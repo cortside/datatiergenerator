@@ -23,7 +23,7 @@ namespace Spring2.DataTierGenerator.Generator.Styler {
 	private String inFile = null;
 	private String outFile = null;
 	private Boolean linespace = true;
-	private StringCollection filebuffer = new StringCollection();
+	private StylerLineList filebuffer = new StylerLineList();
 
 	private BraceStyle typeBracing = BraceStyle.Block;
 	private BraceStyle flowBracing = BraceStyle.Block;
@@ -270,16 +270,16 @@ namespace Spring2.DataTierGenerator.Generator.Styler {
 
 	    StringBuilder sb = new StringBuilder();
 	    for (int i=0; i < filebuffer.Count; i++) {
-		sb.Append(filebuffer[i]).Append(Environment.NewLine);
+		sb.Append(GetIndentation(filebuffer[i].Indent)).Append(filebuffer[i].Text).Append(Environment.NewLine);
 	    }
 
 	    return sb;
 	}
 
 	public void FillBuffer(TextReader sr) {
-	    filebuffer = new StringCollection();
+	    filebuffer = new StylerLineList();
 	    while (sr.Peek() > -1) {
-		filebuffer.Add(sr.ReadLine());
+		filebuffer.Add(new StylerLine(sr.ReadLine(), filebuffer));
 	    }
 	    sr.Close();
 	}
@@ -288,62 +288,61 @@ namespace Spring2.DataTierGenerator.Generator.Styler {
 	    // break the opening brace off of the line if using hanging braces
 	    if (flowBracing == BraceStyle.C) {
 		for (int i=0; i < filebuffer.Count; i++) {
-		    String str = filebuffer[i];
+		    StylerLine line = filebuffer[i];
 
-		    if (str.Trim().StartsWith("}") && (IsElse(str) || IsElseIf(str) || IsCatch(str) || IsFinally(str))) {
+		    if (line.StartsWithClosingBrace && (line.IsElse || line.IsElseIf || line.IsCatch || line.IsFinally)) {
 			filebuffer.RemoveAt(i);
-			filebuffer.Insert(i, "}");
-			filebuffer.Insert(i + 1, str.Trim().Substring(1).Trim());
+			filebuffer.Insert(i, new StylerLine("}", filebuffer));
+			filebuffer.Insert(i + 1, new StylerLine(line.Text.Trim().Substring(1).Trim(), filebuffer));
 		    }
 
-		    if (IsSingleLineGet(str)) {
+		    if (line.IsSingleLineGet) {
 			filebuffer.RemoveAt(i);
-			filebuffer.Insert(i, "get");
-			filebuffer.Insert(i + 1, "{");
-			String s = str.Substring(str.IndexOf("get")).Trim();
+			filebuffer.Insert(i, new StylerLine("get", filebuffer));
+			filebuffer.Insert(i + 1, new StylerLine("{", filebuffer));
+			String s = line.Text.Substring(line.Text.IndexOf("get")).Trim();
 			s = s.Substring(s.IndexOf("{")+1);
 			s = s.Substring(0,s.Length-1).Trim();
-			filebuffer.Insert(i + 2, s);
-			filebuffer.Insert(i + 3, "}");
+			filebuffer.Insert(i + 2, new StylerLine(s, filebuffer));
+			filebuffer.Insert(i + 3, new StylerLine("}", filebuffer));
 		    }
 
-		    if (IsSingleLineSet(str)) {
+		    if (line.IsSingleLineSet) {
 			filebuffer.RemoveAt(i);
-			filebuffer.Insert(i, "set");
-			filebuffer.Insert(i + 1, "{");
-			String s = str.Substring(str.IndexOf("set")).Trim();
+			filebuffer.Insert(i, new StylerLine("set", filebuffer));
+			filebuffer.Insert(i + 1, new StylerLine("{", filebuffer));
+			String s = line.Text.Substring(line.Text.IndexOf("set")).Trim();
 			s = s.Substring(s.IndexOf("{")+1);
 			s = s.Substring(0,s.Length-1).Trim();
-			filebuffer.Insert(i + 2, s);
-			filebuffer.Insert(i + 3, "}");
+			filebuffer.Insert(i + 2, new StylerLine(s, filebuffer));
+			filebuffer.Insert(i + 3, new StylerLine("}", filebuffer));
 		    }
-
 		}
 	    }
 
 	    // combine the opening brace with next line if using block brace style
 	    if (flowBracing == BraceStyle.Block) {
 		for (int i=0; i < filebuffer.Count; i++) {
-		    String str = filebuffer[i];
+		    StylerLine line = filebuffer[i];
 
-		    if (str.Trim().Equals("}") && i < (filebuffer.Count -1) && !StartWithOpenBrace(filebuffer[i+1]) && (IsElse(filebuffer[i+1]) || IsElseIf(filebuffer[i+1]) || IsCatch(filebuffer[i+1]) || IsFinally(filebuffer[i+1]))) {
-			filebuffer[i] = "} " + filebuffer[i+1].Trim();
+		    if (line.StartsWithClosingBrace && i < (filebuffer.Count -1) && !filebuffer[i+1].StartWithOpenBrace && (filebuffer[i+1].IsElse || filebuffer[i+1].IsElseIf || filebuffer[i+1].IsCatch || filebuffer[i+1].IsFinally)) {
+			filebuffer[i] = new StylerLine("} " + filebuffer[i+1].Text.Trim(), filebuffer);
 			filebuffer.RemoveAt(i+1);
 		    }
 
 		    // move closing brace to new line if not a single line property set/get
-		    if (!IsComment(filebuffer[i]) && EndWithCloseBrace(filebuffer[i]) && filebuffer[i].Trim().Length > 1 && !IsSingleLineGet(filebuffer[i]) && !IsSingleLineSet(filebuffer[i])) {
-			filebuffer[i] = filebuffer[i].Substring(0, filebuffer[i].LastIndexOf("}")).Trim();
-			filebuffer.Insert(i+1, "}");
+		    if (!line.IsComment && line.EndWithCloseBrace && line.Text.Trim().Length > 1 && !line.IsSingleLineGet && !line.IsSingleLineSet) {
+			filebuffer[i] = new StylerLine(line.Text.Substring(0, line.Text.LastIndexOf("}")).Trim(), filebuffer);
+			filebuffer.Insert(i+1, new StylerLine("}", filebuffer));
 		    }
 
 		    // open up properties that are multiple lines starting on line with get/set
-		    if ((IsGet(filebuffer[i]) && !IsSingleLineGet(filebuffer[i]) && !IsSingleLineGetWithComment(filebuffer[i])) || (IsSet(filebuffer[i]) && !IsSingleLineSet(filebuffer[i]) && !IsSingleLineSetWithComment(filebuffer[i]))) {
-			String rightOfOpenBrace = str.Substring(str.IndexOf("{")+1);
+		    if ((line.IsGet && !line.IsSingleLineGet && !line.IsSingleLineGetWithComment) || (line.IsSet && !line.IsSingleLineSet && !line.IsSingleLineSetWithComment)) {
+			String rightOfOpenBrace = line.Text.Substring(line.Text.IndexOf("{")+1);
 			rightOfOpenBrace = rightOfOpenBrace.Replace("\t","").Trim();
 			if (rightOfOpenBrace.Length > 0) {
-			    filebuffer.Insert(i+1, rightOfOpenBrace);
-			    filebuffer[i] = str.Substring(0, str.IndexOf("{")+1);
+			    filebuffer.Insert(i+1, new StylerLine(rightOfOpenBrace, filebuffer));
+			    filebuffer[i] = new StylerLine(line.Text.Substring(0, line.Text.IndexOf("{")+1), filebuffer);
 			}
 		    }
 		}
@@ -363,9 +362,9 @@ namespace Spring2.DataTierGenerator.Generator.Styler {
 
 	    for (int i=0; i < filebuffer.Count; i++) {
 		Int32 currentIndent = indent;
-		String str = filebuffer[i].Trim();
+		StylerLine line = filebuffer[i];
 
-		if (str.StartsWith("/*")) {
+		if (line.Text.StartsWith("/*")) {
 		    inComment = true;
 		}
 
@@ -376,99 +375,97 @@ namespace Spring2.DataTierGenerator.Generator.Styler {
 
 		if (!inComment) {
 		    //                                                  + && !IsElse(str)
-		    if (!IsComment(str) 
-			    && (IsType(str) 
-				|| (IsFlow(str) && (!IsElse(str) || flowBracing == BraceStyle.C) && !IsElseIf(str) && !IsCatch(str) && !IsFinally(str) ) 
-			    || IsFunction(str) 
-			    || IsProperty(str) 
-			    || IsHangingBrace(str) 
-			    || IsGet(str) 
-			    || IsSet(str) 
-			    || IsLock(str)) 
-			&& !EndWithCloseBrace(str) 
-			&& !EndWithCloseBraceAndComment(str)
-			&& !IsClosingBrace(str) ) {
+		    if (!line.IsComment 
+			    && (line.IsType
+				|| (line.IsFlow && (!line.IsElse || flowBracing == BraceStyle.C) && !line.IsElseIf && !line.IsCatch && !line.IsFinally ) 
+			    || line.IsFunction 
+			    || line.IsProperty
+			    || line.IsHangingBrace
+			    || line.IsGet
+			    || line.IsSet
+			    || line.IsLock) 
+			&& !line.EndWithCloseBrace
+			&& !line.EndWithCloseBraceAndComment
+			&& !line.IsClosingBrace ) {
 
 			// if next line is { only, then don't indent next line but 2 lines from then.
-			if (filebuffer[i+1].Trim().Equals("{")) {
+			if (filebuffer[i+1].Text.Equals("{")) {
 			    skipIndent = true;
 			} else {
-			    if (IsIf(str)) {
-				if (EndWithBrace(str) || EndWithBraceAndComment(str) || IsHangingBrace(filebuffer[i+1]) || EndWithContinuationOperator(str) || StartWithContinuationOperator(filebuffer[i+1])) {
+			    if (line.IsIf) {
+				if (line.EndWithBrace || line.EndWithBraceAndComment || filebuffer[i+1].IsHangingBrace || line.EndWithContinuationOperator || filebuffer[i+1].StartWithContinuationOperator) {
 				    indent++;
 				}
 			    } else {
 				// the line may be misinterpreted if there is multiline concatination
-				if (!StartWithContinuationOperator(filebuffer[i+1]) && !EndWithContinuationOperator(str)) {
+				if (!filebuffer[i+1].StartWithContinuationOperator && !line.EndWithContinuationOperator) {
 				    indent++;
 				}
 			    }
 			}
 			// TODO: this may be a problem with nested switch statements
-			if (IsSwitch(str)) {
+			if (line.IsSwitch) {
 			    inSwitch = true;
 			    switchIndent = indent;
 			}
-		    } else if (!IsComment(str) && (IsElse(str) ||
-			IsElseIf(str) ||
-			IsCatch(str) ||
-			IsFinally(str)) ) {
-			if (flowBracing == BraceStyle.Block && (StartWithOpenBrace(str) || EndWithBrace(filebuffer[i-1]))) {
+		    } else if (!line.IsComment && (line.IsElse ||
+			line.IsElseIf ||
+			line.IsCatch ||
+			line.IsFinally) ) {
+			if (flowBracing == BraceStyle.Block && (line.StartWithOpenBrace || filebuffer[i-1].EndWithBrace)) {
 			    currentIndent--;
 			}
 
-			if (flowBracing == BraceStyle.Block && (!StartWithOpenBrace(str) && !(i>0 && EndWithBrace(filebuffer[i-1]))) && (IsElse(str) || IsElseIf(str))) {
+			if (flowBracing == BraceStyle.Block && (!line.StartWithOpenBrace && !(i>0 && filebuffer[i-1].EndWithBrace)) && (line.IsElse || line.IsElseIf)) {
 			    indent++;
 			}
 
 			// handle single line else statments (bad idea in my opinion)
-			if (IsElse(str) && !EndWithBrace(str) && !EndWithBraceAndComment(str) && !EndWithContinuationOperator(str) && !StartWithContinuationOperator(filebuffer[i+1])) {
+			if (line.IsElse && !line.EndWithBrace && !line.EndWithBraceAndComment && !line.EndWithContinuationOperator && !filebuffer[i+1].StartWithContinuationOperator) {
 			    indent--;
 			}
-		    } else if (!IsComment(str) && IsClosingBrace(str)) {
+		    } else if (!line.IsComment && line.IsClosingBrace) {
 			indent--;
 			currentIndent--;
 
 			// TODO: this may be a problem with nested switch statements
-			if (inSwitch && (indent == switchIndent || (IsBreak(filebuffer[i-1]) && indent==switchIndent-1) ) && !IsComment(str) && IsClosingBrace(str)) {
+			if (inSwitch && (indent == switchIndent || (filebuffer[i-1].IsBreak && indent==switchIndent-1) ) && !line.IsComment && line.IsClosingBrace) {
 			    inSwitch = false;
 			    indent = switchIndent -1;
 			    currentIndent = indent;
 			    switchIndent=0;
 			}
-		    } else if (!IsComment(str) && (IsCase(str) || IsSwitchDefault(str))) {
+		    } else if (!line.IsComment && (line.IsCase || line.IsSwitchDefault)) {
 			currentIndent = switchIndent;
 			indent = currentIndent +1;
-		    } else if (!IsComment(str) && IsBreak(str) && inSwitch) {
+		    } else if (!line.IsComment && line.IsBreak && inSwitch) {
 			indent--;
 		    }
 
 		    // handle method calls that are broken into multiple lines and string concatination
-		    if (StartWithContinuationOperator(str) || (i > 0 && EndWithContinuationOperator(filebuffer[i-1]))) {
+		    if (line.StartWithContinuationOperator || (i > 0 && filebuffer[i-1].EndWithContinuationOperator)) {
 			currentIndent++;
-		    } else if (i > 0 && !IsComment(filebuffer[i-1]) && (IsIf(filebuffer[i-1]) || IsElse(filebuffer[i-1])) && !EndWithBrace(filebuffer[i-1]) && !EndWithBraceAndComment(filebuffer[i-1]) && !EndWithSemicolon(filebuffer[i-1])) {
+		    } else if (i > 0 && !filebuffer[i-1].IsComment && (filebuffer[i-1].IsIf || filebuffer[i-1].IsElse) && !filebuffer[i-1].EndWithBrace && !filebuffer[i-1].EndWithBraceAndComment && !filebuffer[i-1].EndWithSemicolon) {
 			// handle single line if/else statements
 			currentIndent++;
 		    }
 
 		    // handle single line while/for/foreach statements
-		    if (i > 0 && !IsComment(filebuffer[i-1]) && (IsWhile(filebuffer[i-1]) || IsFor(filebuffer[i-1]) || IsForEach(filebuffer[i-1])) && !EndWithBrace(filebuffer[i-1]) && !EndWithBraceAndComment(filebuffer[i-1]) && !EndWithSemicolon(filebuffer[i-1])) {
+		    if (i > 0 && !filebuffer[i-1].IsComment && (filebuffer[i-1].IsWhile || filebuffer[i-1].IsFor || filebuffer[i-1].IsForEach) && !filebuffer[i-1].EndWithBrace && !filebuffer[i-1].EndWithBraceAndComment && !filebuffer[i-1].EndWithSemicolon) {
 			indent--;
 		    }
 		}
 
 
-		if (str.EndsWith("*/")) {
+		if (line.Text.EndsWith("*/")) {
 		    inComment = false;
 		}
 
-
-		filebuffer[i] = GetIndentation(currentIndent) + str;
+		filebuffer[i].Indent = currentIndent;
 
 		if (skipIndent) {
 		    i++;
-		    str = str = filebuffer[i].Trim();
-		    filebuffer[i] = GetIndentation(currentIndent) + str;
+		    filebuffer[i].Indent = currentIndent;
 
 		    indent++;
 		}
@@ -480,11 +477,10 @@ namespace Spring2.DataTierGenerator.Generator.Styler {
 		Console.Out.WriteLine("WARNING: indent level did not end up at 0 when finished - " + this.File);
 	    }
 
-
 	    // remove leading whitespace for blank lines
 	    for (int i=0; i < filebuffer.Count; i++) {
-		if (IsBlankLine(filebuffer[i])) {
-		    filebuffer[i] = String.Empty;
+		if (filebuffer[i].IsBlankLine) {
+		    filebuffer[i] = new StylerLine(String.Empty, filebuffer);
 		}
 	    }
 
@@ -514,46 +510,17 @@ namespace Spring2.DataTierGenerator.Generator.Styler {
 	    }
 	}
 
-
-	public void IsBadMonoStyle(String str) {
-	    if (IsBadMonoType(str)) {
-		if (typeBracing == BraceStyle.Block) {
-		    FixHangingBrace(str);
-		} else {
-		    FixEndBrace(str);
-		}
-	    } else if(IsBadMonoFlow(str)) {
-		if (flowBracing == BraceStyle.Block) {
-		    FixHangingBrace(str);
-		} else {
-		    FixEndBrace(str);
-		}
-	    } else if(IsBadMonoFunction(str)) {
-		if (functionBracing == BraceStyle.Block) {
-		    FixHangingBrace(str);
-		} else {
-		    FixEndBrace(str);
-		}
-	    } else if(IsBadMonoProperty(str) || IsBadPropertyAccessor(str)) {
-		if (propertyBracing == BraceStyle.Block) {
-		    FixHangingBrace(str);
-		} else {
-		    FixEndBrace(str);
-		}
-	    }
-	}
-
-	public void FixHangingBrace(String str) {
-	    int strloc = filebuffer.IndexOf(str);
+	public void FixHangingBrace(StylerLine line) {
+	    int strloc = filebuffer.IndexOf(line);
 	    int brcloc = FindHangingBrace(strloc);
 	    int diff = brcloc - strloc;
 	    if (brcloc > 0) {
 		for (int i = 0; i < diff+1; i++) {
 		    filebuffer.RemoveAt(strloc);
 		}
-		filebuffer.Insert(strloc, str + " {");
+		filebuffer.Insert(strloc, new StylerLine(line.Text + " {", filebuffer));
 		if (linespace) {
-		    filebuffer.Insert(strloc+1, "");
+		    filebuffer.Insert(strloc+1, new StylerLine("", filebuffer));
 		}
 	    } else {
 	    }
@@ -564,12 +531,15 @@ namespace Spring2.DataTierGenerator.Generator.Styler {
 	    bool found = false;
 	    while (!found) {
 		try {
-		    string str = filebuffer[strloc++].Trim().Replace("\t", "");
-		    found = IsHangingBrace(str);
-		    if (found && str != "{") {
-			filebuffer.Insert(strloc, str.Substring(1));
+		    //string str = filebuffer[strloc++].Text.Replace("\t", "");
+		    filebuffer[strloc] = new StylerLine(filebuffer[strloc].Text.Replace("\t", ""), filebuffer);
+		    StylerLine line = filebuffer[strloc];
+		    strloc++;
+		    found = line.IsHangingBrace;
+		    if (found && line.Text != "{") {
+			filebuffer.Insert(strloc, new StylerLine(line.Text.Substring(1), filebuffer));
 		    }
-		    if (!found && !IsBlankLine(str)) {
+		    if (!found && !line.IsBlankLine) {
 			return -1;
 		    }
 		} catch (Exception) {
@@ -579,16 +549,16 @@ namespace Spring2.DataTierGenerator.Generator.Styler {
 	    return strloc -1;
 	}
 
-	public void FixEndBrace(String str) {
-	    int strloc = filebuffer.IndexOf(str);
+	public void FixEndBrace(StylerLine line) {
+	    int strloc = filebuffer.IndexOf(line);
 	    filebuffer.RemoveAt(strloc);
-	    filebuffer.Insert(strloc, RemoveEndBrace(str));
-	    filebuffer.Insert(strloc+1, AddHangingBrace(str));
+	    filebuffer.Insert(strloc, line.RemoveEndBrace);
+	    filebuffer.Insert(strloc+1, line.AddHangingBrace);
 	}
 
-	public bool IsBadMonoType(String str) {
-	    if ( IsType(str) ) {
-		if (typeBracing == BraceStyle.Block && !EndWithBrace(str) || typeBracing == BraceStyle.C && EndWithBrace(str)) {
+	public bool IsBadMonoType(StylerLine line) {
+	    if (line.IsType) {
+		if (typeBracing == BraceStyle.Block && !line.EndWithBrace || typeBracing == BraceStyle.C && line.EndWithBrace) {
 		    return true;
 		}
 	    }
@@ -596,9 +566,9 @@ namespace Spring2.DataTierGenerator.Generator.Styler {
 	    return false;
 	}
 
-	public bool IsBadMonoFlow(String str) {
-	    if (IsFlow(str)) {
-		if (flowBracing == BraceStyle.Block && !EndWithBrace(str) || flowBracing == BraceStyle.C && EndWithBrace(str)) {
+	public bool IsBadMonoFlow(StylerLine line) {
+	    if (line.IsFlow) {
+		if (flowBracing == BraceStyle.Block && !line.EndWithBrace || flowBracing == BraceStyle.C && line.EndWithBrace) {
 		    return true;
 		}
 	    }
@@ -606,9 +576,9 @@ namespace Spring2.DataTierGenerator.Generator.Styler {
 	    return false;
 	}
 
-	public bool IsBadMonoFunction(String str) {
-	    if (IsFunction(str)) {
-		if (functionBracing == BraceStyle.Block && !EndWithBrace(str) || functionBracing == BraceStyle.C && EndWithBrace(str)) {
+	public bool IsBadMonoFunction(StylerLine line) {
+	    if (line.IsFunction) {
+		if (functionBracing == BraceStyle.Block && !line.EndWithBrace || functionBracing == BraceStyle.C && line.EndWithBrace) {
 		    return true;
 		}
 	    }
@@ -616,9 +586,9 @@ namespace Spring2.DataTierGenerator.Generator.Styler {
 	    return false;
 	}
 
-	public bool IsBadMonoProperty(String str) {
-	    if (IsProperty(str)) {
-		if (propertyBracing == BraceStyle.Block && !EndWithBrace(str) || propertyBracing == BraceStyle.C && EndWithBrace(str)) {
+	public bool IsBadMonoProperty(StylerLine line) {
+	    if (line.IsProperty) {
+		if (propertyBracing == BraceStyle.Block && !line.EndWithBrace || propertyBracing == BraceStyle.C && line.EndWithBrace) {
 		    return true;
 		}
 	    }
@@ -626,9 +596,9 @@ namespace Spring2.DataTierGenerator.Generator.Styler {
 	    return false;
 	}
 
-	public bool IsBadPropertyAccessor(String str) {
-	    if (IsGet(str) || IsSet(str)) {
-		if (propertyBracing == BraceStyle.Block && !EndWithBrace(str) || propertyBracing == BraceStyle.C && EndWithBrace(str)) {
+	public bool IsBadPropertyAccessor(StylerLine line) {
+	    if (line.IsGet || line.IsSet) {
+		if (propertyBracing == BraceStyle.Block && !line.EndWithBrace || propertyBracing == BraceStyle.C && line.EndWithBrace) {
 		    return true;
 		}
 	    }
@@ -636,286 +606,32 @@ namespace Spring2.DataTierGenerator.Generator.Styler {
 	    return false;
 	}
 
-	public static bool IsType(String str) {
-	    if (!IsComment(str) && (
-		IsNameSpace(str) ||
-		IsClass(str) ||
-		IsStruct(str) ||
-		IsEnum(str) )) {
-		return true;
-	    } else {
-		return false;
+	public void IsBadMonoStyle(StylerLine line) {
+	    if (IsBadMonoType(line)) {
+		if (typeBracing == BraceStyle.Block) {
+		    FixHangingBrace(line);
+		} else {
+		    FixEndBrace(line);
+		}
+	    } else if(IsBadMonoFlow(line)) {
+		if (flowBracing == BraceStyle.Block) {
+		    FixHangingBrace(line);
+		} else {
+		    FixEndBrace(line);
+		}
+	    } else if(IsBadMonoFunction(line)) {
+		if (functionBracing == BraceStyle.Block) {
+		    FixHangingBrace(line);
+		} else {
+		    FixEndBrace(line);
+		}
+	    } else if(IsBadMonoProperty(line) || IsBadPropertyAccessor(line)) {
+		if (propertyBracing == BraceStyle.Block) {
+		    FixHangingBrace(line);
+		} else {
+		    FixEndBrace(line);
+		}
 	    }
-	}
-
-	public static bool IsFlow(String str) {
-	    if (!IsComment(str) && (
-		IsIf(str) ||
-		IsElse(str) ||
-		IsElseIf(str) ||
-		IsTry(str) ||
-		IsCatch(str) ||
-		IsFinally(str) ||
-		IsFor(str) ||
-		IsForEach(str) ||
-		IsWhile(str) ||
-		IsSwitch(str)
-		)) {
-		return true;
-	    } else {
-		return false;
-	    }
-	}
-
-	public static bool IsFunction(String str) {
-	    if (Regex.IsMatch(str, @"^\s*(\w+)\s+(\w+).*\(+") &&
-		!IsDeclaration(str) &&
-		!IsComment(str) &&
-		!IsType(str) &&
-		!IsFlow(str) &&
-		!IsReturn(str)) {
-		return true;
-	    } else {
-		return false;
-	    }
-	}
-
-	public bool IsProperty(String str) {
-	    Int32 index = filebuffer.IndexOf(str);
-	    if (Regex.IsMatch(str, @"^\s*(\w+)\s+(\w+).*") &&
-		!IsDeclaration(str) &&
-		!IsComment(str) &&
-		!IsType(str) &&
-		!IsFlow(str) &&
-		!IsFunction(str) &&
-		!IsReturn(str)  && (EndWithBrace(str) || StartWithOpenBrace(filebuffer[index+1]) ) ) {
-		return true;
-	    } else {
-		return false;
-	    }
-	}
-
-	private static Regex removeEndBrace = new Regex(@"\{\s*$");
-	public static string RemoveEndBrace(String str) {
-	    return removeEndBrace.Replace(str, "");
-	}
-
-	private static Regex addHangingBrace = new Regex(@"\S+\s*");
-	public static string AddHangingBrace(String str) {
-	    string blank = addHangingBrace.Replace(str,"");
-	    return blank + "{";
-	}
-
-	private static Regex isDeclaration = new Regex(@"\;\s*(\/+|$)");
-	public static bool IsDeclaration(String str) {
-	    return isDeclaration.IsMatch(str);
-	}
-
-	private static Regex isComment = new Regex(@"^(\s*\/+|\s*\*+|\s*\#+)");
-	public static bool IsComment(String str) {
-	    return isComment.IsMatch(str);
-	}
-
-	private static Regex endWithBrace = new Regex(@"\{\s*$");
-	public static bool EndWithBrace(String str) {
-	    return endWithBrace.IsMatch(str);
-	}
-
-	private static Regex isHangingBrace = new Regex(@"^\s*\{");
-	public static bool IsHangingBrace(String str) {
-	    return isHangingBrace.IsMatch(str);
-	}
-
-	private static Regex isBlankLine = new Regex(@"^\s*$");
-	public static bool IsBlankLine(String str) {
-	    return isBlankLine.IsMatch(str);
-	}
-
-	private static Regex isNameSpace = new Regex(@"(^|\s+)namespace\s+");
-	public static bool IsNameSpace(String str) {
-	    return isNameSpace.IsMatch(str);
-	}
-
-	private static Regex isClass = new Regex(@"(public|internal|abstract|private|^)(\s+|^)class\s+\w+");
-	public static bool IsClass(String str) {
-	    return isClass.IsMatch(str);
-	}
-
-	private static Regex isStruct = new Regex(@"\s+struct\s+");
-	public static bool IsStruct(String str) {
-	    return isStruct.IsMatch(str);
-	}
-
-	private static Regex isEnum = new Regex(@"\s+enum\s+");
-	public static bool IsEnum(String str) {
-	    return isEnum.IsMatch(str);
-	}
-
-	private static Regex isIf = new Regex(@"(^|\s+|\}+)if(\s+|\(+|$)");
-	public static bool IsIf(String str) {
-	    return isIf.IsMatch(str);
-	}
-
-	private static Regex isElse = new Regex(@"(^|\s*|\}+)else(\s*|\{+|$|/s*\/\/.*$)");
-	public static bool IsElse(String str) {
-	    return isElse.IsMatch(str);
-	}
-
-	private static Regex isElseIf = new Regex(@"(^|\s+|\}+)else if(\s+|\(+|$)");
-	public static bool IsElseIf(String str) {
-	    return isElseIf.IsMatch(str);
-	}
-
-	private static Regex isTry = new Regex(@"^\s*try(\s*|\(+|$)");
-	public static bool IsTry(String str) {
-	    return isTry.IsMatch(str);
-	}
-
-	private static Regex isCatch = new Regex(@"(^|\s+|\}+)catch(\s+|\(+|$)");
-	public static bool IsCatch(String str) {
-	    return isCatch.IsMatch(str);
-	}
-
-	private static Regex isFinally = new Regex(@"(^|\s+|\}+)finally(\s+|\{+|$)");
-	public static bool IsFinally(String str) {
-	    return isFinally.IsMatch(str);
-	}
-
-	private static Regex isFor = new Regex(@"(^|\s+|\}+)for(\s*\(+|$)");
-	public static bool IsFor(String str) {
-	    //return Regex.IsMatch(str, @"(^|\s+|\}+)for(\s+|\(+|$)");
-	    return isFor.IsMatch(str);
-	}
-
-	private static Regex isForEach = new Regex(@"^\s*foreach(\s+|\(+|$)");
-	public static bool IsForEach(String str) {
-	    return isForEach.IsMatch(str);
-	}
-
-	private static Regex isWhile = new Regex(@"(^\s*|\}+)while(\s+|\(+|$)");
-	public static bool IsWhile(String str) {
-	    return isWhile.IsMatch(str);
-	}
-
-	private static Regex isSwitch = new Regex(@"(^|\s+|\}+)switch(\s+|\(+|$)");
-	public static bool IsSwitch(String str) {
-	    return isSwitch.IsMatch(str);
-	}
-
-	private static Regex isCase = new Regex(@"(^\s*|\}+)case(\s+|\(+|$)");
-	public static bool IsCase(String str) {
-	    return isCase.IsMatch(str);
-	}
-
-	private static Regex isGet = new Regex(@"(^\s*|\}+)get\s*({|$)");
-	public static bool IsGet(String str) {
-	    return isGet.IsMatch(str);
-	}
-
-	private static Regex isSet = new Regex(@"(^\s*|\}+)set\s*({|$)");
-	public static bool IsSet(String str) {
-	    return isSet.IsMatch(str);
-	}
-
-	private static Regex endWithCloseBrace = new Regex(@"\}\s*$");
-	public static bool EndWithCloseBrace(String str) {
-	    return endWithCloseBrace.IsMatch(str);
-	}
-
-	private static Regex endWithCloseBraceAndComment = new Regex(@"\}\s*(\/\/|$)");
-	public static bool EndWithCloseBraceAndComment(String str) {
-	    return endWithCloseBraceAndComment.IsMatch(str);
-	}
-
-	private static Regex startWithOpenBrace = new Regex(@"^\s*\}");
-	public static bool StartWithOpenBrace(String str) {
-	    return startWithOpenBrace.IsMatch(str);
-	}
-
-	private static Regex isReturn = new Regex(@"^\s*return\s+");
-	public static bool IsReturn(String str) {
-	    return isReturn.IsMatch(str);
-	}
-
-	private static Regex isLock = new Regex(@"(^\s*|\}+)lock\s*\(");
-	public static bool IsLock(String str) {
-	    return isLock.IsMatch(str);
-	}
-
-	private static Regex endWithBraceAndComment = new Regex(@"\{\s*(\/\/|$)");
-	public static bool EndWithBraceAndComment(String str) {
-	    return endWithBraceAndComment.IsMatch(str);
-	}
-
-	private static Regex endWithSemicolon = new Regex(@"\;\s*(\/+|$)");
-	public static bool EndWithSemicolon(String str) {
-	    return endWithSemicolon.IsMatch(str);
-	}
-
-	private static Regex isClosingBrace = new Regex(@"^\s*\}\s*(\;|\/\/|$)");
-	/// <summary>
-	/// Check to see if the line is:
-	///   }
-	///   } // comment
-	///   };
-	/// </summary>
-	public static bool IsClosingBrace(String str) {
-	    return isClosingBrace.IsMatch(str);
-	}
-
-	private static Regex isSwitchClosingBrace = new Regex(@"^\s*\}\s*\;(\/\/|$)");
-	public static bool IsSwitchClosingBrace(String str) {
-	    return isSwitchClosingBrace.IsMatch(str);
-	}
-
-	private static Regex isBreak = new Regex(@"^\s*break\s*\;");
-	public static bool IsBreak(String str) {
-	    return isBreak.IsMatch(str);
-	}
-
-	private static Regex isSwitchDefault = new Regex(@"^\s*default\s*:\s*$");
-	public static bool IsSwitchDefault(String str) {
-	    return isSwitchDefault.IsMatch(str);
-	}
-
-	private static Regex endWithContinuationOperator = new Regex(@"(\+\s*$|,\s*$|&&\s*$|\|\|\s*$|\(\s*$|\*\s*$)");
-	/// <summary>
-	/// Ends with something that would mean the next line is a continuation (+/,/&&/||/()
-	/// </summary>
-	/// <param name="str"></param>
-	/// <returns></returns>
-	public static bool EndWithContinuationOperator(String str) {
-	    return endWithContinuationOperator.IsMatch(str);
-	}
-
-	private static Regex startWithContinuationOperator = new Regex(@"(^\s*\*|^\s*\+|^\s*,|^\s*&&|^\s*\|\|)");
-	/// <summary>
-	/// Ends with something that would mean the next line is a continuation (+/,/&&/||)
-	/// </summary>
-	/// <param name="str"></param>
-	/// <returns></returns>
-	public static bool StartWithContinuationOperator(String str) {
-	    return startWithContinuationOperator.IsMatch(str);
-	}
-
-	private static Regex isSingleLineGet = new Regex(@"(^\s*)get\s*{*\s*\w+");
-	public static bool IsSingleLineGet(String str) {
-	    return isSingleLineGet.IsMatch(str) && EndWithCloseBrace(str);
-	}
-
-	private static Regex isSingleLineSet = new Regex(@"(^\s*)set\s*{*\s*\w+");
-	public static bool IsSingleLineSet(String str) {
-	    return isSingleLineSet.IsMatch(str) && EndWithCloseBrace(str);
-	}
-
-	private static Regex isSingleLineGetWithComment = new Regex(@"(^\s*)get\s*{*\s*\w+");
-	public static bool IsSingleLineGetWithComment(String str) {
-	    return isSingleLineGetWithComment.IsMatch(str) && EndWithCloseBraceAndComment(str);
-	}
-
-	private static Regex isSingleLineSetWithComment = new Regex(@"(^\s*)set\s*{*\s*\w+");
-	public static bool IsSingleLineSetWithComment(String str) {
-	    return isSingleLineSetWithComment.IsMatch(str) && EndWithCloseBraceAndComment(str);
 	}
 
 
