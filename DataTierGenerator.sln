@@ -15,7 +15,8 @@ Global
 		{8C44AE3C-E997-4016-AAE5-4A66729DD36A}.Release.Build.0 = Release|.NET
 	EndGlobalSection
 	GlobalSection(SolutionItems) = postSolution
-		Item:1 = ToDo.txt
+		Item:1 = dtg-config.xml
+		Item:2 = ToDo.txt
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection
