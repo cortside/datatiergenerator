@@ -16,10 +16,15 @@ $namespaces
 #nameSpaces($options $element.CollectedClass true)
 
 #end
+## add the name space for the Type if it is not in the namespace
+#if ($element.Type.Package != $options.GetCollectionNameSpace($element.Name))
+using $element.Type.Package;
+
+#end
 namespace $options.GetCollectionNameSpace($element.Name) {
 
     /// <summary>
-    /// $element.Type generic collection
+    /// $element.Type.Name generic collection
     /// </summary>
     public class $element.Name : System.Collections.CollectionBase {
 	
@@ -42,8 +47,8 @@ namespace $options.GetCollectionNameSpace($element.Name) {
 
 	// Indexer implementation.
 	[Generate]
-	public $element.Type this[int index] {
-	    get { return (${element.Type}) List[index]; }
+	public $element.Type.Name this[int index] {
+	    get { return (${element.Type.Name}) List[index]; }
 	    set { 
 		if (!immutable) {
 		    List[index] = value;
@@ -54,7 +59,7 @@ namespace $options.GetCollectionNameSpace($element.Name) {
 	}
 
 	[Generate]
-	public void Add(${element.Type} value) {
+	public void Add(${element.Type.Name} value) {
 	    if (!immutable) {
 		List.Add(value);
 	    } else {
@@ -63,17 +68,17 @@ namespace $options.GetCollectionNameSpace($element.Name) {
 	}
 
 	[Generate]
-	public Boolean Contains(${element.Type} value) {
+	public Boolean Contains(${element.Type.Name} value) {
 	    return List.Contains(value);
 	}
 	
 	[Generate]
-	public Int32 IndexOf(${element.Type} value) {
+	public Int32 IndexOf(${element.Type.Name} value) {
 	    return List.IndexOf(value);
 	}
 	
 	[Generate]
-	public void Insert(Int32 index, ${element.Type} value) {
+	public void Insert(Int32 index, ${element.Type.Name} value) {
 	    if (!immutable) {
 	    	List.Insert(index, value);
 	    } else {
@@ -95,7 +100,7 @@ namespace $options.GetCollectionNameSpace($element.Name) {
 	}
 
 	[Generate]
-	public void Remove(${element.Type} value) {
+	public void Remove(${element.Type.Name} value) {
 	    if (!immutable) {
 		List.Remove(value); 
 	    } else {
@@ -106,10 +111,10 @@ namespace $options.GetCollectionNameSpace($element.Name) {
 	[Generate]
 	public void AddRange(System.Collections.IList list) {
 	    foreach(Object o in list) {
-		if (o is ${element.Type}) {
-		    Add((${element.Type})o);
+		if (o is ${element.Type.Name}) {
+		    Add((${element.Type.Name})o);
 		} else {
-		    throw new System.InvalidCastException("object in list could not be cast to ${element.Type}");
+		    throw new System.InvalidCastException("object in list could not be cast to ${element.Type.Name}");
 		}
 	    }
 	}
@@ -139,7 +144,7 @@ namespace $options.GetCollectionNameSpace($element.Name) {
 	/// </summary>
 	[Generate]
 	public Boolean Contains($identity.Type.Name $identity.GetFieldFormat()) {
-	    foreach(${element.Type} o in List) {
+	    foreach(${element.Type.Name} o in List) {
 		if (o.${identity.Name}.Equals($identity.GetFieldFormat())) {
 		    return true;
 		}
@@ -151,9 +156,9 @@ namespace $options.GetCollectionNameSpace($element.Name) {
 	/// returns the instance by identity or null if it not found
 	/// </summary>
 	[Generate]
-	public $element.Type this[$identity.Type.Name $identity.GetFieldFormat()] {
+	public $element.Type.Name this[$identity.Type.Name $identity.GetFieldFormat()] {
 	    get { 
-		foreach($element.Type o in List) {
+		foreach($element.Type.Name o in List) {
 		    if (o.${identity.Name}.Equals($identity.GetFieldFormat())) {
 			return o;
 		    }
@@ -171,7 +176,7 @@ namespace $options.GetCollectionNameSpace($element.Name) {
 	public $element.Name RetainAll($element.Name list) {
 	    $element.Name result = new ${element.Name}();
 
-	    foreach($element.Type data in List) {
+	    foreach($element.Type.Name data in List) {
 		if (list.Contains(data.$identity.GetMethodFormat())) {
 		    result.Add(data);
 		}
@@ -187,7 +192,7 @@ namespace $options.GetCollectionNameSpace($element.Name) {
 	public $element.Name RemoveAll($element.Name list) {
 	    $element.Name result = new ${element.Name}();
 
-	    foreach($element.Type data in List) {
+	    foreach($element.Type.Name data in List) {
 		if (!list.Contains(data.$identity.GetMethodFormat())) {
 		    result.Add(data);
 		}
@@ -230,8 +235,8 @@ namespace $options.GetCollectionNameSpace($element.Name) {
 	[Generate]
 	public class ${field.Name.Replace(".","_")}Sorter : System.Collections.IComparer {
 	    public Int32 Compare(Object a, Object b) {
-		${element.Type} o1 = (${element.Type})a;
-		${element.Type} o2 = (${element.Type})b;
+		${element.Type.Name} o1 = (${element.Type.Name})a;
+		${element.Type.Name} o2 = (${element.Type.Name})b;
 
 		if (o1 == null || o2 == null || !o1.${field.Name}.IsValid || !o2.${field.Name}.IsValid) {
 		    return 0;
@@ -258,12 +263,12 @@ namespace $options.GetCollectionNameSpace($element.Name) {
 #foreach($comparer in $element.CollectedClass.Comparers)
 
         /// <summary>
-        /// Used to sort or search an ArrayList of $element.Type objects on the #foreach($field in $comparer.Fields)#if($velocityCount > 1),#end$field.Name#end properties
+        /// Used to sort or search an ArrayList of $element.Type.Name objects on the #foreach($field in $comparer.Fields)#if($velocityCount > 1),#end$field.Name#end properties
         /// </summary>
 	[Generate]
         public class $comparer.Name : IComparer {
             /// <summary>
-            /// Compares two $element.Type objects.
+            /// Compares two $element.Type.Name objects.
             /// </summary>
             /// <param name="o1">First object</param>
             /// <param name="o2">Second Object</param>
@@ -281,8 +286,8 @@ namespace $options.GetCollectionNameSpace($element.Name) {
 		    return 1;
                 }
 
-                $element.Type g1 = ($element.Type)o1;
-                $element.Type g2 = ($element.Type)o2;
+                $element.Type.Name g1 = ($element.Type.Name)o1;
+                $element.Type.Name g2 = ($element.Type.Name)o2;
 
 #foreach($field in $comparer.Fields)
                 if (g1.${field.GetMethodFormat()}.IsValid && !g2.${field.GetMethodFormat()}.IsValid) {
