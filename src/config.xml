@@ -10,7 +10,16 @@
 	</task>
 -->
 
+<!--    <parser class="Spring2.DataTierGenerator.Parser.DatabaseParser,Spring2.DataTierGenerator">
+	<argument name="server" value="hal" />
+	<argument name="database" value="cort_seamless" />
+	<argument name="user" value="sa" />
+	<argument name="password" value="" />
+    </parser>
+-->
+
     <generator class="Spring2.DataTierGenerator.Generator.GeneratorTaskManager,Spring2.DataTierGenerator">
+	<task name="dataobject" element="entity" template="Template\dataobject.vm" directory="DataObject" filenameformat="{0}Data.cs" />
 	<task name="enum" element="enum" template="Template\enum.vm" directory="Types" filenameformat="vm{0}.cs" />
 	<task name="enum" element="enum" template="Template\EnumTest.vm" directory="Test" filenameformat="vm{0}Test.cs" />
 	<task name="collection" element="collection" template="Template\collection.vm" directory="DataObject" filenameformat="vm{0}Data.cs" />
