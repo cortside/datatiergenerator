@@ -1,28 +1,39 @@
-Todo:
-    - support generation of CHECK CONSTRAINTS in table scripts
-    - fix indentation in DAO classes
-	
-    - sqltypes image and binary do not generate correct code for pulling data from a datareader (populating a dataobject).
-    - data objects could/should support ICloneable with MemberwiseClone().
-    - when loading property attributes, not all overridable values are being loaded (i.e. readerformat)
-    - look for read-only files when writing output and change the attribute before proceeding.
-    - finder methods that support named stored procedures and arguments.  would also have to support knowing what object is to be populated from the data reader.
-    - ability to externally define sql keywords
-    - all elements needs to have an Equals() method so that 2 instances can be compared, including collections. (needed to complete DatabaseCompareParser)
-    - create custom element collections - find and compare methods could be put at this level
-    - implement logger that can be passed to NVelocity for template processing messages
-    - NVelocity Toolbox tool for sql - escape can be the first method - remove from elements
-    - having a comment node in the /databases/database/sqlentities/sqlentity/column childern causes a null exception
-    - update version of NVelocity used
-    - use HttpHandlerLogger (or whatever it is renamed to) to having NVelocity messages show up in a single DTG log (might want to change logging level)
-    - use of log4net for logging instead of caputuring System.Out to a file stream.
-    - if 2 properties on an entity have the same name, no errors or warnings are generated
-    - ability to generate stored procs based on finder methods
-    - DAO classes should be internal
-    - look for generated code that rethrows execptions incorrectly
-    - support for nolock in view generation
-    - support for joining view in view generation
+Generator Todo:
+    M remove support for CodeGenerator; make <generator> a required element
+
+    L support generation of CHECK CONSTRAINTS in table scripts (escaping of clause?)
+    L sqltypes image and binary do not generate correct code for pulling data from a datareader (populating a dataobject).
+
+    M seperate parsing of config data from validation/linking
+
+    L when loading property attributes, not all overridable values are being loaded (i.e. readerformat)
+    L look for read-only files when writing output and change the attribute before proceeding.
+    - finder methods that support named stored procedures (and/or sql where clause fragments) and arguments (to support reporting-like needs)
+    L ability to externally define sql keywords
+    M all elements needs to have an Equals() method so that 2 instances can be compared, including collections. (needed to complete DatabaseCompareParser)
+    M create custom element collections (generics) - find and compare methods could be put at this level
+    H implement logger that can be passed to NVelocity for template processing messages
+    L NVelocity Toolbox tool for sql - escape can be the first method - remove from elements
+    H (BUG)having a comment node in the /databases/database/sqlentities/sqlentity/column childern causes a null exception
+    H update version of NVelocity used
+    H use of log4net for logging instead of caputuring System.Out to a file stream.
+    H (bug)if 2 properties on an entity have the same name, no errors or warnings are generated
+    L ability to generate stored procs based on finder methods (this could be done for performance reasons, saving stored proc compile time) (Seamless)
+    L support for nolock in view generation (Seamless)
+    - support for joining sqlentity (or view) in view generation (data mapping)
     - ability to create check constraint based on enum
+    - support for accessing other properties from the task (i.e. ability to get to SqlEntity.ViewName so that views scripts can have matching file names)
+    M review of element attributes for those that are no longer valid
+    M review of "global" configuration values to see if any are still valid and if global config values make sense
+
+    - ability to describe business logic methods
+    - ability to describe and generate facade classes and methods
+
+Template Todo:
+    - data objects could/should support ICloneable with MemberwiseClone().
+    - DAO classes should be internal
+    - look for generated code that rethrows execptions incorrectly (throw ex; vs throw;)
+
 
 Completed:
     - preservation of custom regions (pull code from regions and insert into generated source before overwritting)
@@ -49,3 +60,8 @@ Completed:
     - define default types and sqltypes so that they don't have to be defined in every config file if they are default.
     - DataObject, DAO, stored proc, view name formats specifiable in config.xml (via VelocityTask)
     - COMMAND_TIMEOUT in read-only DAO classes does not need to be output
+
+
+Other:
+    - possibility of introducing new mapper element to express more complex mappings between entities and sqlentities.  include the possibility for updatating multiple sqlentities with one dao call.
+    - DTG config file for internal entities
