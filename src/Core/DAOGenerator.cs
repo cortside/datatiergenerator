@@ -540,9 +540,6 @@ namespace Spring2.DataTierGenerator.Core {
 	    writer.WriteLine(4, "list.Add(GetDataObjectFromReader(dataReader)); ");
 	    writer.WriteLine(3, "}");
 	    writer.WriteLine(3, "dataReader.Close();");
-	    writer.WriteLine(3, "if (list.Count < 1) {");
-	    writer.WriteLine(4, "throw new FinderException(\"List retrieval returned no members for " + entity.Name + ".\");");
-	    writer.WriteLine(3, "}");
 	    writer.WriteLine(3, "return list; ");
 	    writer.WriteLine(2, "}");
 	    writer.WriteLine();
