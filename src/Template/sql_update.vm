@@ -40,7 +40,7 @@ SET
 #end
 
 WHERE
-#foreach($column in $element.GetPrimaryKeyColumns(false))
+#foreach($column in $element.GetPrimaryKeyColumns())
 #if($velocityCount > 1)
 	 AND #end${column.Name} = @${column.Name}
 #end
