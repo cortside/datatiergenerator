@@ -1,0 +1,109 @@
+#if(!$element.JoinTable)
+using System;
+
+using Spring2.Core.Message;
+using Spring2.Core.Types;
+using Spring2.DataTierGenerator.Attribute;
+
+using ${options.RootNameSpace}.Dao;
+using ${options.RootNameSpace}.DataObject;
+
+namespace ${options.RootNameSpace}.BusinessLogic {
+    public #if($element.IsAbstract)abstract #end class $element.Name#if(!$element.JoinTable) :#if($element.IsDerived) $element.BaseEntity.Name,#else BusinessEntity,#end I$element.Name#end {
+
+#foreach($field in $element.PrivateFields)
+#if($field.Name.IndexOf('.')<0 && !$field.Derived)
+	[Generate]
+	#if ($element.IsAbstract)
+	/// <summary>Protected member</summary>
+	protected $field.Type.ConcreteType $field.GetFieldFormat() = $field.Type.NewInstanceFormat;
+	#else
+	$field.AccessModifier $field.Type.Name $field.GetFieldFormat() = $field.Type.NewInstanceFormat;
+	#end
+#end
+#end
+
+        [Generate]
+        internal ${element.Name}() {}
+
+#if(!$element.IsAbstract)
+        [Generate]
+	public static $element.Name NewInstance() {
+	    return new ${element.Name}();
+	}
+
+#if(!$element.SqlEntity.Name.Equals("") && !$element.JoinTable)
+	[Generate]
+	public static $element.Name GetInstance(#parameterList(true $element.GetPrimaryKeyFields())) {
+	    return ${element.Name}DAO.DAO.Load(#argumentList(true $element.GetPrimaryKeyFields()));
+	}
+
+#if($element.WritableFields.Count>0)
+	[Generate]
+	public#if($element.IsDerived) override#end void Update(${element.Name}Data data) {
+#foreach($field in $element.WritableFields) 
+	    $field.GetFieldFormat() = data.${field.Name}.IsDefault ? $field.GetFieldFormat : data.${field.Name};
+#end
+	    Store();
+	}
+#end
+
+	[Generate]
+	public#if($element.IsDerived) override#end void Store() {
+	    MessageList errors = Validate();
+
+	    if (errors.Count > 0) {
+		throw new MessageListException(errors);
+            }
+
+#if($element.GetIdentityField())
+	    if (isNew) {
+		this.$element.GetIdentityField().GetMethodFormat() = ${element.Name}DAO.DAO.Insert(this);
+		isNew = false;
+            } else {
+		${element.Name}DAO.DAO.Update(this);
+            }
+#end
+	}
+#end
+
+	[Generate]
+	public MessageList Validate() 	{
+
+	    MessageList errors = new MessageList();
+
+	    return errors;
+	}
+#end
+
+#foreach($field in $element.PrivateFields)
+#if($field.Name.IndexOf('.')<0 && !$field.IsDerived)
+#if ($field.Type.ConcreteType.Equals("") || $field.Type.ConcreteType.Equals($field.Type.Name))
+
+	[Generate]
+	public $field.Type.Name $field.GetMethodFormat() {
+	    get { return this.$field.GetFieldFormat(); }
+	    set { this.$field.GetFieldFormat() = value; }
+	}
+#else
+	[Generate]
+	public $field.Type.ConcreteType $field.GetMethodFormat() {
+	    get { return this.$field.GetFieldFormat() as $field.Type.ConcreteType; }
+	    set { this.$field.GetFieldFormat() = value; }
+	}
+
+	[Generate]
+	$field.Type.Name I${element.Name}.$field.GetMethodFormat() {
+#if ($field.Readable)
+	    get { return this.$field.GetMethodFormat(); }
+#end
+#if ($field.Writable)
+	    set { this.$field.GetFieldFormat() = value; }
+#end
+        }
+#end
+#end
+#end
+    }
+}
+#end

@@ -1,0 +1,42 @@
+#if(!$element.JoinTable)
+#*
+
+        interface.vm - default data object templates (replaces DataObjectGenerator class)
+
+*###
+using System;
+using System.Collections;
+
+using Spring2.Core.Types;
+
+using ${options.RootNameSpace}.Types;
+
+#set ($directory = $task.Directory)
+#if($directory.StartsWith('.\'))
+#set ($directory = $directory.Substring(2))
+#end
+#set ($namespace = "$options.RootNameSpace$directory.Replace('\','.')")
+namespace $namespace {
+
+    public class ${element.Name}Fields {
+	private ${element.Name}Fields() {}
+#foreach($propertyName in $element.GetPropertyNames($options, $elements))
+	public static readonly String $propertyName.FieldName = $propertyName.FieldValue;
+#end
+    }
+
+    public interface I$element.Name :#if($element.IsDerived) I$element.BaseEntity.Name#else IBusinessEntity#end {
+#foreach($field in $element.ReadableProperties)
+#if ($field.Description.Length>0)
+
+	/// <summary>
+	/// $field.Description
+	/// </summary>
+#end
+	$field.Type.Name $field.GetMethodFormat() {
+	    get;
+	}
+#end
+    }
+}
+#end

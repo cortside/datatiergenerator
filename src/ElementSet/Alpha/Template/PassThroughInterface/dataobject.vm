@@ -1,0 +1,32 @@
+#if($element.WritableProperties.Count > 0)
+using System;
+
+using Spring2.Core.Types;
+
+using ${options.RootNameSpace}.Types;
+
+namespace $options.GetDONameSpace($element.Name) {
+
+    public class ${element.Name}Data #if($options.DataObjectBaseClass.Length > 0): $options.DataObjectBaseClass #end{
+
+	public static readonly ${element.Name}Data DEFAULT = new ${element.Name}Data();
+
+#foreach($field in $element.WritableProperties)
+	$field.AccessModifier $field.DataObjectType.Name $field.GetFieldFormat() = $field.DataObjectType.NewInstanceFormat;
+#end
+#foreach($field in $element.WritableProperties)
+
+	public $field.DataObjectType.Name $field.GetMethodFormat() {
+	    get { return this.$field.GetFieldFormat(); }
+	    set { this.$field.GetFieldFormat() = value == null ? $field.DataObjectType.NewInstanceFormat : value; }
+	}
+#end
+
+	public Boolean IsDefault {
+	    get {
+		return Object.ReferenceEquals(DEFAULT, this);
+	    }
+        }
+    }
+}
+#end
