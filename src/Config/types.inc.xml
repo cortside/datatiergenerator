@@ -31,4 +31,6 @@ conversion format replacement parameters:
 	<type name="CurrencyType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="new CurrencyType({2})" newinstanceformat="CurrencyType.DEFAULT" nullinstanceformat="CurrencyType.UNSET" />
 	<type name="QuantityType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="new QuantityType({2})" newinstanceformat="QuantityType.DEFAULT" nullinstanceformat="QuantityType.UNSET" />
 	<type name="IntegerType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="new IntegerType({2})" newinstanceformat="IntegerType.DEFAULT" nullinstanceformat="IntegerType.UNSET" />
+	<type name="GenderType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="GenderType.GetInstance({2})" newinstanceformat="GenderType.DEFAULT" nullinstanceformat="GenderType.UNSET" />
+	<type name="USStateCodeEnum" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="USStateCodeEnum.GetInstance({2})" newinstanceformat="USStateCodeEnum.DEFAULT" nullinstanceformat="USStateCodeEnum.UNSET" />
 </types>
