@@ -76,7 +76,7 @@ namespace Spring2.DataTierGenerator {
 		    type.Name = node.Attributes["name"].Value + "Data";
 		    type.ConcreteType = type.Name;
 		    type.Package = options.GetDONameSpace("");
-		    type.NewInstanceFormat = "new " + type.Name + "Data()";
+		    type.NewInstanceFormat = "new " + type.Name + "()";
 		    types.Add(type.Name, type);
 		}
 	    }
