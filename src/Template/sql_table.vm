@@ -1,0 +1,93 @@
+#*
+
+        sql_table.vm - default sql table template (replaces SqlGenerator.CreateTable)
+
+*###
+#if($element.GenerateSqlTableScripts)
+#if ($element.Description.Length>0)
+/*
+$$elementDescription).Append("
+*/
+
+#end
+## initial table script - if table does not already exist
+if not exists (select * from dbo.sysobjects where id = object_id(N'[$element.Name]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+CREATE TABLE $element.EscapedName (
+#foreach ($column in $element.Columns)
+#if (!$column.ViewColumn)
+#if ($velocityCount>1),
+#end
+	$column.EscapedName ${column.SqlType.Declaration}#if ($column.Identity) IDENTITY($column.Seed,$column.Increment)#end#if ($column.RowGuidCol) ROWGUIDCOL#end#if ($column.Identity || $column.Required || $column.RowGuidCol || $column.Default.Length>0) NOT#end NULL#if ($column.Default.Length>0) CONSTRAINT [DF_${element.Name}_$column.Name] DEFAULT ($column.Default)#end
+#end
+#end
+
+)
+GO
+
+## create alter table scripts for each column - don't know when they got added
+#foreach ($column in $element.Columns)
+#if (!$column.ViewColumn)
+#if ($column.Required && $column.Default.Length==0)
+/* -- commented out because column does not have default value and is required
+#end
+if not exists(select * from syscolumns where id=object_id('$element.EscapedName') and name = '$column.Name')
+  BEGIN
+	ALTER TABLE $element.EscapedName ADD
+	    $column.EscapedName $column.SqlType.Declaration#if ($column.Identity) IDENTITY($column.Seed,$column.Increment)#end#if ($column.RowGuidCol) ROWGUIDCOL#end#if ($column.Identity || $column.Required || $column.RowGuidCol || $column.Default.Length>0) NOT#end NULL
+#if ($column.Default.Length>0)
+	CONSTRAINT
+	    DF_${element.Name}_$column.Name DEFAULT $column.Default WITH VALUES
+#end
+  END
+#if ($column.Required && $column.Default.Length==0)
+*/
+#end
+GO
+
+#end
+#end
+
+## create constraints, checking for existance
+#foreach ($constraint in $element.Constraints)
+#if (!$constraint.Type.ToUpper().Equals("CHECK"))
+if not exists (select * from dbo.sysobjects where id = object_id(N'$constraint.EscapedName') and OBJECTPROPERTY(id, N'#if ($constraint.Type.ToUpper().Equals("PRIMARY KEY")) IsPrimaryKey#elseif($constraint.Type.ToUpper().Equals("FOREIGN KEY"))IsForeignKey#elseif($constraint.Type.ToUpper().Equals("UNIQUE"))IsUniqueCnst#end') = 1)
+ALTER TABLE $element.EscapedName#if ($constraint.Type.ToUpper().Equals("PRIMARY KEY")) WITH NOCHECK#end ADD
+	CONSTRAINT $constraint.EscapedName $constraint.Type#if ($constraint.Type.ToUpper().Equals("PRIMARY KEY"))#if ($constraint.Clustered) CLUSTERED#else NONCLUSTERED#end#end
+	
+	(
+#foreach ($column in $constraint.Columns)
+#if ($velocityCount>1),
+#end
+		$column.EscapedName
+#end
+	)
+#if ($constraint.Type.ToUpper().Equals("FOREIGN KEY"))
+	REFERENCES $constraint.EscapedForeignEntity
+	(
+#foreach ($column in $constraint.Columns)
+#if ($velocityCount>1),
+#end
+		$column.EscapedForeignColumn
+#end
+	)
+#end
+	
+GO
+
+    #end
+#end
+
+## create indexes, checking for existance
+#foreach ($index in $element.Indexes) {
+if not exists (select * from sysindexes where name='$index.Name' and id=object_id(N'[$element.Name]'))
+    CREATE#if ($index.Unique) UNIQUE#end INDEX $index.EscapedName ON $element.EscapedName (
+#foreach ($column in $index.Columns)
+#if ($velocityCount>1),
+#end
+        $column.EscapedName $column.SortDirection
+#end
+
+    )
+GO
+#end
+#end
