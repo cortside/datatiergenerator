@@ -31,7 +31,12 @@ namespace Spring2.DataTierGenerator {
 	    sb.Append(GetUsingNamespaces(true));
 	    sb.Append("\n");
 	    sb.Append("namespace " + options.GetDAONameSpace(entity.Name) + " {\n");
-	    sb.Append("\tpublic class " + options.GetDAOClassName(entity.Name) + " : Spring2.Core.DAO.EntityDAO {\n");
+	    sb.Append("\tpublic class " + options.GetDAOClassName(entity.Name));
+	    if (options.DataObjectBaseClass.Length>0) {
+		sb.Append(" : ").Append(options.DaoBaseClass);
+	    }
+	    sb.Append(" {\n\n");
+
 	    sb.Append("\n\t\tprivate static readonly String VIEW = \"vw").Append(entity.Name).Append("\";\n\n");
 
 	    CreateDAOListMethods(sb);
@@ -82,7 +87,7 @@ namespace Spring2.DataTierGenerator {
 			
 	    // Determine the return type of the insert function.
 	    sb.Append("\t\tpublic static ");
-	    Field idField = Field.GetIdentityColumn(entity.Fields);
+	    Field idField = entity.GetIdentityColumn();
 
 	    // this is a hack becuase the method above returns a new Field instead of null - fix the method above and remove this code
 	    if (idField != null && idField.Name.Equals(String.Empty)) {
@@ -491,15 +496,17 @@ namespace Spring2.DataTierGenerator {
 	private void CreateDAOListMethods(StringBuilder sb) {
 			
 	    // GetList methods.
-	    sb.Append("\t\tpublic static ICollection GetList() { \n");
+	    sb.Append("\t\tpublic static IList GetList() { \n");
 	    sb.Append("\t\t\treturn GetList(null, null);\n");
 	    sb.Append("\t\t}\n");
+	    sb.Append("\n");
 
-	    sb.Append("\t\tpublic static ICollection GetList(IWhere whereClause) { \n");
+	    sb.Append("\t\tpublic static IList GetList(IWhere whereClause) { \n");
 	    sb.Append("\t\t\treturn GetList(whereClause, null);\n");
 	    sb.Append("\t\t}\n");
+	    sb.Append("\n");
 
-	    sb.Append("\t\tpublic static ICollection GetList(IWhere whereClause, IOrderBy orderByClause) { \n");
+	    sb.Append("\t\tpublic static IList GetList(IWhere whereClause, IOrderBy orderByClause) { \n");
 	    sb.Append("\t\t	SqlDataReader dataReader = GetListReader(VIEW, whereClause, orderByClause); \n");
 	    sb.Append("\t\t	 \n");
 	    sb.Append("\t\t	ArrayList list = new ArrayList(); \n");
@@ -509,10 +516,23 @@ namespace Spring2.DataTierGenerator {
 	    sb.Append("\t\t	dataReader.Close(); \n");
 	    sb.Append("\t\t	return list; \n");
 	    sb.Append("\t\t} \n");
+	    sb.Append("\n");
 
 	    // Load
-	    sb.Append("\t\tpublic static ").Append(options.GetDOClassName(entity.Name)).Append(" Load(Int32 id) {\n");
-	    sb.Append("\t\t	SqlDataReader dataReader = GetListReader(VIEW, new WhereClause(\"").Append(Field.GetIdentityColumn(entity.Fields).Name).Append("\", id), null);\n");
+	    IList keys = entity.GetPrimaryKeyColumns();
+	    String parms = "";
+	    foreach (Field field in keys) {
+		if (!parms.Equals(String.Empty)) {
+		    parms += ", ";
+		}
+		parms += field.CreateMethodParameter();
+	    }
+	    sb.Append("\t\tpublic static ").Append(options.GetDOClassName(entity.Name)).Append(" Load(").Append(parms).Append(") {\n");
+	    sb.Append("\t\t	WhereClause w = new WhereClause();\n");
+	    foreach (Field field in keys) {
+		sb.Append("\t\t	w.And(\"").Append(field.SqlName).Append("\", ").Append(String.Format(field.Type.ConvertToSqlTypeFormat, "", field.GetMethodFormat(), "", "", field.GetMethodFormat())).Append(");\n");
+	    }
+	    sb.Append("\t\t	SqlDataReader dataReader = GetListReader(VIEW, w, null);\n");
 	    sb.Append("\t\t    \n");
 	    sb.Append("\t\t	dataReader.Read();\n");
 	    sb.Append("\t\t	return GetDataObjectFromReader(dataReader);\n");
