@@ -35,18 +35,7 @@
     </config>
     <!--
 		Application entites (objects)
-	-->
-    <entities>
-	<entity name="Address">
-	    <property name="Address1" sqlname="" type="StringType" />
-	    <property name="Address2" sqlname="" type="StringType" />
-	    <property name="City" sqlname="" type="StringType" />
-	    <property name="State" sqlname="" type="StringType" />
-	    <property name="PostalCode" sqlname="" type="StringType" />
-	    <property name="Country" sqlname="" type="StringType" />
-	</entity>
-	<entity name="TestSqlObject" sqlobject="TestSqlObject">
-	    <!-- 
+
 				Finder attributes:
 					name - name that must match a name defined in the properties collection
 					sort - a comma seperated list of sql column names.  If one is not specified, one is created using the order of the properties specified
@@ -54,7 +43,31 @@
 					
 					support for Or?
 					support for specifying custom sql?
-			-->
+		
+	-->
+    <entities>
+	<entity name="Address">
+	    <properties>
+		<property name="Address1" type="StringType" />
+		<property name="Address2" type="StringType" />
+		<property name="City" type="StringType" />
+		<property name="State" type="StringType" />
+		<property name="PostalCode" type="StringType" />
+		<property name="Country" type="StringType" />
+	    </properties>
+	</entity>
+	<entity name="Testsqlentity" sqlentity="Testsqlentity">
+	    <properties>
+		<property name="StringColumn" column="sqlstringcolumn" type="StringType" />
+		<property name="Int32Column" column="sqlintcolumn" type="IdType" />
+		<property name="EmailFormat" type="FormatType" />
+		<property name="Address" type="AddressData" />
+		<property name="Address.Address1" column="addr1" type="StringType" />
+		<property name="Address.Address2" column="addr2" type="StringType" />
+		<property name="Address.City" column="city" type="StringType" />
+		<property name="Address.State" column="state" type="StringType" />
+		<property name="Address.PostalCode" column="zip" type="StringType" />
+	    </properties>
 	    <finders>
 		<finder name="FindByPostalCode" sort="Int32Column, StringColumn">
 		    <properties>
@@ -68,30 +81,15 @@
 		    </properties>
 		</finder>
 	    </finders>
-	    <!-- 
-				property elements should now be defined inside a properties element - this will allow for ability to define other tags under entity.
-			-->
-	    <properties>
-		<property name="StringColumn" sqlname="sqlstringcolumn" sqltype="varchar" isprimarykey="True" />
-		<property name="Int32Column" sqlname="sqlintcolumn" sqltype="int" type="IdType" isprimarykey="True" />
-		<property name="EmailFormat" sqltype="char" type="FormatType" />
-		<property name="Address" sqlname="" type="AddressData" />
-		<property name="Address.Address1" sqlname="addr1" sqltype="varchar" type="StringType" />
-		<property name="Address.Address2" sqlname="addr2" sqltype="varchar" type="StringType" />
-		<property name="Address.City" sqlname="city" sqltype="varchar" type="StringType" />
-		<property name="Address.State" sqlname="state" sqltype="varchar" type="StringType" />
-		<property name="Address.PostalCode" sqlname="zip" sqltype="varchar" type="StringType" />
-	    </properties>
 	</entity>
-	<entity name="TestSqlObject2" sqlobject="TestSqlObject2">
+	<entity name="Testsqlentity2" sqlentity="Testsqlentity2">
 	    <properties>
-		<property name="Id" sqltype="int" type="IdType" isidentity="True" />
+		<property name="Id" type="IdType" />
 	    </properties>
 	</entity>
     </entities>
     <!--
-		sqlobject definitions
-		NOT SUPPORTED YET
+		sqlentity definitions
 		
 		this is how we might be able to define enough information to be able to create table scripts.
 		the following need to be able to be supported in order to create table scripts:
@@ -104,10 +102,8 @@
 				unique
 				check - I haven't seen this used in any code at spring2, but we should double check
 	-->
-    <sqlobjects>
-	<sqlobject name="TestSqlObject">
-	    <primarykeycolumn name="sqlstringcolumn" />
-	    <primarykeycolumn name="sqlintcolumn" />
+    <sqlentities>
+	<sqlentity name="Testsqlentity">
 	    <columns>
 		<column name="sqlstringcolumn" sqltype="varchar" required="True" />
 		<column name="sqlintcolumn" sqltype="int" required="True" />
@@ -118,14 +114,14 @@
 		<column name="state" sqltype="varchar" length="50" />
 		<column name="zip" sqltype="varchar" length="50" />
 	    </columns>
-	    <indexes>
-		<index name="PK_TestSqlObject" isPrimaryKey="True" isUnique="True">
-		    <indexcolumn name="sqlstringcolumn" />
-		    <indexcolumn name="sqlintcolumn" />
-		</index>
-	    </indexes>
-	</sqlobject>
-    </sqlobjects>
+	    <constraints>
+		<constraint name="PK_Testsqlentity" type="PRIMARY KEY" clustered="False">
+		    <column name="sqlstringcolumn" />
+		    <column name="sqlintcolumn" />
+		</constraint>
+	    </constraints>
+	</sqlentity>
+    </sqlentities>
     <!--
 		Enum definitions
 		Elements:
@@ -205,7 +201,7 @@
 			1=Property name (properly cased)
 			2=sqltype's readermethod (formatted by readermethodformat) (for convert from sql type, otherwise blank)
 			3=reader variable name (for convert from sql type, otherwise blank)
-			4=sqlname
+			4=coluumn
 			5=property name (property cased without data object name)
 	-->
     <types>
