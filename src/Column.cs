@@ -123,6 +123,9 @@ namespace Spring2.DataTierGenerator {
 		    if (node.Attributes["rowguidcol"] != null) {
 			column.RowGuidCol = Boolean.Parse(node.Attributes["rowguidcol"].Value);
 		    }
+		    if (node.Attributes["viewcolumn"] != null) {
+			column.ViewColumn = Boolean.Parse(node.Attributes["viewcolumn"].Value);
+		    }
 
 		    if (node.Attributes["increment"] != null) {
 			column.Increment = Int32.Parse(node.Attributes["increment"].Value);
