@@ -1,0 +1,17 @@
+## sql/table/DriveAwaySchedule.table.log: sql/table/Product.table.log
+##
+#foreach($sqlentity in $element.List)
+#set($hasDependency = false)
+## see if there are any dependencies
+#foreach($constraint in $sqlentity.Constraints)
+#if ($constraint.Type == 'FOREIGN KEY')
+#set($hasDependency = true)
+#end
+#end
+##if ($hasDependency)
+sql/table/${sqlentity.Name}.table.log: #foreach($constraint in $sqlentity.Constraints)#if ($constraint.Type == 'FOREIGN KEY' && $constraint.ForeignEntity.Name != $sqlentity.Name) sql/table/${constraint.ForeignEntity.Name}.table.log#end#end
+
+sql/view/${sqlentity.View}.view.log: #foreach($constraint in $sqlentity.Constraints)#if ($constraint.Type == 'FOREIGN KEY' && $constraint.ForeignEntity.Name != $sqlentity.Name) sql/view/${constraint.ForeignEntity.View}.view.log#end#end
+
+##end
+#end
