@@ -1,0 +1,1515 @@
+<?xml version="1.0" ?>
+<DataTierGenerator xmlns:xinc="http://www.w3.org/1999/XML/xinclude">
+	
+<!--
+	<task name="sql-tables" element="sqlentity" template="sql-table.vm"
+	    <context>
+		<put name="sqlentity" value="sqlentity" />
+		<put name="database" value="database" />
+	    </context>
+	</task>
+-->
+
+   <parser class="Spring2.DataTierGenerator.Parser.DatabaseCompareParser,Spring2.DataTierGenerator">
+	<argument name="server" value="hal" />
+	<argument name="database" value="cort_seamless" />
+	<argument name="user" value="sa" />
+	<argument name="password" value="" />
+    </parser>
+
+    <generator class="Spring2.DataTierGenerator.Generator.GeneratorTaskManager,Spring2.DataTierGenerator">
+	<task name="sql entities" element="sqlentity" template="Template\config_sqlentity.vm" directory="config" filenameformat="config_sqlentity_{0}.xml" />
+	<task name="entities" element="entity" template="Template\config_entity.vm" directory="config" filenameformat="config_entity_{0}.xml" />
+    </generator>
+
+    <config>
+    	<setting name="RootDirectory" value=".\bin" />
+    </config>
+    
+    <!--
+	Configuration settings goverening basic generation
+    -->
+    <config>
+	<setting name="RootDirectory" value="" />
+	<setting name="DaoClassDirectory" value="DAO" />
+	<setting name="DoClassDirectory" value="DataObject" />
+	<setting name="TypesClassDirectory" value="Types" />
+	<setting name="RootNameSpace" value="Seamless.Manhattan" />
+	<setting name="DataObjectBaseClass" value="Spring2.Core.DataObject.DataObject" />
+	<setting name="DAOBaseClass" value="Seamless.Manhattan.DAO.SeamlessEntityDAO" />
+    </config>
+    <!-- 
+	Entities
+    -->
+    <entities>
+	<entity name="SystemParameter" sqlentity="SystemParameter">
+	    <properties>
+		<property name="Parameter" column="*" type="String" />
+		<property name="ParameterType" column="*" type="String" />
+		<property name="AlphaValue" column="*" type="String" />
+		<property name="IntegerValue" column="*" type="IdType" />
+		<property name="CurrencyValue" column="*" type="CurrencyType" />
+		<property name="EffectiveDate" column="*" type="DateType" />
+		<property name="DateValue" column="*" type="DateType" />
+    	    </properties>
+	</entity>
+    
+	<entity name="VendorLocation" sqlentity="VendorLocation">
+	    <properties>
+		<property name="VendorLocationID" column="*" type="IdType" />
+		<property name="VendorID" column="*" type="IdType" />
+		<property name="AddressID" column="*" type="IdType" />
+		<property name="PhoneNumber" column="*" type="StringType" />
+		<property name="FaxNumber" column="*" type="StringType" />
+		<property name="EffectiveDate" column="*" type="DateType" />
+		<property name="ExpirationDate" column="*" type="DateType" />
+		<property name="LocationName" column="*" type="StringType" />
+		<property name="MinForDelivery" column="*" type="CurrencyType" />
+		<property name="FaxPort" column="*" type="IdType" />
+		<property name="ResendRequestTime" column="*" type="DateType" />
+		<property name="LastFaxAttempt" column="*" type="DateType" />
+		<property name="FaxRetryCount" column="*" type="IdType" />
+		<property name="LastFaxID" column="*" type="IdType" />
+		<property name="LastFaxStatus" column="*" type="StringType" />
+		<property name="PrimaryFlag" column="*" type="BooleanType" />
+		<property name="VoiceNumber" column="*" type="StringType" />
+		<property name="AutoWait" column="*" type="IdType" />
+		<property name="AutoXfr" column="*" type="StringType" />
+		<property name="DeliveryAreaDescription" column="*" type="StringType" />
+		<property name="LastOrderCompleteTime" column="*" type="DateType" />
+	    </properties>
+	</entity>
+	<entity name="Address" sqlentity="Address">
+	    <properties>
+		<property name="AddressID" column="*" type="IdType" />
+		<property name="Address1" column="*" type="StringType" />
+		<property name="City" column="*" type="StringType" />
+		<property name="State" column="*" type="StringType" />
+		<property name="ZipCode" column="*" type="StringType" />
+		<property name="Address2" column="*" type="StringType" />
+		<property name="Address3" column="*" type="StringType" />
+		<property name="CrossStreets" column="*" type="StringType" />
+		<property name="BuildingFloor" column="*" type="StringType" />
+		<property name="AddressDesc" column="*" type="StringType" />
+	    </properties>
+	</entity>
+	<entity name="Firm" sqlentity="Firm">
+	    <properties>
+		<property name="FirmID" type="IdType" column="*" />
+		<property name="FirmName" type="StringType" column="*" />
+		<property name="LineOfCreditFlag" type="BooleanType" column="*" />
+		<property name="ChangeOrderLocFlag" type="BooleanType" column="*" />
+		<property name="CreditCardNumber" type="StringType" column="*" />
+		<property name="CreditCardExpire" type="DateType" column="*" />
+		<property name="ExpenseCodeFormat" type="StringType" column="*" />
+		<property name="EffectiveDate" type="DateType" column="*" />
+		<property name="ExpirationDate" type="DateType" column="*" />
+		<property name="ContactUserID" type="IdType" column="*" />
+		<property name="PhoneNumber" type="StringType" column="*" />
+		<property name="DefaultTerms" type="NumberType" column="*" />
+		<property name="TranRate" type="CurrencyType" column="*" />
+		<property name="IsPercent" type="BooleanType" column="*" />
+		<property name="ExpenseCodeFormatText" type="StringType" column="*" />
+		<property name="AllowSavePassword" type="BooleanType" column="*" />
+		<property name="IsTranFeePerAlloc" type="BooleanType" column="*" />
+		<property name="CredCardTranFee" type="BooleanType" column="*" />
+		<property name="IsExpenseCodeExact" type="BooleanType" column="*" />
+		<property name="WeekdayBreakfast" type="StringType" column="*" />
+		<property name="WeekdayLunch" type="StringType" column="*" />
+		<property name="WeekdayDinner" type="StringType" column="*" />
+		<property name="WeekendBreakfast" type="StringType" column="*" />
+		<property name="WeekendLunch" type="StringType" column="*" />
+		<property name="WeekendDinner" type="StringType" column="*" />
+		<property name="WeekdayAfterBreakfast" type="StringType" column="*" />
+		<property name="WeekdayAfterLunch" type="StringType" column="*" />
+		<property name="WeekdayAfterDinner" type="StringType" column="*" />
+		<property name="WeekendAfterBreakfast" type="StringType" column="*" />
+		<property name="WeekendAfterLunch" type="StringType" column="*" />
+		<property name="WeekendAfterDinner" type="StringType" column="*" />
+		<property name="ApprovalRequired" type="BooleanType" column="*" />
+		<property name="Logo" column="*" type="StringType" convertfromsqltypeformat="StringType.UNSET" />
+		<property name="NotifyMsg" type="StringType" column="*" />
+		<property name="AllowFirmCreditCardOrders" type="BooleanType" column="*" />
+		<property name="RequireCommentOnOverBudget" type="BooleanType" column="*" />
+		<property name="DisableMyProfile" type="BooleanType" column="*" />
+		<property name="RequireExpenseCode" type="BooleanType" column="*" />
+		<property name="TranFeeOnPersonalOrders" type="BooleanType" column="*" />
+		<property name="SelectFirmLocationOnOrder" type="BooleanType" column="*" />
+		<property name="SendWelcomeMessage" type="BooleanType" column="*" />
+		<property name="ShowTransactionFee" type="BooleanType" column="*" />
+		<property name="AllocationHeaderText" type="StringType" column="*" />
+		<property name="IsCCEmailRequired" type="BooleanType" column="*" />
+		<property name="BuildingFloorText" type="StringType" column="*" />
+		<property name="CateringFieldsRequired" type="BooleanType" column="*" />
+		<property name="ConsumerFirm" type="BooleanType" column="*" />
+		<property name="DefaultConsumerFirm" type="BooleanType" column="*" />
+		<property name="MealsDefaultTipPercent" type="QuantityType" column="*" />
+		<property name="CateringDefaultTipPercent" type="QuantityType" column="*" />
+		<property name="MealsMaxTip" type="CurrencyType" column="*" />
+		<property name="CateringMaxTip" type="CurrencyType" column="*" />
+		<property name="FirmCode" type="StringType" column="*" />
+		<property name="ExpenseCommentName" type="StringType" column="*" />
+		<property name="ExpenseCommentDescription" type="StringType" column="*" />
+	    </properties>
+	    <finders>
+		<finder name="FindByDefaultConsumerFirm" unique="True">
+		    <properties>
+			<property name="DefaultConsumerFirm" />
+		    </properties>
+		</finder>
+	    </finders>
+	</entity>
+	<entity name="OrderAllocation" sqlentity="OrderAllocation">
+	    <properties>
+		<property name="OrderID" column="*" type="IdType" />
+		<property name="UserID" column="*" type="IdType" />
+		<property name="AllocationAmt" column="*" type="CurrencyType" />
+		<property name="ExpenseCode" column="*" type="StringType" />
+		<property name="Comment" column="*" type="StringType" />
+		<property name="LineID" column="*" type="IdType" />
+		<property name="AmtOverBudget" column="*" type="CurrencyType" />
+		<property name="TranFee" column="*" type="CurrencyType" />
+		<property name="TranFeePaid" column="*" type="BooleanType" />
+		<property name="OverageAllocation" column="*" type="BooleanType" />
+	    </properties>
+	</entity>
+	<entity name="OrderDelivery" sqlentity="OrderDelivery">
+	    <properties>
+		<property name="OrderID" column="*" type="IdType" />
+		<property name="CrossStreets" column="*" type="StringType" />
+		<property name="BuildingFloor" column="*" type="StringType" />
+		<property name="RoomNbr" column="*" type="StringType" />
+		<property name="CompanyDept" column="*" type="StringType" />
+		<property name="BuzzerNbr" column="*" type="StringType" />
+		<property name="EntranceCode" column="*" type="StringType" />
+		<property name="Address1" column="*" type="StringType" />
+		<property name="Address2" column="*" type="StringType" />
+		<property name="ZipCode" column="*" type="StringType" />
+		<property name="DeliveryInstructionsID" column="*" type="IdType" />
+		<property name="DeliveryComment" column="*" type="StringType" />
+		<property name="PhoneNumber" column="*" type="StringType" />
+		<property name="DeliveryContact1" column="*" type="StringType" />
+		<property name="DeliveryContact2" column="*" type="StringType" />
+		<property name="DeliveryInstructionsName" type="StringType" />
+	    </properties>
+	</entity>
+	<entity name="OrderDetail" sqlentity="OrderDetail">
+	    <properties>
+		<property name="OrderID" column="*" type="IdType" />
+		<property name="LineID" column="*" type="IdType" />
+		<property name="Price" column="*" type="CurrencyType" />
+		<property name="ProductID" column="*" type="IdType" />
+		<property name="Quantity" column="*" type="NumberType" />
+		<property name="CategoryID" column="*" type="IdType" />
+		<property name="VendorLocationID" column="*" type="IdType" />
+		<property name="TemplateID" column="*" type="IdType" />
+		<property name="SpecialInstructions" column="*" type="StringType" />
+		<property name="NonTaxable" column="*" type="BooleanType" />
+	    </properties>
+	</entity>
+	<entity name="OrderDetailOption" sqlentity="OrderDetailOption">
+	    <properties>
+		<property name="OrderID" column="*" type="IdType" />
+		<property name="LineID" column="*" type="IdType" />
+		<property name="OptionID" column="*" type="IdType" />
+		<property name="OptionGroupID" column="*" type="IdType" />
+		<property name="Price" column="*" type="CurrencyType" />
+	    </properties>
+	</entity>
+	<entity name="Order" sqlentity="Orders">
+	    <properties>
+		<!-- dependant objects -->
+		<property name="Vendor" type="OrderVendorData" />
+		<property name="Delivery" type="OrderDeliveryData" />
+		<property name="Allocations" type="IList" concretetype="ArrayList" />
+		<property name="Lines" type="IList" concretetype="ArrayList" />
+		<property name="Payments" type="IList" concretetype="ArrayList" />
+		<!-- fields from Orders -->
+		<property name="OrderID" column="*" type="IdType" />
+		<property name="OrderTime" column="*" type="DateType" />
+		<property name="UserID" column="*" type="IdType" />
+		<property name="ProductTotalAmt" column="*" type="CurrencyType" />
+		<property name="TaxAmt" column="*" type="CurrencyType" />
+		<property name="GratuityAmt" column="*" type="CurrencyType" />
+		<property name="GrandTotalAmt" column="*" type="CurrencyType" />
+		<property name="PaymentTypeID" column="*" type="StringType" />
+		<property name="Comment" column="*" type="StringType" />
+		<property name="DiscountAmt" column="*" type="CurrencyType" />
+		<property name="ResponsibleUserID" column="*" type="IdType" />
+		<property name="OrderCompleteTime" column="*" type="DateType" />
+		<property name="PaymentID" column="*" type="IdType" />
+		<property name="OrderType" column="*" type="OrderType" />
+		<property name="AllocationComment" column="*" type="StringType" />
+		<property name="AmendmentText" column="*" type="StringType" />
+		<property name="ApprovalUserID" column="*" type="IdType" />
+		<property name="IsGroupOrder" column="*" type="BooleanType" />
+		<property name="GroupOrderID" column="*" type="IdType" />
+		<property name="CCEmailAddress" column="*" type="StringType" />
+		<property name="CostCode" column="*" type="StringType" />
+		<property name="TranFeePaid" column="*" type="BooleanType" />
+		<property name="Processed" column="*" type="BooleanType" />
+		<property name="Printed" column="*" type="BooleanType" />
+		<property name="ChargeInProcess" column="*" type="BooleanType" />
+		<property name="ChargeErrorCode" column="*" type="NumberType" />
+		<property name="FaxID" column="*" type="IdType" />
+		<property name="FaxSendRetryCount" column="*" type="NumberType" />
+		<property name="FaxStatus" column="*" type="StringType" />
+		<property name="FaxImageGenerated" column="*" type="DateType" />
+		<property name="FirmLocationId" column="*" type="IdType" />
+		<property name="FirmId" column="*" type="IdType" />
+		<property name="PaymentTypeName" column="*" type="StringType" />
+		<property name="OrderTypeID" column="*" type="IdType" />
+                <property name="FaxGenAppID" column="*" type="IdType" />
+                <property name="FaxGenRetrievedDate" column="*" type="DateType" />
+		<!-- OrderDelivery columns -->
+		<property name="Delivery.CrossStreets" column="CrossStreets" type="StringType" />
+		<property name="Delivery.BuildingFloor" column="BuildingFloor" type="StringType" />
+		<property name="Delivery.RoomNbr" column="RoomNbr" type="StringType" />
+		<property name="Delivery.DeliveryComment" column="DeliveryComment" type="StringType" />
+		<property name="Delivery.CompanyDept" column="CompanyDept" type="StringType" />
+		<property name="Delivery.BuzzerNbr" column="BuzzerNbr" type="StringType" />
+		<property name="Delivery.EntranceCode" column="EntranceCode" type="StringType" />
+		<property name="Delivery.Address1" column="Address1" type="StringType" />
+		<property name="Delivery.Address2" column="Address2" type="StringType" />
+		<property name="Delivery.ZipCode" column="ZipCode" type="StringType" />
+		<property name="Delivery.DeliveryInstructionsID" column="DeliveryInstructionsID" type="IdType" />
+		<property name="Delivery.PhoneNumber" column="PhoneNumber" type="StringType" />
+		<property name="Delivery.DeliveryContact1" column="DeliveryContact1" type="StringType" />
+		<property name="Delivery.DeliveryContact2" column="DeliveryContact2" type="StringType" />
+		<property name="Delivery.DeliveryInstructionsName" column="DeliveryInstructionsName" type="StringType" />
+		<!-- OrderVendor columns -->
+		<property name="Vendor.VendorLocationID" column="VendorLocationID" type="IdType" />
+		<property name="Vendor.ActualDeliveryTime" column="ActualDeliveryTime" type="DateType" />
+		<property name="Vendor.CCDeductedAmt" column="CCDeductedAmt" type="CurrencyType" />
+		<property name="Vendor.DeliveryFee" column="DeliveryFee" type="CurrencyType" />
+		<property name="Vendor.EventStartTime" column="EventStartTime" type="StringType" />
+		<property name="Vendor.EventEndTime" column="EventEndTime" type="StringType" />
+		<property name="Vendor.FinalTip" column="FinalTip" type="BooleanType" />
+		<property name="Vendor.GratuityAmt" column="VendorGratuityAmt" type="CurrencyType" />
+		<property name="Vendor.GratuityPct" column="GratuityPct" type="CurrencyType" />
+		<property name="Vendor.GuestCount" column="GuestCount" type="NumberType" />
+		<property name="Vendor.PickupTime" column="PickupTime" type="StringType" />
+		<property name="Vendor.RequestedDeliveryTime" column="RequestedDeliveryTime" type="DateType" />
+		<property name="Vendor.VendorProductAmt" column="VendorProductAmt" type="CurrencyType" />
+		<property name="Vendor.VendorReceiptTime" column="VendorReceiptTime" type="DateType" />
+		<property name="Vendor.VendorTaxAmt" column="VendorTaxAmt" type="CurrencyType" />
+		<property name="Vendor.SetupRequirements" column="SetupRequirements" type="StringType" />
+		<property name="Vendor.VendorTypeId" column="VendorTypeId" type="IdType" />
+	    </properties>
+	</entity>
+	<entity name="OrderVendor" sqlentity="OrderVendor">
+	    <properties>
+		<property name="OrderID" column="*" type="IdType" />
+		<property name="VendorLocationID" column="*" type="IdType" />
+		<property name="RequestedDeliveryTime" column="*" type="DateType" />
+		<property name="EventStartTime" column="*" type="StringType" />
+		<property name="VendorProductAmt" column="*" type="CurrencyType" />
+		<property name="VendorTaxAmt" column="*" type="CurrencyType" />
+		<property name="GratuityPct" column="*" type="CurrencyType" />
+		<property name="GratuityAmt" column="*" type="CurrencyType" />
+		<property name="VendorReceiptTime" column="*" type="DateType" />
+		<property name="ActualDeliveryTime" column="*" type="DateType" />
+		<property name="FinalTip" column="*" type="BooleanType" />
+		<property name="CCDeductedAmt" column="*" type="CurrencyType" />
+		<property name="GuestCount" column="*" type="NumberType" />
+		<property name="DeliveryFee" column="*" type="CurrencyType" />
+		<property name="PickupTime" column="*" type="StringType" />
+		<property name="EventEndTime" column="*" type="StringType" />
+		<property name="SetupRequirements" column="*" type="StringType" />
+		<property name="VendorTypeId" type="IdType" />
+	    </properties>
+	</entity>
+	<entity name="OrderPayment" sqlentity="OrdPmt">
+	    <properties>
+		<property name="pmt_id" column="*" type="NumberType" />
+		<property name="OrderID" column="*" type="NumberType" />
+		<property name="pmtdate" column="*" type="DateType" />
+		<property name="pmtamt" column="*" type="QuantityType" />
+		<property name="pmt_type_id" column="*" type="StringType" />
+		<property name="reference_no" column="*" type="StringType" />
+		<property name="authorization_" column="*" type="StringType" />
+		<property name="avs_id" column="*" type="StringType" />
+		<property name="site" column="*" type="StringType" />
+		<property name="Action" column="*" type="StringType" />
+		<property name="ActionDate" column="*" type="DateType" />
+		<property name="TransactionNumber" column="*" type="StringType" />
+                <property name="BatchID" column="*" type="IdType" />
+	    </properties>
+	</entity>
+	<entity name="PaymentType" sqlentity="pmt_type">
+	    <properties>
+		<property name="pmt_type_id" column="*" type="StringType" />
+		<property name="pmt_type_descr" column="*" type="StringType" />
+		<property name="credit_card" column="*" type="NumberType" />
+	    </properties>
+	</entity>
+	<entity name="GroupOrder" sqlentity="GroupOrders">
+	    <properties>
+		<property name="GroupOrderID" column="*" type="NumberType" />
+		<property name="Title" column="*" type="StringType" />
+		<property name="Weekly" column="*" type="StringType" />
+		<property name="OpenTime" column="*" type="DateType" />
+		<property name="CloseTime" column="*" type="DateType" />
+		<property name="DeliveryTime" column="*" type="DateType" />
+		<property name="GratuityType" column="*" type="StringType" />
+		<property name="MasterGratuityType" column="*" type="StringType" />
+		<property name="MasterGratuityAmt" column="*" type="CurrencyType" />
+		<property name="FirmID" column="*" type="NumberType" />
+		<property name="DayOfWeek" column="DOW" type="StringType" />
+		<property name="TipProcessed" column="*" type="BooleanType" />
+		<property name="Notified" column="*" type="BooleanType" />
+		<property name="Individual" column="*" type="BooleanType" />
+		<property name="Processed" column="*" type="BooleanType" />
+		<property name="GroupOrderContact" column="*" type="NumberType" />
+		<property name="DeliveryLocation" column="*" type="StringType" />
+		<property name="DeliveryFloor" column="*" type="StringType" />
+		<property name="DeliveryPhoneNumber" column="*" type="StringType" />
+	    </properties>
+	</entity>
+	<entity name="GroupOrderDetail" sqlentity="GroupOrderDetail">
+	    <properties>
+		<property name="GroupOrderID" column="*" type="NumberType" />
+		<property name="Type" column="*" type="StringType" />
+		<property name="Id" column="ID" type="NumberType" />
+	    </properties>
+	</entity>
+	<entity name="GroupOrderVendor" sqlentity="GroupOrderVendors">
+	    <properties>
+		<property name="GroupOrderID" column="*" type="NumberType" />
+		<property name="VendorLocationID" column="*" type="NumberType" />
+		<property name="VendorReceiptTime" column="*" type="DateType" />
+		<property name="Processed" column="*" type="BooleanType" />
+		<property name="TotalOrders" column="*" type="NumberType" />
+		<property name="FaxID" column="*" type="NumberType" />
+		<property name="FaxImageGenerated" column="*" type="DateType" />
+		<property name="FaxSendRetryCount" column="*" type="NumberType" />
+		<property name="FaxStatus" column="*" type="StringType" />
+		<property name="Printed" column="*" type="BooleanType" />
+		<property name="ActualDeliveryTime" column="*" type="DateType" />
+                <property name="GratuityAmt" column="*" type="CurrencyType" />
+                <property name="GrandTotalAmt" column="*" type="CurrencyType" />
+                <property name="FaxGenAppID" column="*" type="IdType" />
+                <property name="FaxGenRetrievedDate" column="*" type="DateType" />
+	    </properties>
+	</entity>
+	<entity name="ErrorLog" sqlentity="ErrorLog">
+	    <properties>
+		<property name="ErrorID" column="*" type="IdType" />
+		<property name="EventTime" column="*" type="DateType" />
+		<property name="AppName" column="*" type="StringType" />
+		<property name="ErrorNumber" column="*" type="NumberType" convertfromsqltypeformat="NumberType.NewInstance((Int32){2})" />
+		<property name="Description" column="*" type="StringType" />
+		<property name="LineNumber" column="*" type="NumberType" />
+		<property name="UserID" column="*" type="NumberType" />
+		<property name="OrderID" column="*" type="NumberType" />
+		<property name="Source" column="*" type="StringType" />
+		<property name="ErrorParams" column="*" type="StringType" />
+		<property name="ErrorLevel" column="*" type="StringType" />
+	    </properties>
+	</entity>
+	<entity name="Function" sqlentity="Function">
+	    <properties>
+		<property name="FunctionId" column="FunctionId" type="IdType" />
+		<property name="FunctionName" column="*" type="StringType" />
+		<property name="Description" column="*" type="StringType" />
+	    </properties>
+	</entity>
+	<entity name="SecurityGroup" sqlentity="SecurityGroup">
+	    <properties>
+		<property name="SecurityGroupID" column="*" type="NumberType" />
+		<property name="SecurityGroupName" column="*" type="StringType" />
+		<property name="Description" column="*" type="StringType" />
+	    </properties>
+	</entity>
+	<entity name="SecurityGroupFunction" sqlentity="SecurityGroupFunction">
+	    <properties>
+		<property name="SecurityGroupID" column="*" type="NumberType" />
+		<property name="FunctionID" column="*" type="NumberType" />
+	    </properties>
+	</entity>
+	<entity name="User" sqlentity="Users">
+	    <properties>
+		<property name="UserID" column="*" type="IdType" />
+		<property name="Login" column="*" type="StringType" />
+		<property name="Password" column="*" type="StringType" />
+		<property name="FirstName" column="*" type="StringType" />
+		<property name="LastName" column="*" type="StringType" />
+		<property name="PhoneNumber" column="*" type="StringType" />
+		<property name="EmailAddress" column="*" type="StringType" />
+		<property name="FirmLocationID" column="*" type="IdType" />
+		<property name="CreditCardTypeID" column="*" type="StringType" />
+		<property name="CreditCardNumber" column="*" type="StringType" />
+		<property name="CreditCardExpire" column="*" type="StringType" />
+		<property name="OrderLimitAmt" column="*" type="CurrencyType" />
+		<property name="LastIPAddress" column="*" type="StringType" />
+		<property name="LastLoginTime" column="*" type="DateType" />
+		<property name="SecurityGroupID" column="*" type="IdType" />
+		<property name="PreferredName" column="*" type="StringType" />
+		<property name="LastBrowserType" column="*" type="StringType" />
+		<property name="SessionExpireTime" column="*" type="DateType" />
+		<property name="EffectiveDate" column="*" type="DateType" />
+		<property name="ExpirationDate" column="*" type="DateType" />
+		<property name="FirmInternalID" column="*" type="StringType" />
+		<property name="JobTitleID" column="*" type="IdType" />
+		<property name="HouseholdIncomeID" column="*" type="IdType" />
+		<property name="Gender" column="*" type="StringType" />
+		<property name="EmailAddressPersonal" column="*" type="StringType" />
+		<property name="Birthdate" column="*" type="DateType" />
+		<property name="CredCardBillingAddress" column="*" type="StringType" />
+		<property name="CredCardBillingZipCode" column="*" type="StringType" />
+		<property name="VendorLocationID" column="*" type="IdType" />
+		<property name="Floor" column="*" type="StringType" />
+		<property name="SavePassword" column="*" type="BooleanType" />
+		<property name="NeedEmailSent" column="*" type="BooleanType" />
+		<property name="BudgetGroupID" column="*" type="IdType" />
+		<property name="DepartmentID" column="*" type="IdType" />
+		<property name="NotifyMsg" column="*" type="StringType" />
+		<property name="Priority" column="*" type="StringType" />
+		<property name="SecureLogin" column="*" type="StringType" />
+		<property name="CCEMailAddress" column="*" type="StringType" />
+		<property name="AnonymousUser" column="*" type="BooleanType" />
+		<property name="DefaultAnonymousUser" column="*" type="BooleanType" />
+		<property name="FirmID" column="*" type="IdType" />
+		<property name="FirmName" column="*" type="StringType" />
+		<property name="AutoLogin" column="*" type="BooleanType" />
+		<property name="HTMLMail" column="*" type="BooleanType" />
+		<property name="AllowEmail" column="*" type="BooleanType" />
+		<property name="OverageCreditCardTypeID" column="*" type="StringType" />
+		<property name="OverageCreditCardNumber" column="*" type="StringType" />
+		<property name="OverageCreditCardExpire" column="*" type="StringType" />
+		<property name="Address" type="AddressData" />
+		<property name="Address.AddressID" column="AddressID" type="IdType" />
+		<property name="Address.Address1" column="Address1" type="StringType" />
+		<property name="Address.City" column="City" type="StringType" />
+		<property name="Address.State" column="State" type="StringType" />
+		<property name="Address.ZipCode" column="ZipCode" type="StringType" />
+		<property name="Address.Address2" column="Address2" type="StringType" />
+		<property name="Address.Address3" column="Address3" type="StringType" />
+		<property name="Address.CrossStreets" column="CrossStreets" type="StringType" />
+		<property name="Address.BuildingFloor" column="BuildingFloor" type="StringType" />
+		<property name="Address.AddressDesc" column="AddressDesc" type="StringType" />
+		<property name="Functions" type="IList" concretetype="ArrayList" />
+	    </properties>
+	    <finders>
+		<finder name="FindByLogin" unique="True">
+		    <properties>
+			<property name="Login" />
+		    </properties>
+		</finder>
+	    </finders>
+	</entity>
+	<entity name="ServiceArea" sqlentity="ServiceArea">
+	    <properties>
+		<property name="ServiceAreaID" column="*" type="IdType" />
+		<property name="Description" type="StringType" column="*" />
+	    </properties>
+	</entity>
+	<entity name="Product" sqlentity="Product">
+	    <properties>
+		<property name="ProductID" column="*" type="IdType" />
+		<property name="ProductName" column="*" type="StringType" />
+		<property name="VendorID" column="*" type="IdType" />
+		<property name="Description" column="*" type="StringType" />
+		<property name="BasePrice" column="*" type="CurrencyType" />
+		<property name="EffectiveDate" column="*" type="DateType" />
+		<property name="ExpirationDate" column="*" type="DateType" />
+		<property name="UnavailStartTime" column="*" type="StringType" />
+		<property name="UnavailStopTime" column="*" type="StringType" />
+		<property name="UnavailDOW" column="*" type="StringType" />
+		<property name="NonTaxable" column="*" type="BooleanType" />
+	    </properties>
+	</entity>
+	<entity name="FirmLocation" sqlentity="FirmLocation">
+	    <properties>
+		<property name="FirmLocationID" column="*" type="IdType" />
+		<property name="FirmID" column="*" type="IdType" />
+		<property name="PrimaryFlag" column="*" type="BooleanType" />
+		<property name="AddressID" column="*" type="IdType" />
+		<property name="PhoneNumber" column="*" type="StringType" />
+		<property name="FaxNumber" column="*" type="StringType" />
+		<property name="AdminUserID" column="*" type="IdType" />
+		<property name="EffectiveDate" column="*" type="DateType" />
+		<property name="ExpirationDate" column="*" type="DateType" />
+		<property name="ServiceAreaID" column="*" type="IdType" />
+		<property name="LocationName" column="*" type="StringType" />
+	    </properties>
+	</entity>
+	<entity name="FirmLocRule" sqlentity="FirmLocRule">
+	    <properties>
+		<property name="FirmLocationID" column="*" type="IdType" />
+		<property name="RuleID" column="*" type="IdType" />
+		<property name="EffectiveDate" column="*" type="DateType" />
+		<property name="ExpirationDate" column="*" type="DateType" />
+	    </properties>
+	</entity>
+	<entity name="FirmRule" sqlentity="FirmRule">
+	    <properties>
+		<property name="FirmID" column="*" type="IdType" />
+		<property name="RuleID" column="*" type="IdType" />
+		<property name="EffectiveDate" column="*" type="DateType" />
+		<property name="ExpirationDate" column="*" type="DateType" />
+	    </properties>
+	</entity>
+	<entity name="SqlObject">
+	    <properties>
+		<property name="Name" type="StringType" />
+		<property name="Type" type="StringType" />
+	    </properties>
+	</entity>
+	<entity name="SqlColumn">
+	    <properties>
+		<property name="Name" type="StringType" />
+		<property name="Type" type="StringType" />
+		<property name="SqlObject" type="StringType" />
+		<property name="OrdinalPosition" type="NumberType" />
+		<property name="Length" type="NumberType" />
+		<property name="Precision" type="NumberType" />
+		<property name="Scale" type="NumberType" />
+	    </properties>
+	</entity>
+	<entity name="ValidationError">
+		<properties>
+			<property name="Field" type="StringType" />
+			<property name="ValidationErrorType" type="ValidationErrorTypesEnum" />
+			<property name="Description" type="StringType" />
+		</properties>
+	</entity>
+	<entity name="InvalidPhoneNumber" sqlentity="InvalidPhoneNumber">
+	    <properties>
+		<property name="InvalidPhoneNumberId" column="*" type="IdType" />
+		<property name="PhoneNumber" column="*" type="StringType" />
+    	    </properties>
+	    <finders>
+		<finder name="FindByPhoneNumber" unique="True">
+		    <properties>
+			<property name="PhoneNumber" />
+		    </properties>
+		</finder>
+	    </finders>
+	</entity>
+    </entities>
+    <enums>
+	<!--
+	select '<value name="' + FunctionName + '" code="' + convert(varchar, functionId) + '" >' + description + '</value>' from [function] order by functionId
+	-->
+	<enum name="ValidationErrorTypesEnum" integerbased="true">
+		<value name="Data Type Error" code="1">Invalid Data Type</value>
+		<value name="Missing" code="2">Required Field</value>
+		<value name="Length Error" code="3">Data too long for field</value>
+		<value name="Not Found" code="4">Data entered was expected to be found in the system and is not found</value>
+		<value name="Unspecified" code="5">Misc validation error</value>
+	</enum>
+	<enum name="FunctionEnum" integerbased="true">
+	    <value name="Order" code="1">Place an Order</value>
+	    <value name="Vendor Monitor Orders" code="2">Monitor/Acknowledge New Vendor Orders</value>
+	    <value name="Vendor Edit" code="3">Edit Vendor Information</value>
+	    <value name="Vendor View Invoices" code="4">View a vendor's invoices</value>
+	    <value name="Firm Loc Edit" code="6">Edit Firm Locations</value>
+	    <value name="Firm Edit" code="7">Edit Firm Data</value>
+	    <value name="Create Firm Template" code="8">Create a Firm Template</value>
+	    <value name="Firm View Invoices" code="10">View a firm's invoices</value>
+	    <value name="Vendor Edit Menus" code="11">Edit a Vendor's Menus</value>
+	    <value name="Firm Edit Members" code="12">Edit firm members</value>
+	    <value name="Firm Edit Rules" code="13">Edit Firm Rules</value>
+	    <value name="Firm Monitor Orders" code="14">View a firm's orders</value>
+	    <value name="Firm Admin Interface" code="15">Access firm administrator default page</value>
+	    <value name="Set No Tran Fee" code="16">Add filters without a transaction fee in admin/expensecode</value>
+	    <value name="Firm Edit Expense Codes" code="17">Edit firm expense codes</value>
+	    <value name="Save Firm Template" code="18">Save a Firm's Template</value>
+	    <value name="Order Firm Specific Items" code="19">Order Firm Specific Items</value>
+	    <value name="Firm Availability Override" code="20">Add Override schedules for a firm</value>
+	    <value name="Vendor Order For User" code="21">Allows access to vendor manual order interface.</value>
+	    <value name="Order Black Car" code="22">Allows user to view/order from the black car tab.</value>
+	    <value name="Firm Edit Group Orders" code="23">Edit Group Orders</value>
+	    <value name="Firm Car Reports" code="24">View Firm Car Reports</value>
+	    <value name="Firm Admin Reports" code="25">View firm admin reports</value>
+	    <value name="Internal Utility Queries" code="26">Access queries used for internal reporting</value>
+	    <value name="Internal System Maintenance" code="27">Perform System Maintenance functions</value>
+	</enum>
+	<enum name="OrderType">
+	    <value name="Personal" code="P" />
+	    <value name="Firm" code="F" />
+	</enum>
+	<enum name="FormatType">
+	    <value name="HTML" code="H" />
+	    <value name="Text" code="T" />
+	</enum>
+    </enums>
+    <collections>
+		<collection name="ValidationErrorsCollection" type="ValidationErrorData" />
+    </collections>
+    <!--
+	This section defines the actual sql types that can be queried from the 
+	database.  Each sqltype can have the following attributes:
+		name = (required) This identifies the type - should be the same as the type returned by querying the database
+				information.schema tables.
+		length = 
+		precision = 
+		scale = 
+		type = (optional) this is the default type, if one is not specified for a particular property.
+		readermethodformat = (optional) This is a format string that will be used when data objects are generated, if one is not
+				specified for a particular property.  The format will have access to the following values:
+					0=reader variable name
+					1=column name (not quoted)
+    -->
+    <sqltypes-ref xinc:href="config\sqltypes.inc.xml" />
+    <!--
+	conversion format replacement parameters:
+		0=data object variable name
+		1=Property name (properly cased)
+		2=sqltype's readermethod (formatted by readermethodformat) (for convert from sql type, otherwise blank)
+		3=reader variable name (for convert from sql type, otherwise blank)
+		4=sqlname
+		5=property name (property cased without data object name)
+    -->
+    <types-ref xinc:href="config\types.inc.xml" />
+    <!--
+    
+      Database/SqlEntity definitions
+    
+    -->
+    <databases server="olympus" database="seamless" user="sa" password="1qaz2wsx" scriptsinglefile="False" generateonlyprimarydeletestoredproc="True" generateviewscript="False" generatetablescript="False" useview="True" scriptdropstatement="True" generateprocsforforeignkeys="False" generateinsertstoredprocscript="True" generateupdatestoredprocscript="True" generatedeletestoredprocscript="True" generateselectstoredprocscript="False" allowupdateofprimarykey="False" scriptforindexedviews="True" commandtimeout="30">
+	<database name="database" key="Registry:HKLM:Software\\SeamlessWeb\\customDB">
+	    <sqlentities>
+		<sqlentity name="VendorLocation" view="vwVendorLocation">
+		    <columns>
+			<column name="VendorLocationID" sqltype="int" identity="True" required="True" />
+			<column name="VendorID" sqltype="int" required="True" />
+			<column name="AddressID" sqltype="int" />
+			<column name="PhoneNumber" sqltype="varchar" length="20" />
+			<column name="FaxNumber" sqltype="varchar" length="20" />
+			<column name="EffectiveDate" sqltype="smalldatetime" length="8" scale="3" precision="23" required="True" />
+			<column name="ExpirationDate" sqltype="smalldatetime" length="8" scale="3" precision="23" required="True" />
+			<column name="LocationName" sqltype="varchar" length="50" />
+			<column name="MinForDelivery" sqltype="smallmoney" length="4" scale="4" precision="10" />
+			<column name="FaxPort" sqltype="int" length="4" precision="10" />
+			<column name="ResendRequestTime" sqltype="smalldatetime" length="8" scale="3" precision="23" />
+			<column name="LastFaxAttempt" sqltype="smalldatetime" length="8" scale="3" precision="23" />
+			<column name="FaxRetryCount" sqltype="int" />
+			<column name="LastFaxID" sqltype="int" />
+			<column name="LastFaxStatus" sqltype="varchar" length="50" />
+			<column name="PrimaryFlag" sqltype="char" length="1" default="'N'" />
+			<column name="voicenumber" sqltype="varchar" length="20" />
+			<column name="autowait" sqltype="int" />
+			<column name="autoxfr" sqltype="varchar" length="20" />
+			<column name="DeliveryAreaDescription" sqltype="varchar" length="1024" />
+			<column name="LastOrderCompleteTime" sqltype="datetime" length="8" scale="3" precision="23" />
+		    </columns>
+		    <constraints>
+			<constraint name="PK_VendorLocation" type="PRIMARY KEY">
+			    <column name="VendorLocationID" />
+			    <column name="EffectiveDate" />
+			</constraint>
+		    </constraints>
+		</sqlentity>
+		<sqlentity name="Address" view="vwAddress">
+		    <columns>
+			<column name="AddressID" sqltype="int" identity="True" required="True" />
+			<column name="Address1" sqltype="varchar" length="80" required="True" />
+			<column name="City" sqltype="varchar" length="40" required="True" />
+			<column name="State" sqltype="char" length="2" required="True" />
+			<column name="ZipCode" sqltype="varchar" length="10" required="True" />
+			<column name="Address2" sqltype="varchar" length="80" />
+			<column name="Address3" sqltype="varchar" length="80" />
+			<column name="CrossStreets" sqltype="varchar" length="100" />
+			<column name="BuildingFloor" sqltype="varchar" length="20" />
+			<column name="AddressDesc" sqltype="varchar" length="150" />
+		    </columns>
+		    <constraints>
+			<constraint name="PK_Address" type="PRIMARY KEY">
+			    <column name="AddressID" />
+			</constraint>
+		    </constraints>
+		</sqlentity>
+		<sqlentity name="ErrorLog" view="vwErrorLog">
+		    <columns>
+			<column name="ErrorID" sqltype="int" identity="True" required="True" />
+			<column name="EventTime" sqltype="datetime" length="8" scale="3" precision="23" required="True" />
+			<column name="AppName" sqltype="varchar" length="50" />
+			<column name="ErrorNumber" sqltype="int" />
+			<column name="Description" sqltype="varchar" length="7500" />
+			<column name="LineNumber" sqltype="smallint" length="2" precision="5" />
+			<column name="UserID" sqltype="int" />
+			<column name="OrderID" sqltype="int" />
+			<column name="Source" sqltype="varchar" length="100" />
+			<column name="ErrorParams" sqltype="varchar" length="255" />
+			<column name="ErrorLevel" sqltype="varchar" length="50" />
+		    </columns>
+		    <constraints>
+			<constraint name="PK_ErrorLog" type="PRIMARY KEY">
+			    <column name="ErrorID" />
+			</constraint>
+		    </constraints>
+		</sqlentity>
+		<sqlentity name="SystemParameter" view="vwSystemParameter">
+		    <columns>
+			<column name="Parameter" sqltype="varchar" length="50" required="True" />
+			<column name="ParameterType" sqltype="char" length="1" required="True" />
+			<column name="AlphaValue" sqltype="varchar" length="255" />
+			<column name="IntegerValue" sqltype="int" />
+			<column name="CurrencyValue" sqltype="smallmoney" length="4" scale="4" precision="10" />
+			<column name="EffectiveDate" sqltype="smalldatetime" length="4" precision="16" required="True" />
+			<column name="DateValue" sqltype="datetime" length="8" scale="3" precision="23" />
+		    </columns>
+		    <constraints>
+			<constraint name="PK_SystemParameter" type="PRIMARY KEY">
+			    <column name="Parameter" />
+			    <column name="EffectiveDate" />
+			</constraint>
+		    </constraints>
+		</sqlentity>
+		<sqlentity name="Firm" view="vwFirm" generateviewscript="True" generatetablescript="false">
+		    <columns>
+			<column name="FirmID" sqltype="int" identity="True" required="True" />
+			<column name="FirmName" sqltype="varchar" length="40" required="True" />
+			<column name="LineOfCreditFlag" sqltype="char" length="1" default="'Y'" />
+			<column name="ChangeOrderLocFlag" sqltype="char" length="1" default="'N'" />
+			<column name="CreditCardNumber" sqltype="varchar" length="30" />
+			<column name="CreditCardExpire" sqltype="smalldatetime" length="4" precision="16" />
+			<column name="ExpenseCodeFormat" sqltype="varchar" length="40" />
+			<column name="EffectiveDate" sqltype="smalldatetime" length="4" precision="16" required="True" />
+			<column name="ExpirationDate" sqltype="smalldatetime" length="4" precision="16" required="True" />
+			<column name="ContactUserID" sqltype="int" />
+			<column name="PhoneNumber" sqltype="varchar" length="20" />
+			<column name="DefaultTerms" sqltype="int" />
+			<column name="TranRate" sqltype="smallmoney" length="4" scale="4" precision="10" default="0.5" />
+			<column name="IsPercent" sqltype="char" length="1" default="'N'" />
+			<column name="ExpenseCodeFormatText" sqltype="varchar" length="255" />
+			<column name="AllowSavePassword" sqltype="char" length="1" default="'Y'" />
+			<column name="IsTranFeePerAlloc" sqltype="char" length="1" default="'Y'" />
+			<column name="CredCardTranFee" sqltype="char" length="1" />
+			<column name="IsExpenseCodeExact" sqltype="char" length="1" default="'N'" />
+			<column name="WeekdayBreakfast" sqltype="varchar" length="5" default="'5:00'" />
+			<column name="WeekdayLunch" sqltype="varchar" length="5" default="'10:30'" />
+			<column name="WeekdayDinner" sqltype="varchar" length="5" default="'18:00'" />
+			<column name="WeekendBreakfast" sqltype="varchar" length="5" default="'6:00'" />
+			<column name="WeekendLunch" sqltype="varchar" length="5" default="'11:30'" />
+			<column name="WeekendDinner" sqltype="varchar" length="5" default="'16:00'" />
+			<column name="WeekdayAfterBreakfast" sqltype="varchar" length="5" default="'9:00'" />
+			<column name="WeekdayAfterLunch" sqltype="varchar" length="5" default="'14:30'" />
+			<column name="WeekdayAfterDinner" sqltype="varchar" length="5" default="'22:00'" />
+			<column name="WeekendAfterBreakfast" sqltype="varchar" length="5" default="'10:00'" />
+			<column name="WeekendAfterLunch" sqltype="varchar" length="5" default="'15:30'" />
+			<column name="WeekendAfterDinner" sqltype="varchar" length="5" default="'20:00'" />
+			<column name="ApprovalRequired" sqltype="char" length="1" />
+			<column name="Logo" sqltype="image" length="2147483647" />
+			<column name="NotifyMsg" sqltype="text" length="2147483647" />
+			<column name="AllowFirmCreditCardOrders" sqltype="char" length="1" />
+			<column name="RequireCommentOnOverBudget" sqltype="char" length="1" />
+			<column name="DisableMyProfile" sqltype="char" length="1" required="True" default="'N'" />
+			<column name="RequireExpenseCode" sqltype="char" length="1" required="True" default="'Y'" />
+			<column name="TranFeeOnPersonalOrders" sqltype="char" length="1" required="True" default="'N'" />
+			<column name="SelectFirmLocationOnOrder" sqltype="char" length="1" required="True" default="'N'" />
+			<column name="SendWelcomeMessage" sqltype="char" length="1" default="'Y'" />
+			<column name="ShowTransactionFee" sqltype="char" length="1" required="True" default="'N'" />
+			<column name="AllocationHeaderText" sqltype="varchar" length="25" />
+			<column name="IsCCEmailRequired" sqltype="char" length="1" />
+			<column name="BuildingFloorText" sqltype="varchar" length="20" />
+			<column name="CateringFieldsRequired" sqltype="char" length="1" required="True" default="'N'" />
+			<column name="ConsumerFirm" sqltype="char" length="1" required="True" default="'N'" />
+			<column name="DefaultConsumerFirm" sqltype="char" length="1" required="True" default="'N'" />
+			<column name="MealsDefaultTipPercent" sqltype="numeric" length="17" scale="1" precision="10" />
+			<column name="CateringDefaultTipPercent" sqltype="numeric" length="17" scale="1" precision="10" />
+			<column name="MealsMaxTip" sqltype="numeric" length="17" scale="2" precision="10" />
+			<column name="CateringMaxTip" sqltype="numeric" length="17" scale="2" precision="10" />
+			<column name="FirmCode" sqltype="varchar" length="10" />
+			<column name="ExpenseCommentName" sqltype="varchar" length="50" />
+			<column name="ExpenseCommentDescription" sqltype="varchar" length="250" />
+		    </columns>
+		    <constraints>
+			<constraint name="PK_Firm" type="PRIMARY KEY">
+			    <column name="FirmID" />
+			    <column name="EffectiveDate" />
+			</constraint>
+			<constraint name="CK_ChangeOrderLocFlag" type="CHECK" checkclause="([ChangeOrderLocFlag] = 'N' or [ChangeOrderLocFlag] = 'Y')" />
+			<constraint name="CK_Firm_IsPercent" type="CHECK" checkclause="([ispercent] = 'N' or [ispercent] = 'Y')" />
+			<constraint name="CK_LineOfCreditFlag" type="CHECK" checkclause="([LineOfCreditFlag] = 'N' or [LineOfCreditFlag] = 'Y')" />
+			<constraint name="FK_Firm_Users" type="FOREIGN KEY" foreignentity="Users">
+			    <column name="ContactUserID" foreigncolumn="UserID" />
+			</constraint>
+		    </constraints>
+		    <indexes>
+			<index name="UN_Firm" unique="True">
+			    <column name="FirmName" />
+			</index>
+		    </indexes>
+		</sqlentity>
+		<sqlentity name="FirmLocation" view="vwFirmLocation">
+		    <columns>
+			<column name="FirmLocationID" sqltype="int" identity="True" required="True" />
+			<column name="FirmID" sqltype="int" required="True" />
+			<column name="PrimaryFlag" sqltype="char" length="1" required="True" default="'Y'" />
+			<column name="AddressID" sqltype="int" />
+			<column name="PhoneNumber" sqltype="varchar" length="20" />
+			<column name="FaxNumber" sqltype="varchar" length="20" />
+			<column name="AdminUserID" sqltype="int" />
+			<column name="EffectiveDate" sqltype="smalldatetime" length="4" precision="16" required="True" />
+			<column name="ExpirationDate" sqltype="smalldatetime" length="4" precision="16" required="True" />
+			<column name="ServiceAreaID" sqltype="int" />
+			<column name="LocationName" sqltype="varchar" length="50" />
+		    </columns>
+		    <constraints>
+			<constraint name="FK_FirmLocation_Address" type="FOREIGN KEY" foreignentity="Address">
+			    <column name="AddressID" foreigncolumn="AddressID" />
+			</constraint>
+			<constraint name="CK_PrimaryFlag" type="CHECK" checkclause="([PrimaryFlag] = 'N' or [PrimaryFlag] = 'Y')" />
+			<constraint name="PK_FirmLocation" type="PRIMARY KEY">
+			    <column name="FirmLocationID" />
+			    <column name="EffectiveDate" />
+			</constraint>
+		    </constraints>
+		</sqlentity>
+		<sqlentity name="Product" view="vwProduct">
+		    <columns>
+			<column name="ProductID" sqltype="int" required="True" identity="true" />
+			<column name="ProductName" sqltype="varchar" length="50" required="True" />
+			<column name="VendorID" sqltype="int" required="True" />
+			<column name="Description" sqltype="varchar" length="500" />
+			<column name="BasePrice" sqltype="smallmoney" length="4" scale="4" precision="10" />
+			<column name="EffectiveDate" sqltype="smalldatetime" length="4" precision="16" required="True" />
+			<column name="ExpirationDate" sqltype="smalldatetime" length="4" precision="16" required="True" />
+			<column name="UnavailStartTime" sqltype="varchar" length="5" />
+			<column name="UnavailStopTime" sqltype="varchar" length="5" />
+			<column name="UnavailDOW" sqltype="varchar" length="7" />
+			<column name="NonTaxable" sqltype="char" length="1" />
+		    </columns>
+		    <constraints>
+			<constraint name="PK_Product" type="PRIMARY KEY" clustered="False">
+			    <column name="ProductID" />
+			    <column name="EffectiveDate" />
+			</constraint>
+		    </constraints>
+		</sqlentity>
+		<sqlentity name="FirmLocRule" view="vwFirmLocRule">
+		    <columns>
+			<column name="FirmLocationID" sqltype="int" required="True" />
+			<column name="RuleID" sqltype="int" required="True" />
+			<column name="EffectiveDate" sqltype="smalldatetime" length="4" precision="16" required="True" />
+			<column name="ExpirationDate" sqltype="smalldatetime" length="4" precision="16" required="True" />
+		    </columns>
+		    <constraints>
+			<constraint name="PK_FirmLocRule" type="PRIMARY KEY" clustered="True">
+			    <column name="FirmLocationID" />
+			    <column name="RuleID" />
+			    <column name="EffectiveDate" />
+			</constraint>
+		    </constraints>
+		</sqlentity>
+		<sqlentity name="FirmRule" view="vwFirmRule">
+		    <columns>
+			<column name="FirmID" sqltype="int" required="True" />
+			<column name="RuleID" sqltype="int" required="True" />
+			<column name="EffectiveDate" sqltype="smalldatetime" length="4" precision="16" required="True" />
+			<column name="ExpirationDate" sqltype="smalldatetime" length="4" precision="16" required="True" />
+		    </columns>
+		    <constraints>
+			<constraint name="PK_FirmRule" type="PRIMARY KEY" clustered="True">
+			    <column name="FirmID" />
+			    <column name="RuleID" />
+			    <column name="EffectiveDate" />
+			</constraint>
+		    </constraints>
+		</sqlentity>
+		<sqlentity name="Function" view="vwFunction">
+		    <columns>
+			<column name="FunctionID" sqltype="int" identity="True" required="True" />
+			<column name="FunctionName" sqltype="varchar" length="50" required="True" />
+			<column name="Description" sqltype="varchar" length="200" />
+		    </columns>
+		    <constraints>
+			<constraint name="PK_Function" type="PRIMARY KEY">
+			    <column name="FunctionID" />
+			</constraint>
+		    </constraints>
+		</sqlentity>
+		<sqlentity name="GroupOrderDetail" view="vwGroupOrderDetail" generateupdatestoredprocscript="False">
+		    <columns>
+			<column name="GroupOrderID" sqltype="int" required="True" />
+			<column name="Type" sqltype="char" length="1" required="True" />
+			<column name="ID" sqltype="int" required="True" />
+		    </columns>
+		    <constraints>
+			<constraint name="PK_GroupOrderDetail" type="PRIMARY KEY" clustered="True">
+			    <column name="GroupOrderID" />
+			    <column name="Type" />
+			    <column name="ID" />
+			</constraint>
+		    </constraints>
+		</sqlentity>
+		<sqlentity name="GroupOrders" view="vwGroupOrders">
+		    <columns>
+			<column name="GroupOrderID" sqltype="int" identity="True" required="True" />
+			<column name="Title" sqltype="varchar" length="100" required="True" />
+			<column name="Weekly" sqltype="char" length="1" required="True" />
+			<column name="OpenTime" sqltype="smalldatetime" length="4" precision="16" required="True" />
+			<column name="CloseTime" sqltype="smalldatetime" length="4" precision="16" required="True" />
+			<column name="DeliveryTime" sqltype="smalldatetime" length="4" precision="16" required="True" />
+			<column name="GratuityType" sqltype="varchar" length="50" required="True" />
+			<column name="MasterGratuityType" sqltype="char" length="1" required="True" />
+			<column name="MasterGratuityAmt" sqltype="smallmoney" length="4" scale="4" precision="10" required="True" />
+			<column name="FirmID" sqltype="int" required="True" />
+			<column name="DOW" sqltype="char" length="7" required="True" default="'1234567'" />
+			<column name="TipProcessed" sqltype="char" length="1" required="True" default="'N'" />
+			<column name="Notified" sqltype="char" length="1" />
+			<column name="Individual" sqltype="char" length="1" />
+			<column name="Processed" sqltype="char" length="1" default="'N'" />
+			<column name="GroupOrderContact" sqltype="int" />
+			<column name="DeliveryLocation" sqltype="varchar" length="100" />
+			<column name="DeliveryFloor" sqltype="varchar" length="100" />
+			<column name="DeliveryPhoneNumber" sqltype="varchar" length="20" />
+		    </columns>
+		    <constraints>
+			<constraint name="PK_GroupOrders" type="PRIMARY KEY" clustered="True">
+			    <column name="GroupOrderID" />
+			</constraint>
+		    </constraints>
+		</sqlentity>
+		<sqlentity name="GroupOrderVendors" view="vwGroupOrderVendors">
+		    <columns>
+			<column name="GroupOrderID" sqltype="int" required="True" />
+			<column name="VendorLocationID" sqltype="int" required="True" />
+			<column name="VendorReceiptTime" sqltype="datetime" length="8" scale="3" precision="23" />
+			<column name="Processed" sqltype="char" length="1" />
+			<column name="TotalOrders" sqltype="int" />
+			<column name="FaxID" sqltype="int" />
+			<column name="FaxImageGenerated" sqltype="datetime" length="8" scale="3" precision="23" />
+			<column name="FaxSendRetryCount" sqltype="int" />
+			<column name="FaxStatus" sqltype="varchar" length="50" />
+			<column name="Printed" sqltype="char" length="1" />
+			<column name="ActualDeliveryTime" sqltype="smalldatetime" length="4" precision="16" />
+			<column name="GratuityAmt" sqltype="numeric" length="17" scale="2" precision="10" />
+			<column name="GrandTotalAmt" sqltype="numeric" length="17" scale="2" precision="10" />
+                        <column name="FaxGenAppID" sqltype="int" />
+                        <column name="FaxGenRetrievedDate" sqltype="datetime" length="8" scale="3" precision="23" />
+		    </columns>
+		    <constraints>
+			<constraint name="PK_GroupOrderVendor" type="PRIMARY KEY" clustered="True">
+			    <column name="GroupOrderID" />
+			    <column name="VendorLocationID" />
+			</constraint>
+		    </constraints>
+		    <indexes>
+			<index name="groupordervendors_faxid">
+			    <column name="FaxID" />
+			</index>
+		    </indexes>
+		</sqlentity>
+		<sqlentity name="OrderAllocation" view="vwOrderAllocation">
+		    <columns>
+			<column name="OrderID" sqltype="int" required="True" />
+			<column name="UserID" sqltype="int" required="True" />
+			<column name="AllocationAmt" sqltype="smallmoney" length="4" scale="4" precision="10" required="True" />
+			<column name="ExpenseCode" sqltype="varchar" length="40" required="True" />
+			<column name="Comment" sqltype="varchar" length="200" />
+			<column name="LineID" sqltype="tinyint" length="1" precision="3" required="True" />
+			<column name="AmtOverBudget" sqltype="smallmoney" length="4" scale="4" precision="10" />
+			<column name="TranFee" sqltype="smallmoney" length="4" scale="4" precision="10" />
+			<column name="TranFeePaid" sqltype="char" length="1" />
+			<column name="OverageAllocation" sqltype="char" length="1" default="'N'" />
+		    </columns>
+		    <constraints>
+			<constraint name="PK_OrderAllocation" type="PRIMARY KEY">
+			    <column name="OrderID" />
+			    <column name="UserID" />
+			    <column name="LineID" />
+			</constraint>
+			<constraint name="UN_OrderAllocation" type="UNIQUE">
+			    <column name="OrderID" />
+			    <column name="UserID" />
+			    <column name="ExpenseCode" />
+			</constraint>
+			<constraint name="FK_OrderRebill_Orders" type="FOREIGN KEY" foreignentity="Orders">
+			    <column name="OrderID" foreigncolumn="OrderID" />
+			</constraint>
+		    </constraints>
+		    <indexes>
+			<index name="OrderAllocation3" clustered="True">
+			    <column name="UserID" />
+			</index>
+			<index name="OrderAllocation21">
+			    <column name="UserID" />
+			    <column name="OrderID" />
+			    <column name="AllocationAmt" />
+			    <column name="ExpenseCode" />
+			    <column name="LineID" />
+			    <column name="AmtOverBudget" />
+			    <column name="TranFee" />
+			    <column name="TranFeePaid" />
+			</index>
+		    </indexes>
+		</sqlentity>
+		<sqlentity name="OrderDelivery" view="vwOrderDelivery">
+		    <columns>
+			<column name="OrderID" sqltype="int" required="True" />
+			<column name="CrossStreets" sqltype="varchar" length="100" />
+			<column name="BuildingFloor" sqltype="varchar" length="20" />
+			<column name="RoomNbr" sqltype="varchar" length="20" />
+			<column name="CompanyDept" sqltype="varchar" length="100" />
+			<column name="BuzzerNbr" sqltype="varchar" length="20" />
+			<column name="EntranceCode" sqltype="varchar" length="20" />
+			<column name="Address1" sqltype="varchar" length="100" />
+			<column name="Address2" sqltype="varchar" length="100" />
+			<column name="ZipCode" sqltype="varchar" length="10" />
+			<column name="DeliveryInstructionsID" sqltype="int" />
+			<column name="DeliveryComment" sqltype="varchar" length="200" />
+			<column name="PhoneNumber" sqltype="varchar" length="20" />
+			<column name="DeliveryContact1" sqltype="varchar" length="30" />
+			<column name="DeliveryContact2" sqltype="varchar" length="30" />
+		    </columns>
+		    <constraints>
+			<constraint name="PK_OrderDelivery" type="PRIMARY KEY">
+			    <column name="OrderID" />
+			</constraint>
+			<constraint name="FK_OrderDelivery_DeliveryInstructions" type="FOREIGN KEY" foreignentity="DeliveryInstructions">
+			    <column name="DeliveryInstructionsID" foreigncolumn="DeliveryInstructionsID" />
+			</constraint>
+			<constraint name="FK_OrderDelivery_Orders" type="FOREIGN KEY" foreignentity="Orders">
+			    <column name="OrderID" foreigncolumn="OrderID" />
+			</constraint>
+		    </constraints>
+		</sqlentity>
+		<sqlentity name="OrderDetail" view="vwOrderDetail">
+		    <columns>
+			<column name="OrderID" sqltype="int" required="True" />
+			<column name="LineID" sqltype="smallint" length="2" precision="5" required="True" />
+			<column name="Price" sqltype="smallmoney" length="4" scale="4" precision="10" />
+			<column name="ProductID" sqltype="int" required="True" />
+			<column name="Quantity" sqltype="int" required="True" />
+			<column name="CategoryID" sqltype="int" required="True" />
+			<column name="VendorLocationID" sqltype="int" required="True" />
+			<column name="TemplateID" sqltype="int" />
+			<column name="SpecialInstructions" sqltype="varchar" length="500" />
+			<column name="NonTaxable" sqltype="char" length="1" />
+		    </columns>
+		    <constraints>
+			<constraint name="PK_OrderDetail" type="PRIMARY KEY">
+			    <column name="OrderID" />
+			    <column name="LineID" />
+			</constraint>
+			<constraint name="FK_OrderDetail_Orders" type="FOREIGN KEY" foreignentity="Orders">
+			    <column name="OrderID" foreigncolumn="OrderID" />
+			</constraint>
+		    </constraints>
+		</sqlentity>
+		<sqlentity name="OrderDetailOption" view="vwOrderDetailOption">
+		    <columns>
+			<column name="OrderID" sqltype="int" required="True" />
+			<column name="LineID" sqltype="smallint" length="2" precision="5" required="True" />
+			<column name="OptionID" sqltype="int" required="True" />
+			<column name="OptionGroupID" sqltype="int" required="True" />
+			<column name="Price" sqltype="smallmoney" length="4" scale="4" precision="10" />
+		    </columns>
+		    <constraints>
+			<constraint name="FK_OrderDetailOption_OrderDetail" type="FOREIGN KEY" foreignentity="OrderDetail">
+			    <column name="OrderID" foreigncolumn="OrderID" />
+			    <column name="LineID" foreigncolumn="LineID" />
+			</constraint>
+			<constraint name="PK_OrderDetailOption" type="PRIMARY KEY">
+			    <column name="OrderID" />
+			    <column name="LineID" />
+			    <column name="OptionID" />
+			</constraint>
+		    </constraints>
+		</sqlentity>
+		<sqlentity name="Orders" view="vwOrder">
+		    <columns>
+			<column name="OrderID" sqltype="int" identity="True" required="True" />
+			<column name="OrderTime" sqltype="smalldatetime" length="4" precision="16" required="True" default="getdate()" />
+			<column name="UserID" sqltype="int" />
+			<column name="ProductTotalAmt" sqltype="smallmoney" length="4" scale="4" precision="10" />
+			<column name="TaxAmt" sqltype="smallmoney" length="4" scale="4" precision="10" />
+			<column name="GratuityAmt" sqltype="smallmoney" length="4" scale="4" precision="10" />
+			<column name="GrandTotalAmt" sqltype="smallmoney" length="4" scale="4" precision="10" />
+			<column name="Comment" sqltype="varchar" length="200" />
+			<column name="DiscountAmt" sqltype="smallmoney" length="4" scale="4" precision="10" />
+			<column name="ResponsibleUserID" sqltype="int" />
+			<column name="OrderCompleteTime" sqltype="smalldatetime" length="4" precision="16" />
+			<column name="PaymentID" sqltype="int" />
+			<column name="OrderType" sqltype="char" length="1" />
+			<column name="AllocationComment" sqltype="varchar" length="200" />
+			<column name="PaymentTypeID" sqltype="char" length="2" />
+			<column name="AmendmentText" sqltype="varchar" length="15" />
+			<column name="CostCode" sqltype="varchar" length="15" />
+			<column name="Processed" sqltype="char" length="1" />
+			<column name="Printed" sqltype="char" length="1" />
+			<column name="ApprovalUserID" sqltype="int" />
+			<column name="TranFeePaid" sqltype="char" length="1" />
+			<column name="ChargeInProcess" sqltype="char" length="1" />
+			<column name="ChargeErrorCode" sqltype="int" />
+			<column name="IsGroupOrder" sqltype="char" length="1" />
+			<column name="GroupOrderID" sqltype="int" />
+			<column name="FaxID" sqltype="int" />
+			<column name="FaxSendRetryCount" sqltype="int" />
+			<column name="FaxStatus" sqltype="varchar" length="50" />
+			<column name="FaxImageGenerated" sqltype="datetime" length="8" scale="3" precision="23" />
+			<column name="CCEmailAddress" sqltype="varchar" length="60" />
+			<column name="CrossStreets" sqltype="varchar" length="100" viewcolumn="True" />
+			<column name="BuildingFloor" sqltype="varchar" length="20" viewcolumn="True" />
+			<column name="RoomNbr" sqltype="varchar" length="20" viewcolumn="True" />
+			<column name="DeliveryComment" sqltype="varchar" length="200" viewcolumn="True" />
+			<column name="CompanyDept" sqltype="varchar" length="100" viewcolumn="True" />
+			<column name="BuzzerNbr" sqltype="varchar" length="20" viewcolumn="True" />
+			<column name="EntranceCode" sqltype="varchar" length="20" viewcolumn="True" />
+			<column name="Address1" sqltype="varchar" length="100" viewcolumn="True" />
+			<column name="Address2" sqltype="varchar" length="100" viewcolumn="True" />
+			<column name="ZipCode" sqltype="varchar" length="10" viewcolumn="True" />
+			<column name="DeliveryInstructionsID" sqltype="int" viewcolumn="True" />
+			<column name="PhoneNumber" sqltype="varchar" length="20" viewcolumn="True" />
+			<column name="DeliveryContact1" sqltype="varchar" length="30" viewcolumn="True" />
+			<column name="DeliveryContact2" sqltype="varchar" length="30" viewcolumn="True" />
+			<column name="DeliveryInstructionsName" sqltype="varchar" length="50" viewcolumn="True" />
+			<column name="ActualDeliveryTime" sqltype="smalldatetime" length="4" precision="16" viewcolumn="True" />
+			<column name="CCDeductedAmt" sqltype="smallmoney" length="4" scale="4" precision="10" viewcolumn="True" />
+			<column name="DeliveryFee" sqltype="smallmoney" length="4" scale="4" precision="10" viewcolumn="True" />
+			<column name="EventStartTime" sqltype="varchar" length="30" viewcolumn="True" />
+			<column name="EventEndTime" sqltype="varchar" length="8" viewcolumn="True" />
+			<column name="FinalTip" sqltype="char" length="1" viewcolumn="True" />
+			<column name="VendorGratuityAmt" sqltype="smallmoney" length="4" scale="4" precision="10" viewcolumn="True" />
+			<column name="GratuityPct" sqltype="smallmoney" length="4" scale="4" precision="10" viewcolumn="True" />
+			<column name="GuestCount" sqltype="int" viewcolumn="True" />
+			<column name="PickupTime" sqltype="varchar" length="50" viewcolumn="True" />
+			<column name="RequestedDeliveryTime" sqltype="smalldatetime" length="4" precision="16" viewcolumn="True" />
+			<column name="VendorLocationID" sqltype="int" viewcolumn="True" />
+			<column name="VendorProductAmt" sqltype="smallmoney" length="4" scale="4" precision="10" viewcolumn="True" />
+			<column name="VendorReceiptTime" sqltype="datetime" length="8" scale="3" precision="23" viewcolumn="True" />
+			<column name="VendorTaxAmt" sqltype="smallmoney" length="4" scale="4" precision="10" viewcolumn="True" />
+			<column name="SetupRequirements" sqltype="varchar" length="1000" viewcolumn="True" />
+			<column name="VendorTypeId" sqltype="int" viewcolumn="True" />
+			<column name="PaymentTypeName" sqltype="varchar" length="50" viewcolumn="True" />
+			<column name="OrderTypeID" sqltype="int" viewcolumn="True" />
+			<column name="FirmLocationId" sqltype="int" viewcolumn="True" />
+			<column name="FirmId" sqltype="int" viewcolumn="True" />
+                        <column name="FaxGenAppID" sqltype="int" />
+                        <column name="FaxGenRetrievedDate" sqltype="datetime" />
+		    </columns>
+		    <constraints>
+			<constraint name="PK_Orders" type="PRIMARY KEY">
+			    <column name="OrderID" />
+			</constraint>
+			<constraint name="FK_Orders_Pmt_Type" type="FOREIGN KEY" foreignentity="pmt_type">
+			    <column name="PaymentTypeID" foreigncolumn="pmt_type_id" />
+			</constraint>
+		    </constraints>
+		    <indexes>
+			<index name="Orders27" clustered="True">
+			    <column name="OrderCompleteTime" />
+			</index>
+			<index name="Orders_UserID">
+			    <column name="UserID" />
+			</index>
+			<index name="orders_faxid">
+			    <column name="FaxID" />
+			</index>
+			<index name="Orders0">
+			    <column name="OrderID" />
+			    <column name="FaxID" />
+			</index>
+			<index name="OrdersUserIDOrderID">
+			    <column name="UserID" />
+			    <column name="OrderID" />
+			</index>
+			<index name="Orders9">
+			    <column name="OrderID" />
+			    <column name="OrderTime" />
+			    <column name="UserID" />
+			    <column name="ProductTotalAmt" />
+			    <column name="GratuityAmt" />
+			    <column name="GrandTotalAmt" />
+			    <column name="OrderCompleteTime" />
+			    <column name="OrderType" />
+			    <column name="AllocationComment" />
+			    <column name="CostCode" />
+			    <column name="Processed" />
+			    <column name="Printed" />
+			    <column name="ApprovalUserID" />
+			    <column name="IsGroupOrder" />
+			    <column name="FaxSendRetryCount" />
+			</index>
+			<index name="Orders28">
+			    <column name="OrderID" />
+			    <column name="UserID" />
+			    <column name="ResponsibleUserID" />
+			    <column name="OrderCompleteTime" />
+			    <column name="OrderType" />
+			    <column name="Processed" />
+			    <column name="IsGroupOrder" />
+			</index>
+			<index name="OrdersVoiceServer">
+			    <column name="OrderID" />
+			    <column name="OrderCompleteTime" />
+			    <column name="Processed" />
+			    <column name="IsGroupOrder" />
+			    <column name="GroupOrderID" />
+			</index>
+		    </indexes>
+		</sqlentity>
+		<sqlentity name="OrderVendor" view="vwOrderVendor">
+		    <columns>
+			<column name="OrderID" sqltype="int" required="True" />
+			<column name="VendorLocationID" sqltype="int" required="True" />
+			<column name="RequestedDeliveryTime" sqltype="smalldatetime" length="4" precision="16" />
+			<column name="EventStartTime" sqltype="varchar" length="30" />
+			<column name="VendorProductAmt" sqltype="smallmoney" length="4" scale="4" precision="10" />
+			<column name="VendorTaxAmt" sqltype="smallmoney" length="4" scale="4" precision="10" />
+			<column name="GratuityPct" sqltype="smallmoney" length="4" scale="4" precision="10" />
+			<column name="GratuityAmt" sqltype="smallmoney" length="4" scale="4" precision="10" />
+			<column name="VendorReceiptTime" sqltype="datetime" length="8" scale="3" precision="23" />
+			<column name="ActualDeliveryTime" sqltype="smalldatetime" length="4" precision="16" />
+			<column name="FinalTip" sqltype="char" length="1" />
+			<column name="CCDeductedAmt" sqltype="smallmoney" length="4" scale="4" precision="10" />
+			<column name="GuestCount" sqltype="int" />
+			<column name="DeliveryFee" sqltype="smallmoney" length="4" scale="4" precision="10" />
+			<column name="PickupTime" sqltype="varchar" length="50" />
+			<column name="EventEndTime" sqltype="varchar" length="8" />
+			<column name="SetupRequirements" sqltype="varchar" length="1000" />
+		    </columns>
+		    <constraints>
+			<constraint name="PK_OrderVendor" type="PRIMARY KEY">
+			    <column name="OrderID" />
+			    <column name="VendorLocationID" />
+			</constraint>
+			<constraint name="FK_OrderVendor_Orders" type="FOREIGN KEY" foreignentity="Orders">
+			    <column name="OrderID" foreigncolumn="OrderID" />
+			</constraint>
+		    </constraints>
+		    <indexes>
+			<index name="OrderVendor36" clustered="True">
+			    <column name="OrderID" />
+			</index>
+			<index name="OrderVendor22">
+			    <column name="OrderID" />
+			    <column name="VendorLocationID" />
+			    <column name="ActualDeliveryTime" />
+			</index>
+			<index name="OrderVendor24">
+			    <column name="OrderID" />
+			    <column name="VendorLocationID" />
+			    <column name="ActualDeliveryTime" />
+			    <column name="RequestedDeliveryTime" />
+			    <column name="VendorReceiptTime" />
+			</index>
+			<index name="OrderVendor0">
+			    <column name="VendorReceiptTime" />
+			</index>
+		    </indexes>
+		</sqlentity>
+		<sqlentity name="OrdPmt" view="vwOrdPmt">
+		    <columns>
+			<column name="pmt_id" sqltype="int" required="True" />
+			<column name="OrderID" sqltype="int" required="True" />
+			<column name="pmtdate" sqltype="datetime" length="8" scale="3" precision="23" />
+			<column name="pmtamt" sqltype="float" length="8" precision="53" required="True" />
+			<column name="pmt_type_id" sqltype="char" length="2" required="True" />
+			<column name="reference_no" sqltype="varchar" length="64" />
+			<column name="authorization_" sqltype="varchar" length="15" />
+			<column name="avs_id" sqltype="char" length="1" />
+			<column name="site" sqltype="char" length="5" />
+			<column name="Action" sqltype="varchar" length="15" />
+			<column name="ActionDate" sqltype="smalldatetime" length="4" precision="16" />
+			<column name="TransactionNumber" sqltype="varchar" length="10" />
+                        <column name="BatchID" sqltype="int" />
+		    </columns>
+		    <constraints>
+			<constraint name="PK_ordpmt" type="PRIMARY KEY">
+			    <column name="pmt_id" />
+			</constraint>
+		    </constraints>
+		    <indexes>
+			<index name="ordpmt_orderid">
+			    <column name="OrderID" />
+			</index>
+			<index name="ordpmt_pmtdate">
+			    <column name="pmtdate" />
+			</index>
+		    </indexes>
+		</sqlentity>
+		<sqlentity name="pmt_type" view="vwpmt_type">
+		    <columns>
+			<column name="pmt_type_id" sqltype="char" length="2" required="True" />
+			<column name="pmt_type_descr" sqltype="varchar" length="50" required="True" />
+			<column name="credit_card" sqltype="bit" length="1" precision="1" required="True" />
+		    </columns>
+		    <constraints>
+			<constraint name="PK_Pmt_Type" type="PRIMARY KEY" clustered="True">
+			    <column name="pmt_type_id" />
+			</constraint>
+		    </constraints>
+		</sqlentity>
+		<sqlentity name="SecurityGroup" view="vwSecurityGroup">
+		    <columns>
+			<column name="SecurityGroupID" sqltype="int" identity="True" required="True" />
+			<column name="SecurityGroupName" sqltype="varchar" length="50" required="True" />
+			<column name="Description" sqltype="varchar" length="200" />
+		    </columns>
+		    <constraints>
+			<constraint name="PK_SecurityGroup" type="PRIMARY KEY">
+			    <column name="SecurityGroupID" />
+			</constraint>
+		    </constraints>
+		</sqlentity>
+		<sqlentity name="SecurityGroupFunction" view="vwSecurityGroupFunction" generateupdatestoredprocscript="False">
+		    <columns>
+			<column name="SecurityGroupID" sqltype="int" required="True" />
+			<column name="FunctionID" sqltype="int" required="True" />
+		    </columns>
+		    <constraints>
+			<constraint name="FK_SecurityGroupFunction_Function" type="FOREIGN KEY" foreignentity="Function">
+			    <column name="FunctionID" foreigncolumn="FunctionID" />
+			</constraint>
+			<constraint name="FK_SecurityGroupFunction_SecurityGroup" type="FOREIGN KEY" foreignentity="SecurityGroup">
+			    <column name="SecurityGroupID" foreigncolumn="SecurityGroupID" />
+			</constraint>
+			<constraint name="PK_SecurityGroupFunction" type="PRIMARY KEY">
+			    <column name="SecurityGroupID" />
+			    <column name="FunctionID" />
+			</constraint>
+		    </constraints>
+		</sqlentity>
+		<sqlentity name="ServiceArea" view="vwServiceArea">
+		    <columns>
+			<column name="ServiceAreaID" sqltype="int" identity="True" required="True" />
+			<column name="Description" sqltype="varchar" length="255" required="True" />
+		    </columns>
+		    <constraints>
+			<constraint name="UN_ServiceArea" type="UNIQUE">
+			    <column name="Description" />
+			</constraint>
+			<constraint name="PK_ServiceArea" type="PRIMARY KEY">
+			    <column name="ServiceAreaID" />
+			</constraint>
+		    </constraints>
+		</sqlentity>
+		<sqlentity name="Users" view="vwUser">
+		    <columns>
+			<column name="UserID" sqltype="int" identity="True" required="True" />
+			<column name="Login" sqltype="varchar" length="30" required="True" default="'default'" />
+			<column name="Password" sqltype="varchar" length="8" required="True" default="'default'" />
+			<column name="FirstName" sqltype="varchar" length="50" required="True" />
+			<column name="LastName" sqltype="varchar" length="50" required="True" />
+			<column name="PhoneNumber" sqltype="varchar" length="20" required="True" />
+			<column name="EmailAddress" sqltype="varchar" length="60" required="True" />
+			<column name="FirmLocationID" sqltype="int" />
+			<column name="CreditCardTypeID" sqltype="char" length="2" />
+			<column name="CreditCardNumber" sqltype="varchar" length="64" />
+			<column name="CreditCardExpire" sqltype="char" length="4" />
+			<column name="OrderLimitAmt" sqltype="smallmoney" length="4" scale="4" precision="10" />
+			<column name="LastIPAddress" sqltype="char" length="15" />
+			<column name="LastLoginTime" sqltype="smalldatetime" length="4" precision="16" />
+			<column name="SecurityGroupID" sqltype="int" />
+			<column name="AddressID" sqltype="int" />
+			<column name="PreferredName" sqltype="varchar" length="50" />
+			<column name="LastBrowserType" sqltype="varchar" length="100" />
+			<column name="SessionExpireTime" sqltype="smalldatetime" length="4" precision="16" />
+			<column name="EffectiveDate" sqltype="smalldatetime" length="4" precision="16" required="True" />
+			<column name="ExpirationDate" sqltype="smalldatetime" length="4" precision="16" required="True" />
+			<column name="FirmInternalID" sqltype="varchar" length="30" />
+			<column name="JobTitleID" sqltype="int" />
+			<column name="HouseholdIncomeID" sqltype="int" />
+			<column name="Gender" sqltype="char" length="1" />
+			<column name="EmailAddressPersonal" sqltype="varchar" length="60" />
+			<column name="Birthdate" sqltype="smalldatetime" length="4" precision="16" />
+			<column name="CredCardBillingAddress" sqltype="varchar" length="70" />
+			<column name="CredCardBillingZipCode" sqltype="char" length="10" />
+			<column name="VendorLocationID" sqltype="int" />
+			<column name="Floor" sqltype="varchar" length="5" />
+			<column name="SavePassword" sqltype="char" length="1" default="'Y'" />
+			<column name="NeedEmailSent" sqltype="char" length="1" default="'Y'" />
+			<column name="BudgetGroupID" sqltype="int" />
+			<column name="DepartmentID" sqltype="int" />
+			<column name="NotifyMsg" sqltype="text" length="2147483647" />
+			<column name="Priority" sqltype="varchar" length="2" />
+			<column name="SecureLogin" sqltype="varchar" length="50" />
+			<column name="CCEMailAddress" sqltype="varchar" length="60" />
+			<column name="AnonymousUser" sqltype="char" length="1" required="True" default="'N'" />
+			<column name="DefaultAnonymousUser" sqltype="char" length="1" required="True" default="'N'" />
+			<column name="AutoLogin" sqltype="char" length="1" required="True" default="'N'" />
+			<column name="HTMLMail" sqltype="char" length="1" required="True" default="'Y'" />
+			<column name="AllowEmail" sqltype="char" length="1" required="True" default="'Y'" />
+			<column name="OverageCreditCardTypeID" sqltype="char" length="2" />
+			<column name="OverageCreditCardNumber" sqltype="varchar" length="64" />
+			<column name="OverageCreditCardExpire" sqltype="char" length="4" />
+			<column name="FirmID" sqltype="int" viewcolumn="True" />
+			<column name="Address1" sqltype="varchar" length="80" viewcolumn="True" />
+			<column name="City" sqltype="varchar" length="40" viewcolumn="True" />
+			<column name="State" sqltype="char" length="2" viewcolumn="True" />
+			<column name="ZipCode" sqltype="varchar" length="10" viewcolumn="True" />
+			<column name="Address2" sqltype="varchar" length="80" viewcolumn="True" />
+			<column name="Address3" sqltype="varchar" length="80" viewcolumn="True" />
+			<column name="CrossStreets" sqltype="varchar" length="100" viewcolumn="True" />
+			<column name="BuildingFloor" sqltype="varchar" length="20" viewcolumn="True" />
+			<column name="AddressDesc" sqltype="varchar" length="150" viewcolumn="True" />
+			<column name="FirmName" sqltype="varchar" length="40" viewcolumn="True" />
+		    </columns>
+		    <constraints>
+			<constraint name="CK_MAIL" type="CHECK" checkclause="([EmailAddress] &lt;&gt; '')" />
+			<constraint name="UN_Member" type="UNIQUE">
+			    <column name="Login" />
+			</constraint>
+			<constraint name="PK_Users" type="PRIMARY KEY">
+			    <column name="UserID" />
+			</constraint>
+			<constraint name="FK_Users_SecurityGroup" type="FOREIGN KEY" foreignentity="SecurityGroup">
+			    <column name="SecurityGroupID" foreigncolumn="SecurityGroupID" />
+			</constraint>
+			<constraint name="FK_Users_Address" type="FOREIGN KEY" foreignentity="Address">
+			    <column name="AddressID" foreigncolumn="AddressID" />
+			</constraint>
+		    </constraints>
+		    <indexes>
+			<index name="Users40">
+			    <column name="ExpirationDate" />
+			    <column name="Login" />
+			    <column name="FirstName" />
+			    <column name="LastName" />
+			    <column name="FirmLocationID" />
+			    <column name="SecurityGroupID" />
+			    <column name="AddressID" />
+			    <column name="EffectiveDate" />
+			</index>
+			<index name="users_securitygroupid">
+			    <column name="SecurityGroupID" />
+			</index>
+			<index name="users_vendorlocationid">
+			    <column name="VendorLocationID" />
+			</index>
+			<index name="users_firmlocationid">
+			    <column name="FirmLocationID" />
+			</index>
+			<index name="Users0">
+			    <column name="UserID" />
+			    <column name="FirstName" />
+			    <column name="LastName" />
+			    <column name="FirmLocationID" />
+			    <column name="PreferredName" />
+			    <column name="DepartmentID" />
+			</index>
+			<index name="users_addressid">
+			    <column name="AddressID" />
+			</index>
+			<index name="Users_Lastname">
+			    <column name="LastName" />
+			</index>
+			<index name="Users_UserIDSessionExpire">
+			    <column name="UserID" />
+			    <column name="SessionExpireTime" />
+			</index>
+		    </indexes>
+		</sqlentity>
+		<sqlentity name="InvalidPhoneNumber" view="vwInvalidPhoneNumber" generateviewscript="True" generatetablescript="True">
+		    <columns>
+			<column name="InvalidPhoneNumberId" sqltype="int" identity="True" required="True" />
+			<column name="PhoneNumber" sqltype="varchar" length="20" />
+		    </columns>
+		    <constraints>
+			<constraint name="PK_InvalidPhoneNumber" type="PRIMARY KEY">
+			    <column name="InvalidPhoneNumberId" />
+			</constraint>
+			<constraint name="UN_InvalidPhoneNumber" type="UNIQUE">
+			    <column name="PhoneNumber" />
+			</constraint>
+		    </constraints>
+		</sqlentity>
+	    </sqlentities>
+	</database>
+    </databases>
+</DataTierGenerator>
