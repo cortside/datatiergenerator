@@ -2,9 +2,6 @@ using System;
 using System.Collections;
 using System.Xml;
 
-using Spring2.DataTierGenerator.Generator;
-
-
 namespace Spring2.DataTierGenerator.Generator {
 
     /// <summary>
