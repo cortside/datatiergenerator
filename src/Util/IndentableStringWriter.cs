@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 
-namespace Spring2.DataTierGenerator.Core {
+namespace Spring2.DataTierGenerator.Util {
     /// <summary>
     /// Class that handles writing indented strings for Data Tier generator.
     /// </summary>
