@@ -6,12 +6,16 @@ using Spring2.DataTierGenerator.Generator;
 
 
 namespace Spring2.DataTierGenerator.Generator {
+
     /// <summary>
     /// Summary description for IParser.
     /// </summary>
     public interface IParser {
 
-	void Parse(XmlDocument doc);
+	/// <summary>
+	/// Parse config file 
+	/// </summary>
+	void Parse(String filename);
 
 	Object Configuration {
 	    get;
@@ -30,10 +34,6 @@ namespace Spring2.DataTierGenerator.Generator {
 	}
 
 	String Generator {
-	    get;
-	}
-
-	String RootDirectory {
 	    get;
 	}
 
