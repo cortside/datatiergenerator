@@ -47,13 +47,19 @@ namespace Spring2.DataTierGenerator.Core {
 	    CreateDAOListMethods(writer);
 
 	    // Append the access methods.
-	    CreateInsertMethod(writer);
+	    if (entity.SqlEntity.GenerateInsertStoredProcScript) {
+		CreateInsertMethod(writer);
+	    }
+
 	    if (entity.SqlEntity.HasUpdatableColumns()) {
 		writer.WriteLine();
 		CreateUpdateMethod(writer);
 	    }
 	    writer.WriteLine();
-	    CreateDeleteMethods(writer);
+
+	    if (entity.SqlEntity.GenerateDeleteStoredProcScript) {
+		CreateDeleteMethods(writer);
+	    }
 
 	    if (entity.SqlEntity.GenerateSelectStoredProcScript) {
 		writer.WriteLine();
