@@ -55,8 +55,7 @@ namespace Spring2.DataTierGenerator {
 	public static ArrayList ParseFromXml(Configuration options, XmlDocument doc, Hashtable sqltypes, Hashtable types) {
 	    ArrayList entities = new ArrayList();
 	    XmlNodeList elements = doc.DocumentElement.GetElementsByTagName("entity");
-	    for (Int32 i = 0; i<elements.Count; i++) {
-		XmlNode node = elements[i];
+	    foreach (XmlNode node in elements) {
 		Entity entity = new Entity();
 		entity.Name = node.Attributes["name"].Value;
 		if (node.Attributes["sqlobject"] != null) {
