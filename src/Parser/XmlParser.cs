@@ -1,8 +1,6 @@
 using System;
 
 using System.Collections;
-using System.Data;
-using System.Data.SqlClient;
 using System.IO;
 using System.Text;
 using System.Xml;
@@ -21,7 +19,6 @@ namespace Spring2.DataTierGenerator.Parser {
     public class XmlParser : ParserSkeleton, IParser {
 
 	private XmlDocument doc = null;
-	private SqlConnection connection = null;
 
 	public XmlParser(String filename) {
 	    FileInfo file = new FileInfo(filename);
@@ -58,29 +55,37 @@ namespace Spring2.DataTierGenerator.Parser {
 		options.RootDirectory += "\\";
 	    }
 
+	    parser = Element.Parser.ParseFromXml(options, doc, vd);
 	    generator = Element.Generator.ParseFromXml(options, doc, vd);
-
 	    sqltypes = SqlType.ParseFromXml(doc, vd);
 	    types = Spring2.DataTierGenerator.Element.Type.ParseFromXml(options, doc, vd);
-	    databases = GetDatabases(doc, vd);
-	    entities = GetEntities(doc, connection, Database.GetAllSqlEntities(databases), vd);
+
 	    enumtypes = EnumType.ParseFromXml(options,doc,sqltypes,types, vd);
 	    collections = Collection.ParseFromXml(options,doc,sqltypes,types, vd);
+	    databases = Database.ParseFromXml(options, doc, sqltypes, types, vd);
+	    entities = Entity.ParseFromXml(options, doc, sqltypes, types, Database.GetAllSqlEntities(databases), vd);
 
 	    Validate(vd);
 	}
 
-	private void Validate(ParserValidationDelegate vd) {
-	    //TODO: walk through collection to make sure that cross relations are correct.
+	public XmlParser(Element.Parser parser, Configuration options, XmlDocument doc, Hashtable sqltypes, Hashtable types, ParserValidationDelegate vd) {
+	    this.options = options;
+	    this.doc = doc;
+	    this.sqltypes = sqltypes;
+	    this.types = types;
+	    enumtypes = EnumType.ParseFromXml(options,doc,sqltypes,types, vd);
+	    collections = Collection.ParseFromXml(options,doc,sqltypes,types, vd);
+	    databases = Database.ParseFromXml(options, doc, sqltypes, types, vd);
+	    entities = Entity.ParseFromXml(options, doc, sqltypes, types, Database.GetAllSqlEntities(databases), vd);
 
-	    foreach(Entity entity in entities) {
-		if (entity.SqlEntity.Name.Length>0 && !entity.SqlEntity.HasUpdatableColumns()) {
-		    vd(ParserValidationArgs.NewWarning("WARNING: entity " + entity.Name + " does not have any editable fields and does not have x specified.  No update stored procedures or update DAO methods will be generated."));
-		}
-	    }
+	    Validate(vd);
 	}
 
 
+	/// <summary>
+	/// validates xml file against embedded schema file
+	/// </summary>
+	/// <param name="filename"></param>
 	private void ValidateSchema(String filename) {
 	    try {
 		ResourceManager rm = new ResourceManager();
@@ -112,7 +117,11 @@ namespace Spring2.DataTierGenerator.Parser {
 	    }
 	}
 
-	//handle XML validation errors
+	/// <summary>
+	/// handle XML validation errors
+	/// </summary>
+	/// <param name="sender"></param>
+	/// <param name="args"></param>
 	internal void SchemaValidationEventHandler(object sender, ValidationEventArgs args) {
 	    if (args.Severity.Equals(XmlSeverityType.Error)) {
 		isValid = false;
@@ -121,61 +130,6 @@ namespace Spring2.DataTierGenerator.Parser {
 		errors.Add(ParserValidationArgs.NewWarning(args.Message));
 	    }
 	}
-
-	internal void ParserValidationEventHandler(ParserValidationArgs args) {
-	    if (args.Severity.Equals(ParserValidationSeverity.ERROR)) {
-		isValid = false;
-	    }
-	    errors.Add(args);
-	}
-
-	private ArrayList GetEntities(XmlDocument doc, SqlConnection connection, ArrayList sqlentities, ParserValidationDelegate vd) {
-	    ArrayList entities = new ArrayList();
-
-	    if (doc != null) {
-		entities.AddRange(Entity.ParseFromXml(options, doc, sqltypes, types, sqlentities, vd));
-
-//		if (options.AutoDiscoverProperties) {
-//		    foreach (Entity entity in entities) {
-//			entity.Fields = GetFields(entity, connection, doc, sqltypes, types);
-//		    }
-//		}
-	    }
-
-//	    if (options.AutoDiscoverEntities) {
-//		// Get a list of the entities in the database
-//		DataTable objDataTable = new DataTable();
-//		SqlDataAdapter objDataAdapter = new SqlDataAdapter("SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_CATALOG = '" + connection.Database + "'", connection);
-//		objDataAdapter.Fill(objDataTable);
-//		foreach (DataRow row in objDataTable.Rows) {
-//		    if (row["TABLE_TYPE"].ToString() == "BASE TABLE" && row["TABLE_NAME"].ToString() != "dtproperties") {
-//			if (Entity.FindEntityBySqlEntity(entities, row["TABLE_NAME"].ToString()) == null) {
-//			    Entity entity = new Entity();
-//			    entity.Name = row["TABLE_NAME"].ToString();
-//			    entity.SqlEntity.Name = row["TABLE_NAME"].ToString();
-//			    if (options.UseViews) {
-//				entity.SqlEntity.View = "vw" + entity.SqlEntity.Name;
-//			    }
-//			    entity.Fields = GetFields(entity, connection, doc, sqltypes, types);
-//			    entities.Add(entity);
-//			}
-//		    }
-//		}	    
-//	    }
-
-	    return entities;
-	}
-
-
-	private ArrayList GetDatabases(XmlDocument doc, ParserValidationDelegate vd) {
-	    ArrayList list = new ArrayList();
-
-	    if (doc != null) {
-		list.AddRange(Database.ParseFromXml(options, doc, sqltypes, types, vd));
-	    }
-	    return list;
-	}
-
 
     }
 }
