@@ -1,0 +1,49 @@
+#*
+
+        sql_delete.vm - default sql insert stored proc template (replaces SqlGenerator)
+
+*###
+#if($element.GenerateInsertStoredProcScript)
+#set($at = '@')
+if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[sp${element.Name}_Insert]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+drop procedure [dbo].[sp${element.Name}_Insert]
+GO
+
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE sp${element.Name}_Insert
+#set($cols = 0)
+#set($id = $element.GetIdentityColumn())
+#foreach($column in $element.Columns)#if(!$column.ViewColumn && (!$column.Identity || $doBoth))#set($cols = $cols + 1)#if($cols>1),
+#end	@${column.Name}	${column.Declaration}#end
+#end
+
+
+AS
+
+## this is to set the columns set to null with their default if they have one
+## #foreach($column in $element.Columns)#if($column.Default.Length > 0)
+##     if @$column.Name is null set @$column.Name=$column.Default
+## #end#end
+INSERT INTO $sql.Escape($element.Name) (
+#set($cols = 0)
+#foreach($column in $element.Columns)#if(!$column.Identity && !$column.ViewColumn)#set($cols = $cols + 1)#if($cols>1),
+#end	$sql.Escape(${column.Name})#end#end)
+#set($cols = 0)
+VALUES (
+#foreach($column in $element.Columns)#if(!$column.Identity && !$column.ViewColumn)#set($cols = $cols + 1)#if($cols>1),
+#end	${at}${column.Name}#end#end)
+
+
+if @@rowcount <> 1 or @@error!=0
+    BEGIN
+        RAISERROR  20000 'sp${element.Name}_Insert: Unable to insert new row into $element.Name table '
+        RETURN(-1)
+    END
+
+return @@IDENTITY
+GO
+
+#end

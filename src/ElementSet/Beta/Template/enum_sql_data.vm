@@ -1,0 +1,8 @@
+#foreach ($value in $element.Values)
+#if (!$value.Description.Equals(""))
+-- $value.Description
+#end
+if not exists (select * from $table where $codeColumn = #if(!$element.IntegerBased)'#end$value.Code#if(!$element.IntegerBased)'#end)
+	insert into $table ($codeColumn, $nameColumn#if($descriptionColumn), $descriptionColumn#end) values (#if(!$element.IntegerBased)'#end$value.Code#if(!$element.IntegerBased)'#end,'$value.Name'#if($descriptionColumn), $sql.Quote($value.Description)#end)
+GO
+#end

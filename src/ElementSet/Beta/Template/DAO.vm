@@ -1,0 +1,241 @@
+##
+##      dao.vm - default dao template for C#
+##
+##      NOTE: this template may have some screwy things in it to EXACTLY match the ouput of the 
+##      DaoGenerator class.
+##
+#if($element.DataMaps.Count > 0)
+#nameSpaces($options $element true)
+
+namespace $options.GetDAONameSpace($element.Name) {
+    public class $options.GetDAOClassName($element.Name) : $options.DaoBaseClass {
+
+	private static readonly String VIEW = "$element.ViewName";
+	private static readonly String CONNECTION_STRING_KEY = "$element.ConnectionStringKey";
+##if($element.SqlEntity.GenerateInsertStoredProcScript || $element.SqlEntity.GenerateUpdateStoredProcScript || $element.SqlEntity.GenerateDeleteStoredProcScript)
+	private static readonly Int32 COMMAND_TIMEOUT = $element.CommandTimeout;
+##end
+
+	/// <summary>
+	/// Returns a list of all $element.Name rows.
+	/// </summary>
+	/// <returns>List of $options.GetDOClassName($element.Name) objects.</returns>
+	/// <exception cref="Spring2.Core.DAO.FinderException">Thrown when no rows are found.</exception>
+	public static IList GetList() { 
+	    return GetList(null, null);
+	}
+
+	/// <summary>
+	/// Returns a filtered list of $element.Name rows.
+	/// </summary>
+	/// <param name="whereClause">Filtering criteria.</param>
+	/// <returns>List of $options.GetDOClassName($element.Name) objects.</returns>
+	/// <exception cref="Spring2.Core.DAO.FinderException">Thrown when no rows are found matching the where criteria.</exception>
+	public static IList GetList(IWhere whereClause) { 
+	    return GetList(whereClause, null);
+	}
+
+	/// <summary>
+	/// Returns an ordered list of $element.Name rows.  All rows in the database are returned
+	/// </summary>
+	/// <param name="orderByClause">Ordering criteria.</param>
+	/// <returns>List of $options.GetDOClassName($element.Name) objects.</returns>
+	/// <exception cref="Spring2.Core.DAO.FinderException">Thrown when no rows are found.</exception>
+	public static IList GetList(IOrderBy orderByClause) { 
+	    return GetList(null, orderByClause);
+	}
+
+	/// <summary>
+	/// Returns an ordered and filtered list of $element.Name rows.
+	/// </summary>
+	/// <param name="whereClause">Filtering criteria.</param>
+	/// <param name="orderByClause">Ordering criteria.</param>
+	/// <returns>List of $options.GetDOClassName($element.Name) objects.</returns>
+	/// <exception cref="Spring2.Core.DAO.FinderException">Thrown when no rows are found matching the where criteria.</exception>
+	public static IList GetList(IWhere whereClause, IOrderBy orderByClause) { 
+	    SqlDataReader dataReader = GetListReader(CONNECTION_STRING_KEY, VIEW, whereClause, orderByClause); 
+
+	    ArrayList list = new ArrayList(); 
+	    while (dataReader.Read()) { 
+		list.Add(GetDataObjectFromReader(dataReader)); 
+	    }
+	    dataReader.Close();
+	    return list; 
+	}
+
+	/// <summary>
+	/// Finds a $element.Name entity using it's primary key.
+	/// </summary>
+#parameterComments(true $element.GetPrimaryKeyProperties() "A key field.")
+	/// <returns>A $options.GetDOClassName($element.Name) object.</returns>
+	/// <exception cref="Spring2.Core.DAO.FinderException">Thrown when no entity exists witht he specified primary key..</exception>
+	public static $options.GetDOClassName($element.Name) Load(#parameterList(true $element.GetPrimaryKeyProperties())) {
+	    WhereClause w = new WhereClause();
+#foreach ($columnMap in $element.GetPrimaryKeyColumnMaps())
+	    w.And("$columnMap.Column.Name", $options.GetSqlConversion($columnMap.Property));
+#end
+	    SqlDataReader dataReader = GetListReader(CONNECTION_STRING_KEY, VIEW, w, null);
+
+	    if (!dataReader.Read()) {
+		dataReader.Close();
+		throw new FinderException("Load found no rows for $element.Name.");
+	    }
+	    $options.GetDOClassName($element.Name) data = GetDataObjectFromReader(dataReader);
+	    dataReader.Close();
+	    return data;
+	}
+
+	/// <summary>
+	/// Builds a data object from the current row in a data reader..
+	/// </summary>
+	/// <param name="dataReader">Container for database row.</param>
+	/// <returns>Data object built from current row.</returns>
+	private static $options.GetDOClassName($element.Name) GetDataObjectFromReader(SqlDataReader dataReader) {
+	    $options.GetDOClassName($element.Name) data = new $options.GetDOClassName($element.Name)();
+#foreach($dataMap in $element.DataMaps)
+#foreach($columnMap in $dataMap.ColumnMaps)
+#if($columnMap.Column.SqlType.Name.Length>0)
+	    if (dataReader.IsDBNull(dataReader.GetOrdinal("$columnMap.Column.Name"))) { 
+		data.${columnMap.Name} = ${columnMap.Property.Type.NullInstanceFormat};
+	    } else {
+		data.$columnMap.Name = $options.GetCReaderString($columnMap);
+	    }
+#end
+#end
+#end
+
+	    return data;
+	}
+#foreach($dataMap in $element.DataMaps)
+##if($dataMap.SqlEntity.GenerateInsertStoredProcScript)
+
+	/// <summary>
+	/// Inserts a record into the $dataMap.SqlEntity.Name table.
+	/// </summary>
+	/// <param name=""></param>
+#set($s="void")
+#if($element.GetIdentityProperty())
+    #set($s=${element.GetIdentityProperty().Type.Name})
+#end
+	public static $s Insert($options.GetDOClassName($element.Name) data) {
+	    // Create and execute the command
+#set($s="Insert")
+	    SqlCommand cmd = GetSqlCommand(CONNECTION_STRING_KEY, "$options.GetProcName($dataMap.SqlEntity.Name, $s)", CommandType.StoredProcedure, COMMAND_TIMEOUT);
+
+#if($element.GetIdentityProperty())
+	    SqlParameter rv = cmd.Parameters.Add("RETURN_VALUE", SqlDbType.Int);
+	    rv.Direction = ParameterDirection.ReturnValue;
+#end
+	    //Create the parameters and append them to the command object
+#foreach($columnMap in $dataMap.ColumnMaps)
+#if(!$columnMap.Column.ViewColumn && $columnMap.Column.Name.Length>0 && !$columnMap.Column.Identity && !$columnMap.Column.RowGuidCol)	    $columnMap.CreateSqlParameter(false, true)#end
+#end
+
+	    // Execute the query
+	    cmd.ExecuteNonQuery();
+	    cmd.Connection.Close();
+#if($element.GetIdentityProperty())
+	    // Set the output paramter value(s)
+	    return $options.GetProcedureReturnString($element.GetIdentityProperty());
+#end
+	}
+##end
+#end
+#foreach($dataMap in $element.DataMaps)
+##if($dataMap.SqlEntity.HasUpdatableColumns() && $dataMap.SqlEntity.GenerateUpdateStoredProcScript)
+
+	/// <summary>
+	/// Updates a record in the $dataMap.SqlEntity.Name table.
+	/// </summary>
+	/// <param name=""></param>
+	public static void Update($options.GetDOClassName($element.Name) data) {
+	    // Create and execute the command
+#set($s="Update")
+	    SqlCommand cmd = GetSqlCommand(CONNECTION_STRING_KEY, "$options.GetProcName($dataMap.SqlEntity.Name, $s)", CommandType.StoredProcedure, COMMAND_TIMEOUT);
+
+	    //Create the parameters and append them to the command object
+#foreach($columnMap in $dataMap.ColumnMaps)
+#if(!$columnMap.Column.ViewColumn && $columnMap.Column.Name.Length>0)	    $columnMap.CreateSqlParameter(false, true)#end
+#end
+
+	    // Execute the query
+	    cmd.ExecuteNonQuery();
+	    cmd.Connection.Close();
+	}
+##end
+#end
+#foreach($dataMap in $element.DataMaps)
+##if($dataMap.SqlEntity.GenerateDeleteStoredProcScript)
+
+	/// <summary>
+	/// Deletes a record from the $dataMap.SqlEntity.Name table by#if($element.GetPrimaryKeyColumnMaps().Count == 1 && $element.GetPrimaryKeyColumnMaps().get_Item(0).Column.Identity) $element.GetIdentityProperty().Name#else a composite primary key#end.
+	/// </summary>
+	/// <param name=""></param>
+	public static void Delete(#foreach( $property in $element.GetPrimaryKeyProperties() )#if($velocityCount>1), #end$property.CreateMethodParameter()#end) {
+	    // Create and execute the command
+	    SqlCommand cmd = GetSqlCommand(CONNECTION_STRING_KEY, "$options.GetProcName($dataMap.SqlEntity.Name, "Delete")", CommandType.StoredProcedure, COMMAND_TIMEOUT);
+
+	    // Create and append the parameters
+#foreach( $columnMap in $element.GetPrimaryKeyColumnMaps() )
+	    $columnMap.CreateSqlParameter(false, false)#end
+#if($element.GetPrimaryKeyColumnMaps().Count == 1 && $element.GetPrimaryKeyColumnMaps().get_Item(0).Column.Identity)
+
+#end
+	    // Execute the query and return the result
+	    cmd.ExecuteNonQuery();
+	    cmd.Connection.Close();
+	}
+##end
+#end
+#if($element.SqlEntity.GenerateSelectStoredProcScript)
+##Not implemented
+#end
+
+#if($element.Finders.Count > 0)
+
+#end
+#foreach($finder in $element.Finders)
+	/// <summary>
+#if($finder.Unique)
+	/// Returns an object which matches the values for the fields specified.
+#else
+	/// Returns a list of objects which match the values for the fields specified.
+#end
+	/// </summary>
+#parameterComments(true $finder.Properties "A field value to be matched.")
+#if($finder.Unique)
+	/// <returns>The object found.</returns>
+#else
+	/// <returns>The list of $options.GetDAOClassName($element.Name) objects found.</returns>
+#end
+	/// <exception cref="Spring2.Core.DAO.FinderException">Thrown when no rows are found.</exception>
+#if($finder.Unique)
+#set($s=$options.GetDOClassName($element.Name))
+#else
+#set($s="IList")
+#end
+	public static $s ${finder.Name}(#parameterList(true $finder.Fields)) {
+		WhereClause filter = new WhereClause();
+		OrderByClause sort = new OrderByClause("$finder.Sort");
+#foreach($field in $finder.Fields)
+		filter.And("$field.Column.Name", $options.GetSqlConversion($field));
+#end
+#if($finder.Unique)
+		SqlDataReader dataReader = GetListReader(CONNECTION_STRING_KEY, VIEW, filter, sort);
+
+		if (!dataReader.Read()) {
+		    dataReader.Close();
+		    throw new FinderException("$options.GetDOClassName($element.Name).$finder.Name found no rows.");
+		}
+		$options.GetDOClassName($element.Name) data = GetDataObjectFromReader(dataReader);
+		dataReader.Close();
+		return data;
+#else
+
+		return GetList(filter, sort);
+#end
+	}
+#end
+    }
+}
+#end

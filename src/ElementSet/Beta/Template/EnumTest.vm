@@ -1,0 +1,29 @@
+using System;
+using NUnit.Framework;
+
+using Seamless.Manhattan.Types;
+
+namespace $options.GetTestNameSpace($element.Name) {
+
+    public class ${element.Name}Test : TestCase {
+
+	public ${element.Name}Test(String name) : base(name) { }
+
+	protected override void SetUp() {
+	}
+
+	public void Test_${element.Name}() {
+	    foreach(${element.Name} o in ${element.Name}.Options) {
+#if ( $element.IntegerBased )
+		Assert("${element.Name} could not be retrieved by ToInt32() value)", o.Equals(${element.Name}.GetInstance(o.ToInt32())));
+#end
+		Assert("${element.Name} could not be retrieved by Code)", o.Equals(${element.Name}.GetInstance(o.Code)));
+	    }
+	    Assert("Function should have been invalid", !${element.Name}.GetInstance("xxx").IsValid);
+#if ( $element.IntegerBased )
+	    Assert("Function should have been invalid", !${element.Name}.GetInstance(-69).IsValid);
+#end
+	}
+
+    }
+}

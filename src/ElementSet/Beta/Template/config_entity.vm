@@ -1,0 +1,22 @@
+#*
+	
+	template to create a DTG config file from an existing database
+
+	The context contains the following:
+		$dtgversion - String
+		$options - Spring2.DTG.Configuration
+		$element - one of the DTG.Element objects: SqlEntity, Entity, Enum, Collection
+		$elements - IList of $element typed objects
+	
+*###
+	<entity name="$element.Name" sqlentity="$element.SqlEntity.Name">
+#if ($element.Fields.Count > 0)
+	    <properties>
+#end
+#foreach ($property in $element.Fields)
+		<property name="$property.Name" column="#if ($property.Name.Equals($property.Column.Name))*#else$property.Column.Name#end" type="$property.Type.Name" />
+#end
+#if ($element.Fields.Count > 0)
+	    </properties>
+#end
+	</entity>

@@ -1,0 +1,61 @@
+#*
+	
+	template to create a DTG config file from an existing database
+
+	The context contains the following:
+		$dtgversion - String
+		$options - Spring2.DTG.Configuration
+		$element - one of the DTG.Element objects: SqlEntity, Entity, Enum, Collection
+		$elements - IList of $element typed objects
+	
+*###
+	<sqlentity name="$element.Name" view="$element.View">
+#if ($element.Columns.Count > 0)
+	    <columns>
+#end
+#foreach ($column in $element.Columns)
+		<column name="$column.Name" sqltype="$column.SqlType.Name" #if ($column.SqlType.Length > 0)length="$column.SqlType.Length" #end
+#if ($column.SqlType.Precision > 0)precision="$column.SqlType.Precision" #end
+#if ($column.SqlType.Scale > 0)scale="$column.SqlType.Scale" #end
+#if ($column.Identity)identity="True" increment="$column.Increment" seed="$column.Seed" #end
+#if ($column.Required)required="True" #end
+#if ($column.ViewColumn)viewcolumn="True" #end
+#if ($column.Default.Length > 0)default="$column.Default" #end
+/>
+#end
+#if ($element.Columns.Count > 0)
+	    </columns>
+#end
+#if ($element.Constraints.Count > 0)
+	    <constraints>
+#end
+#foreach ($constraint in $element.Constraints)
+		<constraint name="$constraint.Name" type="$constraint.Type" #if ($constraint.CheckClause.Length > 0)checkclause="$constraint.CheckClause" #end
+#if ($constraint.ForeignEntity.Length > 0)foreignentity="$constraint.ForeignEntity" #end
+>
+#foreach ($column in $constraint.Columns)
+		    <column name="$column.Name" #if ($column.ForeignColumn.Length > 0)foreigncolumn="$column.ForeignColumn" #end/>
+#end
+		</constraint>
+#end
+#if ($element.Constraints.Count > 0)
+	    </constraints>
+#end
+#if ($element.Indexes.Count > 0)
+	    <indexes>
+#end
+#foreach ($index in $element.Indexes)
+		<index name="$index.Name" #if ($index.Unique)unique="True" #end
+#if ($index.Clustered)clustered="True" #end
+>
+#foreach ($column in $index.Columns)
+		    <column name="$column.Name" #if ($index.SortDirection.Length>0)sortdirection="$column.SortDirection" #end
+#if ($index.Expression.Length>0)expression="$column.Expression" #end
+/>
+#end
+		</index>
+#end
+#if ($element.Indexes.Count > 0)
+	    </indexes>
+#end
+	</sqlentity>

@@ -1,0 +1,20 @@
+#*
+	
+	template to create a DTG config file from an existing database
+
+	The context contains the following:
+		$dtgversion - String
+		$options - Spring2.DTG.Configuration
+		$element - one of the DTG.Element objects: SqlEntity, Entity, Enum, Collection
+		$elements - IList of $element typed objects
+	
+*###
+    <entities>
+## note that this is overriding $element in the context
+#foreach ($element in $elements)
+#if ($velocityCount>1)
+
+#end
+#parse("template\\config_entity.vm")
+#end    
+    </entities>

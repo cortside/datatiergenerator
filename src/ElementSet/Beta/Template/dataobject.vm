@@ -1,0 +1,42 @@
+#*
+
+    dataobject.vm - default data object templates (replaces DataObjectGenerator class)
+
+*###
+#nameSpaces($options $element false)
+namespace $options.GetDONameSpace($element.Name) {
+    public class $options.GetDOClassName($element.Name) #if($options.DataObjectBaseClass.Length > 0): $options.DataObjectBaseClass #end{
+
+#foreach($property in $element.Properties)
+#if($property.Name.IndexOf('.')<0)
+#if($property.Type)
+	private $property.ConcreteType.Name $property.GetFieldFormat() = $property.ConcreteType.NewInstanceFormat;
+#else
+	private ${property.EntityType.Name}Data $property.GetFieldFormat() = new ${property.EntityType.Name}Data();
+#end
+#end
+#end
+
+#foreach($propertyName in $element.GetPropertyNames($options, $elements))
+	public static readonly String $propertyName.FieldName = $propertyName.FieldValue;
+#end
+#foreach($property in $element.Properties)
+
+#if($property.Name.IndexOf('.')<0)
+#if ($property.Description.Length>0)
+	/// <summary>
+	/// $property.Description
+	/// </summary>
+#end
+#if ($property.Type)
+	public $property.Type.Name $property.GetMethodFormat() {
+#else
+	public ${property.EntityType.Name}Data $property.GetMethodFormat() {
+#end
+	    get { return this.$property.GetFieldFormat(); }
+	    set { this.$property.GetFieldFormat() = value; }
+	}
+#end
+#end
+    }
+}

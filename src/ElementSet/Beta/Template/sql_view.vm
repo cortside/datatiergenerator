@@ -1,0 +1,34 @@
+#*
+
+        sql_view.vm - default sql view template (replaces SqlGenerator.CreateView)
+
+*###
+#if($element.GenerateSqlViewScripts)
+if exists (select * from sysobjects where id = object_id(N'[vw$element.Name]') and OBJECTPROPERTY(id, N'IsView') = 1)
+drop view [vw$element.Name]
+GO
+
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE VIEW vw$element.Name
+
+AS
+
+SELECT
+#foreach($column in $element.Columns)
+	#if($column.ForeignSqlEntity.Length>0)$sql.Escape(${column.ForeignSqlEntity})#else$sql.Escape($element.Name)#end.#if($column.Prefix.Length==0)$sql.Escape($column.Name)#else$column.Name.Substring($column.Prefix.Length) $column.Name#end#if($velocityCount!=$element.Columns.Count),
+#end
+#end
+
+FROM
+	$sql.Escape($element.Name)
+#if ($element.Views.Count==1)
+#foreach($constraint in $element.Views.get_Item(0).Constraints)
+LEFT JOIN $sql.Escape($constraint.ForeignEntity) on #foreach($column in $constraint.Columns)#if ($velocityCount >1) and #end${element.Name}.$column.Name = $sql.Escape(${constraint.ForeignEntity}).$column.ForeignColumn#end
+
+#end
+#end
+GO
+#end
