@@ -91,7 +91,7 @@ namespace Spring2.DataTierGenerator {
 	    if (useDataObject) {
 		sb.Append(String.Format(type.ConvertToSqlTypeFormat, "data", "data."+GetMethodFormat(), "", "", GetMethodFormat()));
 	    } else {
-		sb.Append(String.Format(type.ConvertToSqlTypeFormat, "", GetMethodFormat(), "", "", GetMethodFormat()));
+		sb.Append(String.Format(type.ConvertToSqlTypeFormat, "", GetFieldFormat(), "", "", GetFieldFormat()));
 	    }
 	    sb.Append("));\n");
 	    return sb.ToString();
@@ -110,7 +110,7 @@ namespace Spring2.DataTierGenerator {
 	/// </summary>
 	/// <returns>String containing parameter information of the specified field for a method call.</returns>
 	public string CreateMethodParameter() {
-	    return type.Name + " " + name.Substring(0, 1).ToUpper() + name.Substring(1);
+	    return type.Name + " " + name.Substring(0, 1).ToLower() + name.Substring(1);
 	}
 
 	/// <summary>
