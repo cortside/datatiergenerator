@@ -1,4 +1,12 @@
-how to support read only properties
+- how to support read only properties
+- This statement would not alter a table that had the column as a real
+	alter table OrdPmt alter column pmtamt float(8) not null
+- treat warnings as errors
+- c# writer does not create folder
+- add ability to style output after it is generated to handle brace and beginning of line white space styles
+- in table script - check for existance of primary key with different name and drop if found
+- in table script - check for columns in primary key of same name and if there are more or less or different columns, drop
+- in table script - drop indexes before altering columns so that indexed columns can be altered
 
 Generator Todo:
 ---------------
@@ -34,6 +42,8 @@ Generator Todo:
     - check for duplicate defined properties/columns
     - modify schema to ensure that required elements are set (i.e. constraint[@type]) or gracefully deal when they are not
 
+
+
 Template Todo:
 --------------
     - data objects could/should support ICloneable with MemberwiseClone().
@@ -44,6 +54,9 @@ Template Todo:
     - support for accessing other properties from the task (i.e. ability to get to SqlEntity.ViewName so that views scripts can have matching file names)
     - look for generated code that rethrows execptions incorrectly (throw ex; vs throw;)
     - end user documentation based on information descibed in config files
+    - and check constrainsts based on enums (Update_priv char(1) CHECK ([Update_priv] in ('N','Y')) DEFAULT 'N' NOT NULL)
+
+
 
 Completed:
     - preservation of custom regions (pull code from regions and insert into generated source before overwritting)
