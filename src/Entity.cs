@@ -58,7 +58,7 @@ namespace Spring2.DataTierGenerator {
 		entity.Name = node.Attributes["name"].Value;
 		if (node.Attributes["sqlentity"] != null) {
 		    SqlEntity sqlentity = SqlEntity.FindByName(sqlentities, node.Attributes["sqlentity"].Value);
-		    if (sqlentities!=null) {
+		    if (sqlentity!=null) {
 			entity.SqlEntity = (SqlEntity)sqlentity.Clone();
 		    } else {
 			entity.SqlEntity.Name = node.Attributes["sqlentity"].Value;
