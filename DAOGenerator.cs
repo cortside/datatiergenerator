@@ -14,10 +14,8 @@ namespace Spring2.DataTierGenerator {
 	/// Contructor for the Generator class.
 	/// </summary>
 	/// <param name="strConnectionString">Connecion string to a SQL Server database.</param>
-	public DAOGenerator(Configuration options, Entity entity) : base(options, entity) {
-	}
+	public DAOGenerator(Configuration options, Entity entity) : base(options, entity) {}
 		
-
 	/// <summary>
 	/// Creates a C# data access class for all of the table's stored procedures.
 	/// </summary>
@@ -29,9 +27,10 @@ namespace Spring2.DataTierGenerator {
 
 	    // Create the header for the class.
 	    sb.Append(GetUsingNamespaces(true));
-	    sb.Append("\n");
+	    sb.Append(Environment.NewLine);
 	    sb.Append("namespace " + options.GetDAONameSpace(entity.Name) + " {\n");
 	    sb.Append("    public class " + options.GetDAOClassName(entity.Name));
+
 	    if (options.DataObjectBaseClass.Length>0) {
 		sb.Append(" : ").Append(options.DaoBaseClass);
 	    }
@@ -64,15 +63,8 @@ namespace Spring2.DataTierGenerator {
 	    sb.Append("    }\n");
 	    sb.Append("}\n");
 
-	    // Create the output stream
-	    String fileName = options.RootDirectory + options.DaoClassDirectory + "\\" + options.GetDAOClassName(entity.Name) + ".cs";
-	    if (File.Exists(fileName)) {
-		File.Delete(fileName);
-	    }
-
-	    StreamWriter writer = new StreamWriter(fileName);
-	    writer.Write(sb.ToString());
-	    writer.Close();
+	    FileInfo file = new FileInfo(options.RootDirectory + options.DaoClassDirectory + "\\" + options.GetDAOClassName(entity.Name) + ".cs");
+	    WriteToFile(file, sb.ToString(), false);
 	}
 
 		
