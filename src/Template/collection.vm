@@ -6,7 +6,7 @@ namespace $options.GetCollectionNameSpace($element.Name) {
     /// $element.Type generic collection
     /// </summary>
     public class $element.Name : System.Collections.CollectionBase {
-    
+
 	public static readonly $element.Name UNSET = new ${element.Name}(true);
 	public static readonly $element.Name DEFAULT = new ${element.Name}(true);
 

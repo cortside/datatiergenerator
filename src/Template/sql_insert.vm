@@ -46,8 +46,4 @@ if @@rowcount <> 1 or @@error!=0
 return @@IDENTITY
 GO
 
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-GO
-
 #end

@@ -12,6 +12,10 @@ $$elementDescription).Append("
 #end
 ## initial table script - if table does not already exist
 if not exists (select * from dbo.sysobjects where id = object_id(N'[$element.Name]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
+GO
+
 CREATE TABLE $element.EscapedName (
 #foreach ($column in $element.Columns)
 #if (!$column.ViewColumn)
@@ -46,14 +50,13 @@ GO
 
 #end
 #end
-
 ## create constraints, checking for existance
 #foreach ($constraint in $element.Constraints)
 #if (!$constraint.Type.ToUpper().Equals("CHECK"))
 if not exists (select * from dbo.sysobjects where id = object_id(N'$constraint.EscapedName') and OBJECTPROPERTY(id, N'#if ($constraint.Type.ToUpper().Equals("PRIMARY KEY"))IsPrimaryKey#elseif($constraint.Type.ToUpper().Equals("FOREIGN KEY"))IsForeignKey#elseif($constraint.Type.ToUpper().Equals("UNIQUE"))IsUniqueCnst#end') = 1)
 ALTER TABLE $element.EscapedName#if ($constraint.Type.ToUpper().Equals("PRIMARY KEY")) WITH NOCHECK#end ADD
-	CONSTRAINT $constraint.EscapedName $constraint.Type#if ($constraint.Type.ToUpper().Equals("PRIMARY KEY"))#if ($constraint.Clustered) CLUSTERED#else NONCLUSTERED#end#end
-	
+	CONSTRAINT $constraint.EscapedName $constraint.Type#if($constraint.Type.ToUpper().Equals("PRIMARY KEY"))#if($constraint.Clustered) CLUSTERED#else NONCLUSTERED#end#end
+
 	(
 #foreach ($column in $constraint.Columns)
 #if ($velocityCount>1),
@@ -71,21 +74,20 @@ ALTER TABLE $element.EscapedName#if ($constraint.Type.ToUpper().Equals("PRIMARY 
 #end
 	)
 #end
-	
 GO
 
 #end
 #end
-
 ## create indexes, checking for existance
 #foreach ($index in $element.Indexes)
 if not exists (select * from sysindexes where name='$index.Name' and id=object_id(N'[$element.Name]'))
-    CREATE#if ($index.Unique) UNIQUE#end INDEX $index.EscapedName ON $element.EscapedName (
+	CREATE#if ($index.Unique) UNIQUE#end INDEX $index.EscapedName ON $element.EscapedName
+	(
 #foreach ($column in $index.Columns)
-        $column.EscapedName#if ($column.SortDirection.Length>0) $column.SortDirection#end#if ($velocityCount!=$index.Columns.Count),#end
-        
+        	$column.EscapedName#if($column.SortDirection.Length>0)$column.SortDirection#end#if($velocityCount!=$index.Columns.Count),#end
 #end
-    )
+
+	)
 GO
 #end
 #end
