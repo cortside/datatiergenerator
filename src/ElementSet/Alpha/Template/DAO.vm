@@ -1,5 +1,6 @@
 ##
 ##      dao.vm - default dao template for C#
+##	Customized for SeamlessWeb on 1/18/2005 by Cort to use more paramaterized queries
 ##
 ##      NOTE: this template may have some screwy things in it to EXACTLY match the ouput of the 
 ##      DaoGenerator class.
@@ -199,11 +200,12 @@ namespace $options.GetDAONameSpace($element.Name) {
 	/// <returns>A $options.GetDOClassName($element.Name) object.</returns>
 	/// <exception cref="Spring2.Core.DAO.FinderException">Thrown when no entity exists witht he specified primary key..</exception>
 	public static $options.GetDOClassName($element.Name) Load(#parameterList(true $element.GetPrimaryKeyFields())) {
-	    WhereClause w = new WhereClause();
+	    String sql = "SELECT * FROM " + VIEW + " WHERE #foreach ($field in $element.GetPrimaryKeyFields())#if($velocityCount>1) AND #end$field.GetSqlAlias()=@$field.GetSqlAlias()#end";
+	    SqlCommand cmd = GetSqlCommand(CONNECTION_STRING_KEY, sql, CommandType.Text);
 #foreach ($field in $element.GetPrimaryKeyFields())
-	    w.And("[$field.GetSqlAlias()]", $options.GetSqlConversion($field));
+	    cmd.Parameters.Add(new SqlParameter("@$field.GetSqlAlias()", $options.GetSqlConversion($field)));
 #end
-	    SqlDataReader dataReader = GetListReader(CONNECTION_STRING_KEY, VIEW, w, null);
+	    SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
 
 	    if (!dataReader.Read()) {
 		dataReader.Close();
@@ -211,6 +213,31 @@ namespace $options.GetDAONameSpace($element.Name) {
 	    }
 	    $options.GetDOClassName($element.Name) data = GetDataObjectFromReader(dataReader);
 	    dataReader.Close();
+	    return data;
+	}
+
+	/// <summary>
+	/// Read through the reader and return a data object list
+	/// </summary>
+	private static $listtype GetList(SqlDataReader reader) { 
+	    $listtype list = new #if($listtype=="IList")ArrayList#else$listtype#end();
+	    while (reader.Read()) { 
+		list.Add(GetDataObjectFromReader(reader)); 
+	    }
+	    reader.Close();
+	    return list; 
+	}
+
+	/// <summary>
+	/// Read from reader and return a single data object
+	/// </summary>
+	private static $options.GetDOClassName($element.Name) GetDataObject(SqlDataReader reader) { 
+	    if (!reader.Read()) {
+		reader.Close();
+		throw new FinderException("$options.GetDOClassName($element.Name).$finder.Name found no rows.");
+	    }
+	    $options.GetDOClassName($element.Name) data = GetDataObjectFromReader(reader);
+	    reader.Close();
 	    return data;
 	}
 
@@ -376,29 +403,23 @@ namespace $options.GetDAONameSpace($element.Name) {
 #set($s=$listtype)
 #end
 	public static $s ${finder.Name}(#parameterList(true $finder.Fields)#if($finder.Limit), Int32 limit#end) {
+#if($finder.Expression == "")
+	    String sql = "SELECT#if($finder.Limit) TOP $finder.Limit#end * FROM " + VIEW + " WHERE #foreach ($field in $finder.Fields)#if($velocityCount>1) AND #end$field.GetSqlAlias()=@$field.GetPropertyName().Replace(".", "_")#end#if($finder.Sort != "") ORDER BY $finder.Sort#end";
+	    SqlCommand cmd = GetSqlCommand(CONNECTION_STRING_KEY, sql, CommandType.Text);
+#foreach ($field in $finder.Fields)
+	    cmd.Parameters.Add(new SqlParameter("@$field.GetPropertyName().Replace(".", "_")", SqlDbType.$field.GetSqlType().SqlDbType, $field.GetSqlType.Length, ParameterDirection.Input, false, 0, 0, "$field.GetPropertyName()", DataRowVersion.Proposed, $options.GetSqlConversion($field)));
+#end
+	    SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+
+#if($finder.Unique)
+	    return GetDataObject(dataReader);
+#else
+	    return GetList(dataReader);
+#end
+#else
 #if($finder.Sort != "")
 	    OrderByClause sort = new OrderByClause("$finder.Sort");
 #end
-#if($finder.Expression == "")
-	    WhereClause filter = new WhereClause();
-#foreach($field in $finder.Fields)
-	    filter.And("[$field.GetSqlExpression()]", $options.GetSqlConversion($field));
-#end
-#if($finder.Unique)
-	    SqlDataReader dataReader = GetListReader(CONNECTION_STRING_KEY, VIEW, filter, sort#if($finder.Limit), limit#end);
-
-	    if (!dataReader.Read()) {
-		dataReader.Close();
-		throw new FinderException("$options.GetDOClassName($element.Name).$finder.Name found no rows.");
-	    }
-	    $options.GetDOClassName($element.Name) data = GetDataObjectFromReader(dataReader);
-	    dataReader.Close();
-	    return data;
-#else
-
-	    return GetList(filter, sort);
-#end
-#else
 	    WhereClause filter = new WhereClause("$finder.Expression");
 	    String sql = "Select #if($finder.Limit)top " + limit.ToString() + " #end* from " + VIEW + filter.FormatSql() + sort.FormatSql();
 	    SqlCommand cmd = GetSqlCommand(CONNECTION_STRING_KEY, sql, CommandType.Text);
