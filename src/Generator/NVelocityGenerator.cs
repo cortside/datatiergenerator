@@ -35,6 +35,20 @@ namespace Spring2.DataTierGenerator.Generator {
 	
 	public void Generate(IParser parser) {
 	    Boolean hasErrors = false;
+	    try {
+		Velocity.GetTemplate("Template\\dtg_csharp_library.vm");
+	    } catch (ResourceNotFoundException) {
+		WriteToLog("ERROR: Unable to locate Template\\dtg_csharp_library.vm");
+		hasErrors = true;
+	    }
+
+	    try {
+		Velocity.GetTemplate("Template\\dtg_java_library.vm");
+	    } catch (ResourceNotFoundException) {
+		WriteToLog("ERROR: Unable to locate Template\\dtg_java_library.vm");
+		hasErrors = true;
+	    }
+		
 	    foreach(ITask task in parser.Tasks) {
 		try {
 		    Velocity.GetTemplate(task.Template);
@@ -54,8 +68,9 @@ namespace Spring2.DataTierGenerator.Generator {
 		}
 
 		foreach(ITask task in parser.Tasks) {
+		    Template template = Velocity.GetTemplate(task.Template);
 		    foreach(IElement element in task.Elements) {
-			GenerateFile(parser, element, task);
+			GenerateFile(parser, element, task, template);
 		    }
 		}
 	    } else {
@@ -67,7 +82,7 @@ namespace Spring2.DataTierGenerator.Generator {
 	}
 
 
-	private void GenerateFile(IParser parser, IElement element, ITask task) {
+	private void GenerateFile(IParser parser, IElement element, ITask task, Template template) {
 	    StringWriter writer = new StringWriter();
 
 	    VelocityContext vc = new VelocityContext();
@@ -84,9 +99,6 @@ namespace Spring2.DataTierGenerator.Generator {
 	    vc.Put("task", task);
 
 	    try {
-		Template template = Velocity.GetTemplate("Template\\dtg_csharp_library.vm");
-		template = Velocity.GetTemplate("Template\\dtg_java_library.vm");
-		template = Velocity.GetTemplate(task.Template);
 		template.Merge(vc, writer);
 
 		FileInfo file = new FileInfo(task.Directory + "\\" + task.FileNameFormat.Replace("{removewhitespace(element.Name)}", element.Name.Replace(" ", String.Empty)).Replace("{element.Name}", element.Name));
