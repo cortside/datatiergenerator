@@ -10,17 +10,49 @@ using Spring2.Core.Xml;
 
 using Spring2.DataTierGenerator;
 using Spring2.DataTierGenerator.Element;
+using Spring2.DataTierGenerator.Generator;
 
 namespace Spring2.DataTierGenerator.Parser {
 
     /// <summary>
     /// Summary description for XMLParser.
     /// </summary>
-    public class XmlParser : ParserSkeleton {
+    public class XmlParser : AbstractParser, IParser {
 
 	private XmlDocument doc = null;
 
-	public XmlParser(String filename) {
+	public TaskList Tasks {
+	    get { 
+		TaskList tasks = new TaskList();
+
+		foreach(TaskElement task in generator.Tasks) {
+		    tasks.Add(new Task(this, task));
+		}
+		return tasks;
+	    }
+	}
+
+	public Hashtable Tools {
+	    get {
+		Hashtable tools = new Hashtable();
+		foreach(ToolElement tool in generator.Tools) {
+		    try {
+			Type clazz = System.Type.GetType(tool.Class);
+			if (clazz != null) {
+			    Object o = System.Activator.CreateInstance(clazz);
+			    tools.Add(tool.Name, o);
+			} else {
+			    WriteToLog("Could not find class '" + tool.Class + "', '" + tool.Name + "' will not be added to toolbox.");
+			}
+		    } catch (Exception ex) {
+			WriteToLog("Error trying to create tool '" + tool.Name + "': " + ex.Message);
+		    }
+		}
+		return tools;
+	    }
+	}
+
+	public void Parse(String filename) {
 	    FileInfo file = new FileInfo(filename);
 	    if (!file.Exists) {
 		throw new FileNotFoundException("Could not load config file", filename);
@@ -55,7 +87,6 @@ namespace Spring2.DataTierGenerator.Parser {
 		options.RootDirectory += "\\";
 	    }
 
-	    parser = ParserElement.ParseFromXml(options, doc, vd);
 	    generator = GeneratorElement.ParseFromXml(options, doc, vd);
 	    sqltypes = SqlTypeElement.ParseFromXml(doc, vd);
 	    types = TypeElement.ParseFromXml(options, doc, vd);
@@ -68,42 +99,34 @@ namespace Spring2.DataTierGenerator.Parser {
 	    Validate(vd);
 	}
 
-	public XmlParser(ParserElement parser, Configuration options, XmlDocument doc, Hashtable sqltypes, Hashtable types, ParserValidationDelegate vd) {
-	    this.options = options;
-	    this.doc = doc;
-	    this.sqltypes = sqltypes;
-	    this.types = types;
-	    enumtypes = EnumElement.ParseFromXml(options,doc,sqltypes,types, vd);
-	    databases = DatabaseElement.ParseFromXml(options, doc, sqltypes, types, vd);
-	    entities = EntityElement.ParseFromXml(options, doc, sqltypes, types, DatabaseElement.GetAllSqlEntities(databases), vd);
-	    collections = CollectionElement.ParseFromXml(options,doc,sqltypes,types, vd, (ArrayList)entities);
-
-	    Validate(vd);
-	}
-
-
 	/// <summary>
 	/// validates xml file against embedded schema file
 	/// </summary>
 	/// <param name="filename"></param>
 	private void ValidateSchema(String filename) {
 	    try {
-		ResourceManager rm = new ResourceManager();
 		ValidationEventHandler veh = new ValidationEventHandler(SchemaValidationEventHandler);
-		XmlSchema xsd = XmlSchema.Read(rm.ConfigSchema, veh);
+		System.IO.Stream s = this.GetType().Assembly.GetManifestResourceStream("config.xsd");
+		if (s == null) {
+		    isValid=false;
+		    WriteToLog(ParserValidationArgs.NewError("unable to locate config.xsd as assembly resource").ToString());
+		} else {
+		    XmlSchema xsd = XmlSchema.Read(s, veh);
+		    s.Close();
 
-		XmlTextReader xml = XIncludeReader.GetXmlTextReader(filename);
-		XmlValidatingReader vr = new XmlValidatingReader(xml);
-		vr.Schemas.Add(xsd);
-		vr.ValidationType = ValidationType.Schema;
+		    XmlTextReader xml = XIncludeReader.GetXmlTextReader(filename);
+		    XmlValidatingReader vr = new XmlValidatingReader(xml);
+		    vr.Schemas.Add(xsd);
+		    vr.ValidationType = ValidationType.Schema;
 
-		// and validation errors events go to...
-		vr.ValidationEventHandler += veh;
+		    // and validation errors events go to...
+		    vr.ValidationEventHandler += veh;
 				
-		// wait until the read is over, its occuring in a different thread - kinda like 
-		// when your walking to get a cup of coffee and your mind is in Hawaii
-		while (vr.Read());
-		vr.Close();
+		    // wait until the read is over, its occuring in a different thread - kinda like 
+		    // when your walking to get a cup of coffee and your mind is in Hawaii
+		    while (vr.Read());
+		    vr.Close();
+		}
 	    } catch(UnauthorizedAccessException ex) {
 		//dont have access permission
 		isValid=false;
