@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Specialized;
 using System.Text;
 using System.Xml;
 
@@ -325,6 +326,19 @@ namespace Spring2.DataTierGenerator.Element {
 		entity.comparers = ComparerElement.ParseFromXml(node, entities, entity, sqltypes, types, vd);
 		entities.Add(entity);
 	    }
+
+	    StringCollection names = new StringCollection();
+	    foreach (EntityElement entity in entities) 
+	    {
+		if (names.Contains(entity.Name)) 
+		{
+		    vd(new ParserValidationArgs(ParserValidationSeverity.ERROR, "duplicate entity definition for " + entity.Name));	    	    	
+		} 
+		else 
+		{
+		    names.Add(entity.Name);
+		}
+	    }   
 	    return entities;
 	}
 

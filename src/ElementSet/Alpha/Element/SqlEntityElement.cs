@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Specialized;
 using System.Text;
 using System.Xml;
 
@@ -197,6 +198,15 @@ namespace Spring2.DataTierGenerator.Element {
 		    sqlentities.Add(sqlentity);
 		}
 	    }
+
+	    StringCollection names = new StringCollection();
+	    foreach (SqlEntityElement sqlentity in sqlentities) {
+	    	if (names.Contains(sqlentity.Name)) {
+		    vd(new ParserValidationArgs(ParserValidationSeverity.ERROR, "duplicate sqlentity definition for " + sqlentity.Name));	    	    	
+	    	} else {
+	    	    names.Add(sqlentity.Name);
+	    	}
+ 	    }   
 	    return sqlentities;
 	}
 
