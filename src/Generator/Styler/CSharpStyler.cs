@@ -328,9 +328,24 @@ namespace Spring2.DataTierGenerator.Generator.Styler {
 			filebuffer[i] = "} " + filebuffer[i+1].Trim();
 			filebuffer.RemoveAt(i+1);
 		    }
+
+		    // move closing brace to new line if not a single line property set/get
+		    if (!IsComment(filebuffer[i]) && EndWithCloseBrace(filebuffer[i]) && filebuffer[i].Trim().Length > 1 && !IsSingleLineGet(filebuffer[i]) && !IsSingleLineSet(filebuffer[i])) {
+			filebuffer[i] = filebuffer[i].Substring(0, filebuffer[i].LastIndexOf("}")).Trim();
+			filebuffer.Insert(i+1, "}");
+		    }
+
+		    // open up properties that are multiple lines starting on line with get/set
+		    if ((IsGet(filebuffer[i]) && !IsSingleLineGet(filebuffer[i]) && !IsSingleLineGetWithComment(filebuffer[i])) || (IsSet(filebuffer[i]) && !IsSingleLineSet(filebuffer[i]) && !IsSingleLineSetWithComment(filebuffer[i]))) {
+			String rightOfOpenBrace = str.Substring(str.IndexOf("{")+1);
+			rightOfOpenBrace = rightOfOpenBrace.Replace("\t","").Trim();
+			if (rightOfOpenBrace.Length > 0) {
+			    filebuffer.Insert(i+1, rightOfOpenBrace);
+			    filebuffer[i] = str.Substring(0, str.IndexOf("{")+1);
+			}
+		    }
 		}
 	    }
-
 
 	    for (int i=0; i < filebuffer.Count; i++) {
 		IsBadMonoStyle(filebuffer[i]);
@@ -353,19 +368,31 @@ namespace Spring2.DataTierGenerator.Generator.Styler {
 		}
 
 // TODO: remove - this is for debugging only
-//if (str.Trim().IndexOf("if (!immutable)") >= 0) {
-//    int foo=0;
-//}
+if (str.Trim().IndexOf("set{localDeliveryDate = value;} //added this line") >= 0) {
+    int foo=0;
+}
 
 		if (!inComment) {
 		    //                                                  + && !IsElse(str)
-		    if (!IsComment(str) && (IsType(str) || (IsFlow(str) && (!IsElse(str) || flowBracing == BraceStyle.C) && !IsElseIf(str) && !IsCatch(str) && !IsFinally(str) ) || IsFunction(str) || IsProperty(str) || IsHangingBrace(str) || IsGet(str) || IsSet(str) || IsLock(str)) && !EndWithCloseBrace(str) && !IsClosingBrace(str)) {
+		    if (!IsComment(str) 
+			    && (IsType(str) 
+				|| (IsFlow(str) && (!IsElse(str) || flowBracing == BraceStyle.C) && !IsElseIf(str) && !IsCatch(str) && !IsFinally(str) ) 
+			    || IsFunction(str) 
+			    || IsProperty(str) 
+			    || IsHangingBrace(str) 
+			    || IsGet(str) 
+			    || IsSet(str) 
+			    || IsLock(str)) 
+			&& !EndWithCloseBrace(str) 
+			&& !EndWithCloseBraceAndComment(str)
+			&& !IsClosingBrace(str) ) {
+
 			// if next line is { only, then don't indent next line but 2 lines from then.
 			if (filebuffer[i+1].Trim().Equals("{")) {
 			    skipIndent = true;
 			} else {
 			    if (IsIf(str)) {
-				if (EndWithBrace(str) || EndWithBraceAndComment(str) || IsHangingBrace(filebuffer[i+1])) {
+				if (EndWithBrace(str) || EndWithBraceAndComment(str) || IsHangingBrace(filebuffer[i+1]) || EndWithContinuationOperator(str) || StartWithContinuationOperator(filebuffer[i+1])) {
 				    indent++;
 				}
 			    } else {
@@ -393,7 +420,7 @@ namespace Spring2.DataTierGenerator.Generator.Styler {
 			}
 
 			// handle single line else statments (bad idea in my opinion)
-			if (IsElse(str) && !EndWithBrace(str)) {
+			if (IsElse(str) && !EndWithBrace(str) && !EndWithBraceAndComment(str) && !EndWithContinuationOperator(str) && !StartWithContinuationOperator(filebuffer[i+1])) {
 			    indent--;
 			}
 		    } else if (!IsComment(str) && IsClosingBrace(str)) {
@@ -415,12 +442,10 @@ namespace Spring2.DataTierGenerator.Generator.Styler {
 		    }
 
 		    // handle method calls that are broken into multiple lines and string concatination
-		    if (i > 0 && EndWithContinuationOperator(filebuffer[i-1])) {
+		    if (StartWithContinuationOperator(str) || (i > 0 && EndWithContinuationOperator(filebuffer[i-1]))) {
 			currentIndent++;
-		    }
-
-		    // handle single line if/else statements
-		    if (i > 0 && !IsComment(filebuffer[i-1]) && (IsIf(filebuffer[i-1]) || IsElse(filebuffer[i-1])) && !EndWithBrace(filebuffer[i-1]) && !EndWithBraceAndComment(filebuffer[i-1]) && !EndWithSemicolon(filebuffer[i-1])) {
+		    } else if (i > 0 && !IsComment(filebuffer[i-1]) && (IsIf(filebuffer[i-1]) || IsElse(filebuffer[i-1])) && !EndWithBrace(filebuffer[i-1]) && !EndWithBraceAndComment(filebuffer[i-1]) && !EndWithSemicolon(filebuffer[i-1])) {
+			// handle single line if/else statements
 			currentIndent++;
 		    }
 
@@ -534,8 +559,11 @@ namespace Spring2.DataTierGenerator.Generator.Styler {
 	    bool found = false;
 	    while (!found) {
 		try {
-		    string str = filebuffer[strloc++];
+		    string str = filebuffer[strloc++].Trim().Replace("\t", "");
 		    found = IsHangingBrace(str);
+		    if (found && str != "{") {
+			filebuffer.Insert(strloc, str.Substring(1));
+		    }
 		    if (!found && !IsBlankLine(str)) {
 			return -1;
 		    }
@@ -714,7 +742,7 @@ namespace Spring2.DataTierGenerator.Generator.Styler {
 	}
 
 	public static bool IsElse(String str) {
-	    return Regex.IsMatch(str, @"(^|\s+|\}+)else(\s+|\{+|$)");
+	    return Regex.IsMatch(str, @"(^|\s*|\}+)else(\s*|\{+|$|/s*\/\/.*$)");
 	}
 
 	public static bool IsElseIf(String str) {
@@ -722,7 +750,7 @@ namespace Spring2.DataTierGenerator.Generator.Styler {
 	}
 
 	public static bool IsTry(String str) {
-	    return Regex.IsMatch(str, @"^\s*try(\s+|\(+|$)");
+	    return Regex.IsMatch(str, @"^\s*try(\s*|\(+|$)");
 	}
 
 	public static bool IsCatch(String str) {
@@ -743,7 +771,7 @@ namespace Spring2.DataTierGenerator.Generator.Styler {
 	}
 
 	public static bool IsWhile(String str) {
-	    return Regex.IsMatch(str, @"(^|\s+|\}+)while(\s+|\(+|$)");
+	    return Regex.IsMatch(str, @"(^\s*|\}+)while(\s+|\(+|$)");
 	}
 
 	public static bool IsSwitch(String str) {
@@ -751,7 +779,7 @@ namespace Spring2.DataTierGenerator.Generator.Styler {
 	}
 
 	public static bool IsCase(String str) {
-	    return Regex.IsMatch(str, @"(^|\s+|\}+)case(\s+|\(+|$)");
+	    return Regex.IsMatch(str, @"(^\s*|\}+)case(\s+|\(+|$)");
 	}
 
 	public static bool IsGet(String str) {
@@ -764,6 +792,10 @@ namespace Spring2.DataTierGenerator.Generator.Styler {
 
 	public static bool EndWithCloseBrace(String str) {
 	    return Regex.IsMatch(str, @"\}\s*$");
+	}
+
+	public static bool EndWithCloseBraceAndComment(String str) {
+	    return Regex.IsMatch(str, @"\}\s*(\/\/|$)");
 	}
 
 	public static bool StartWithOpenBrace(String str) {
@@ -814,7 +846,7 @@ namespace Spring2.DataTierGenerator.Generator.Styler {
 	/// <param name="str"></param>
 	/// <returns></returns>
 	public static bool EndWithContinuationOperator(String str) {
-	    return Regex.IsMatch(str, @"(\+\s*$|,\s*$|&&\s*$|\|\|\s*$|\(\s*$)");
+	    return Regex.IsMatch(str, @"(\+\s*$|,\s*$|&&\s*$|\|\|\s*$|\(\s*$|\*\s*$)");
 	}
 
 	/// <summary>
@@ -823,7 +855,7 @@ namespace Spring2.DataTierGenerator.Generator.Styler {
 	/// <param name="str"></param>
 	/// <returns></returns>
 	public static bool StartWithContinuationOperator(String str) {
-	    return Regex.IsMatch(str, @"(^\s*\+|^\s*,|^\s*&&|^\s*\|\|)");
+	    return Regex.IsMatch(str, @"(^\s*\*|^\s*\+|^\s*,|^\s*&&|^\s*\|\|)");
 	}
 
 	public static bool IsSingleLineGet(String str) {
@@ -833,6 +865,15 @@ namespace Spring2.DataTierGenerator.Generator.Styler {
 	public static bool IsSingleLineSet(String str) {
 	    return Regex.IsMatch(str, @"(^\s*)set\s*{*\s*\w+") && EndWithCloseBrace(str);
 	}
+
+	public static bool IsSingleLineGetWithComment(String str) {
+	    return Regex.IsMatch(str, @"(^\s*)get\s*{*\s*\w+") && EndWithCloseBraceAndComment(str);
+	}
+
+	public static bool IsSingleLineSetWithComment(String str) {
+	    return Regex.IsMatch(str, @"(^\s*)set\s*{*\s*\w+") && EndWithCloseBraceAndComment(str);
+	}
+
 
     }
 }
