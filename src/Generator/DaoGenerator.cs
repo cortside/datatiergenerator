@@ -291,9 +291,6 @@ namespace Spring2.DataTierGenerator.Generator {
 		}
 		writer.WriteLine(parms + ") {");
 				
-		writer.WriteLine(3, "SqlCommand cmd;");
-		writer.WriteLine();
-
 		GetCreateCommandSection(writer, options.GetProcName(entity.SqlEntity.Name, methodName));
 
 		// Append the parameters
