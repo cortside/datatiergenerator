@@ -28,8 +28,10 @@
 		<setting name="DataObjectBaseClass" value="Spring2.Core.DataObject.DataObject" />
 		<setting name="DAOBaseClass" value="Spring2.Core.DAO.EntityDAO" />
 		<setting name="EnumBaseClass" value="Spring2.Core.Types.EnumDataType" />
+		<!-- unsupported below this line -->
 		<setting name="DataObjectNameFormat" value="{0}Data" />
 		<setting name="DaoNameFormat" value="{0}Dao" />
+		<setting name="AutoDiscoverFinders" value="False" />
 	</config>
 	<!--
 		Application entites (objects)
@@ -45,15 +47,25 @@
 		</entity>
 		<entity name="TestSqlObject" sqlobject="TestSqlObject">
 			<!-- 
-				NOT SUPPORTED YET.
-				finder could be defined this way - needs a name and a set of fields/properties.  
-				Everything needed to generate the code should be contained within the fields.
+				Finder attributes:
+					name - name that must match a name defined in the properties collection
+					sort - a comma seperated list of sql column names.  If one is not specified, one is created using the order of the properties specified
+					unique - a boolean that determines is a single row or a collection of rows is returned/expected.  Default is false;
+					
+					support for Or?
+					support for specifying custom sql?
 			-->
 			<finders>
-				<finder name="FindByPostalCode">
-					<columns>
-						<column name="zip" />
-					</columns>
+				<finder name="FindByPostalCode" sort="Int32Column, StringColumn">
+					<properties>
+						<property name="Address.PostalCode" />
+					</properties>
+				</finder>
+				<finder name="FindByPK" unique="True">
+					<properties>
+						<property name="StringColumn" />
+						<property name="Int32Column" />
+					</properties>
 				</finder>
 			</finders>
 			<!-- 
@@ -72,6 +84,7 @@
 			</properties>
 		</entity>
 		<entity name="TestSqlObject2" sqlobject="TestSqlObject2">
+			<properties>
 				<property name="Id" sqltype="int" type="IdType" isidentity="True" />
 			</properties>
 		</entity>
