@@ -68,7 +68,9 @@ namespace Spring2.DataTierGenerator {
 					XmlNode node = elements[i];
 					Entity entity = new Entity();
 					entity.Name = node.Attributes["name"].Value;
-					entity.SqlObject = node.Attributes["sqlobject"].Value;
+                    if (node.Attributes["sqlobject"] != null) {
+                        entity.SqlObject = node.Attributes["sqlobject"].Value;
+                    }
 					entities.Add(entity);
 				}
 			}
@@ -149,44 +151,58 @@ namespace Spring2.DataTierGenerator {
 				XmlNodeList elements = doc.DocumentElement.GetElementsByTagName("entity");
 				foreach (XmlNode element in elements) {
 					String name = element.Attributes["name"].Value;
-					String sqlObject = element.Attributes["sqlobject"].Value;
+					String sqlObject = (element.Attributes["sqlobject"] == null) ? "" : element.Attributes["sqlobject"].Value;
 					if (((entity.SqlObject.Length>0 && sqlObject == entity.SqlObject) || (entity.SqlObject.Length==0 && name == entity.Name)) && element.HasChildNodes) {
 						foreach (XmlNode node in element.ChildNodes) {
-							Field field = new Field();
-							if (node.Attributes["name"] != null) {
-								field.ColumnName = node.Attributes["name"].Value;
-							}
-							if (node.Attributes["sqltype"] != null) {
-								field.SqlType = node.Attributes["sqltype"].Value;
-							}
-							if (node.Attributes["length"] != null) {
-								field.Length = Int32.Parse(node.Attributes["length"].Value);
-							}
-							if (node.Attributes["scale"] != null) {
-								field.Scale = Int32.Parse(node.Attributes["scale"].Value);
-							}
-							if (node.Attributes["precision"] != null) {
-								field.Precision = Int32.Parse(node.Attributes["precision"].Value);
-							}
-							if (node.Attributes["datatype"] != null) {
-								field.DataType = node.Attributes["datatype"].Value;
-							} else if (options.UseDataTypes) {
-								if (field.IsIdentity) {
-									field.DataType = "Spring2.Core.Types.IdType";
-								} else {
-									field.DataType = Field.GetSpring2DataType(field.SqlType);
-								}
-							}
-							if (node.Attributes["constructor"] != null) {
-								field.Constructor = node.Attributes["constructor"].Value;
-							}
+                            // for properties  - collections and nested elements to be handled seperately
+                            if (node.Name.ToLower().Equals("property")) {
+                                Field field = new Field();
+                                if (node.Attributes["name"] != null) {
+                                    field.ColumnName = node.Attributes["name"].Value;
+                                }
+                                if (node.Attributes["sqltype"] != null) {
+                                    field.SqlType = node.Attributes["sqltype"].Value;
+                                }
+                                if (node.Attributes["length"] != null) {
+                                    field.Length = Int32.Parse(node.Attributes["length"].Value);
+                                }
+                                if (node.Attributes["scale"] != null) {
+                                    field.Scale = Int32.Parse(node.Attributes["scale"].Value);
+                                }
+                                if (node.Attributes["precision"] != null) {
+                                    field.Precision = Int32.Parse(node.Attributes["precision"].Value);
+                                }
 
-							field.IsIdentity = (node.Attributes["isidentity"] != null);
-							field.IsPrimaryKey = (node.Attributes["isprimarykey"] != null);
-							field.IsRowGuidCol = (node.Attributes["isrowguidcol"] != null);
-							field.IsForeignKey = (node.Attributes["isforeignkey"] != null);
-							field.IsViewColumn = (node.Attributes["isviewcolumn"] != null);
-							fields.Add(field);
+                                if (node.Attributes["type"] != null) {
+                                    field.Type = node.Attributes["type"].Value;
+                                    field.ConcreteType = field.Type;
+                                }
+                                if (node.Attributes["concretetype"] != null) {
+                                    field.ConcreteType = node.Attributes["concretetype"].Value;
+                                }
+
+                                if (node.Attributes["datatype"] != null) {
+                                    field.DataType = node.Attributes["datatype"].Value;
+                                } else if (options.UseDataTypes) {
+                                    if (field.Type.Length==0) {
+                                        if (field.IsIdentity) {
+                                            field.DataType = "Spring2.Core.Types.IdType";
+                                        } else {
+                                            field.DataType = Field.GetSpring2DataType(field.SqlType);
+                                        }
+                                    }
+                                }
+                                if (node.Attributes["constructor"] != null) {
+                                    field.Constructor = node.Attributes["constructor"].Value;
+                                }
+
+                                field.IsIdentity = (node.Attributes["isidentity"] != null);
+                                field.IsPrimaryKey = (node.Attributes["isprimarykey"] != null);
+                                field.IsRowGuidCol = (node.Attributes["isrowguidcol"] != null);
+                                field.IsForeignKey = (node.Attributes["isforeignkey"] != null);
+                                field.IsViewColumn = (node.Attributes["isviewcolumn"] != null);
+                                fields.Add(field);
+                            }
 						}
 					}
 				}
