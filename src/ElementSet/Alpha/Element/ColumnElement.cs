@@ -180,7 +180,7 @@ namespace Spring2.DataTierGenerator.Element {
 			columnElement.Increment = Int32.Parse(GetAttributeValue(columnNode, INCREMENT, columnElement.Increment.ToString()));
 			columnElement.Seed = Int32.Parse(GetAttributeValue(columnNode, SEED, columnElement.Seed.ToString()));
 			columnElement.ForeignColumn = GetAttributeValue(columnNode, FOREIGN_COLUMN, columnElement.ForeignColumn);
-			columnElement.obsolete = Boolean.Parse(GetAttributeValue(columnNode, OBSOLETE, columnElement.Obsolete.ToString()));
+			columnElement.Obsolete = Boolean.Parse(GetAttributeValue(columnNode, OBSOLETE, columnElement.Obsolete.ToString()));
 			columnElement.Description = columnNode.InnerText.Trim();
 			columnElement.Collate = GetAttributeValue(columnNode, COLLATE, columnElement.Collate);
 
