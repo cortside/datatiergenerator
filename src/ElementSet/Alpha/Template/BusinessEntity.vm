@@ -1,0 +1,136 @@
+#*
+
+        BusinessEntity.vm - new seamless business entity stub
+
+*###
+using System;
+using System.Collections;
+using Spring2.Core.DAO;
+using Spring2.Core.Types;
+using Spring2.DataTierGenerator.Attribute;
+using ${options.RootNameSpace}.Dao;
+using ${options.RootNameSpace}.DataObject;
+using ${options.RootNameSpace}.Types;
+using ${options.RootNameSpace}.Exceptions;
+#nameSpaces($options $element false)
+namespace ${options.RootNameSpace}.BusinessLogic {
+
+    public class ${element.Name} {
+
+	[Generate]
+	private ${element.Name}Data internalState;
+
+	[Generate]
+	private ${element.Name}(#parameterList(true $element.GetPrimaryKeyFields())) {
+	    internalState = ${element.Name}DAO.Load(#argumentList(true $element.GetPrimaryKeyFields()));
+	}
+
+	[Generate]
+	private ${element.Name}() {
+	}
+
+	[Generate]
+	private ${element.Name}(${element.Name}Data data) {
+	    SetInitialState();
+	    UpdateInternalState(data);
+	}
+
+	/// <summary>
+	/// Creates and persists a new ${element.Name}
+	/// </summary>
+	/// <param name="data"></param>
+	[Generate]
+	public static ${element.Name} Create(${element.Name}Data data) {
+	    ${element.Name} entity = new ${element.Name}(data);
+	    
+            ErrorMessageList errors = entity.Validate();
+
+            if (errors.Count <= 0){
+	        // insert new record
+#set($s="")
+#if($element.GetIdentityField())
+#set($s="${element.GetIdentityField().Type.Name} id = ")
+#end
+	        ${s}${element.Name}DAO.Insert(entity.internalState);
+#if($element.GetIdentityField())
+	        entity.internalState.$element.GetIdentityField().GetMethodFormat() = id;
+#end
+            } else {
+                throw new ValidationException("There were problems processing the data you entered", errors);
+            }
+	    return entity;
+	}
+	
+	/// <summary>
+	/// Retrieves an existing instance of a ${element.Name} with the specified id
+	/// </summary>
+	[Generate]
+	public static ${element.Name} GetInstance(#parameterList(true $element.GetPrimaryKeyFields())) {
+	    return new ${element.Name}(#argumentList(true $element.GetPrimaryKeyFields()));
+	}
+
+	/// <summary>
+	/// Returns fully populated internal state
+	/// </summary>
+	[Generate]
+	public ${element.Name}Data Data {
+	    get { return internalState; }
+	}
+
+	/// <summary>
+	/// Update current instance from passed in data object
+	/// </summary>
+	/// <param name="data"></param>
+	[Generate]
+	public void Update(${element.Name}Data data) {
+	    
+	    
+	    // copy the applicable properties, if they are valid
+	    UpdateInternalState(data);
+
+            ErrorMessageList errors = Validate();
+            if (errors.Count <= 0) {
+		${element.Name}DAO.Update(internalState);
+	    } else {
+		throw new ValidationException("There were problems processing the data you entered", errors);
+	    }
+	}
+
+	private void SetInitialState() {
+	    internalState = new $options.GetDOClassName($element.Name)();
+#foreach($field in $element.Fields)
+#if($field.Name.IndexOf('.')<0)
+	    internalState.${field.GetMethodFormat()} = $field.Type.NewInstanceFormat;
+#end
+#end
+	}
+
+	private void UpdateInternalState($options.GetDOClassName($element.Name) data) {
+#foreach($field in $element.Fields)
+#if($field.Name.IndexOf('.')<0)
+	    if (!data.${field.GetMethodFormat()}.IsDefault) {
+		internalState.${field.GetMethodFormat()} = data.${field.GetMethodFormat()};
+	    }
+#end
+#end
+	}
+
+	private ErrorMessageList Validate() {
+	    ErrorMessageList errors = new ErrorMessageList();
+
+#foreach($field in $element.Fields)
+#if($field.Name.IndexOf('.')<0&&$field.column.Identity==false)
+	    if (!internalState.${field.GetMethodFormat()}.IsValid) {
+		errors.Add(ErrorEnum.MISSING_REQUIRED_FIELD, StringType.Parse($options.GetDOClassName($element.Name).${field.GetMethodFormat().ToUpper()}));
+	    }
+#end
+#end
+	    return errors;
+	}
+	
+        public override String ToString() {
+            return internalState.ToString();
+        }
+
+    }
+}
