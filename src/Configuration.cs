@@ -99,6 +99,12 @@ namespace Spring2.DataTierGenerator {
 	    return s;
 	}
 
+	public String GetBusinessLogicNameSpace() {
+	    // TODO:  this is hardcoded!  Need to deal with namespaces better - maybe defined on the entity themselves.
+	    String s = this.rootNameSpace + "." + "BusinessLogic";
+	    return s;
+	}
+
 	public String GetDAOClassName(String table) {
 	    String s;
 

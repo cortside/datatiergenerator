@@ -516,6 +516,21 @@ namespace Spring2.DataTierGenerator.DTGEditor {
 	}
 
 	private void ShowEntities(Int32 level, String nodeText, String parentNodeText) {
+	    if (level==0) {
+		listView1.Items.Clear();
+		listView1.Columns.Clear();
+		listView1.Columns.Add("Name", -1, HorizontalAlignment.Left);		
+		listView1.Columns.Add("Base Entity", -1, HorizontalAlignment.Left);		
+		listView1.Columns.Add("Abstract", -1, HorizontalAlignment.Left);		
+
+		foreach (Entity entity in entities) {
+		    ListViewItem lvi = new ListViewItem(entity.Name);
+		    lvi.SubItems.Add(entity.BaseEntity.Name);
+		    lvi.SubItems.Add(entity.IsAbstract.ToString());
+		    listView1.Items.Add(lvi);
+		}
+	    }
+
 	    if (level==1) {
 		listView1.Items.Clear();
 		Entity entity = Entity.FindEntityByName((ArrayList)entities, nodeText);
@@ -528,6 +543,8 @@ namespace Spring2.DataTierGenerator.DTGEditor {
 		listView1.Columns.Add("Convert From SqlType Format", -1, HorizontalAlignment.Left);
 		listView1.Columns.Add("Access Modifier", -1, HorizontalAlignment.Left);
 		listView1.Columns.Add("Description", -1, HorizontalAlignment.Left);
+		listView1.Columns.Add("Readable", -1, HorizontalAlignment.Left);
+		listView1.Columns.Add("Writable", -1, HorizontalAlignment.Left);
 		foreach(Field field in entity.Fields) {
 		    ListViewItem lvi = new ListViewItem(field.Name);
 		    lvi.SubItems.Add(field.Type.Name);
@@ -537,6 +554,8 @@ namespace Spring2.DataTierGenerator.DTGEditor {
 		    lvi.SubItems.Add(field.Type.ConvertFromSqlTypeFormat);
 		    lvi.SubItems.Add(field.AccessModifier);
 		    lvi.SubItems.Add(field.Description);
+		    lvi.SubItems.Add(field.Readable.ToString());
+		    lvi.SubItems.Add(field.Writable.ToString());
 		    listView1.Items.Add(lvi);
 		}
 	    }
