@@ -229,6 +229,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Element\View.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Generator\CodeGenerator.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
