@@ -23,13 +23,10 @@ namespace Spring2.DataTierGenerator.Generator {
 	}
 
 	public override void Generate() {
-	    //Console.Out.Write("\n");
-	    //Console.Out.WriteLine(String.Empty.PadLeft(20,'='));
-
 	    if (parser.IsValid) {
 
 		if (parser.HasWarnings) {
-		    Console.Out.WriteLine("The parser is in a valid state, but reported the following issues:\n" + parser.ErrorDescription);
+		    WriteToLog("The parser is in a valid state, but reported the following issues:\n" + parser.ErrorDescription);
 		}
 
 		IList tasks = parser.Generator.FindTasksByElement("sqlentity");
@@ -39,6 +36,7 @@ namespace Spring2.DataTierGenerator.Generator {
 			    foreach(TaskElement task in tasks) {
 				IGenerator g = new VelocityTask(options, database.SqlEntities, sqlentity, task, sqlentity.Name);
 				g.Generate();
+				((ArrayList)Log).AddRange(g.Log);
 			    }
 
 			    // foreach database
@@ -54,6 +52,7 @@ namespace Spring2.DataTierGenerator.Generator {
 			foreach(TaskElement task in tasks) {
 			    IGenerator g = new VelocityTask(options, parser.Entities, entity, task, entity.Name);
 			    g.Generate();
+			    ((ArrayList)Log).AddRange(g.Log);
 			}
 
 			// foreach finder
@@ -66,6 +65,7 @@ namespace Spring2.DataTierGenerator.Generator {
 			foreach(TaskElement task in tasks) {
 			    IGenerator g = new VelocityTask(options, parser.Enums, type, task, type.Name);
 			    g.Generate();
+			    ((ArrayList)Log).AddRange(g.Log);
 			}
 		    }
 		}
@@ -76,6 +76,7 @@ namespace Spring2.DataTierGenerator.Generator {
 			foreach(TaskElement task in tasks) {
 			    IGenerator g = new VelocityTask(options, parser.Collections, collection, task, collection.Name);
 			    g.Generate();
+			    ((ArrayList)Log).AddRange(g.Log);
 			}
 		    }
 		}
@@ -84,19 +85,20 @@ namespace Spring2.DataTierGenerator.Generator {
 		foreach(TaskElement task in tasks) {
 		    IGenerator g = new VelocityTask(options, DatabaseElement.GetAllSqlEntities(parser.Databases), null, task, "sqlentities");
 		    g.Generate();
+		    ((ArrayList)Log).AddRange(g.Log);
 		}
 
 		tasks = parser.Generator.FindTasksByElement("entities");
 		foreach(TaskElement task in tasks) {
 		    IGenerator g = new VelocityTask(options, parser.Entities, null, task, "entities");
 		    g.Generate();
+		    ((ArrayList)Log).AddRange(g.Log);
 		}
 
 	    } else {
-		Console.Out.WriteLine("Parser was not in a valid state and reported the following errors:\n" + parser.ErrorDescription);
+		WriteToLog("Parser was not in a valid state and reported the following errors:\n" + parser.ErrorDescription);
 	    }
 			
-	    //Console.Out.WriteLine(String.Empty.PadLeft(20,'='));
 	}
 
     }

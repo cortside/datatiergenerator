@@ -18,6 +18,7 @@ namespace Spring2.DataTierGenerator.Generator {
 	private readonly String END_REGION = "#endregion";
 
 	protected Configuration options;
+	private IList log = new ArrayList();
 
 	public GeneratorSkeleton() {
 	    InitNVelocity();
@@ -102,7 +103,7 @@ namespace Spring2.DataTierGenerator.Generator {
 
 	    // Only write to the file if it has changed or does not exist.
 	    if (changed) {
-		Console.WriteLine("generating " + file.FullName);
+		WriteToLog("generating " + file.FullName);
 		StreamWriter writer = new StreamWriter(file.FullName, append);
 
 		// If any #region tags were found, append the regions to the end
@@ -190,6 +191,14 @@ namespace Spring2.DataTierGenerator.Generator {
 
 	protected virtual String EndRegionTag {
 	    get { return END_REGION; }
+	}
+
+	protected void WriteToLog(String s) {
+	    log.Add(s);
+	}
+
+	public IList Log {
+	    get { return log; }
 	}
 
     }
