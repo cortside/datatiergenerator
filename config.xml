@@ -1,10 +1,10 @@
 <?xml version="1.0" ?>
 <DataTierGenerator xmlns="http://www.spring2.com/xsd/datatiergenerator.xsd">
 	<config>
-		<setting name="Server" value="olympus" />
+		<setting name="Server" value="hal" />
 		<setting name="Database" value="cort_seamless" />
 		<setting name="User" value="sa" />
-		<setting name="Password" value="1qaz2wsx" />
+		<setting name="Password" value="" />
 		<setting name="RootDirectory" value="c:\data\work\seamlessweb\manhattan\src\" />
 		<setting name="SqlScriptDirectory" value="sql" />
 		<setting name="DaoClassDirectory" value="DAO" />
@@ -16,303 +16,285 @@
 		<setting name="CreateDataObjects" value="True" />
 		<setting name="ScriptDropStatement" value="True" />
 		<setting name="StoredProcNameFormat" value="proc{%TABLE_NAME%}{%PROC_TYPE%}" />
-		<setting name="ProjectNameSpace" value="Seamless.Manhattan" />
+		<setting name="RootNameSpace" value="Seamless.Manhattan" />
 		<setting name="GenerateProcsForForeignKey" value="False" />
 		<setting name="GenerateSelectStoredProcs" value="False" />
 		<setting name="GenerateOnlyPrimaryDeleteStoredProc" value="True" />
 		<setting name="AllowUpdateOfPrimaryKey" value="False" />
-		<setting name="UseDataTypes" value="True" />
 		<setting name="AutoDiscoverEntities" value="False" />
-		<setting name="AutoDiscoverProperties" value="True" />
-		<setting name="AutoDiscoverAttributes" value="True" />
+		<setting name="AutoDiscoverProperties" value="False" />
+		<setting name="AutoDiscoverAttributes" value="False" />
 		<setting name="DataObjectBaseClass" value="Spring2.Core.DataObject.DataObject" />
 		<setting name="DAOBaseClass" value="Spring2.Core.DAO.EntityDAO" />
 	</config>
 	<entities>
-		<entity name="Foo" sqlobject="" dataobjectbaseclass="Spring2.Core.DataObject.DataObject" daobaseclass="Spring2.Core.DAO.EntityDAO" sqltable="Firm" sqlview="vwFirm" useview="True" autodiscoverproperties="True" autodiscoverattributes="True">
-			<collection name="Items" />
-			<property name="Bar" sqlname="" sqltype="varchar" />
-			<nestedentity name="Address" type="AddressData" sqlobject="Address">
-				<property name="AddressBar1" sqltype="varchar" />
-				<property name="AddressBar2" sqltype="varchar" />
-			</nestedentity>
-		</entity>
-		<entity name="Order" sqlobject="">
-			<property name="Header" type="OrderHeaderData" />
-			<property name="Vendor" type="OrderVendorData" />
-			<property name="Delivery" type="OrderDeliveryData" />
-			<property name="Allocations" concretetype="System.Collections.ArrayList" type="System.Collections.IList" />
-			<property name="Payments" concretetype="ArrayList" type="IList" />
-			<property name="Details" concretetype="ArrayList" type="IList" />
-		</entity>
 		<entity name="Firm" sqlobject="Firm">
-			<property name="FirmID" sqltype="int" scale="0" precision="10" datatype="Spring2.Core.Types.IdType" isidentity="True" isprimarykey="True">
+			<property name="FirmID" sqltype="int" scale="0" precision="10" type="IdType" isidentity="True" isprimarykey="True">
 				this is the unique column for this table.  this is some description.
 			</property>
-			<property name="FirmName" sqltype="varchar" length="40" datatype="Spring2.Core.Types.StringType" />
-			<property name="LineOfCreditFlag" sqltype="char" length="1" datatype="Spring2.Core.Types.BooleanType" constructor="GetInstance" />
-			<property name="ChangeOrderLocFlag" sqltype="char" length="1" datatype="Spring2.Core.Types.BooleanType" constructor="GetInstance" />
-			<property name="CreditCardNumber" sqltype="varchar" length="30" datatype="Spring2.Core.Types.StringType" />
-			<property name="CreditCardExpire" sqltype="smalldatetime" datatype="Spring2.Core.Types.DateType" />
-			<property name="ExpenseCodeFormat" sqltype="varchar" length="40" datatype="Spring2.Core.Types.StringType" />
-			<property name="EffectiveDate" sqltype="smalldatetime" datatype="Spring2.Core.Types.DateType" isprimarykey="True" />
-			<property name="ExpirationDate" sqltype="smalldatetime" datatype="Spring2.Core.Types.DateType" />
-			<property name="ContactUserID" sqltype="int" scale="0" precision="10" datatype="Spring2.Core.Types.IdType" isforeignkey="True" />
-			<property name="PhoneNumber" sqltype="varchar" length="20" datatype="Spring2.Core.Types.StringType" />
-			<property name="DefaultTerms" sqltype="int" scale="0" precision="10" datatype="Spring2.Core.Types.NumberType" />
-			<property name="TranRate" sqltype="smallmoney" scale="4" precision="10" datatype="Spring2.Core.Types.CurrencyType" />
-			<property name="IsPercent" sqltype="char" length="1" datatype="Spring2.Core.Types.BooleanType" constructor="GetInstance" />
-			<property name="ExpenseCodeFormatText" sqltype="varchar" length="255" datatype="Spring2.Core.Types.StringType" />
-			<property name="AllowSavePassword" sqltype="char" length="1" datatype="Spring2.Core.Types.BooleanType" constructor="GetInstance" />
-			<property name="IsTranFeePerAlloc" sqltype="char" length="1" datatype="Spring2.Core.Types.BooleanType" constructor="GetInstance" />
-			<property name="CredCardTranFee" sqltype="char" length="1" datatype="Spring2.Core.Types.BooleanType" constructor="GetInstance" />
-			<property name="IsExpenseCodeExact" sqltype="char" length="1" datatype="Spring2.Core.Types.BooleanType" constructor="GetInstance" />
-			<property name="WeekdayBreakfast" sqltype="varchar" length="5" datatype="Spring2.Core.Types.StringType" />
-			<property name="WeekdayLunch" sqltype="varchar" length="5" datatype="Spring2.Core.Types.StringType" />
-			<property name="WeekdayDinner" sqltype="varchar" length="5" datatype="Spring2.Core.Types.StringType" />
-			<property name="WeekendBreakfast" sqltype="varchar" length="5" datatype="Spring2.Core.Types.StringType" />
-			<property name="WeekendLunch" sqltype="varchar" length="5" datatype="Spring2.Core.Types.StringType" />
-			<property name="WeekendDinner" sqltype="varchar" length="5" datatype="Spring2.Core.Types.StringType" />
-			<property name="WeekdayAfterBreakfast" sqltype="varchar" length="5" datatype="Spring2.Core.Types.StringType" />
-			<property name="WeekdayAfterLunch" sqltype="varchar" length="5" datatype="Spring2.Core.Types.StringType" />
-			<property name="WeekdayAfterDinner" sqltype="varchar" length="5" datatype="Spring2.Core.Types.StringType" />
-			<property name="WeekendAfterBreakfast" sqltype="varchar" length="5" datatype="Spring2.Core.Types.StringType" />
-			<property name="WeekendAfterLunch" sqltype="varchar" length="5" datatype="Spring2.Core.Types.StringType" />
-			<property name="WeekendAfterDinner" sqltype="varchar" length="5" datatype="Spring2.Core.Types.StringType" />
-			<property name="ApprovalRequired" sqltype="char" length="1" datatype="Spring2.Core.Types.BooleanType" constructor="GetInstance" />
-			<property name="Logo" sqltype="image" length="2147483647" datatype="Spring2.Core.Types.StringType" />
-			<property name="NotifyMsg" sqltype="text" length="2147483647" datatype="Spring2.Core.Types.StringType" />
-			<property name="AllowFirmCreditCardOrders" sqltype="char" length="1" datatype="Spring2.Core.Types.BooleanType" constructor="GetInstance" />
-			<property name="RequireCommentOnOverBudget" sqltype="char" length="1" datatype="Spring2.Core.Types.BooleanType" constructor="GetInstance" />
-			<property name="DisableMyProfile" sqltype="char" length="1" datatype="Spring2.Core.Types.BooleanType" constructor="GetInstance" />
-			<property name="RequireExpenseCode" sqltype="char" length="1" datatype="Spring2.Core.Types.BooleanType" constructor="GetInstance" />
-			<property name="TranFeeOnPersonalOrders" sqltype="char" length="1" datatype="Spring2.Core.Types.BooleanType" constructor="GetInstance" />
-			<property name="SelectFirmLocationOnOrder" sqltype="char" length="1" datatype="Spring2.Core.Types.BooleanType" constructor="GetInstance" />
-			<property name="SendWelcomeMessage" sqltype="char" length="1" datatype="Spring2.Core.Types.BooleanType" constructor="GetInstance" />
-			<property name="ShowTransactionFee" sqltype="char" length="1" datatype="Spring2.Core.Types.BooleanType" constructor="GetInstance" />
-			<property name="AllocationHeaderText" sqlname="*" sqltype="varchar" length="25" datatype="Spring2.Core.Types.BooleanType" constructor="GetInstance" />
-			<property name="IsCCEmailRequired" sqlname="IsCCEmailRequired" sqltype="char" length="1" datatype="Spring2.Core.Types.BooleanType" constructor="GetInstance" />
-			<property name="FirmLocations" type="F1Data" concretetype="ArrayList" />
+			<property name="FirmName" sqltype="varchar" length="40" type="StringType" />
+			<property name="LineOfCreditFlag" sqltype="char" length="1" type="BooleanType" constructor="GetInstance" />
+			<property name="ChangeOrderLocFlag" sqltype="char" length="1" type="BooleanType" constructor="GetInstance" />
+			<property name="CreditCardNumber" sqltype="varchar" length="30" type="StringType" />
+			<property name="CreditCardExpire" sqltype="smalldatetime" type="DateType" />
+			<property name="ExpenseCodeFormat" sqltype="varchar" length="40" type="StringType" />
+			<property name="EffectiveDate" sqltype="smalldatetime" type="DateType" isprimarykey="True" />
+			<property name="ExpirationDate" sqltype="smalldatetime" type="DateType" />
+			<property name="ContactUserID" sqltype="int" scale="0" precision="10" type="IdType" isforeignkey="True" />
+			<property name="PhoneNumber" sqltype="varchar" length="20" type="StringType" />
+			<property name="DefaultTerms" sqltype="int" scale="0" precision="10" type="NumberType" />
+			<property name="TranRate" sqltype="smallmoney" scale="4" precision="10" type="CurrencyType" />
+			<property name="IsPercent" sqltype="char" length="1" type="BooleanType" constructor="GetInstance" />
+			<property name="ExpenseCodeFormatText" sqltype="varchar" length="255" type="StringType" />
+			<property name="AllowSavePassword" sqltype="char" length="1" type="BooleanType" constructor="GetInstance" />
+			<property name="IsTranFeePerAlloc" sqltype="char" length="1" type="BooleanType" constructor="GetInstance" />
+			<property name="CredCardTranFee" sqltype="char" length="1" type="BooleanType" constructor="GetInstance" />
+			<property name="IsExpenseCodeExact" sqltype="char" length="1" type="BooleanType" constructor="GetInstance" />
+			<property name="WeekdayBreakfast" sqltype="varchar" length="5" type="StringType" />
+			<property name="WeekdayLunch" sqltype="varchar" length="5" type="StringType" />
+			<property name="WeekdayDinner" sqltype="varchar" length="5" type="StringType" />
+			<property name="WeekendBreakfast" sqltype="varchar" length="5" type="StringType" />
+			<property name="WeekendLunch" sqltype="varchar" length="5" type="StringType" />
+			<property name="WeekendDinner" sqltype="varchar" length="5" type="StringType" />
+			<property name="WeekdayAfterBreakfast" sqltype="varchar" length="5" type="StringType" />
+			<property name="WeekdayAfterLunch" sqltype="varchar" length="5" type="StringType" />
+			<property name="WeekdayAfterDinner" sqltype="varchar" length="5" type="StringType" />
+			<property name="WeekendAfterBreakfast" sqltype="varchar" length="5" type="StringType" />
+			<property name="WeekendAfterLunch" sqltype="varchar" length="5" type="StringType" />
+			<property name="WeekendAfterDinner" sqltype="varchar" length="5" type="StringType" />
+			<property name="ApprovalRequired" sqltype="char" length="1" type="BooleanType" constructor="GetInstance" />
+			<property name="Logo" sqltype="image" length="2147483647" type="StringType" />
+			<property name="NotifyMsg" sqltype="text" length="2147483647" type="StringType" />
+			<property name="AllowFirmCreditCardOrders" sqltype="char" length="1" type="BooleanType" constructor="GetInstance" />
+			<property name="RequireCommentOnOverBudget" sqltype="char" length="1" type="BooleanType" constructor="GetInstance" />
+			<property name="DisableMyProfile" sqltype="char" length="1" type="BooleanType" constructor="GetInstance" />
+			<property name="RequireExpenseCode" sqltype="char" length="1" type="BooleanType" constructor="GetInstance" />
+			<property name="TranFeeOnPersonalOrders" sqltype="char" length="1" type="BooleanType" constructor="GetInstance" />
+			<property name="SelectFirmLocationOnOrder" sqltype="char" length="1" type="BooleanType" constructor="GetInstance" />
+			<property name="SendWelcomeMessage" sqltype="char" length="1" type="BooleanType" constructor="GetInstance" />
+			<property name="ShowTransactionFee" sqltype="char" length="1" type="BooleanType" constructor="GetInstance" />
+			<property name="AllocationHeaderText" sqlname="*" sqltype="varchar" length="25" type="BooleanType" constructor="GetInstance" />
+			<property name="IsCCEmailRequired" sqlname="IsCCEmailRequired" sqltype="char" length="1" type="BooleanType" constructor="GetInstance" />
 		</entity>
 		<entity name="OrderAllocation" sqlobject="OrderAllocation">
-			<property name="OrderID" sqltype="int" scale="0" precision="10" datatype="Spring2.Core.Types.IdType" isprimarykey="True" isforeignkey="True" />
-			<property name="UserID" sqltype="int" scale="0" precision="10" datatype="Spring2.Core.Types.IdType" isprimarykey="True" />
-			<property name="AllocationAmt" sqltype="smallmoney" scale="4" precision="10" datatype="Spring2.Core.Types.CurrencyType" />
-			<property name="ExpenseCode" sqltype="varchar" length="40" datatype="Spring2.Core.Types.StringType" />
-			<property name="Comment" sqltype="varchar" length="200" datatype="Spring2.Core.Types.StringType" />
-			<property name="LineID" sqltype="tinyint" scale="0" precision="3" datatype="Spring2.Core.Types.IdType" isprimarykey="True" />
-			<property name="AmtOverBudget" sqltype="smallmoney" scale="4" precision="10" datatype="Spring2.Core.Types.CurrencyType" />
-			<property name="TranFee" sqltype="smallmoney" scale="4" precision="10" datatype="Spring2.Core.Types.CurrencyType" />
-			<property name="TranFeePaid" sqltype="char" length="1" datatype="Spring2.Core.Types.BooleanType" constructor="GetInstance" />
+			<property name="OrderID" sqltype="int" scale="0" precision="10" type="IdType" isprimarykey="True" isforeignkey="True" />
+			<property name="UserID" sqltype="int" scale="0" precision="10" type="IdType" isprimarykey="True" />
+			<property name="AllocationAmt" sqltype="smallmoney" scale="4" precision="10" type="CurrencyType" />
+			<property name="ExpenseCode" sqltype="varchar" length="40" type="StringType" />
+			<property name="Comment" sqltype="varchar" length="200" type="StringType" />
+			<property name="LineID" sqltype="tinyint" scale="0" precision="3" type="IdType" isprimarykey="True" />
+			<property name="AmtOverBudget" sqltype="smallmoney" scale="4" precision="10" type="CurrencyType" />
+			<property name="TranFee" sqltype="smallmoney" scale="4" precision="10" type="CurrencyType" />
+			<property name="TranFeePaid" sqltype="char" length="1" type="BooleanType" constructor="GetInstance" />
 		</entity>
 		<entity name="OrderDelivery" sqlobject="OrderDelivery">
-			<property name="OrderID" sqltype="int" scale="0" precision="10" datatype="Spring2.Core.Types.IdType" isprimarykey="True" isforeignkey="True" />
-			<property name="CrossStreets" sqltype="varchar" length="100" datatype="Spring2.Core.Types.StringType" />
-			<property name="BuildingFloor" sqltype="varchar" length="20" datatype="Spring2.Core.Types.StringType" />
-			<property name="RoomNbr" sqltype="varchar" length="20" datatype="Spring2.Core.Types.StringType" />
-			<property name="CompanyDept" sqltype="varchar" length="100" datatype="Spring2.Core.Types.StringType" />
-			<property name="BuzzerNbr" sqltype="varchar" length="20" datatype="Spring2.Core.Types.StringType" />
-			<property name="EntranceCode" sqltype="varchar" length="20" datatype="Spring2.Core.Types.StringType" />
-			<property name="Address1" sqltype="varchar" length="100" datatype="Spring2.Core.Types.StringType" />
-			<property name="Address2" sqltype="varchar" length="100" datatype="Spring2.Core.Types.StringType" />
-			<property name="ZipCode" sqltype="varchar" length="10" datatype="Spring2.Core.Types.StringType" />
-			<property name="DeliveryInstructionsID" sqltype="int" scale="0" precision="10" datatype="Spring2.Core.Types.IdType" isforeignkey="True" />
-			<property name="DeliveryComment" sqltype="varchar" length="200" datatype="Spring2.Core.Types.StringType" />
-			<property name="PhoneNumber" sqltype="varchar" length="20" datatype="Spring2.Core.Types.StringType" />
-			<property name="DeliveryContact1" sqltype="varchar" length="30" datatype="Spring2.Core.Types.StringType" />
-			<property name="DeliveryContact2" sqltype="varchar" length="30" datatype="Spring2.Core.Types.StringType" />
+			<property name="OrderID" sqltype="int" scale="0" precision="10" type="IdType" isprimarykey="True" isforeignkey="True" />
+			<property name="CrossStreets" sqltype="varchar" length="100" type="StringType" />
+			<property name="BuildingFloor" sqltype="varchar" length="20" type="StringType" />
+			<property name="RoomNbr" sqltype="varchar" length="20" type="StringType" />
+			<property name="CompanyDept" sqltype="varchar" length="100" type="StringType" />
+			<property name="BuzzerNbr" sqltype="varchar" length="20" type="StringType" />
+			<property name="EntranceCode" sqltype="varchar" length="20" type="StringType" />
+			<property name="Address1" sqltype="varchar" length="100" type="StringType" />
+			<property name="Address2" sqltype="varchar" length="100" type="StringType" />
+			<property name="ZipCode" sqltype="varchar" length="10" type="StringType" />
+			<property name="DeliveryInstructionsID" sqltype="int" scale="0" precision="10" type="IdType" isforeignkey="True" />
+			<property name="DeliveryComment" sqltype="varchar" length="200" type="StringType" />
+			<property name="PhoneNumber" sqltype="varchar" length="20" type="StringType" />
+			<property name="DeliveryContact1" sqltype="varchar" length="30" type="StringType" />
+			<property name="DeliveryContact2" sqltype="varchar" length="30" type="StringType" />
 		</entity>
 		<entity name="OrderDetail" sqlobject="OrderDetail">
-			<property name="OrderID" sqltype="int" scale="0" precision="10" datatype="Spring2.Core.Types.IdType" isprimarykey="True" isforeignkey="True" />
-			<property name="LineID" sqltype="smallint" scale="0" precision="5" datatype="Spring2.Core.Types.IdType" isprimarykey="True" />
-			<property name="Price" sqltype="smallmoney" scale="4" precision="10" datatype="Spring2.Core.Types.CurrencyType" />
-			<property name="ProductID" sqltype="int" scale="0" precision="10" datatype="Spring2.Core.Types.IdType" />
-			<property name="Quantity" sqltype="int" scale="0" precision="10" datatype="Spring2.Core.Types.NumberType" />
-			<property name="CategoryID" sqltype="int" scale="0" precision="10" datatype="Spring2.Core.Types.IdType" />
-			<property name="VendorLocationID" sqltype="int" scale="0" precision="10" datatype="Spring2.Core.Types.IdType" />
-			<property name="TemplateID" sqltype="int" scale="0" precision="10" datatype="Spring2.Core.Types.IdType" />
-			<property name="SpecialInstructions" sqltype="varchar" length="500" datatype="Spring2.Core.Types.StringType" />
-			<property name="NonTaxable" sqltype="char" length="1" datatype="Spring2.Core.Types.BooleanType" constructor="GetInstance" />
+			<property name="OrderID" sqltype="int" scale="0" precision="10" type="IdType" isprimarykey="True" isforeignkey="True" />
+			<property name="LineID" sqltype="smallint" scale="0" precision="5" type="IdType" isprimarykey="True" />
+			<property name="Price" sqltype="smallmoney" scale="4" precision="10" type="CurrencyType" />
+			<property name="ProductID" sqltype="int" scale="0" precision="10" type="IdType" />
+			<property name="Quantity" sqltype="int" scale="0" precision="10" type="NumberType" />
+			<property name="CategoryID" sqltype="int" scale="0" precision="10" type="IdType" />
+			<property name="VendorLocationID" sqltype="int" scale="0" precision="10" type="IdType" />
+			<property name="TemplateID" sqltype="int" scale="0" precision="10" type="IdType" />
+			<property name="SpecialInstructions" sqltype="varchar" length="500" type="StringType" />
+			<property name="NonTaxable" sqltype="char" length="1" type="BooleanType" constructor="GetInstance" />
 		</entity>
 		<entity name="OrderDetailOption" sqlobject="OrderDetailOption">
-			<property name="OrderID" sqltype="int" scale="0" precision="10" datatype="Spring2.Core.Types.IdType" isprimarykey="True" isforeignkey="True" />
-			<property name="LineID" sqltype="smallint" scale="0" precision="5" datatype="Spring2.Core.Types.IdType" isprimarykey="True" isforeignkey="True" />
-			<property name="OptionID" sqltype="int" scale="0" precision="10" datatype="Spring2.Core.Types.IdType" isprimarykey="True" />
-			<property name="OptionGroupID" sqltype="int" scale="0" precision="10" datatype="Spring2.Core.Types.IdType" />
-			<property name="Price" sqltype="smallmoney" scale="4" precision="10" datatype="Spring2.Core.Types.CurrencyType" />
+			<property name="OrderID" sqltype="int" scale="0" precision="10" type="IdType" isprimarykey="True" isforeignkey="True" />
+			<property name="LineID" sqltype="smallint" scale="0" precision="5" type="IdType" isprimarykey="True" isforeignkey="True" />
+			<property name="OptionID" sqltype="int" scale="0" precision="10" type="IdType" isprimarykey="True" />
+			<property name="OptionGroupID" sqltype="int" scale="0" precision="10" type="IdType" />
+			<property name="Price" sqltype="smallmoney" scale="4" precision="10" type="CurrencyType" />
 		</entity>
 		<entity name="OrderHeader" sqlobject="Orders">
-			<property name="OrderID" sqltype="int" scale="0" precision="10" datatype="Spring2.Core.Types.IdType" isidentity="True" isprimarykey="True" />
-			<property name="OrderTime" sqltype="smalldatetime" datatype="Spring2.Core.Types.DateType" />
-			<property name="UserID" sqltype="int" scale="0" precision="10" datatype="Spring2.Core.Types.IdType" />
-			<property name="ProductTotalAmt" sqltype="smallmoney" scale="4" precision="10" datatype="Spring2.Core.Types.CurrencyType" />
-			<property name="TaxAmt" sqltype="smallmoney" scale="4" precision="10" datatype="Spring2.Core.Types.CurrencyType" />
-			<property name="GratuityAmt" sqltype="smallmoney" scale="4" precision="10" datatype="Spring2.Core.Types.CurrencyType" />
-			<property name="GrandTotalAmt" sqltype="smallmoney" scale="4" precision="10" datatype="Spring2.Core.Types.CurrencyType" />
-			<property name="Comment" sqltype="varchar" length="200" datatype="Spring2.Core.Types.StringType" />
-			<property name="DiscountAmt" sqltype="smallmoney" scale="4" precision="10" datatype="Spring2.Core.Types.CurrencyType" />
-			<property name="ResponsibleUserID" sqltype="int" scale="0" precision="10" datatype="Spring2.Core.Types.IdType" />
-			<property name="OrderCompleteTime" sqltype="smalldatetime" datatype="Spring2.Core.Types.DateType" />
-			<property name="PaymentID" sqltype="int" scale="0" precision="10" datatype="Spring2.Core.Types.IdType" />
-			<property name="OrderType" sqltype="char" length="1" datatype="Seamless.Manhattan.Types.OrderType" constructor="GetInstance" />
-			<property name="AllocationComment" sqltype="varchar" length="200" datatype="Spring2.Core.Types.StringType" />
-			<property name="PaymentTypeID" sqltype="char" length="2" datatype="Spring2.Core.Types.StringType" isforeignkey="True" />
-			<property name="AmendmentText" sqltype="varchar" length="15" datatype="Spring2.Core.Types.StringType" />
-			<property name="CostCode" sqltype="varchar" length="15" datatype="Spring2.Core.Types.StringType" />
-			<property name="Processed" sqltype="char" length="1" datatype="Spring2.Core.Types.BooleanType" constructor="GetInstance" />
-			<property name="Printed" sqltype="char" length="1" datatype="Spring2.Core.Types.BooleanType" constructor="GetInstance" />
-			<property name="ApprovalUserID" sqltype="int" scale="0" precision="10" datatype="Spring2.Core.Types.IdType" />
-			<property name="TranFeePaid" sqltype="char" length="1" datatype="Spring2.Core.Types.BooleanType" constructor="GetInstance" />
-			<property name="ChargeInProcess" sqltype="char" length="1" datatype="Spring2.Core.Types.BooleanType" constructor="GetInstance" />
-			<property name="ChargeErrorCode" sqltype="int" scale="0" precision="10" datatype="Spring2.Core.Types.NumberType" />
-			<property name="IsGroupOrder" sqltype="char" length="1" datatype="Spring2.Core.Types.BooleanType" constructor="GetInstance" />
-			<property name="GroupOrderID" sqltype="int" scale="0" precision="10" datatype="Spring2.Core.Types.IdType" />
-			<property name="FaxID" sqltype="int" scale="0" precision="10" datatype="Spring2.Core.Types.IdType" />
-			<property name="FaxSendRetryCount" sqltype="int" scale="0" precision="10" datatype="Spring2.Core.Types.NumberType" />
-			<property name="FaxStatus" sqltype="varchar" length="50" datatype="Spring2.Core.Types.StringType" />
-			<property name="FaxImageGenerated" sqltype="datetime" datatype="Spring2.Core.Types.DateType" />
-			<property name="CCEmailAddress" sqltype="varchar" length="60" datatype="Spring2.Core.Types.StringType" />
+			<property name="OrderID" sqltype="int" scale="0" precision="10" type="IdType" isidentity="True" isprimarykey="True" />
+			<property name="OrderTime" sqltype="smalldatetime" type="DateType" />
+			<property name="UserID" sqltype="int" scale="0" precision="10" type="IdType" />
+			<property name="ProductTotalAmt" sqltype="smallmoney" scale="4" precision="10" type="CurrencyType" />
+			<property name="TaxAmt" sqltype="smallmoney" scale="4" precision="10" type="CurrencyType" />
+			<property name="GratuityAmt" sqltype="smallmoney" scale="4" precision="10" type="CurrencyType" />
+			<property name="GrandTotalAmt" sqltype="smallmoney" scale="4" precision="10" type="CurrencyType" />
+			<property name="Comment" sqltype="varchar" length="200" type="StringType" />
+			<property name="DiscountAmt" sqltype="smallmoney" scale="4" precision="10" type="CurrencyType" />
+			<property name="ResponsibleUserID" sqltype="int" scale="0" precision="10" type="IdType" />
+			<property name="OrderCompleteTime" sqltype="smalldatetime" type="DateType" />
+			<property name="PaymentID" sqltype="int" scale="0" precision="10" type="IdType" />
+			<property name="OrderType" sqltype="char" length="1" type="OrderType" constructor="GetInstance" />
+			<property name="AllocationComment" sqltype="varchar" length="200" type="StringType" />
+			<property name="PaymentTypeID" sqltype="char" length="2" type="StringType" isforeignkey="True" />
+			<property name="AmendmentText" sqltype="varchar" length="15" type="StringType" />
+			<property name="CostCode" sqltype="varchar" length="15" type="StringType" />
+			<property name="Processed" sqltype="char" length="1" type="BooleanType" constructor="GetInstance" />
+			<property name="Printed" sqltype="char" length="1" type="BooleanType" constructor="GetInstance" />
+			<property name="ApprovalUserID" sqltype="int" scale="0" precision="10" type="IdType" />
+			<property name="TranFeePaid" sqltype="char" length="1" type="BooleanType" constructor="GetInstance" />
+			<property name="ChargeInProcess" sqltype="char" length="1" type="BooleanType" constructor="GetInstance" />
+			<property name="ChargeErrorCode" sqltype="int" scale="0" precision="10" type="NumberType" />
+			<property name="IsGroupOrder" sqltype="char" length="1" type="BooleanType" constructor="GetInstance" />
+			<property name="GroupOrderID" sqltype="int" scale="0" precision="10" type="IdType" />
+			<property name="FaxID" sqltype="int" scale="0" precision="10" type="IdType" />
+			<property name="FaxSendRetryCount" sqltype="int" scale="0" precision="10" type="NumberType" />
+			<property name="FaxStatus" sqltype="varchar" length="50" type="StringType" />
+			<property name="FaxImageGenerated" sqltype="datetime" type="DateType" />
+			<property name="CCEmailAddress" sqltype="varchar" length="60" type="StringType" />
 		</entity>
 		<entity name="OrderVendor" sqlobject="OrderVendor">
-			<property name="OrderID" sqltype="int" scale="0" precision="10" datatype="Spring2.Core.Types.IdType" isprimarykey="True" isforeignkey="True" />
-			<property name="VendorLocationID" sqltype="int" scale="0" precision="10" datatype="Spring2.Core.Types.IdType" isprimarykey="True" />
-			<property name="RequestedDeliveryTime" sqltype="smalldatetime" datatype="Spring2.Core.Types.DateType" />
-			<property name="EventStartTime" sqltype="varchar" length="30" datatype="Spring2.Core.Types.StringType" />
-			<property name="VendorProductAmt" sqltype="smallmoney" scale="4" precision="10" datatype="Spring2.Core.Types.CurrencyType" />
-			<property name="VendorTaxAmt" sqltype="smallmoney" scale="4" precision="10" datatype="Spring2.Core.Types.CurrencyType" />
-			<property name="GratuityPct" sqltype="smallmoney" scale="4" precision="10" datatype="Spring2.Core.Types.CurrencyType" />
-			<property name="GratuityAmt" sqltype="smallmoney" scale="4" precision="10" datatype="Spring2.Core.Types.CurrencyType" />
-			<property name="VendorReceiptTime" sqltype="datetime" datatype="Spring2.Core.Types.DateType" />
-			<property name="ActualDeliveryTime" sqltype="smalldatetime" datatype="Spring2.Core.Types.DateType" />
-			<property name="FinalTip" sqltype="char" length="1" datatype="Spring2.Core.Types.StringType" />
-			<property name="CCDeductedAmt" sqltype="smallmoney" scale="4" precision="10" datatype="Spring2.Core.Types.CurrencyType" />
-			<property name="GuestCount" sqltype="int" scale="0" precision="10" datatype="Spring2.Core.Types.NumberType" />
-			<property name="DeliveryFee" sqltype="smallmoney" scale="4" precision="10" datatype="Spring2.Core.Types.CurrencyType" />
-			<property name="PickupTime" sqltype="varchar" length="50" datatype="Spring2.Core.Types.StringType" />
+			<property name="OrderID" sqltype="int" scale="0" precision="10" type="IdType" isprimarykey="True" isforeignkey="True" />
+			<property name="VendorLocationID" sqltype="int" scale="0" precision="10" type="IdType" isprimarykey="True" />
+			<property name="RequestedDeliveryTime" sqltype="smalldatetime" type="DateType" />
+			<property name="EventStartTime" sqltype="varchar" length="30" type="StringType" />
+			<property name="VendorProductAmt" sqltype="smallmoney" scale="4" precision="10" type="CurrencyType" />
+			<property name="VendorTaxAmt" sqltype="smallmoney" scale="4" precision="10" type="CurrencyType" />
+			<property name="GratuityPct" sqltype="smallmoney" scale="4" precision="10" type="CurrencyType" />
+			<property name="GratuityAmt" sqltype="smallmoney" scale="4" precision="10" type="CurrencyType" />
+			<property name="VendorReceiptTime" sqltype="datetime" type="DateType" />
+			<property name="ActualDeliveryTime" sqltype="smalldatetime" type="DateType" />
+			<property name="FinalTip" sqltype="char" length="1" type="StringType" />
+			<property name="CCDeductedAmt" sqltype="smallmoney" scale="4" precision="10" type="CurrencyType" />
+			<property name="GuestCount" sqltype="int" scale="0" precision="10" type="NumberType" />
+			<property name="DeliveryFee" sqltype="smallmoney" scale="4" precision="10" type="CurrencyType" />
+			<property name="PickupTime" sqltype="varchar" length="50" type="StringType" />
 		</entity>
 		<entity name="OrderPayment" sqlobject="ordpmt">
-			<property name="pmt_id" sqltype="int" scale="0" precision="10" datatype="Spring2.Core.Types.NumberType" isprimarykey="True" />
-			<property name="OrderID" sqltype="int" scale="0" precision="10" datatype="Spring2.Core.Types.NumberType" />
-			<property name="pmtdate" sqltype="datetime" datatype="Spring2.Core.Types.DateType" />
-			<property name="pmtamt" sqltype="float" scale="0" precision="53" datatype="Spring2.Core.Types.QuantityType" />
-			<property name="pmt_type_id" sqltype="char" length="2" datatype="Spring2.Core.Types.StringType" />
-			<property name="reference_no" sqltype="varchar" length="64" datatype="Spring2.Core.Types.StringType" />
-			<property name="authorization_" sqltype="varchar" length="15" datatype="Spring2.Core.Types.StringType" />
-			<property name="avs_id" sqltype="char" length="1" datatype="Spring2.Core.Types.StringType" />
-			<property name="site" sqltype="char" length="5" datatype="Spring2.Core.Types.StringType" />
-			<property name="Action" sqltype="varchar" length="15" datatype="Spring2.Core.Types.StringType" />
-			<property name="ActionDate" sqltype="smalldatetime" datatype="Spring2.Core.Types.DateType" />
+			<property name="pmt_id" sqltype="int" scale="0" precision="10" type="NumberType" isprimarykey="True" />
+			<property name="OrderID" sqltype="int" scale="0" precision="10" type="NumberType" />
+			<property name="pmtdate" sqltype="datetime" type="DateType" />
+			<property name="pmtamt" sqltype="float" scale="0" precision="53" type="QuantityType" />
+			<property name="pmt_type_id" sqltype="char" length="2" type="StringType" />
+			<property name="reference_no" sqltype="varchar" length="64" type="StringType" />
+			<property name="authorization_" sqltype="varchar" length="15" type="StringType" />
+			<property name="avs_id" sqltype="char" length="1" type="StringType" />
+			<property name="site" sqltype="char" length="5" type="StringType" />
+			<property name="Action" sqltype="varchar" length="15" type="StringType" />
+			<property name="ActionDate" sqltype="smalldatetime" type="DateType" />
 		</entity>
 		<entity name="PaymentType" sqlobject="pmt_type">
-			<property name="pmt_type_id" sqltype="char" length="2" datatype="Spring2.Core.Types.StringType" isprimarykey="True" />
-			<property name="pmt_type_descr" sqltype="varchar" length="50" datatype="Spring2.Core.Types.StringType" />
-			<property name="credit_card" sqltype="bit" scale="0" precision="1" datatype="Spring2.Core.Types.NumberType" />
+			<property name="pmt_type_id" sqltype="char" length="2" type="StringType" isprimarykey="True" />
+			<property name="pmt_type_descr" sqltype="varchar" length="50" type="StringType" />
+			<property name="credit_card" sqltype="bit" scale="0" precision="1" type="NumberType" />
 		</entity>
 		<entity name="GroupOrder" sqlobject="GroupOrders">
-			<property name="GroupOrderID" sqltype="int" scale="0" precision="10" datatype="Spring2.Core.Types.NumberType" isidentity="True" isprimarykey="True" />
-			<property name="Title" sqltype="varchar" length="100" datatype="Spring2.Core.Types.StringType" />
-			<property name="Weekly" sqltype="char" length="1" datatype="Spring2.Core.Types.StringType" />
-			<property name="OpenTime" sqltype="smalldatetime" datatype="Spring2.Core.Types.DateType" />
-			<property name="CloseTime" sqltype="smalldatetime" datatype="Spring2.Core.Types.DateType" />
-			<property name="DeliveryTime" sqltype="smalldatetime" datatype="Spring2.Core.Types.DateType" />
-			<property name="GratuityType" sqltype="varchar" length="50" datatype="Spring2.Core.Types.StringType" />
-			<property name="MasterGratuityType" sqltype="char" length="1" datatype="Spring2.Core.Types.StringType" />
-			<property name="MasterGratuityAmt" sqltype="smallmoney" scale="4" precision="10" datatype="Spring2.Core.Types.CurrencyType" />
-			<property name="FirmID" sqltype="int" scale="0" precision="10" datatype="Spring2.Core.Types.NumberType" />
-			<property name="DOW" sqltype="char" length="7" datatype="Spring2.Core.Types.StringType" />
-			<property name="TipProcessed" sqltype="char" length="1" datatype="Spring2.Core.Types.StringType" />
-			<property name="Notified" sqltype="char" length="1" datatype="Spring2.Core.Types.StringType" />
-			<property name="Individual" sqltype="char" length="1" datatype="Spring2.Core.Types.StringType" />
-			<property name="Processed" sqltype="char" length="1" datatype="Spring2.Core.Types.StringType" />
-			<property name="GroupOrderContact" sqltype="int" scale="0" precision="10" datatype="Spring2.Core.Types.NumberType" />
-			<property name="DeliveryLocation" sqltype="varchar" length="100" datatype="Spring2.Core.Types.StringType" />
-			<property name="DeliveryFloor" sqltype="varchar" length="100" datatype="Spring2.Core.Types.StringType" />
-			<property name="DeliveryPhoneNumber" sqltype="varchar" length="20" datatype="Spring2.Core.Types.StringType" />
+			<property name="GroupOrderID" sqltype="int" scale="0" precision="10" type="NumberType" isidentity="True" isprimarykey="True" />
+			<property name="Title" sqltype="varchar" length="100" type="StringType" />
+			<property name="Weekly" sqltype="char" length="1" type="StringType" />
+			<property name="OpenTime" sqltype="smalldatetime" type="DateType" />
+			<property name="CloseTime" sqltype="smalldatetime" type="DateType" />
+			<property name="DeliveryTime" sqltype="smalldatetime" type="DateType" />
+			<property name="GratuityType" sqltype="varchar" length="50" type="StringType" />
+			<property name="MasterGratuityType" sqltype="char" length="1" type="StringType" />
+			<property name="MasterGratuityAmt" sqltype="smallmoney" scale="4" precision="10" type="CurrencyType" />
+			<property name="FirmID" sqltype="int" scale="0" precision="10" type="NumberType" />
+			<property name="DOW" sqltype="char" length="7" type="StringType" />
+			<property name="TipProcessed" sqltype="char" length="1" type="StringType" />
+			<property name="Notified" sqltype="char" length="1" type="StringType" />
+			<property name="Individual" sqltype="char" length="1" type="StringType" />
+			<property name="Processed" sqltype="char" length="1" type="StringType" />
+			<property name="GroupOrderContact" sqltype="int" scale="0" precision="10" type="NumberType" />
+			<property name="DeliveryLocation" sqltype="varchar" length="100" type="StringType" />
+			<property name="DeliveryFloor" sqltype="varchar" length="100" type="StringType" />
+			<property name="DeliveryPhoneNumber" sqltype="varchar" length="20" type="StringType" />
 		</entity>
 		<entity name="GroupOrderDetail" sqlobject="GroupOrderDetail">
-			<property name="GroupOrderID" sqltype="int" scale="0" precision="10" datatype="Spring2.Core.Types.NumberType" isprimarykey="True" />
-			<property name="Type" sqltype="char" length="1" datatype="Spring2.Core.Types.StringType" isprimarykey="True" />
-			<property name="ID" sqltype="int" scale="0" precision="10" datatype="Spring2.Core.Types.NumberType" isprimarykey="True" />
+			<property name="GroupOrderID" sqltype="int" scale="0" precision="10" type="NumberType" isprimarykey="True" />
+			<property name="Type" sqltype="char" length="1" type="StringType" isprimarykey="True" />
+			<property name="ID" sqltype="int" scale="0" precision="10" type="NumberType" isprimarykey="True" />
 		</entity>
 		<entity name="GroupOrderVendor" sqlobject="GroupOrderVendors">
-			<property name="GroupOrderID" sqltype="int" scale="0" precision="10" datatype="Spring2.Core.Types.NumberType" isprimarykey="True" />
-			<property name="VendorLocationID" sqltype="int" scale="0" precision="10" datatype="Spring2.Core.Types.NumberType" isprimarykey="True" />
-			<property name="VendorReceiptTime" sqltype="datetime" datatype="Spring2.Core.Types.DateType" />
-			<property name="Processed" sqltype="char" length="1" datatype="Spring2.Core.Types.StringType" />
-			<property name="TotalOrders" sqltype="int" scale="0" precision="10" datatype="Spring2.Core.Types.NumberType" />
-			<property name="FaxID" sqltype="int" scale="0" precision="10" datatype="Spring2.Core.Types.NumberType" />
-			<property name="FaxImageGenerated" sqltype="datetime" datatype="Spring2.Core.Types.DateType" />
-			<property name="FaxSendRetryCount" sqltype="int" scale="0" precision="10" datatype="Spring2.Core.Types.NumberType" />
-			<property name="FaxStatus" sqltype="varchar" length="50" datatype="Spring2.Core.Types.StringType" />
-			<property name="Printed" sqltype="char" length="1" datatype="Spring2.Core.Types.StringType" />
-			<property name="ActualDeliveryTime" sqltype="smalldatetime" datatype="Spring2.Core.Types.DateType" />
+			<property name="GroupOrderID" sqltype="int" scale="0" precision="10" type="NumberType" isprimarykey="True" />
+			<property name="VendorLocationID" sqltype="int" scale="0" precision="10" type="NumberType" isprimarykey="True" />
+			<property name="VendorReceiptTime" sqltype="datetime" type="DateType" />
+			<property name="Processed" sqltype="char" length="1" type="StringType" />
+			<property name="TotalOrders" sqltype="int" scale="0" precision="10" type="NumberType" />
+			<property name="FaxID" sqltype="int" scale="0" precision="10" type="NumberType" />
+			<property name="FaxImageGenerated" sqltype="datetime" type="DateType" />
+			<property name="FaxSendRetryCount" sqltype="int" scale="0" precision="10" type="NumberType" />
+			<property name="FaxStatus" sqltype="varchar" length="50" type="StringType" />
+			<property name="Printed" sqltype="char" length="1" type="StringType" />
+			<property name="ActualDeliveryTime" sqltype="smalldatetime" type="DateType" />
 		</entity>
 		<entity name="ErrorLog" sqlobject="ErrorLog">
-			<property name="ErrorID" sqltype="int" scale="0" precision="10" datatype="Spring2.Core.Types.NumberType" isidentity="True" isprimarykey="True" />
-			<property name="EventTime" sqltype="datetime" datatype="Spring2.Core.Types.DateType" />
-			<property name="AppName" sqltype="varchar" length="50" datatype="Spring2.Core.Types.StringType" />
-			<property name="ErrorNumber" sqltype="int" scale="0" precision="10" datatype="Spring2.Core.Types.NumberType" />
-			<property name="Description" sqltype="varchar" length="400" datatype="Spring2.Core.Types.StringType" />
-			<property name="LineNumber" sqltype="smallint" scale="0" precision="5" datatype="Spring2.Core.Types.NumberType" />
-			<property name="UserID" sqltype="int" scale="0" precision="10" datatype="Spring2.Core.Types.NumberType" />
-			<property name="OrderID" sqltype="int" scale="0" precision="10" datatype="Spring2.Core.Types.NumberType" />
-			<property name="Source" sqltype="varchar" length="50" datatype="Spring2.Core.Types.StringType" />
-			<property name="ErrorParams" sqltype="varchar" length="255" datatype="Spring2.Core.Types.StringType" />
+			<property name="ErrorID" sqltype="int" scale="0" precision="10" type="NumberType" isidentity="True" isprimarykey="True" />
+			<property name="EventTime" sqltype="datetime" type="DateType" />
+			<property name="AppName" sqltype="varchar" length="50" type="StringType" />
+			<property name="ErrorNumber" sqltype="int" scale="0" precision="10" type="NumberType" />
+			<property name="Description" sqltype="varchar" length="400" type="StringType" />
+			<property name="LineNumber" sqltype="smallint" scale="0" precision="5" type="NumberType" />
+			<property name="UserID" sqltype="int" scale="0" precision="10" type="NumberType" />
+			<property name="OrderID" sqltype="int" scale="0" precision="10" type="NumberType" />
+			<property name="Source" sqltype="varchar" length="50" type="StringType" />
+			<property name="ErrorParams" sqltype="varchar" length="255" type="StringType" />
 		</entity>
 		<entity name="Function" sqlobject="Function">
-			<property name="FunctionID" sqltype="int" scale="0" precision="10" datatype="Spring2.Core.Types.NumberType" isidentity="True" isprimarykey="True" />
-			<property name="FunctionName" sqltype="varchar" length="50" datatype="Spring2.Core.Types.StringType" />
-			<property name="Description" sqltype="varchar" length="200" datatype="Spring2.Core.Types.StringType" />
+			<property name="FunctionID" sqltype="int" scale="0" precision="10" type="NumberType" isidentity="True" isprimarykey="True" />
+			<property name="FunctionName" sqltype="varchar" length="50" type="StringType" />
+			<property name="Description" sqltype="varchar" length="200" type="StringType" />
 		</entity>
 		<entity name="SecurityGroup" sqlobject="SecurityGroup">
-			<property name="SecurityGroupID" sqltype="int" scale="0" precision="10" datatype="Spring2.Core.Types.NumberType" isidentity="True" isprimarykey="True" />
-			<property name="SecurityGroupName" sqltype="varchar" length="50" datatype="Spring2.Core.Types.StringType" />
-			<property name="Description" sqltype="varchar" length="200" datatype="Spring2.Core.Types.StringType" />
+			<property name="SecurityGroupID" sqltype="int" scale="0" precision="10" type="NumberType" isidentity="True" isprimarykey="True" />
+			<property name="SecurityGroupName" sqltype="varchar" length="50" type="StringType" />
+			<property name="Description" sqltype="varchar" length="200" type="StringType" />
 		</entity>
 		<entity name="SecurityGroupFunction" sqlobject="SecurityGroupFunction">
-			<property name="SecurityGroupID" sqltype="int" scale="0" precision="10" datatype="Spring2.Core.Types.NumberType" isprimarykey="True" isforeignkey="True" />
-			<property name="FunctionID" sqltype="int" scale="0" precision="10" datatype="Spring2.Core.Types.NumberType" isprimarykey="True" isforeignkey="True" />
+			<property name="SecurityGroupID" sqltype="int" scale="0" precision="10" type="NumberType" isprimarykey="True" isforeignkey="True" />
+			<property name="FunctionID" sqltype="int" scale="0" precision="10" type="NumberType" isprimarykey="True" isforeignkey="True" />
 		</entity>
 		<entity name="User" sqlobject="Users">
-			<property name="UserID" sqltype="int" scale="0" precision="10" datatype="Spring2.Core.Types.NumberType" isidentity="True" isprimarykey="True" />
-			<property name="Login" sqltype="varchar" length="30" datatype="Spring2.Core.Types.StringType" />
-			<property name="Password" sqltype="varchar" length="8" datatype="Spring2.Core.Types.StringType" />
-			<property name="FirstName" sqltype="varchar" length="50" datatype="Spring2.Core.Types.StringType" />
-			<property name="LastName" sqltype="varchar" length="50" datatype="Spring2.Core.Types.StringType" />
-			<property name="PhoneNumber" sqltype="varchar" length="20" datatype="Spring2.Core.Types.StringType" />
-			<property name="EmailAddress" sqltype="varchar" length="60" datatype="Spring2.Core.Types.StringType" />
-			<property name="FirmLocationID" sqltype="int" scale="0" precision="10" datatype="Spring2.Core.Types.NumberType" />
-			<property name="CreditCardTypeID" sqltype="char" length="2" datatype="Spring2.Core.Types.StringType" />
-			<property name="CreditCardNumber" sqltype="varchar" length="64" datatype="Spring2.Core.Types.StringType" />
-			<property name="CreditCardExpire" sqltype="char" length="4" datatype="Spring2.Core.Types.StringType" />
-			<property name="OrderLimitAmt" sqltype="smallmoney" scale="4" precision="10" datatype="Spring2.Core.Types.CurrencyType" />
-			<property name="LastIPAddress" sqltype="char" length="15" datatype="Spring2.Core.Types.StringType" />
-			<property name="LastLoginTime" sqltype="smalldatetime" datatype="Spring2.Core.Types.DateType" />
-			<property name="SecurityGroupID" sqltype="int" scale="0" precision="10" datatype="Spring2.Core.Types.NumberType" isforeignkey="True" />
-			<property name="AddressID" sqltype="int" scale="0" precision="10" datatype="Spring2.Core.Types.NumberType" isforeignkey="True" />
-			<property name="PreferredName" sqltype="varchar" length="50" datatype="Spring2.Core.Types.StringType" />
-			<property name="LastBrowserType" sqltype="varchar" length="100" datatype="Spring2.Core.Types.StringType" />
-			<property name="SessionExpireTime" sqltype="smalldatetime" datatype="Spring2.Core.Types.DateType" />
-			<property name="EffectiveDate" sqltype="smalldatetime" datatype="Spring2.Core.Types.DateType" />
-			<property name="ExpirationDate" sqltype="smalldatetime" datatype="Spring2.Core.Types.DateType" />
-			<property name="FirmInternalID" sqltype="varchar" length="30" datatype="Spring2.Core.Types.StringType" />
-			<property name="JobTitleID" sqltype="int" scale="0" precision="10" datatype="Spring2.Core.Types.NumberType" />
-			<property name="HouseholdIncomeID" sqltype="int" scale="0" precision="10" datatype="Spring2.Core.Types.NumberType" />
-			<property name="Gender" sqltype="char" length="1" datatype="Spring2.Core.Types.StringType" />
-			<property name="EmailAddressPersonal" sqltype="varchar" length="60" datatype="Spring2.Core.Types.StringType" />
-			<property name="Birthdate" sqltype="smalldatetime" datatype="Spring2.Core.Types.DateType" />
-			<property name="CredCardBillingAddress" sqltype="varchar" length="70" datatype="Spring2.Core.Types.StringType" />
-			<property name="CredCardBillingZipCode" sqltype="char" length="10" datatype="Spring2.Core.Types.StringType" />
-			<property name="VendorLocationID" sqltype="int" scale="0" precision="10" datatype="Spring2.Core.Types.NumberType" />
-			<property name="Floor" sqltype="varchar" length="5" datatype="Spring2.Core.Types.StringType" />
-			<property name="SavePassword" sqltype="char" length="1" datatype="Spring2.Core.Types.StringType" />
-			<property name="NeedEmailSent" sqltype="char" length="1" datatype="Spring2.Core.Types.StringType" />
-			<property name="BudgetGroupID" sqltype="int" scale="0" precision="10" datatype="Spring2.Core.Types.NumberType" />
-			<property name="DepartmentID" sqltype="int" scale="0" precision="10" datatype="Spring2.Core.Types.NumberType" />
-			<property name="NotifyMsg" sqltype="text" length="2147483647" datatype="Spring2.Core.Types.StringType" />
-			<property name="Priority" sqltype="varchar" length="2" datatype="Spring2.Core.Types.StringType" />
-			<property name="SecureLogin" sqltype="varchar" length="50" datatype="Spring2.Core.Types.StringType" />
-			<property name="CCEMailAddress" sqltype="varchar" length="60" datatype="Spring2.Core.Types.StringType" />
+			<property name="UserID" sqltype="int" scale="0" precision="10" type="NumberType" isidentity="True" isprimarykey="True" />
+			<property name="Login" sqltype="varchar" length="30" type="StringType" />
+			<property name="Password" sqltype="varchar" length="8" type="StringType" />
+			<property name="FirstName" sqltype="varchar" length="50" type="StringType" />
+			<property name="LastName" sqltype="varchar" length="50" type="StringType" />
+			<property name="PhoneNumber" sqltype="varchar" length="20" type="StringType" />
+			<property name="EmailAddress" sqltype="varchar" length="60" type="StringType" />
+			<property name="FirmLocationID" sqltype="int" scale="0" precision="10" type="NumberType" />
+			<property name="CreditCardTypeID" sqltype="char" length="2" type="StringType" />
+			<property name="CreditCardNumber" sqltype="varchar" length="64" type="StringType" />
+			<property name="CreditCardExpire" sqltype="char" length="4" type="StringType" />
+			<property name="OrderLimitAmt" sqltype="smallmoney" scale="4" precision="10" type="CurrencyType" />
+			<property name="LastIPAddress" sqltype="char" length="15" type="StringType" />
+			<property name="LastLoginTime" sqltype="smalldatetime" type="DateType" />
+			<property name="SecurityGroupID" sqltype="int" scale="0" precision="10" type="NumberType" isforeignkey="True" />
+			<property name="AddressID" sqltype="int" scale="0" precision="10" type="NumberType" isforeignkey="True" />
+			<property name="PreferredName" sqltype="varchar" length="50" type="StringType" />
+			<property name="LastBrowserType" sqltype="varchar" length="100" type="StringType" />
+			<property name="SessionExpireTime" sqltype="smalldatetime" type="DateType" />
+			<property name="EffectiveDate" sqltype="smalldatetime" type="DateType" />
+			<property name="ExpirationDate" sqltype="smalldatetime" type="DateType" />
+			<property name="FirmInternalID" sqltype="varchar" length="30" type="StringType" />
+			<property name="JobTitleID" sqltype="int" scale="0" precision="10" type="NumberType" />
+			<property name="HouseholdIncomeID" sqltype="int" scale="0" precision="10" type="NumberType" />
+			<property name="Gender" sqltype="char" length="1" type="StringType" />
+			<property name="EmailAddressPersonal" sqltype="varchar" length="60" type="StringType" />
+			<property name="Birthdate" sqltype="smalldatetime" type="DateType" />
+			<property name="CredCardBillingAddress" sqltype="varchar" length="70" type="StringType" />
+			<property name="CredCardBillingZipCode" sqltype="char" length="10" type="StringType" />
+			<property name="VendorLocationID" sqltype="int" scale="0" precision="10" type="NumberType" />
+			<property name="Floor" sqltype="varchar" length="5" type="StringType" />
+			<property name="SavePassword" sqltype="char" length="1" type="StringType" />
+			<property name="NeedEmailSent" sqltype="char" length="1" type="StringType" />
+			<property name="BudgetGroupID" sqltype="int" scale="0" precision="10" type="NumberType" />
+			<property name="DepartmentID" sqltype="int" scale="0" precision="10" type="NumberType" />
+			<property name="NotifyMsg" sqltype="text" length="2147483647" type="StringType" />
+			<property name="Priority" sqltype="varchar" length="2" type="StringType" />
+			<property name="SecureLogin" sqltype="varchar" length="50" type="StringType" />
+			<property name="CCEMailAddress" sqltype="varchar" length="60" type="StringType" />
 		</entity>
 	</entities>
 	<enums>
@@ -321,18 +303,101 @@
 			<value name="Firm" internalvalue="F" dbvalue="F" />
 		</enum>
 	</enums>
-	<datatypes>
-		<datatype name="IdType" namespace="Spring2.Core.Types" />
-		<datatype name="BooleanType" namespace="Spring2.Core.Types" constructor="GetInstance" />
-		<datatype name="OrderType" constructor="GetInstance" baseclass="Spring2.Core.Types.EnumDataType">
-			<value name="Personal" internalvalue="P" dbvalue="P" />
-			<value name="Firm" internalvalue="F" dbvalue="F" />
-		</datatype>
-	</datatypes>
 	<sqltypes>
-		<sqltype name="varchar" length="50" type="String" datatype="StringType" />
+		<sqltype name="float" type="Double" readermethodformat='{0}.GetDouble({0}.GetOrdinal("{1}"))' />
+		<sqltype name="datetime" type="DateTime" readermethodformat='{0}.GetDateTime({0}.GetOrdinal("{1}"))' />
+		<sqltype name="bit" type="Int32" readermethodformat='{0}.GetInt32({0}.GetOrdinal("{1}"))' />
+		<sqltype name="smallint" type="Int32" readermethodformat='{0}.GetInt32({0}.GetOrdinal("{1}"))' />
+		<sqltype name="tinyint" type="Int32" readermethodformat='{0}.GetInt32({0}.GetOrdinal("{1}"))' />
+		<sqltype name="smallmoney" type="Decimal" readermethodformat='{0}.GetDecimal({0}.GetOrdinal("{1}"))' />
+		<sqltype name="image" length="50" type="String" readermethodformat='{0}.GetString({0}.GetOrdinal("{1}"))' />
+		<sqltype name="text" length="50" type="String" readermethodformat='{0}.GetString({0}.GetOrdinal("{1}"))' />
+		<sqltype name="smalldatetime" type="DateTime" readermethodformat='{0}.GetDateTime({0}.GetOrdinal("{1}"))' />
+		<sqltype name="char" length="1" type="String" readermethodformat='{0}.GetString({0}.GetOrdinal("{1}"))' />
+		<sqltype name="varchar" length="50" type="String" readermethodformat='{0}.GetString({0}.GetOrdinal("{1}"))'>
+			0=reader variable name
+			1=column name (not quoted)
+		</sqltype>
+		<sqltype name="int" scale="0" precision="10" type="Int32" readermethodformat='{0}.GetInt32({0}.GetOrdinal("{1}"))' />
+		<!--
+		    case "binary":
+			return "byte[]";
+		    case "bigint":
+			return "Int64";
+		    case "bit":
+			return "Boolean";
+		    case "char":
+			return "String";
+		    case "datetime":
+			return "DateTime";
+		    case "decimal":
+			return "Decimal";
+		    case "float":
+			return "Double";
+		    case "image":
+			return "String"; //"byte[]";
+		    case "int":
+			return "Int32";
+		    case "money":
+			return "Decimal";
+		    case "nchar":
+			return "String";
+		    case "ntext":
+			return "String";
+		    case "nvarchar":
+			return "String";
+		    case "numeric":
+			return "Decimal";
+		    case "real":
+			return "Single";
+		    case "smalldatetime":
+			return "DateTime";
+		    case "smallint":
+			return "Int16";
+		    case "smallmoney":
+			return "Decimal";
+		    case "sql_variant":
+			return "Object";
+		    case "sysname":
+			return "String";
+		    case "text":
+			return "String";
+		    case "timestamp":
+			return "DateTime";
+		    case "tinyint":
+			return "byte";
+		    case "varbinary":
+			return "byte[]";
+		    case "varchar":
+			return "String";
+		    case "uniqueidentifier":
+			return "Guid";
+		-->
 	</sqltypes>
 	<types>
+		<type name="String" newinstanceformat="String.Empty" />
+		<type name="DateTime" newinstanceformat="new DateTime()" />
+		<type name="Int32" newinstanceformat="0" />
+		<type name="Boolean" newinstanceformat="false" />
+		<type name="Double" newinstanceformat="0" />
+		<type name="Decimal" newinstanceformat="0" />
 		<type name="IList" namespace="System.Collections" />
+		<type name="ArrayList" namespace="System.Collections" newinstanceformat="new ArrayList()" />
+		<type name="Hashtable" namespace="System.Collections" newinstanceformat="new Hashtable()" />
+		<type name="BooleanType" namespace="Spring2.Core.Types" converttosqltypeformat="{0}.{1}.DBValue" convertfromsqltypeformat="BooleanType.GetInstance({2})" newinstanceformat="BooleanType.DEFAULT" nullinstanceformat="BooleanType.UNSET" />
+		<type name="StringType" namespace="Spring2.Core.Types" converttosqltypeformat="{0}.{1}.DBValue" convertfromsqltypeformat="StringType.NewInstance({2})" newinstanceformat="StringType.DEFAULT" nullinstanceformat="StringType.UNSET" />
+		<type name="IdType" namespace="Spring2.Core.Types" converttosqltypeformat="{0}.{1}.DBValue" convertfromsqltypeformat="IdType.NewInstance({2})" newinstanceformat="IdType.DEFAULT" nullinstanceformat="IdType.UNSET" >
+			0=data object variable name
+			1=Property name (properly cased)
+			2=sqltype's readermethod (formatted by readermethodformat) (for convert from sql type, otherwise blank)
+			3=reader variable name (for convert from sql type, otherwise blank)
+		</type>
+		<type name="TypeData" namespace="Spring2.DataTierGenerator" newinstanceformat="new TypeData()" />
+		<type name="SqlTypeData" namespace="Spring2.DataTierGenerator" newinstanceformat="new SqlTypeData()" />
+		<type name="DateType" namespace="Spring2.Core.Types" converttosqltypeformat="{0}.{1}.DBValue" convertfromsqltypeformat="DateType.NewInstance({2})" newinstanceformat="DateType.DEFAULT" nullinstanceformat="DateType.UNSET" />
+		<type name="NumberType" namespace="Spring2.Core.Types" converttosqltypeformat="{0}.{1}.DBValue" convertfromsqltypeformat="NumberType.NewInstance({2})" newinstanceformat="NumberType.DEFAULT" nullinstanceformat="NumberType.UNSET" />
+		<type name="CurrencyType" namespace="Spring2.Core.Types" converttosqltypeformat="{0}.{1}.DBValue" convertfromsqltypeformat="CurrencyType.NewInstance({2})" newinstanceformat="CurrencyType.DEFAULT" nullinstanceformat="CurrencyType.UNSET" />
+		<type name="QuantityType" namespace="Spring2.Core.Types" converttosqltypeformat="{0}.{1}.DBValue" convertfromsqltypeformat="QuantityType.NewInstance({2})" newinstanceformat="QuantityType.DEFAULT" nullinstanceformat="QuantityType.UNSET" />
+		<type name="OrderType" namespace="Seamless.Manhattan.Types" converttosqltypeformat="{0}.{1}.DBValue" convertfromsqltypeformat="OrderType.GetInstance({2})" newinstanceformat="OrderType.DEFAULT" nullinstanceformat="OrderType.UNSET" />
 	</types>
 </DataTierGenerator>
