@@ -1,4 +1,5 @@
 Generator Todo:
+---------------
     M remove support for CodeGenerator; make <generator> a required element
 
     L support generation of CHECK CONSTRAINTS in table scripts (escaping of clause?)
@@ -33,8 +34,11 @@ Generator Todo:
     - ability to define begin and end region markers on a task
     - to support generating business logic entities:
 	- add attribute to entity (
+    - check for duplicate defined properties/columns
+
 
 Template Todo:
+--------------
     - data objects could/should support ICloneable with MemberwiseClone().
     - DAO classes should be internal
     - support for nolock in view generation
