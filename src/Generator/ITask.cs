@@ -8,7 +8,7 @@ namespace Spring2.DataTierGenerator.Generator {
     /// </summary>
     public interface ITask {
 
-	IList Elements {
+	ElementList Elements {
 	    get;
 	}
 
