@@ -1,5 +1,5 @@
 <?xml version="1.0" ?>
-<DataTierGenerator>
+<DataTierGenerator xmlns:xinc="http://www.w3.org/1999/XML/xinclude">
   <generator class="Spring2.DataTierGenerator.Generator.GeneratorTaskManager,Spring2.DataTierGenerator">
     <tasks>
       <task name="dataobject" element="entity" template="Template\DataObject.vm" directory="DataObject" filenameformat="{0}Data.cs" />
@@ -49,6 +49,10 @@
     <setting name="DataObjectBaseClass" value="Spring2.Core.DataObject.DataObject" />
     <setting name="DAOBaseClass" value="Spring2.Core.DAO.EntityDAO" />
   </config>
+
+    <sqltypes-ref xinc:href="config\sqltypes.inc.xml" />
+    <types-ref xinc:href="config\types.inc.xml" />
+
   <entities>
     <entity name="TournamentFee" sqlentity="TournamentFee">
       <properties>
@@ -298,6 +302,39 @@
 	<property name="Email" type="StringType" />
       </properties>
     </entity>
+
+    <entity name="TestSqlEntities" sqlentity="TestSqlEntities">
+	<properties>
+	    <property name="FloatProperty" column="float" type="DecimalType" />
+	    <property name="DateTimeProperty" column="datetime" type="DateType" />
+	    <property name="BigIntProperty" column="bigint" type="Int64" />
+	    <property name="BitProperty" column="bit" type="BooleanType" />
+	    <property name="SmallIntProperty" column="smallint" type="IntegerType" />
+	    <property name="TinyIntProperty" column="tinyint" type="IntegerType" />
+	    <property name="SmallMoneyProperty" column="smallmoney" type="CurrencyType" />
+	    <property name="MoneyProperty" column="money" type="CurrencyType" />
+	    <property name="TextProperty" column="text" type="StringType" />
+	    <property name="SmallDateTimeProperty" column="smalldatetime" type="DateType" />
+	    <property name="CharProperty" column="char" type="StringType" />
+	    <property name="VarCharProperty" column="varchar" type="StringType" />
+	    <property name="IntProperty" column="int" type="IntegerType" />
+	    <property name="NumericProperty" column="numeric" type="DecimalType" />
+	    <property name="DecimalProperty" column="decimal" type="DecimalType" />
+	    <property name="NCharProperty" column="nchar" type="StringType" />
+	    <property name="NTextProperty" column="ntext" type="StringType" />
+	    <property name="NVarCharProperty" column="nvarchar" type="StringType" />
+	    <property name="RealProperty" column="real" type="DecimalType" />
+	    <property name="UniqueIdentifierProperty" column="uniqueidentifier" type="Guid" />
+<!--
+	    <property name="TimestampProperty" column="timestamp" type="Byte[]" />
+	    <property name="ImageProperty" column="image" type="Byte[]" />
+	    <property name="BinaryProperty" column="binary" type="Byte[]" />
+	    <property name="VarBinaryProperty" column="varbinary" type="Byte[]" />
+-->
+	</properties>
+    </entity>
+
+
   </entities>
   <!--
     
@@ -439,61 +476,7 @@
       <value name="Vendor View Invoices" code="4">View a vendor's invoices</value>
     </enum>
   </enums>
-  <!-- 
-    
-      Types
-      
-    -->
-  <types>
-    <!-- .Net primitive types -->
-    <type name="String" newinstanceformat="String.Empty" />
-    <type name="DateTime" newinstanceformat="new DateTime()" />
-    <type name="Int32" newinstanceformat="0" />
-    <type name="Boolean" newinstanceformat="false" />
-    <type name="Double" newinstanceformat="0" />
-    <type name="Decimal" newinstanceformat="0" />
-    <!-- .Net FCL types -->
-    <type name="IList" namespace="System.Collections" />
-    <type name="ArrayList" namespace="System.Collections" newinstanceformat="new ArrayList()" />
-    <type name="Hashtable" namespace="System.Collections" newinstanceformat="new Hashtable()" />
-    <!-- Spring2.Core.Types -->
-    <type name="BooleanType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="BooleanType.GetInstance({2})" newinstanceformat="BooleanType.DEFAULT" nullinstanceformat="BooleanType.UNSET" />
-    <type name="StringType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="StringType.Parse({2})" newinstanceformat="StringType.DEFAULT" nullinstanceformat="StringType.UNSET" />
-    <type name="IdType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="new IdType({2})" newinstanceformat="IdType.DEFAULT" nullinstanceformat="IdType.UNSET" />
-    <type name="DateType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="new DateType({2})" newinstanceformat="DateType.DEFAULT" nullinstanceformat="DateType.UNSET" />
-    <type name="IntegerType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="new IntegerType({2})" newinstanceformat="IntegerType.DEFAULT" nullinstanceformat="IntegerType.UNSET" />
-    <type name="DecimalType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="new DecimalType({2})" newinstanceformat="DecimalType.DEFAULT" nullinstanceformat="DecimalType.UNSET" />
-    <type name="CurrencyType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="new CurrencyType({2})" newinstanceformat="CurrencyType.DEFAULT" nullinstanceformat="CurrencyType.UNSET" />
-    <type name="QuantityType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="new QuantityType({2})" newinstanceformat="QuantityType.DEFAULT" nullinstanceformat="QuantityType.UNSET" />
-    <type name="GenderType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="GenderType.GetInstance({2})" newinstanceformat="GenderType.DEFAULT" nullinstanceformat="GenderType.UNSET" />
-    <type name="USStateCodeEnum" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="USStateCodeEnum.GetInstance({2})" newinstanceformat="USStateCodeEnum.DEFAULT" nullinstanceformat="USStateCodeEnum.UNSET" />
-  </types>
-  <sqltypes>
-    <sqltype name="float" type="DecimalType" readermethodformat='{0}.GetDouble({0}.GetOrdinal("{1}"))' declarationformat="{0}({2})" />
-    <sqltype name="datetime" sqldbtype="DateTime" type="DateType" readermethodformat='{0}.GetDateTime({0}.GetOrdinal("{1}"))' />
-    <sqltype name="bit" type="IntegerType" readermethodformat='{0}.GetInt32({0}.GetOrdinal("{1}"))' />
-    <sqltype name="smallint" sqldbtype="SmallInt" type="IntegerType" readermethodformat='{0}.GetInt32({0}.GetOrdinal("{1}"))' />
-    <sqltype name="tinyint" sqldbtype="TinyInt" type="IntegerType" readermethodformat='{0}.GetInt32({0}.GetOrdinal("{1}"))' />
-    <sqltype name="smallmoney" sqldbtype="SmallMoney" type="CurrencyType" readermethodformat='{0}.GetDecimal({0}.GetOrdinal("{1}"))' />
-    <sqltype name="money" type="CurrencyType" readermethodformat='{0}.GetDecimal({0}.GetOrdinal("{1}"))' />
-    <sqltype name="image" length="50" type="StringType" readermethodformat='{0}.GetString({0}.GetOrdinal("{1}"))' />
-    <sqltype name="text" length="50" type="StringType" readermethodformat='{0}.GetString({0}.GetOrdinal("{1}"))' />
-    <sqltype name="smalldatetime" sqldbtype="SmallDateTime" type="DateType" readermethodformat='{0}.GetDateTime({0}.GetOrdinal("{1}"))' />
-    <sqltype name="char" length="1" type="StringType" readermethodformat='{0}.GetString({0}.GetOrdinal("{1}"))' declarationformat="{0}({1})" />
-    <sqltype name="varchar" sqldbtype="VarChar" length="50" type="StringType" readermethodformat='{0}.GetString({0}.GetOrdinal("{1}"))' declarationformat="{0}({1})" />
-    <sqltype name="int" scale="0" precision="10" type="IntegerType" readermethodformat='{0}.GetInt32({0}.GetOrdinal("{1}"))' />
-    <sqltype name="numeric" sqldbtype="Decimal" type="DecimalType" readermethodformat='{0}.GetDecimal({0}.GetOrdinal("{1}"))' declarationformat="{0}({2}, {3})" />
-    <sqltype name="binary" type="byte[]" declarationformat="{0}({1})" />
-    <sqltype name="bigint" sqldbtype="BigInt" type="Int64" readermethodformat='{0}.GetInt64({0}.GetOrdinal("{1}"))' />
-    <sqltype name="decimal" type="Decimal" readermethodformat='{0}.GetDecimal({0}.GetOrdinal("{1}"))' declarationformat="{0}({2}, {3})" />
-    <sqltype name="nchar" sqldbtype="NChar" type="String" readermethodformat='{0}.GetString({0}.GetOrdinal("{1}"))' declarationformat="{0}({1})" />
-    <sqltype name="ntext" sqldbtype="NText" type="String" readermethodformat='{0}.GetString({0}.GetOrdinal("{1}"))' declarationformat="{0}({1})" />
-    <sqltype name="nvarchar" sqldbtype="NVarChar" type="String" readermethodformat='{0}.GetString({0}.GetOrdinal("{1}"))' declarationformat="{0}({1})" />
-    <sqltype name="real" type="Single" readermethodformat='{0}.GetString({0}.GetOrdinal("{1}"))' />
-    <sqltype name="varbinary" sqldbtype="VarBinary" type="byte[]" declarationformat="{0}({1})" />
-    <sqltype name="uniqueidentifier" sqldbtype="UniqueIdentifier" type="Guid" />
-    <sqltype name="timestamp" type="DateTime" readermethodformat='{0}.GetDateTime({0}.GetOrdinal("{1}"))' />
-  </sqltypes>
+
   <!--
 	sqlentity attributes:
 	    name -
@@ -714,6 +697,44 @@
 	    </index>
 	  </indexes>
 	</sqlentity>
+
+	<sqlentity name="TestSqlEntities" view="vwTestSqlEntities">
+	  <columns>
+	    <column name="TestSqlEntitiesId" sqltype="int" identity="True" />
+	    <column name="float" sqltype="float" length="10" />
+	    <column name="datetime" sqltype="datetime" />
+	    <column name="bit" sqltype="bit" />
+	    <column name="smallint" sqltype="smallint" />
+	    <column name="tinyint" sqltype="tinyint" />
+	    <column name="smallmoney" sqltype="smallmoney" />
+	    <column name="money" sqltype="money" />
+	    <column name="text" sqltype="text" />
+	    <column name="smalldatetime" sqltype="smalldatetime" />
+	    <column name="char" sqltype="char" length="10" />
+	    <column name="varchar" sqltype="varchar" length="10" />
+	    <column name="int" sqltype="int" />
+	    <column name="numeric" sqltype="numeric" precision="10" scale="3" />
+	    <column name="bigint" sqltype="bigint" />
+	    <column name="decimal" sqltype="decimal" precision="10" scale="3" />
+	    <column name="nchar" sqltype="nchar" length="10" />
+	    <column name="ntext" sqltype="ntext" />
+	    <column name="nvarchar" sqltype="nvarchar" length="10" />
+	    <column name="real" sqltype="real" />
+	    <column name="uniqueidentifier" sqltype="uniqueidentifier" />
+	  </columns>
+<!--
+	    <column name="image" sqltype="image" length="10" />
+	    <column name="binary" sqltype="binary" length="10" />
+	    <column name="varbinary" sqltype="varbinary" length="10" />
+	    <column name="timestamp" sqltype="timestamp" length="10" />
+-->
+	  <constraints>
+	    <constraint name="PK_TestSqlEntities" type="PRIMARY KEY" clustered="False">
+	      <column name="TestSqlEntitiesId" />
+	    </constraint>
+	  </constraints>
+	</sqlentity>
+
       </sqlentities>
     </database>
   </databases>
