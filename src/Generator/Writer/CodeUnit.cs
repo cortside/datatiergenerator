@@ -447,7 +447,7 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 			    member = null;
 			}
 			if (m is CodeMemberField) {
-			} else if (m is CodeMemberMethod || m is CodeMemberProperty || m is CodeConstructor) {
+			} else if (m is CodeMemberMethod || m is CodeMemberProperty || m is CodeConstructor || m is CodeTypeConstructor) {
 			    member = new Member();
 			    member.FirstLine = line.LineNumber;
 			    member.Element = m;
