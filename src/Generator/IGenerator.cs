@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 
 namespace Spring2.DataTierGenerator.Generator {
     /// <summary>
@@ -10,6 +11,13 @@ namespace Spring2.DataTierGenerator.Generator {
 	/// Call the generator to action and output somthing.
 	/// </summary>
 	void Generate();
+
+	/// <summary>
+	/// List of log messages (String) that were created durring generation
+	/// </summary>
+	IList Log {
+	    get;
+	}
 
     }
 }
