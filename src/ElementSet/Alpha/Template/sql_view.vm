@@ -37,7 +37,7 @@ FROM
 #if ($element.Views.Count==1)
 #foreach($constraint in $element.Views.get_Item(0).Constraints)
 #set($length = $constraint.Prefix.Length - 1)
-LEFT JOIN $sql.Escape($constraint.ForeignEntity.View) $sql.Escape($constraint.Prefix.Substring(0,$length)) on #foreach($column in $constraint.Columns)#if ($velocityCount >1) and #end${element.Name}.$column.Name = $sql.Escape($constraint.Prefix.Substring(0,$length)).$column.ForeignColumn#end
+LEFT JOIN $sql.Escape($constraint.ForeignEntity.View) $sql.Escape($constraint.Prefix.Substring(0,$length)) on #foreach($column in $constraint.Columns)#if ($velocityCount >1) and #end${sql.Escape($element.Name)}.$sql.Escape($column.Name) = $sql.Escape($constraint.Prefix.Substring(0,$length)).$column.ForeignColumn#end
 
 #end
 #end
