@@ -24,12 +24,25 @@ namespace $options.GetDAONameSpace($element.Name) {
 #if($element.SqlEntity.GenerateInsertStoredProcScript || $element.SqlEntity.GenerateUpdateStoredProcScript || $element.SqlEntity.GenerateDeleteStoredProcScript)
 	private static readonly Int32 COMMAND_TIMEOUT = $element.SqlEntity.CommandTimeout;
 #end
-###set ($listtype = "void")
-###if($options.GenerateAllCollections)
 #set ($listtype = "${element.Name}List")
-###else
-###set ($listtype="IList")
-###end
+	private static ColumnOrdinals columnOrdinals = null;
+
+	private sealed class ColumnOrdinals {
+
+#foreach($column in $element.SqlEntity.Columns)
+#if($column.SqlType.Name.Length>0)
+	    public Int32 ${column.Name};
+#end
+#end
+
+	    internal ColumnOrdinals(SqlDataReader reader) {
+#foreach($column in $element.SqlEntity.Columns)
+#if($column.SqlType.Name.Length>0)
+		${column.Name} = reader.GetOrdinal("$column.Name");
+#end
+#end
+	    }
+	}
 
 	/// <summary>
 	/// Hash table mapping entity property names to sql code.
@@ -232,13 +245,35 @@ namespace $options.GetDAONameSpace($element.Name) {
 	/// Read from reader and return a single data object
 	/// </summary>
 	private static $options.GetDOClassName($element.Name) GetDataObject(SqlDataReader reader) { 
+	    if (columnOrdinals == null) {
+		columnOrdinals = new ColumnOrdinals(reader);
+	    }
+	    return GetDataObject(reader, columnOrdinals);
+	}
+
+	/// <summary>
+	/// Read from reader and return a single data object
+	/// </summary>
+	private static $options.GetDOClassName($element.Name) GetDataObject(SqlDataReader reader, ColumnOrdinals ordinals) { 
 	    if (!reader.Read()) {
 		reader.Close();
 		throw new FinderException("$options.GetDOClassName($element.Name).$finder.Name found no rows.");
 	    }
-	    $options.GetDOClassName($element.Name) data = GetDataObjectFromReader(reader);
+	    $options.GetDOClassName($element.Name) data = GetDataObjectFromReader(reader, ordinals);
 	    reader.Close();
 	    return data;
+	}
+
+	/// <summary>
+	/// Builds a data object from the current row in a data reader.  Uses the default ColumnOrdinals instance.
+	/// </summary>
+	/// <param name="dataReader">Container for database row.</param>
+	/// <returns>Data object built from current row.</returns>
+	private static $options.GetDOClassName($element.Name) GetDataObjectFromReader(SqlDataReader dataReader) {
+	    if (columnOrdinals == null) {
+		columnOrdinals = new ColumnOrdinals(dataReader);
+	    }
+	    return GetDataObjectFromReader(dataReader, columnOrdinals);
 	}
 
 	/// <summary>
@@ -246,14 +281,22 @@ namespace $options.GetDAONameSpace($element.Name) {
 	/// </summary>
 	/// <param name="dataReader">Container for database row.</param>
 	/// <returns>Data object built from current row.</returns>
-	private static $options.GetDOClassName($element.Name) GetDataObjectFromReader(SqlDataReader dataReader) {
+	private static $options.GetDOClassName($element.Name) GetDataObjectFromReader(SqlDataReader dataReader, ColumnOrdinals ordinals) {
 	    $options.GetDOClassName($element.Name) data = new $options.GetDOClassName($element.Name)();
 #foreach($field in $element.Fields)
 #if($field.Column.SqlType.Name.Length>0)
-	    if (dataReader.IsDBNull(dataReader.GetOrdinal("$field.GetSqlAlias()"))) { 
+	    if (dataReader.IsDBNull(ordinals.${field.Column.Name})) { 
 		data.${field.GetMethodFormat()} = ${field.Type.NullInstanceFormat};
 	    } else {
-		data.$field.GetMethodFormat() = $options.GetReaderString($field);
+#set ($alias = $field.Alias)
+#if ($alias.Length==0)
+#set ($alias = $field.Column.Name)
+#end
+#set ($readerMethod = $field.Column.SqlType.ReaderMethodFormat.Replace("{0}", "dataReader").Replace("{1}", $alias).Replace("{2}", "ordinals.${field.Column.Name}"))
+#if ($field.Type.ConvertFromSqlTypeFormat.Length >0)
+#set ($readerMethod = $field.Type.ConvertFromSqlTypeFormat.Replace("(0}", "data").Replace("{1}", $field.GetMethodFormat()).Replace("{2}", $readerMethod).Replace("{3}", "dataReader").Replace("{4}", $alias))
+#end
+		data.$field.GetMethodFormat() = $readerMethod;
 	    }
 #end
 #end
