@@ -40,78 +40,78 @@ namespace Spring2.DataTierGenerator {
 			if (root.HasChildNodes) {
 				for (Int32 i=0; i<root.ChildNodes.Count; i++) {
 					XmlNode node = root.ChildNodes[i];
-					switch(node.Name.ToLower()) {
+					switch(node.Attributes["name"].Value.ToLower()) {
 						case "projectnamespace":
-							this.projectNameSpace = node.InnerText;
+							this.projectNameSpace = node.Attributes["value"].Value;
 							break;
 						case "server":
-							this.server = node.InnerText;
+							this.server = node.Attributes["value"].Value;
 							break;
 						case "database":
-							this.database = node.InnerText;
+							this.database = node.Attributes["value"].Value;
 							break;
 						case "user":
-							this.user = node.InnerText;
+							this.user = node.Attributes["value"].Value;
 							break;
 						case "password":
-							this.password = node.InnerText;
+							this.password = node.Attributes["value"].Value;
 							break;
 						case "rootdirectory":
-							this.rootDirectory = node.InnerText;
+							this.rootDirectory = node.Attributes["value"].Value;
 							break;
 						case "sqlscriptdirectory":
-							this.sqlScriptDirectory = node.InnerText;
+							this.sqlScriptDirectory = node.Attributes["value"].Value;
 							break;
 						case "daoclassdirectory":
-							this.daoClassDirectory = node.InnerText;
+							this.daoClassDirectory = node.Attributes["value"].Value;
 							break;
 						case "doclassdirectory":
-							this.doClassDirectory = node.InnerText;
+							this.doClassDirectory = node.Attributes["value"].Value;
 							break;
 						case "singlefile":
-							this.singleFile = Boolean.Parse(node.InnerText);
+							this.singleFile = Boolean.Parse(node.Attributes["value"].Value);
 							break;
 						case "createviews":
-							this.createViews = Boolean.Parse(node.InnerText);
+							this.createViews = Boolean.Parse(node.Attributes["value"].Value);
 							break;
 						case "createdataobjects":
-							this.createDataObjects = Boolean.Parse(node.InnerText);
+							this.createDataObjects = Boolean.Parse(node.Attributes["value"].Value);
 							break;
 						case "scriptdropstatement":
-							this.scriptDropStatement = Boolean.Parse(node.InnerText);
+							this.scriptDropStatement = Boolean.Parse(node.Attributes["value"].Value);
 							break;
 						case "storedprocnameformat":
-							this.storedProcNameFormat = node.InnerText;
+							this.storedProcNameFormat = node.Attributes["value"].Value;
 							break;
 						case "generateprocsforforeignkey":
-							this.generateProcsForForeignKey = Boolean.Parse(node.InnerText);
+							this.generateProcsForForeignKey = Boolean.Parse(node.Attributes["value"].Value);
 							break;
 						case "generateselectstoredprocs":
-							this.generateSelectStoredProcs= Boolean.Parse(node.InnerText);
+							this.generateSelectStoredProcs= Boolean.Parse(node.Attributes["value"].Value);
 							break;
 						case "generateonlyprimarydeletestoredproc":
-							this.generateOnlyPrimaryDeleteStoredProc= Boolean.Parse(node.InnerText);
+							this.generateOnlyPrimaryDeleteStoredProc= Boolean.Parse(node.Attributes["value"].Value);
 							break;
 						case "allowupdateofprimarykey":
-							this.allowUpdateOfPrimaryKey = Boolean.Parse(node.InnerText);
+							this.allowUpdateOfPrimaryKey = Boolean.Parse(node.Attributes["value"].Value);
 							break;
 						case "useviews":
-							this.allowUpdateOfPrimaryKey = Boolean.Parse(node.InnerText);
+							this.allowUpdateOfPrimaryKey = Boolean.Parse(node.Attributes["value"].Value);
 							break;
 						case "usedatatypes":
-							this.useDataTypes = Boolean.Parse(node.InnerText);
+							this.useDataTypes = Boolean.Parse(node.Attributes["value"].Value);
 							break;
 						case "autodiscoverentities":
-							this.autoDiscoverEntities = Boolean.Parse(node.InnerText);
+							this.autoDiscoverEntities = Boolean.Parse(node.Attributes["value"].Value);
 							break;
 						case "autodiscoverproperties":
-							this.autoDiscoverProperties = Boolean.Parse(node.InnerText);
+							this.autoDiscoverProperties = Boolean.Parse(node.Attributes["value"].Value);
 							break;
 						case "autodiscoverattributes":
-							this.autoDiscoverAttributes = Boolean.Parse(node.InnerText);
+							this.autoDiscoverAttributes = Boolean.Parse(node.Attributes["value"].Value);
 							break;
 						default:
-							Console.Out.WriteLine("Unrecognized configuration option: " + node.Name);
+							Console.Out.WriteLine("Unrecognized configuration option: " + node.Attributes["name"].Value + " = " + node.Attributes["value"].Value);
 							break;
 					}
 				}
