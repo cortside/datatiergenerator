@@ -1,0 +1,185 @@
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
+GO
+
+if not exists (select * from dbo.sysobjects where id = object_id(N'[TestSqlEntities]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+CREATE TABLE TestSqlEntities (
+	TestSqlEntitiesId int IDENTITY(1,1) NOT NULL,
+	float float(10) NULL,
+	datetime datetime NULL,
+	bit bit NULL,
+	smallint smallint NULL,
+	tinyint tinyint NULL,
+	smallmoney smallmoney NULL,
+	money money NULL,
+	text text NULL,
+	smalldatetime smalldatetime NULL,
+	char char(10) NULL,
+	varchar varchar(10) NULL,
+	int int NULL,
+	numeric numeric(10, 3) NULL,
+	bigint bigint NULL,
+	decimal decimal(10, 3) NULL,
+	nchar nchar(10) NULL,
+	ntext ntext NULL,
+	nvarchar nvarchar(10) NULL,
+	real real NULL,
+	uniqueidentifier uniqueidentifier NULL
+)
+GO
+
+if not exists(select * from syscolumns where id=object_id('TestSqlEntities') and name = 'TestSqlEntitiesId')
+  BEGIN
+	ALTER TABLE TestSqlEntities ADD
+	    TestSqlEntitiesId int IDENTITY(1,1) NOT NULL
+  END
+GO
+
+if not exists(select * from syscolumns where id=object_id('TestSqlEntities') and name = 'float')
+  BEGIN
+	ALTER TABLE TestSqlEntities ADD
+	    float float(10) NULL
+  END
+GO
+
+if not exists(select * from syscolumns where id=object_id('TestSqlEntities') and name = 'datetime')
+  BEGIN
+	ALTER TABLE TestSqlEntities ADD
+	    datetime datetime NULL
+  END
+GO
+
+if not exists(select * from syscolumns where id=object_id('TestSqlEntities') and name = 'bit')
+  BEGIN
+	ALTER TABLE TestSqlEntities ADD
+	    bit bit NULL
+  END
+GO
+
+if not exists(select * from syscolumns where id=object_id('TestSqlEntities') and name = 'smallint')
+  BEGIN
+	ALTER TABLE TestSqlEntities ADD
+	    smallint smallint NULL
+  END
+GO
+
+if not exists(select * from syscolumns where id=object_id('TestSqlEntities') and name = 'tinyint')
+  BEGIN
+	ALTER TABLE TestSqlEntities ADD
+	    tinyint tinyint NULL
+  END
+GO
+
+if not exists(select * from syscolumns where id=object_id('TestSqlEntities') and name = 'smallmoney')
+  BEGIN
+	ALTER TABLE TestSqlEntities ADD
+	    smallmoney smallmoney NULL
+  END
+GO
+
+if not exists(select * from syscolumns where id=object_id('TestSqlEntities') and name = 'money')
+  BEGIN
+	ALTER TABLE TestSqlEntities ADD
+	    money money NULL
+  END
+GO
+
+if not exists(select * from syscolumns where id=object_id('TestSqlEntities') and name = 'text')
+  BEGIN
+	ALTER TABLE TestSqlEntities ADD
+	    text text NULL
+  END
+GO
+
+if not exists(select * from syscolumns where id=object_id('TestSqlEntities') and name = 'smalldatetime')
+  BEGIN
+	ALTER TABLE TestSqlEntities ADD
+	    smalldatetime smalldatetime NULL
+  END
+GO
+
+if not exists(select * from syscolumns where id=object_id('TestSqlEntities') and name = 'char')
+  BEGIN
+	ALTER TABLE TestSqlEntities ADD
+	    char char(10) NULL
+  END
+GO
+
+if not exists(select * from syscolumns where id=object_id('TestSqlEntities') and name = 'varchar')
+  BEGIN
+	ALTER TABLE TestSqlEntities ADD
+	    varchar varchar(10) NULL
+  END
+GO
+
+if not exists(select * from syscolumns where id=object_id('TestSqlEntities') and name = 'int')
+  BEGIN
+	ALTER TABLE TestSqlEntities ADD
+	    int int NULL
+  END
+GO
+
+if not exists(select * from syscolumns where id=object_id('TestSqlEntities') and name = 'numeric')
+  BEGIN
+	ALTER TABLE TestSqlEntities ADD
+	    numeric numeric(10, 3) NULL
+  END
+GO
+
+if not exists(select * from syscolumns where id=object_id('TestSqlEntities') and name = 'bigint')
+  BEGIN
+	ALTER TABLE TestSqlEntities ADD
+	    bigint bigint NULL
+  END
+GO
+
+if not exists(select * from syscolumns where id=object_id('TestSqlEntities') and name = 'decimal')
+  BEGIN
+	ALTER TABLE TestSqlEntities ADD
+	    decimal decimal(10, 3) NULL
+  END
+GO
+
+if not exists(select * from syscolumns where id=object_id('TestSqlEntities') and name = 'nchar')
+  BEGIN
+	ALTER TABLE TestSqlEntities ADD
+	    nchar nchar(10) NULL
+  END
+GO
+
+if not exists(select * from syscolumns where id=object_id('TestSqlEntities') and name = 'ntext')
+  BEGIN
+	ALTER TABLE TestSqlEntities ADD
+	    ntext ntext NULL
+  END
+GO
+
+if not exists(select * from syscolumns where id=object_id('TestSqlEntities') and name = 'nvarchar')
+  BEGIN
+	ALTER TABLE TestSqlEntities ADD
+	    nvarchar nvarchar(10) NULL
+  END
+GO
+
+if not exists(select * from syscolumns where id=object_id('TestSqlEntities') and name = 'real')
+  BEGIN
+	ALTER TABLE TestSqlEntities ADD
+	    real real NULL
+  END
+GO
+
+if not exists(select * from syscolumns where id=object_id('TestSqlEntities') and name = 'uniqueidentifier')
+  BEGIN
+	ALTER TABLE TestSqlEntities ADD
+	    uniqueidentifier uniqueidentifier NULL
+  END
+GO
+
+if not exists (select * from dbo.sysobjects where id = object_id(N'PK_TestSqlEntities') and OBJECTPROPERTY(id, N'IsPrimaryKey') = 1)
+ALTER TABLE TestSqlEntities WITH NOCHECK ADD
+	CONSTRAINT PK_TestSqlEntities PRIMARY KEY NONCLUSTERED
+	(
+		TestSqlEntitiesId
+	)
+GO
+

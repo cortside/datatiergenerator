@@ -1,0 +1,85 @@
+if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[spTestSqlEntities_Insert]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+drop procedure [dbo].[spTestSqlEntities_Insert]
+GO
+
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE spTestSqlEntities_Insert
+	@float	float(10),
+	@datetime	datetime,
+	@bit	bit,
+	@smallint	smallint,
+	@tinyint	tinyint,
+	@smallmoney	smallmoney,
+	@money	money,
+	@text	text,
+	@smalldatetime	smalldatetime,
+	@char	char(10),
+	@varchar	varchar(10),
+	@int	int,
+	@numeric	numeric(10, 3),
+	@bigint	bigint,
+	@decimal	decimal(10, 3),
+	@nchar	nchar(10),
+	@ntext	ntext,
+	@nvarchar	nvarchar(10),
+	@real	real,
+	@uniqueidentifier	uniqueidentifier
+
+AS
+
+INSERT INTO TestSqlEntities (
+	float,
+	datetime,
+	bit,
+	smallint,
+	tinyint,
+	smallmoney,
+	money,
+	text,
+	smalldatetime,
+	char,
+	varchar,
+	int,
+	numeric,
+	bigint,
+	decimal,
+	nchar,
+	ntext,
+	nvarchar,
+	real,
+	uniqueidentifier)
+VALUES (
+	@float,
+	@datetime,
+	@bit,
+	@smallint,
+	@tinyint,
+	@smallmoney,
+	@money,
+	@text,
+	@smalldatetime,
+	@char,
+	@varchar,
+	@int,
+	@numeric,
+	@bigint,
+	@decimal,
+	@nchar,
+	@ntext,
+	@nvarchar,
+	@real,
+	@uniqueidentifier)
+
+
+if @@rowcount <> 1 or @@error!=0
+    BEGIN
+        RAISERROR  20000 'spTestSqlEntities_Insert: Unable to insert new row into TestSqlEntities table '
+        RETURN(-1)
+    END
+
+return @@IDENTITY
+GO
+
