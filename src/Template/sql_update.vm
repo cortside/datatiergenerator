@@ -1,0 +1,60 @@
+#*
+
+        sql_delete.vm - default sql update stored proc template (replaces SqlGenerator)
+
+*###
+#if($element.GenerateUpdateStoredProcScript)
+#set($at = '@')
+if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[sp${element.Name}_Update]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+drop procedure [dbo].[sp${element.Name}_Update]
+GO
+
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE sp${element.Name}_Update
+
+#set($id = $element.GetIdentityColumn())
+#set($cols = 0)
+#foreach($column in $element.Columns)
+#if(!$column.ViewColumn)
+#set($cols = $cols + 1)#if($cols>1),
+#end
+	${at}${column.Name}	${column.SqlType.Declaration}#end
+#end
+
+
+AS
+
+
+UPDATE
+	${element.EscapedName}
+SET
+#set($cols = 0)
+#foreach($column in $element.Columns)
+#if(!$column.ViewColumn && !$column.Identity && !$element.IsPrimaryKeyColumn($column.Name))
+#set($cols = $cols + 1)#if($cols>1),
+#end
+	${column.Name} = @${column.Name}#end
+#end
+
+WHERE
+#foreach($column in $element.GetPrimaryKeyColumns(false))
+#if($velocityCount > 1)
+	 AND #end${column.Name} = @${column.Name}
+#end
+
+
+if @@ROWCOUNT <> 1
+    BEGIN
+        RAISERROR  ('sp${element.Name}_Update:  update was expected to update a single row and updated %d rows', 16,1, @@ROWCOUNT)
+        RETURN(-1)
+    END
+GO
+
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
+GO
+
+#end

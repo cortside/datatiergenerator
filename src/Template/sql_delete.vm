@@ -1,0 +1,50 @@
+#*
+
+        sql_delete.vm - default sql delete stored proc template (replaces SqlGenerator)
+
+*###
+#if($element.GenerateDeleteStoredProcScript)
+#set($at = '@')
+if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[sp${element.Name}_Delete]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+drop procedure [dbo].[sp${element.Name}_Delete]
+GO
+
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE sp${element.Name}_Delete
+
+#foreach($column in $element.GetPrimaryKeyColumns())#if($velocityCount > 1),
+#end${at}${column.Name}	${column.SqlType.Declaration}#end
+
+
+AS
+
+if not exists(SELECT * FROM $element.EscapedName WHERE (#foreach($column in $element.GetPrimaryKeyColumns())
+#if($velocityCount > 1) and
+#end
+	${column.Name} = @${column.Name}
+#end
+))
+    BEGIN
+        RAISERROR  ('sp${element.Name}_Delete: record not found to delete', 16,1)
+        RETURN(-1)
+    END
+
+DELETE
+FROM
+	${element.EscapedName}
+WHERE 
+#foreach($column in $element.GetPrimaryKeyColumns())
+#if($velocityCount > 1) and
+#end
+	${column.Name} = @${column.Name}
+#end
+GO
+
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
+GO
+
+#end

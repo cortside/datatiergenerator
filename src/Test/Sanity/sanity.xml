@@ -9,6 +9,10 @@
 	<task name="collection" element="collection" template="Template\collection.vm" directory="DataObject" filenameformat="{0}Data.cs" />
 	<task name="table" element="sqlentity" template="Template\sql_table.vm" directory="sql\table" filenameformat="{0}.table.sql" />
 	<task name="view" element="sqlentity" template="Template\sql_view.vm" directory="sql\view" filenameformat="vw{0}.view.sql" />
+
+	<task name="delete procs" element="sqlentity" template="Template\sql_delete.vm" directory="sql\proc" filenameformat="sp{0}_Delete.proc.sql" />
+	<task name="insert procs" element="sqlentity" template="Template\sql_insert.vm" directory="sql\proc" filenameformat="sp{0}_Insert.proc.sql" />
+	<task name="update procs" element="sqlentity" template="Template\sql_update.vm" directory="sql\proc" filenameformat="sp{0}_Update.proc.sql" />
     </generator>
 
   <config>
