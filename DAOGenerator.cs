@@ -43,10 +43,12 @@ namespace Spring2.DataTierGenerator {
 
 	    // Append the access methods
 	    CreateInsertMethod(sb);
-	    sb.Append("\n\n");
-	    CreateUpdateMethod(sb);
-	    sb.Append("\n\n");
-	    CreateDeleteMethods(sb);
+		if (entity.HasUpdatableFields()) {
+			sb.Append("\n\n");
+			CreateUpdateMethod(sb);
+		}
+		sb.Append("\n\n");
+		CreateDeleteMethods(sb);
 
 	    if (options.GenerateSelectStoredProcs) {
 		sb.Append("\n\n");
