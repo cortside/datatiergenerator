@@ -292,6 +292,8 @@
         <xs:restriction base="xs:string">
             <xs:enumeration value="True" />
             <xs:enumeration value="False" />
+            <xs:enumeration value="true" />
+            <xs:enumeration value="false" />
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="ConstraintTypeEnum">
