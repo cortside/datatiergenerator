@@ -3,8 +3,8 @@ using System.Data;
 using System.IO;
 using System.Collections;
 
-using org.apache.velocity;
-using org.apache.velocity.app;
+using NVelocity;
+using NVelocity.App;
 
 using Spring2.DataTierGenerator;
 using Spring2.DataTierGenerator.Element;
@@ -33,14 +33,14 @@ namespace Spring2.DataTierGenerator.Generator.Task {
 	    IndentableStringWriter writer = new IndentableStringWriter();
 
 	    VelocityContext vc = new VelocityContext();
-	    vc.put("dtgversion", this.GetType().Assembly.FullName);
-	    vc.put("options", options);
-	    vc.put("element", element);
-	    vc.put("elements", elements);
+	    vc.Put("dtgversion", this.GetType().Assembly.FullName);
+	    vc.Put("options", options);
+	    vc.Put("element", element);
+	    vc.Put("elements", elements);
 
 	    Template template = Velocity.GetTemplate("Template\\dtg_csharp_library.vm");
 	    template = Velocity.GetTemplate(task.Template);
-	    template.merge(vc, writer);
+	    template.Merge(vc, writer);
 
 	    FileInfo file = new FileInfo(options.RootDirectory + task.Directory + "\\" + String.Format(task.FileNameFormat, name));
 	    if (writer.ToString().Length > 0) {

@@ -4,7 +4,7 @@ using System.IO;
 using System.Collections;
 using System.Text;
 
-using org.apache.velocity.app;
+using NVelocity.App;
 
 using Spring2.DataTierGenerator;
 using Spring2.DataTierGenerator.Element;

@@ -78,14 +78,14 @@
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
                 <Reference
-                    Name = "Velocity"
-                    AssemblyName = "Velocity"
-                    HintPath = "..\lib\Velocity.dll"
-                />
-                <Reference
                     Name = "Commons"
                     AssemblyName = "Commons"
                     HintPath = "..\lib\Commons.dll"
+                />
+                <Reference
+                    Name = "NVelocity"
+                    AssemblyName = "NVelocity"
+                    HintPath = "..\lib\NVelocity.dll"
                 />
             </References>
         </Build>
@@ -361,6 +361,10 @@
                 />
                 <File
                     RelPath = "Template\sql_update.vm"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Template\sql_view.vm"
                     BuildAction = "EmbeddedResource"
                 />
                 <File
