@@ -1,52 +1,52 @@
 <?xml version="1.0" ?>
 <DataTierGenerator xmlns="http://www.spring2.com/xsd/datatiergenerator.xsd">
-	<config>
-		<setting name="Server" value="hal" />
-		<setting name="Database" value="cort_project" />
-		<setting name="User" value="sa" />
-		<setting name="Password" value="" />
-		<setting name="RootDirectory" value="c:\data\work\spring2\DataTierGenerator\" />
-		<setting name="SqlScriptDirectory" value="Sql" />
-		<setting name="DaoClassDirectory" value="Dao" />
-		<setting name="DoClassDirectory" value="DataObject" />
-		<setting name="TypesClassDirectory" value="Types" />
-		<setting name="SingleFile" value="False" />
-		<setting name="GenerateSqlViewScripts" value="True" />
-		<setting name="GenerateSqlTableScripts" value="True" />
-		<setting name="UseViews" value="True" />
-		<setting name="GenerateDataObjectClasses" value="True" />
-		<setting name="ScriptDropStatement" value="True" />
-		<setting name="StoredProcNameFormat" value="proc{%TABLE_NAME%}{%PROC_TYPE%}" />
-		<setting name="RootNameSpace" value="Spring2.DataTierGenerator" />
-		<setting name="GenerateProcsForForeignKey" value="False" />
-		<setting name="GenerateSelectStoredProcs" value="False" />
-		<setting name="GenerateOnlyPrimaryDeleteStoredProc" value="True" />
-		<setting name="AllowUpdateOfPrimaryKey" value="False" />
-		<setting name="AutoDiscoverEntities" value="False" />
-		<setting name="AutoDiscoverProperties" value="False" />
-		<setting name="AutoDiscoverAttributes" value="False" />
-		<setting name="DataObjectBaseClass" value="Spring2.Core.DataObject.DataObject" />
-		<setting name="DAOBaseClass" value="Spring2.Core.DAO.EntityDAO" />
-		<setting name="EnumBaseClass" value="Spring2.Core.Types.EnumDataType" />
-		<!-- unsupported below this line -->
-		<setting name="DataObjectNameFormat" value="{0}Data" />
-		<setting name="DaoNameFormat" value="{0}Dao" />
-		<setting name="AutoDiscoverFinders" value="False" />
-	</config>
-	<!--
+    <config>
+	<setting name="Server" value="hal" />
+	<setting name="Database" value="cort_project" />
+	<setting name="User" value="sa" />
+	<setting name="Password" value="" />
+	<setting name="RootDirectory" value="c:\data\work\spring2\DataTierGenerator\" />
+	<setting name="SqlScriptDirectory" value="Sql" />
+	<setting name="DaoClassDirectory" value="Dao" />
+	<setting name="DoClassDirectory" value="DataObject" />
+	<setting name="TypesClassDirectory" value="Types" />
+	<setting name="SingleFile" value="False" />
+	<setting name="GenerateSqlViewScripts" value="True" />
+	<setting name="GenerateSqlTableScripts" value="True" />
+	<setting name="UseViews" value="True" />
+	<setting name="GenerateDataObjectClasses" value="True" />
+	<setting name="ScriptDropStatement" value="True" />
+	<setting name="StoredProcNameFormat" value="proc{%TABLE_NAME%}{%PROC_TYPE%}" />
+	<setting name="RootNameSpace" value="Spring2.DataTierGenerator" />
+	<setting name="GenerateProcsForForeignKey" value="False" />
+	<setting name="GenerateSelectStoredProcs" value="False" />
+	<setting name="GenerateOnlyPrimaryDeleteStoredProc" value="True" />
+	<setting name="AllowUpdateOfPrimaryKey" value="False" />
+	<setting name="AutoDiscoverEntities" value="False" />
+	<setting name="AutoDiscoverProperties" value="False" />
+	<setting name="AutoDiscoverAttributes" value="False" />
+	<setting name="DataObjectBaseClass" value="Spring2.Core.DataObject.DataObject" />
+	<setting name="DAOBaseClass" value="Spring2.Core.DAO.EntityDAO" />
+	<setting name="EnumBaseClass" value="Spring2.Core.Types.EnumDataType" />
+	<!-- unsupported below this line -->
+	<setting name="DataObjectNameFormat" value="{0}Data" />
+	<setting name="DaoNameFormat" value="{0}Dao" />
+	<setting name="AutoDiscoverFinders" value="False" />
+    </config>
+    <!--
 		Application entites (objects)
 	-->
-	<entities>
-		<entity name="Address">
-			<property name="Address1" sqlname="" type="StringType" />
-			<property name="Address2" sqlname="" type="StringType" />
-			<property name="City" sqlname="" type="StringType" />
-			<property name="State" sqlname="" type="StringType" />
-			<property name="PostalCode" sqlname="" type="StringType" />
-			<property name="Country" sqlname="" type="StringType" />
-		</entity>
-		<entity name="TestSqlObject" sqlobject="TestSqlObject">
-			<!-- 
+    <entities>
+	<entity name="Address">
+	    <property name="Address1" sqlname="" type="StringType" />
+	    <property name="Address2" sqlname="" type="StringType" />
+	    <property name="City" sqlname="" type="StringType" />
+	    <property name="State" sqlname="" type="StringType" />
+	    <property name="PostalCode" sqlname="" type="StringType" />
+	    <property name="Country" sqlname="" type="StringType" />
+	</entity>
+	<entity name="TestSqlObject" sqlobject="TestSqlObject">
+	    <!-- 
 				Finder attributes:
 					name - name that must match a name defined in the properties collection
 					sort - a comma seperated list of sql column names.  If one is not specified, one is created using the order of the properties specified
@@ -55,41 +55,41 @@
 					support for Or?
 					support for specifying custom sql?
 			-->
-			<finders>
-				<finder name="FindByPostalCode" sort="Int32Column, StringColumn">
-					<properties>
-						<property name="Address.PostalCode" />
-					</properties>
-				</finder>
-				<finder name="FindByPK" unique="True">
-					<properties>
-						<property name="StringColumn" />
-						<property name="Int32Column" />
-					</properties>
-				</finder>
-			</finders>
-			<!-- 
+	    <finders>
+		<finder name="FindByPostalCode" sort="Int32Column, StringColumn">
+		    <properties>
+			<property name="Address.PostalCode" />
+		    </properties>
+		</finder>
+		<finder name="FindByPK" unique="True">
+		    <properties>
+			<property name="StringColumn" />
+			<property name="Int32Column" />
+		    </properties>
+		</finder>
+	    </finders>
+	    <!-- 
 				property elements should now be defined inside a properties element - this will allow for ability to define other tags under entity.
 			-->
-			<properties>
-				<property name="StringColumn" sqlname="sqlstringcolumn" sqltype="varchar" isprimarykey="True" />
-				<property name="Int32Column" sqlname="sqlintcolumn" sqltype="int" type="IdType" isprimarykey="True" />
-				<property name="EmailFormat" sqltype="char" type="FormatType" />
-				<property name="Address" sqlname="" type="AddressData" />
-				<property name="Address.Address1" sqlname="addr1" sqltype="varchar" type="StringType" />
-				<property name="Address.Address2" sqlname="addr2" sqltype="varchar" type="StringType" />
-				<property name="Address.City" sqlname="city" sqltype="varchar" type="StringType" />
-				<property name="Address.State" sqlname="state" sqltype="varchar" type="StringType" />
-				<property name="Address.PostalCode" sqlname="zip" sqltype="varchar" type="StringType" />
-			</properties>
-		</entity>
-		<entity name="TestSqlObject2" sqlobject="TestSqlObject2">
-			<properties>
-				<property name="Id" sqltype="int" type="IdType" isidentity="True" />
-			</properties>
-		</entity>
-	</entities>
-	<!--
+	    <properties>
+		<property name="StringColumn" sqlname="sqlstringcolumn" sqltype="varchar" isprimarykey="True" />
+		<property name="Int32Column" sqlname="sqlintcolumn" sqltype="int" type="IdType" isprimarykey="True" />
+		<property name="EmailFormat" sqltype="char" type="FormatType" />
+		<property name="Address" sqlname="" type="AddressData" />
+		<property name="Address.Address1" sqlname="addr1" sqltype="varchar" type="StringType" />
+		<property name="Address.Address2" sqlname="addr2" sqltype="varchar" type="StringType" />
+		<property name="Address.City" sqlname="city" sqltype="varchar" type="StringType" />
+		<property name="Address.State" sqlname="state" sqltype="varchar" type="StringType" />
+		<property name="Address.PostalCode" sqlname="zip" sqltype="varchar" type="StringType" />
+	    </properties>
+	</entity>
+	<entity name="TestSqlObject2" sqlobject="TestSqlObject2">
+	    <properties>
+		<property name="Id" sqltype="int" type="IdType" isidentity="True" />
+	    </properties>
+	</entity>
+    </entities>
+    <!--
 		sqlobject definitions
 		NOT SUPPORTED YET
 		
@@ -104,29 +104,29 @@
 				unique
 				check - I haven't seen this used in any code at spring2, but we should double check
 	-->
-	<sqlobjects>
-		<sqlobject name="TestSqlObject">
-			<primarykeycolumn name="sqlstringcolumn" />
-			<primarykeycolumn name="sqlintcolumn" />
-			<columns>
-				<column name="sqlstringcolumn" sqltype="varchar" required="True" />
-				<column name="sqlintcolumn" sqltype="int" required="True" />
-				<column name="EmailFormat" sqltype="char" length="1" />
-				<column name="addr1" sqltype="varchar" length="50" />
-				<column name="addr2" sqltype="varchar" length="50" />
-				<column name="city" sqltype="varchar" length="50" />
-				<column name="state" sqltype="varchar" length="50" />
-				<column name="zip" sqltype="varchar" length="50" />
-			</columns>
-			<indexes>
-				<index name="PK_TestSqlObject" isPrimaryKey="True" isUnique="True">
-					<indexcolumn name="sqlstringcolumn" />
-					<indexcolumn name="sqlintcolumn" />
-				</index>
-			</indexes>
-		</sqlobject>
-	</sqlobjects>
-	<!--
+    <sqlobjects>
+	<sqlobject name="TestSqlObject">
+	    <primarykeycolumn name="sqlstringcolumn" />
+	    <primarykeycolumn name="sqlintcolumn" />
+	    <columns>
+		<column name="sqlstringcolumn" sqltype="varchar" required="True" />
+		<column name="sqlintcolumn" sqltype="int" required="True" />
+		<column name="EmailFormat" sqltype="char" length="1" />
+		<column name="addr1" sqltype="varchar" length="50" />
+		<column name="addr2" sqltype="varchar" length="50" />
+		<column name="city" sqltype="varchar" length="50" />
+		<column name="state" sqltype="varchar" length="50" />
+		<column name="zip" sqltype="varchar" length="50" />
+	    </columns>
+	    <indexes>
+		<index name="PK_TestSqlObject" isPrimaryKey="True" isUnique="True">
+		    <indexcolumn name="sqlstringcolumn" />
+		    <indexcolumn name="sqlintcolumn" />
+		</index>
+	    </indexes>
+	</sqlobject>
+    </sqlobjects>
+    <!--
 		Enum definitions
 		Elements:
 			<enum>
@@ -140,20 +140,20 @@
 			name - constant name/to string value
 			code - database value
 	-->
-	<enums>
-		<enum name="OrderType">
-			<value name="Personal" code="P" />
-			<value name="Firm" code="F" />
-		</enum>
-		<enum name="FormatType">
-			<value name="HTML" code="H" />
-			<value name="Text" code="T" />
-			<value name="JavaScript" code="J" />
-			<value name="RTF" code="R" />
-			<value name="None" code="N" />
-		</enum>
-	</enums>
-	<!--
+    <enums>
+	<enum name="OrderType">
+	    <value name="Personal" code="P" />
+	    <value name="Firm" code="F" />
+	</enum>
+	<enum name="FormatType">
+	    <value name="HTML" code="H" />
+	    <value name="Text" code="T" />
+	    <value name="JavaScript" code="J" />
+	    <value name="RTF" code="R" />
+	    <value name="None" code="N" />
+	</enum>
+    </enums>
+    <!--
 	This section defines the actual sql types that can be queried from the 
 	database.  Each sqltype can have the following attributes:
 		name = (required) This identifies the type - should be the same as the type returned by querying the database
@@ -173,33 +173,33 @@
 			2=precision
 			3=scale
 	-->
-	<sqltypes>
-		<sqltype name="float" type="DecimalType" readermethodformat='{0}.GetDouble({0}.GetOrdinal("{1}"))' declarationformat="{0}({2})" />
-		<sqltype name="datetime" sqldbtype="DateTime" type="DateType" readermethodformat='{0}.GetDateTime({0}.GetOrdinal("{1}"))' />
-		<sqltype name="bit" type="NumberType" readermethodformat='{0}.GetInt32({0}.GetOrdinal("{1}"))' />
-		<sqltype name="smallint" sqldbtype="SmallInt" type="NumberType" readermethodformat='{0}.GetInt32({0}.GetOrdinal("{1}"))' />
-		<sqltype name="tinyint" sqldbtype="TinyInt" type="NumberType" readermethodformat='{0}.GetInt32({0}.GetOrdinal("{1}"))' />
-		<sqltype name="smallmoney" sqldbtype="SmallMoney" type="CurrencyType" readermethodformat='{0}.GetDecimal({0}.GetOrdinal("{1}"))' />
-		<sqltype name="money" type="CurrencyType" readermethodformat='{0}.GetDecimal({0}.GetOrdinal("{1}"))' />
-		<sqltype name="image" length="50" type="StringType" readermethodformat='{0}.GetString({0}.GetOrdinal("{1}"))' />
-		<sqltype name="text" length="50" type="StringType" readermethodformat='{0}.GetString({0}.GetOrdinal("{1}"))' />
-		<sqltype name="smalldatetime" sqldbtype="SmallDateTime" type="DateType" readermethodformat='{0}.GetDateTime({0}.GetOrdinal("{1}"))' />
-		<sqltype name="char" length="1" type="StringType" readermethodformat='{0}.GetString({0}.GetOrdinal("{1}"))' declarationformat="{0}({1})" />
-		<sqltype name="varchar" sqldbtype="VarChar" length="50" type="StringType" readermethodformat='{0}.GetString({0}.GetOrdinal("{1}"))' declarationformat="{0}({1})" />
-		<sqltype name="int" scale="0" precision="10" type="NumberType" readermethodformat='{0}.GetInt32({0}.GetOrdinal("{1}"))' />
-		<sqltype name="numeric" sqldbtype="Decimal" type="DecimalType" readermethodformat='{0}.GetDecimal({0}.GetOrdinal("{1}"))' declarationformat="{0}({2}, {3})" />
-		<sqltype name="binary" type="byte[]" declarationformat="{0}({1})" />
-		<sqltype name="bigint" sqldbtype="BigInt" type="Int64" readermethodformat='{0}.GetInt64({0}.GetOrdinal("{1}"))' />
-		<sqltype name="decimal" type="Decimal" readermethodformat='{0}.GetDecimal({0}.GetOrdinal("{1}"))' declarationformat="{0}({2}, {3})" />
-		<sqltype name="nchar" sqldbtype="NChar" type="String" readermethodformat='{0}.GetString({0}.GetOrdinal("{1}"))' declarationformat="{0}({1})" />
-		<sqltype name="ntext" sqldbtype="NText" type="String" readermethodformat='{0}.GetString({0}.GetOrdinal("{1}"))' declarationformat="{0}({1})" />
-		<sqltype name="nvarchar" sqldbtype="NVarChar" type="String" readermethodformat='{0}.GetString({0}.GetOrdinal("{1}"))' declarationformat="{0}({1})" />
-		<sqltype name="real" type="Single" readermethodformat='{0}.GetString({0}.GetOrdinal("{1}"))' />
-		<sqltype name="varbinary" sqldbtype="VarBinary" type="byte[]" declarationformat="{0}({1})" />
-		<sqltype name="uniqueidentifier" sqldbtype="UniqueIdentifier" type="Guid" />
-		<sqltype name="timestamp" type="DateTime" readermethodformat='{0}.GetDateTime({0}.GetOrdinal("{1}"))' />
-	</sqltypes>
-	<!--
+    <sqltypes>
+	<sqltype name="float" type="DecimalType" readermethodformat='{0}.GetDouble({0}.GetOrdinal("{1}"))' declarationformat="{0}({2})" />
+	<sqltype name="datetime" sqldbtype="DateTime" type="DateType" readermethodformat='{0}.GetDateTime({0}.GetOrdinal("{1}"))' />
+	<sqltype name="bit" type="NumberType" readermethodformat='{0}.GetInt32({0}.GetOrdinal("{1}"))' />
+	<sqltype name="smallint" sqldbtype="SmallInt" type="NumberType" readermethodformat='{0}.GetInt32({0}.GetOrdinal("{1}"))' />
+	<sqltype name="tinyint" sqldbtype="TinyInt" type="NumberType" readermethodformat='{0}.GetInt32({0}.GetOrdinal("{1}"))' />
+	<sqltype name="smallmoney" sqldbtype="SmallMoney" type="CurrencyType" readermethodformat='{0}.GetDecimal({0}.GetOrdinal("{1}"))' />
+	<sqltype name="money" type="CurrencyType" readermethodformat='{0}.GetDecimal({0}.GetOrdinal("{1}"))' />
+	<sqltype name="image" length="50" type="StringType" readermethodformat='{0}.GetString({0}.GetOrdinal("{1}"))' />
+	<sqltype name="text" length="50" type="StringType" readermethodformat='{0}.GetString({0}.GetOrdinal("{1}"))' />
+	<sqltype name="smalldatetime" sqldbtype="SmallDateTime" type="DateType" readermethodformat='{0}.GetDateTime({0}.GetOrdinal("{1}"))' />
+	<sqltype name="char" length="1" type="StringType" readermethodformat='{0}.GetString({0}.GetOrdinal("{1}"))' declarationformat="{0}({1})" />
+	<sqltype name="varchar" sqldbtype="VarChar" length="50" type="StringType" readermethodformat='{0}.GetString({0}.GetOrdinal("{1}"))' declarationformat="{0}({1})" />
+	<sqltype name="int" scale="0" precision="10" type="NumberType" readermethodformat='{0}.GetInt32({0}.GetOrdinal("{1}"))' />
+	<sqltype name="numeric" sqldbtype="Decimal" type="DecimalType" readermethodformat='{0}.GetDecimal({0}.GetOrdinal("{1}"))' declarationformat="{0}({2}, {3})" />
+	<sqltype name="binary" type="byte[]" declarationformat="{0}({1})" />
+	<sqltype name="bigint" sqldbtype="BigInt" type="Int64" readermethodformat='{0}.GetInt64({0}.GetOrdinal("{1}"))' />
+	<sqltype name="decimal" type="Decimal" readermethodformat='{0}.GetDecimal({0}.GetOrdinal("{1}"))' declarationformat="{0}({2}, {3})" />
+	<sqltype name="nchar" sqldbtype="NChar" type="String" readermethodformat='{0}.GetString({0}.GetOrdinal("{1}"))' declarationformat="{0}({1})" />
+	<sqltype name="ntext" sqldbtype="NText" type="String" readermethodformat='{0}.GetString({0}.GetOrdinal("{1}"))' declarationformat="{0}({1})" />
+	<sqltype name="nvarchar" sqldbtype="NVarChar" type="String" readermethodformat='{0}.GetString({0}.GetOrdinal("{1}"))' declarationformat="{0}({1})" />
+	<sqltype name="real" type="Single" readermethodformat='{0}.GetString({0}.GetOrdinal("{1}"))' />
+	<sqltype name="varbinary" sqldbtype="VarBinary" type="byte[]" declarationformat="{0}({1})" />
+	<sqltype name="uniqueidentifier" sqldbtype="UniqueIdentifier" type="Guid" />
+	<sqltype name="timestamp" type="DateTime" readermethodformat='{0}.GetDateTime({0}.GetOrdinal("{1}"))' />
+    </sqltypes>
+    <!--
 		conversion format replacement parameters:
 			0=data object variable name
 			1=Property name (properly cased)
@@ -208,26 +208,26 @@
 			4=sqlname
 			5=property name (property cased without data object name)
 	-->
-	<types>
-		<!-- .Net primitive types -->
-		<type name="String" newinstanceformat="String.Empty" />
-		<type name="DateTime" newinstanceformat="new DateTime()" />
-		<type name="Int32" newinstanceformat="0" />
-		<type name="Boolean" newinstanceformat="false" />
-		<type name="Double" newinstanceformat="0" />
-		<type name="Decimal" newinstanceformat="0" />
-		<!-- .Net FCL types -->
-		<type name="IList" namespace="System.Collections" />
-		<type name="ArrayList" namespace="System.Collections" newinstanceformat="new ArrayList()" />
-		<type name="Hashtable" namespace="System.Collections" newinstanceformat="new Hashtable()" />
-		<!-- Spring2.Core.Types -->
-		<type name="BooleanType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="BooleanType.GetInstance({2})" newinstanceformat="BooleanType.DEFAULT" nullinstanceformat="BooleanType.UNSET" />
-		<type name="StringType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="StringType.NewInstance({2})" newinstanceformat="StringType.DEFAULT" nullinstanceformat="StringType.UNSET" />
-		<type name="IdType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="IdType.NewInstance({2})" newinstanceformat="IdType.DEFAULT" nullinstanceformat="IdType.UNSET" />
-		<type name="DateType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="DateType.NewInstance({2})" newinstanceformat="DateType.DEFAULT" nullinstanceformat="DateType.UNSET" />
-		<type name="NumberType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="NumberType.NewInstance({2})" newinstanceformat="NumberType.DEFAULT" nullinstanceformat="NumberType.UNSET" />
-		<type name="DecimalType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="DecimalType.NewInstance({2})" newinstanceformat="DecimalType.DEFAULT" nullinstanceformat="DecimalType.UNSET" />
-		<type name="CurrencyType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="CurrencyType.NewInstance({2})" newinstanceformat="CurrencyType.DEFAULT" nullinstanceformat="CurrencyType.UNSET" />
-		<type name="QuantityType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="QuantityType.NewInstance({2})" newinstanceformat="QuantityType.DEFAULT" nullinstanceformat="QuantityType.UNSET" />
-	</types>
+    <types>
+	<!-- .Net primitive types -->
+	<type name="String" newinstanceformat="String.Empty" />
+	<type name="DateTime" newinstanceformat="new DateTime()" />
+	<type name="Int32" newinstanceformat="0" />
+	<type name="Boolean" newinstanceformat="false" />
+	<type name="Double" newinstanceformat="0" />
+	<type name="Decimal" newinstanceformat="0" />
+	<!-- .Net FCL types -->
+	<type name="IList" namespace="System.Collections" />
+	<type name="ArrayList" namespace="System.Collections" newinstanceformat="new ArrayList()" />
+	<type name="Hashtable" namespace="System.Collections" newinstanceformat="new Hashtable()" />
+	<!-- Spring2.Core.Types -->
+	<type name="BooleanType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="BooleanType.GetInstance({2})" newinstanceformat="BooleanType.DEFAULT" nullinstanceformat="BooleanType.UNSET" />
+	<type name="StringType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="StringType.NewInstance({2})" newinstanceformat="StringType.DEFAULT" nullinstanceformat="StringType.UNSET" />
+	<type name="IdType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="IdType.NewInstance({2})" newinstanceformat="IdType.DEFAULT" nullinstanceformat="IdType.UNSET" />
+	<type name="DateType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="DateType.NewInstance({2})" newinstanceformat="DateType.DEFAULT" nullinstanceformat="DateType.UNSET" />
+	<type name="NumberType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="NumberType.NewInstance({2})" newinstanceformat="NumberType.DEFAULT" nullinstanceformat="NumberType.UNSET" />
+	<type name="DecimalType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="DecimalType.NewInstance({2})" newinstanceformat="DecimalType.DEFAULT" nullinstanceformat="DecimalType.UNSET" />
+	<type name="CurrencyType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="CurrencyType.NewInstance({2})" newinstanceformat="CurrencyType.DEFAULT" nullinstanceformat="CurrencyType.UNSET" />
+	<type name="QuantityType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="QuantityType.NewInstance({2})" newinstanceformat="QuantityType.DEFAULT" nullinstanceformat="QuantityType.UNSET" />
+    </types>
 </DataTierGenerator>

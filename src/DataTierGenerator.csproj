@@ -98,12 +98,22 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Column.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Configuration.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "ConfigurationData.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Constraint.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -164,6 +174,16 @@
                 />
                 <File
                     RelPath = "GeneratorBase.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Index.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "SqlEntity.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
