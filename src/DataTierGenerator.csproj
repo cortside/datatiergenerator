@@ -188,6 +188,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "ProgressForm.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ProgressForm.resx"
+                    DependentUpon = "ProgressForm.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "SqlEntity.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
