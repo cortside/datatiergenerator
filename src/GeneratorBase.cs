@@ -60,9 +60,8 @@ namespace Spring2.DataTierGenerator {
 		    if (inRegion) {
 			regions.WriteLine(fileLine);
 		    } else {
-			if (!fileLine.Equals(textLine)) {
-			    changed = true;
-			}
+			changed = changed || !fileLine.Equals(textLine);
+			textLine = textReader.ReadLine();
 		    }
 
 		    // Check to see if we have left a region.
@@ -70,15 +69,12 @@ namespace Spring2.DataTierGenerator {
 
 		    // Read the next line from both the file and the generated text.
 		    fileLine = fileReader.ReadLine();
-		    textLine = textReader.ReadLine();
 		}
 
 		// Handle the case where the generated text has more lines than the
 		// existing file but up to that point they were identical.  Don't
 		// know how that could happen, but this should handle it.
-		if (textLine != null) {
-		    changed = true;
-		}
+		changed = changed || textLine != null;
 
 		fileReader.Close();
 		textReader.Close();
@@ -88,7 +84,7 @@ namespace Spring2.DataTierGenerator {
 
 	    // Only write to the file if it has changed or does not exist.
 	    if (changed) {
-		StreamWriter writer = new StreamWriter(file.FullName, append);
+		    StreamWriter writer = new StreamWriter(file.FullName, append);
 
 		// If any #region tags were found, append the regions to the end
 		// of the class.  Otherwise, write the generated text to the file.
@@ -106,7 +102,7 @@ namespace Spring2.DataTierGenerator {
 	    }
 	}
 
-	public String GetUsingNamespaces(ArrayList fields, Boolean isDaoClass) {
+	public void GetUsingNamespaces(TextWriter writer, ArrayList fields, Boolean isDaoClass) {
 
 	    ArrayList namespaces = new ArrayList();
 	    namespaces.Add("System");
@@ -130,44 +126,40 @@ namespace Spring2.DataTierGenerator {
 
 	    Array names = namespaces.ToArray(typeof(String));
 	    Array.Sort(names);
-	    StringBuilder sb = new StringBuilder();
 
-	    // append system
+	    // Append system.
 	    Boolean added = false;
 	    foreach (String s in names) {
 		if (s.StartsWith("System")) {
 		    added = true;
-		    sb.Append("using ").Append(s).Append(";\n");
+		    writer.WriteLine("using " + s + ";");
 		}
 	    }
 	    if (added) {
-		sb.Append("\n");
+		writer.WriteLine();
 	    }
 
 	    added = false;
 	    foreach (String s in names) {
 		if (s.StartsWith("Spring2")) {
 		    added = true;
-		    sb.Append("using ").Append(s).Append(";\n");
+		    writer.WriteLine("using " + s + ";");
 		}
 	    }
 	    if (added) {
-		sb.Append("\n");
+		writer.WriteLine();
 	    }
 
 	    added = false;
 	    foreach (String s in names) {
 		if (!s.StartsWith("Spring2") && !s.StartsWith("System")) {
 		    added = true;
-		    sb.Append("using ").Append(s).Append(";\n");
+		    writer.WriteLine("using " + s + ";");
 		}
 	    }
 	    if (added) {
-		sb.Append("\n");
+		writer.WriteLine();
 	    }
-
-	    return sb.ToString();
-
 	}
     }
 }
