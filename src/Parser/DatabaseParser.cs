@@ -11,6 +11,7 @@ using Spring2.DataTierGenerator;
 using Spring2.DataTierGenerator.Element;
 
 namespace Spring2.DataTierGenerator.Parser {
+
     /// <summary>
     /// Summary description for DatabaseParser.
     /// </summary>
@@ -20,41 +21,60 @@ namespace Spring2.DataTierGenerator.Parser {
 
 	public DatabaseParser(Configuration options, String connectionString) {
 	    this.connectionString = connectionString;
+
+	    // parse everything as if this is the top - because it would be
+	}
+
+	public DatabaseParser(Element.Parser parser, Configuration options, XmlDocument doc, Hashtable sqltypes, Hashtable types, ParserValidationDelegate vd) {
+	    this.options = options;
+	    this.sqltypes = sqltypes;
+	    this.types = types;
+	    enumtypes = EnumType.ParseFromXml(options,doc,sqltypes,types, vd);
+	    collections = Collection.ParseFromXml(options,doc,sqltypes,types, vd);
+
+	    if (parser.FindArgumentByName("server") == null || parser.FindArgumentByName("database") == null || parser.FindArgumentByName("user") == null || parser.FindArgumentByName("password") == null) {
+		vd(ParserValidationArgs.NewError("expected to find the following arguments, but didn't: server, database, user, password."));
+	    } else {
+		this.connectionString = "server=" + parser.FindArgumentByName("server").Value + ";databse=" + parser.FindArgumentByName("database").Value + ";user=" + parser.FindArgumentByName("user").Value + ";password=" + parser.FindArgumentByName("password").Value + ";";
+		
+		Database db = new Database();
+		db.Name = "db";
+		db.Server = parser.FindArgumentByName("server").Value;
+		db.Database = parser.FindArgumentByName("database").Value;
+		db.User = parser.FindArgumentByName("user").Value;
+		db.Password = parser.FindArgumentByName("password").Value;
+		this.connectionString = db.ConnectionString;
+
+		SqlConnection conn = new SqlConnection(this.connectionString);
+		db.SqlEntities = DiscoverSqlEntities(conn, vd);
+		databases.Add(db);
+		entities = GetEntities(doc, conn, new ArrayList(), vd);
+	    }
+
+	    Validate(vd);
 	}
 
 	private ArrayList GetEntities(XmlDocument doc, SqlConnection connection, ArrayList sqlentities, ParserValidationDelegate vd) {
 	    ArrayList entities = new ArrayList();
 
-	    if (doc != null) {
-		entities.AddRange(Entity.ParseFromXml(options, doc, sqltypes, types, sqlentities, vd));
-
-		//		if (options.AutoDiscoverProperties) {
-		//		    foreach (Entity entity in entities) {
-		//			entity.Fields = GetFields(entity, connection, doc, sqltypes, types);
-		//		    }
-		//		}
-	    }
-
-	    //	    if (options.AutoDiscoverEntities) {
-	    //		// Get a list of the entities in the database
-	    //		DataTable objDataTable = new DataTable();
-	    //		SqlDataAdapter objDataAdapter = new SqlDataAdapter("SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_CATALOG = '" + connection.Database + "'", connection);
-	    //		objDataAdapter.Fill(objDataTable);
-	    //		foreach (DataRow row in objDataTable.Rows) {
-	    //		    if (row["TABLE_TYPE"].ToString() == "BASE TABLE" && row["TABLE_NAME"].ToString() != "dtproperties") {
-	    //			if (Entity.FindEntityBySqlEntity(entities, row["TABLE_NAME"].ToString()) == null) {
-	    //			    Entity entity = new Entity();
-	    //			    entity.Name = row["TABLE_NAME"].ToString();
-	    //			    entity.SqlEntity.Name = row["TABLE_NAME"].ToString();
-	    //			    if (options.UseViews) {
-	    //				entity.SqlEntity.View = "vw" + entity.SqlEntity.Name;
-	    //			    }
-	    //			    entity.Fields = GetFields(entity, connection, doc, sqltypes, types);
-	    //			    entities.Add(entity);
-	    //			}
-	    //		    }
-	    //		}	    
-	    //	    }
+	    // Get a list of the entities in the database
+	    DataTable objDataTable = new DataTable();
+	    SqlDataAdapter objDataAdapter = new SqlDataAdapter("SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_CATALOG = '" + connection.Database + "'", connection);
+	    objDataAdapter.Fill(objDataTable);
+	    foreach (DataRow row in objDataTable.Rows) {
+	    	if (row["TABLE_TYPE"].ToString() == "BASE TABLE" && row["TABLE_NAME"].ToString() != "dtproperties") {
+	    	    if (Entity.FindEntityBySqlEntity(entities, row["TABLE_NAME"].ToString()) == null) {
+	    		Entity entity = new Entity();
+	    		entity.Name = row["TABLE_NAME"].ToString();
+	    		entity.SqlEntity.Name = row["TABLE_NAME"].ToString();
+	    		//if (options.UseViews) {
+	    		    entity.SqlEntity.View = "vw" + entity.SqlEntity.Name;
+	    		//}
+	    		entity.Fields = GetFields(entity, connection, doc, sqltypes, types);
+	    		entities.Add(entity);
+	    	    }
+	    	}
+	    }	    
 
 	    return entities;
 	}
@@ -206,7 +226,7 @@ namespace Spring2.DataTierGenerator.Parser {
 	    return table;
 	}
 
-	private ArrayList DiscoverSqlEntities(SqlConnection connection) {
+	private ArrayList DiscoverSqlEntities(SqlConnection connection, ParserValidationDelegate vd) {
 	    ArrayList list = new ArrayList();
 
 	    // Get a list of the entities in the database
@@ -217,7 +237,6 @@ namespace Spring2.DataTierGenerator.Parser {
 	    //SqlDataAdapter adapter = new SqlDataAdapter("SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_CATALOG = '" + connection.Database + "' and TABLE_NAME in ('Users')", connection);
 
 	    adapter.Fill(table);
-	    //form.Maximum= table.Rows.Count +1;
 
 	    foreach (DataRow row in table.Rows) {
 		if (row["TABLE_TYPE"].ToString() == "BASE TABLE" && row["TABLE_NAME"].ToString() != "dtproperties") {
