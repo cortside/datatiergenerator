@@ -73,7 +73,6 @@ namespace Spring2.DataTierGenerator.Element {
 		SqlTypeElement.ParseFromXml(GetChildNodeByName(rootNode, "sqltypes"), rootElement.SqlTypeElements);
 		DatabaseElement.ParseFromXml(GetChildNodeByName(rootNode, "databases"), rootElement.DatabaseElements);
 		GeneratorElement.ParseFromXml(GetChildNodeByName(rootNode, "generator"), rootElement.GeneratorElements);
-		ParserElement.ParseFromXml(GetChildNodeByName(rootNode, "parser"), rootElement.ParserElements);
 	    }
 	}
     }
