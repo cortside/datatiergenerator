@@ -77,7 +77,6 @@ namespace Spring2.DataTierGenerator.Element {
 	public static readonly EntityElement EMPTY = new EntityElement();
 
 	static EntityElement() {
-	    EMPTY = new EntityElement();
 	    EMPTY.BaseEntity = EMPTY;
 	}
 
