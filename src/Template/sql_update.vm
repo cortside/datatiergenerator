@@ -36,7 +36,7 @@ SET
 #if(!$column.ViewColumn && !$column.Identity && !$element.IsPrimaryKeyColumn($column.Name))
 #set($cols = $cols + 1)#if($cols>1),
 #end
-	${column.Name} = @${column.Name}#end
+	${column.EscapedName} = @${column.Name}#end
 #end
 
 WHERE
