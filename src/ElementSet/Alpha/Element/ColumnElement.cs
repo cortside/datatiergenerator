@@ -90,10 +90,6 @@ namespace Spring2.DataTierGenerator.Element {
 	    set { this.foreignColumn = value; }
 	}
 
-	public String EscapedForeignColumn {
-	    get { return EscapeSqlName(this.foreignColumn); }
-	}
-
 	public String SortDirection {
 	    get { return this.sortDirection; }
 	    set { this.sortDirection = value; }
@@ -112,10 +108,6 @@ namespace Spring2.DataTierGenerator.Element {
 	public String ForeignSqlEntity {
 	    get { return this.foreignSqlEntity; }
 	    set { this.foreignSqlEntity = value; }
-	}
-
-	public String EscapedForeignSqlEntity { 
-	    get { return EscapeSqlName(this.foreignSqlEntity); }
 	}
 
 	public Int32 Length 
