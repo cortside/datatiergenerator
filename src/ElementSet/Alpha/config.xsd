@@ -239,6 +239,8 @@
 				    <xs:attribute name="log" type="BooleanEnum" />
 				    <xs:attribute name="returnwholeobject" type="BooleanEnum" />
 				    <xs:attribute name="prepareforinsert" type="BooleanEnum" />
+				    <xs:attribute name="jointable" type="BooleanEnum" />
+				    <xs:attribute name="dependententity" type="BooleanEnum" />
 				</xs:complexType>
 			    </xs:element>
 			</xs:sequence>

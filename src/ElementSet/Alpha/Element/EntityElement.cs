@@ -19,13 +19,16 @@ namespace Spring2.DataTierGenerator.Element {
 	private static readonly String LOG = "log";
 	private static readonly String RETURNWHOLEOBJECT = "returnwholeobject";
 	private static readonly String PREPAREFORINSERT = "prepareforinsert";
+	private static readonly String JOINTABLE = "jointable";
+	private static readonly String DEPENDENTENTITY = "dependententity";
 
 	/// <summary>
 	/// Handles creation of the static readonly property names and values.  Creates
 	/// entries of the form:
 	///	public static readonly string PROPERTY_NAME="Property.Name";
 	/// </summary>
-	public class PropertyName {
+	public class PropertyName 
+	{
 	    public String fieldName = "";
 	    public String fieldValue = "";
 
@@ -89,8 +92,11 @@ namespace Spring2.DataTierGenerator.Element {
 	private Boolean doLog = false;
 	private Boolean returnWholeObject = false;
 	private Boolean prepareForInsert = false;
+	private Boolean joinTable = false;
+	private Boolean dependentEntity = false;
 
-	public SqlEntityElement SqlEntity {
+	public SqlEntityElement SqlEntity 
+	{
 	    get { return this.sqlEntity; }
 	    set { this.sqlEntity = value; }
 	}
@@ -120,7 +126,18 @@ namespace Spring2.DataTierGenerator.Element {
 	    set { this.prepareForInsert = value; }
 	}
 
-	public ArrayList Fields {
+	public Boolean JoinTable {
+	    get { return this.joinTable; }
+	    set { this.joinTable = value; }
+	}
+
+	public Boolean DependentEntity {
+	    get { return this.dependentEntity; }
+	    set { this.dependentEntity = value; }
+	}
+
+	public ArrayList Fields 
+	{
 	    get { return this.fields; }
 	    set { this.fields = value; }
 	}
@@ -184,6 +201,8 @@ namespace Spring2.DataTierGenerator.Element {
 			entityElement.DoLog = Boolean.Parse (GetAttributeValue (entityNode, LOG, entityElement.DoLog.ToString ()));
 			entityElement.ReturnWholeObject = Boolean.Parse (GetAttributeValue (entityNode, RETURNWHOLEOBJECT, entityElement.ReturnWholeObject.ToString ()));
 			entityElement.PrepareForInsert = Boolean.Parse (GetAttributeValue (entityNode, PREPAREFORINSERT, entityElement.PrepareForInsert.ToString ()));
+			entityElement.JoinTable = Boolean.Parse (GetAttributeValue (entityNode, JOINTABLE, entityElement.JoinTable.ToString ()));
+			entityElement.DependentEntity = Boolean.Parse (GetAttributeValue (entityNode, DEPENDENTENTITY, entityElement.DependentEntity.ToString ()));
 
 			PropertyElement.ParseFromXml(GetChildNodeByName(entityNode, PROPERTIES), entityElement.Fields);
 			FinderElement.ParseFromXml(GetChildNodeByName(entityNode, FINDERS), entityElement.Finders);
@@ -237,6 +256,16 @@ namespace Spring2.DataTierGenerator.Element {
 
 		if (node.Attributes["prepareforinsert"] != null) {
 		    entity.PrepareForInsert = Boolean.Parse (node.Attributes["prepareforinsert"].Value);
+		}
+
+		if (node.Attributes["dependententity"] != null) 
+		{
+		    entity.DependentEntity = Boolean.Parse (node.Attributes["dependententity"].Value);
+		}
+
+		if (node.Attributes["jointable"] != null) 
+		{
+		    entity.JoinTable = Boolean.Parse (node.Attributes["jointable"].Value);
 		}
 
 		entity.Fields = PropertyElement.ParseFromXml(doc, entities, entity, sqltypes, types, vd);
