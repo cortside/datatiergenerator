@@ -369,6 +369,10 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "Template\sql_table.vm"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "Template\sql_update.vm"
                     BuildAction = "EmbeddedResource"
                 />
