@@ -34,6 +34,8 @@ namespace Spring2.DataTierGenerator.Generator.Styler {
 	private Int32 tabSize = 8;
 	private Int32 indentSize = 4;
 
+	private Boolean hadIndentWarning = false;
+
 	private static void Usage() {
 	    Console.Write (
 		"csharpstyle -f file.cs -l <true|false> -b <block|c|mono> > output.cs\n\n" +
@@ -368,9 +370,9 @@ namespace Spring2.DataTierGenerator.Generator.Styler {
 		}
 
 // TODO: remove - this is for debugging only
-if (str.Trim().IndexOf("set{localDeliveryDate = value;} //added this line") >= 0) {
-    int foo=0;
-}
+//if (str.Trim().IndexOf("set{localDeliveryDate = value;} //added this line") >= 0) {
+//    int foo=0;
+//}
 
 		if (!inComment) {
 		    //                                                  + && !IsElse(str)
@@ -492,7 +494,10 @@ if (str.Trim().IndexOf("set{localDeliveryDate = value;} //added this line") >= 0
 	    // safety to prevent errors if indent is < 0
 	    if (indent < 0) {
 		indent = 0;
-		Console.Out.WriteLine("WARNING: indent level < 0 in " + this.File);
+		if (!hadIndentWarning) {
+		    Console.Out.WriteLine("WARNING: indent level < 0 in " + this.File);
+			hadIndentWarning = true;
+		}
 	    }
 
 	    String str = String.Empty;
