@@ -66,6 +66,12 @@ namespace Spring2.DataTierGenerator.Generator {
 	    StringBuilder sb = new StringBuilder();
 	    String strProcName = options.GetProcName(sqlentity.Name, "Insert");
 	
+	    if (sqlentity.ScriptForIndexedViews) {
+		sb.Append("SET ANSI_NULLS ON\n");
+		sb.Append("SET QUOTED_IDENTIFIER ON\n");
+		sb.Append("GO\n\n");
+	    }
+				
 	    sb.Append("CREATE PROCEDURE " + strProcName + "\n");
 	
 	    // Create the parameter list
@@ -84,11 +90,6 @@ namespace Spring2.DataTierGenerator.Generator {
 	    }
 	    sb.Append("\n\nAS\n\n");
 
-	    if (sqlentity.ScriptForIndexedViews) {
-		sb.Append("SET ANSI_NULLS ON\n");
-		sb.Append("SET QUOTED_IDENTIFIER ON\n\n");
-	    }
-				
 	    foreach (Column column in sqlentity.Columns) {
 		if (column.RowGuidCol) {
 		    sb.Append("SET @" + column.Name + " = @@NEWID()\n\n");
@@ -137,15 +138,17 @@ namespace Spring2.DataTierGenerator.Generator {
 	    sb.Append("        RETURN(-1)\n");
 	    sb.Append("    END\n\n");
 	
+	    sb.Append("return @@IDENTITY\n");
+	    sb.Append("GO\n\n");
+
 	    if (sqlentity.ScriptForIndexedViews) {
 		sb.Append("SET ANSI_NULLS ON\n");
-		sb.Append("SET QUOTED_IDENTIFIER ON\n\n");
+		sb.Append("SET QUOTED_IDENTIFIER ON\n");
+		sb.Append("GO\n\n");
 	    }
-	
-	    sb.Append("return @@IDENTITY\n");
-	
+	    
 	    // Write out the stored procedure
-	    WriteProcToFile(strProcName, sb.ToString() + "\nGO\n\n");
+	    WriteProcToFile(strProcName, sb.ToString());
 	    sb = null;
 	}
 	
@@ -156,7 +159,14 @@ namespace Spring2.DataTierGenerator.Generator {
 	/// <param name="fields">ArrayList object containing one or more Field objects as defined in the table.</param>
 	private void CreateUpdateStoredProcedure() {
 	    StringBuilder sb = new StringBuilder();
-	
+
+	    // NOTE: this must be done before creating the stored proc to be effective
+	    if (sqlentity.ScriptForIndexedViews) {
+		sb.Append("SET ANSI_NULLS ON\n");
+		sb.Append("SET QUOTED_IDENTIFIER ON\n");
+		sb.Append("GO\n\n");
+	    }
+
 	    sb.Append("CREATE PROCEDURE " + options.GetProcName(sqlentity.Name, "Update") + "\n\n");
 	
 	    // Create the parameter list
@@ -172,11 +182,6 @@ namespace Spring2.DataTierGenerator.Generator {
 		}
 	    }
 	    sb.Append("\n\nAS\n\n");
-
-	    if (sqlentity.ScriptForIndexedViews) {
-		sb.Append("SET ANSI_NULLS ON\n");
-		sb.Append("SET QUOTED_IDENTIFIER ON\n\n");
-	    }
 
 	    sb.Append("\nUPDATE\n\t" + EscapeSqlName(sqlentity.Name) + "\n");
 	    sb.Append("SET\n");
@@ -221,13 +226,16 @@ namespace Spring2.DataTierGenerator.Generator {
 	    sb.Append("        RETURN(-1)\n");
 	    sb.Append("    END\n");
 
+	    sb.Append("GO\n\n");
+
 	    if (sqlentity.ScriptForIndexedViews) {
-		sb.Append("\nSET ANSI_NULLS ON\n");
-		sb.Append("SET QUOTED_IDENTIFIER ON\n\n");
+		sb.Append("SET ANSI_NULLS ON\n");
+		sb.Append("SET QUOTED_IDENTIFIER ON\n");
+		sb.Append("GO\n\n");
 	    }
 	
 	    // Write out the stored procedure
-	    WriteProcToFile(options.GetProcName(sqlentity.Name, "Update"), sb.ToString() + "\nGO\n\n");
+	    WriteProcToFile(options.GetProcName(sqlentity.Name, "Update"), sb.ToString());
 	    sb = null;
 	}
 	
@@ -235,6 +243,12 @@ namespace Spring2.DataTierGenerator.Generator {
 	private void CreateDeleteStoredProcedures() {
 	    String strProcName = options.GetProcName(sqlentity.Name, "Delete");
 	    StringBuilder sb = new StringBuilder();
+
+	    if (sqlentity.ScriptForIndexedViews) {
+		sb.Append("SET ANSI_NULLS ON\n");
+		sb.Append("SET QUOTED_IDENTIFIER ON\n");
+		sb.Append("GO\n\n");
+	    }
 	
 	    sb.Append("CREATE PROCEDURE " + strProcName + "\n\n");				
 					
@@ -251,11 +265,6 @@ namespace Spring2.DataTierGenerator.Generator {
 					
 	    sb.Append("\n\nAS\n\n");
 
-	    if (sqlentity.ScriptForIndexedViews) {
-		sb.Append("SET ANSI_NULLS ON\n");
-		sb.Append("SET QUOTED_IDENTIFIER ON\n\n");
-	    }
-	
 	    // Create the where clause
 	    StringBuilder where = new StringBuilder();
 	    first = true;
@@ -280,15 +289,16 @@ namespace Spring2.DataTierGenerator.Generator {
 	    sb.Append("WHERE \n");
 	
 	    sb.Append(where.ToString());
+	    sb.Append("GO\n\n");
 	    
 	    if (sqlentity.ScriptForIndexedViews) {
-		sb.Append("\nSET ANSI_NULLS OFF\n");
-		sb.Append("SET QUOTED_IDENTIFIER OFF\n\n");
+		sb.Append("SET ANSI_NULLS ON\n");
+		sb.Append("SET QUOTED_IDENTIFIER ON\n");
+		sb.Append("GO\n\n");
 	    }
-
 					
 	    // Write out the stored procedure
-	    WriteProcToFile(strProcName, sb.ToString() + "\nGO\n\n");
+	    WriteProcToFile(strProcName, sb.ToString());
 	    sb = null;
 	}
 	
