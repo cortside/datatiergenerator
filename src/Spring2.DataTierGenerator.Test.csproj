@@ -116,6 +116,346 @@
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
+                <File
+                    RelPath = "Test\Sanity\sanity.xml"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "Test\Sanity\DAO\GolferDAO.cs.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\DAO\OrganizerDAO.cs.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\DAO\ParticipantDAO.cs.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\DAO\PaymentDAO.cs.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\DAO\TeamDAO.cs.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\DAO\TournamentDAO.cs.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\DAO\TournamentFeeDAO.cs.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\DataObject\AddressData.cs.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\DataObject\ALaCarteItemCollection.cs.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\DataObject\ALaCarteItemData.cs.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\DataObject\ContactData.cs.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\DataObject\CreditCardData.cs.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\DataObject\FlightData.cs.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\DataObject\GolferData.cs.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\DataObject\LocationData.cs.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\DataObject\NotificationData.cs.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\DataObject\OrganizationData.cs.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\DataObject\OrganizerData.cs.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\DataObject\PairingData.cs.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\DataObject\ParticipantCollection.cs.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\DataObject\ParticipantData.cs.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\DataObject\PaymentData.cs.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\DataObject\PrizeData.cs.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\DataObject\ProfileData.cs.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\DataObject\RoundData.cs.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\DataObject\ScorecardData.cs.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\DataObject\SponsorData.cs.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\DataObject\TeamCollection.cs.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\DataObject\TeamData.cs.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\DataObject\TournamentData.cs.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\DataObject\TournamentFeeCollection.cs.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\DataObject\TournamentFeeData.cs.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\DataObject\WaitListData.cs.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\Sql\proc\spGolfer_Delete.proc.sql.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\Sql\proc\spGolfer_Insert.proc.sql.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\Sql\proc\spGolfer_Update.proc.sql.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\Sql\proc\spOrganizer_Delete.proc.sql.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\Sql\proc\spOrganizer_Insert.proc.sql.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\Sql\proc\spOrganizer_Update.proc.sql.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\Sql\proc\spParticipant_Delete.proc.sql.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\Sql\proc\spParticipant_Insert.proc.sql.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\Sql\proc\spParticipant_Update.proc.sql.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\Sql\proc\spPayment_Delete.proc.sql.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\Sql\proc\spPayment_Insert.proc.sql.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\Sql\proc\spPayment_Update.proc.sql.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\Sql\proc\spTeam_Delete.proc.sql.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\Sql\proc\spTeam_Insert.proc.sql.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\Sql\proc\spTeam_Update.proc.sql.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\Sql\proc\spTournament_Delete.proc.sql.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\Sql\proc\spTournament_Insert.proc.sql.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\Sql\proc\spTournament_Update.proc.sql.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\Sql\proc\spTournamentFee_Delete.proc.sql.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\Sql\proc\spTournamentFee_Insert.proc.sql.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\Sql\proc\spTournamentFee_Update.proc.sql.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\Sql\table\Golfer.table.sql.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\Sql\table\Organizer.table.sql.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\Sql\table\Participant.table.sql.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\Sql\table\Payment.table.sql.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\Sql\table\Team.table.sql.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\Sql\table\Tournament.table.sql.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\Sql\table\TournamentFee.table.sql.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\Sql\view\vwGolfer.view.sql.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\Sql\view\vwOrganizer.view.sql.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\Sql\view\vwPayment.view.sql.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\Sql\view\vwTeam.view.sql.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\Sql\view\vwTournamentFee.view.sql.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\Test\CreditCardTypeEnumTest.cs.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\Test\ExpMonthEnumTest.cs.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\Test\ExpYearEnumTest.cs.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\Test\GolferStatusEnumTest.cs.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\Test\PaymentStatusEnumTest.cs.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\Test\TeamSizeEnumTest.cs.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\Test\TeamStatusEnumTest.cs.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\Test\TournamentFormatEnumTest.cs.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\Test\USStateEnumTest.cs.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\Types\CreditCardTypeEnum.cs.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\Types\ExpMonthEnum.cs.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\Types\ExpYearEnum.cs.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\Types\GolferStatusEnum.cs.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\Types\PaymentStatusEnum.cs.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\Types\TeamSizeEnum.cs.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\Types\TeamStatusEnum.cs.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\Types\TournamentFormatEnum.cs.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\Sanity\Types\USStateEnum.cs.cmp"
+                    BuildAction = "None"
+                />
             </Include>
         </Files>
     </CSHARP>
