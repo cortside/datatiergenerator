@@ -44,13 +44,14 @@ namespace Spring2.DataTierGenerator {
             sb.Append("using System.Data.SqlClient;\n");
             sb.Append("using System.Configuration;\n");
             sb.Append("using System.Collections;\n");
+			sb.Append("using Spring2.Core.DAO;\n");
             sb.Append("using ").Append(options.GetDONameSpace(null)).Append(";\n");
 
             sb.Append("\n");
             sb.Append("namespace " + options.GetDAONameSpace(table) + " {\n");
-            sb.Append("\tpublic class " + options.GetDAOClassName(table) + " {\n");
+            sb.Append("\tpublic class " + options.GetDAOClassName(table) + " : Spring2.Core.DAO.EntityDAO {\n");
 
-            sb.Append("\n\t\tprivate readonly String TABLE=\"").Append(table).Append("\";\n\n");
+            //sb.Append("\n\t\tprivate readonly String TABLE=\"").Append(table).Append("\";\n\n");
             sb.Append("\n\t\tprivate readonly String VIEW=\"vw").Append(table).Append("\";\n\n");
 
             CreateDAOListMethods(sb);
@@ -69,7 +70,7 @@ namespace Spring2.DataTierGenerator {
             sb.Append("}\n");
 
             // Create the output stream
-            strFileName = options.DaoClassDirectory + "\\" + options.GetDAOClassName(table) + ".cs";
+            strFileName = options.RootDirectory + options.DaoClassDirectory + "\\" + options.GetDAOClassName(table) + ".cs";
             if (File.Exists(strFileName))
                 File.Delete(strFileName);
             objStreamWriter = new StreamWriter(strFileName);
@@ -247,7 +248,7 @@ namespace Spring2.DataTierGenerator {
 
 			
             // Append the connection string parameter
-            sb.Append("string strConnectionString");
+            sb.Append("SqlConnection connection");
 			
             // Append the method header
             sb.Append(") {\n");
@@ -280,17 +281,17 @@ namespace Spring2.DataTierGenerator {
             for (intIndex = 0; intIndex < fields.Count; intIndex++) {
                 objField = (Field)fields[intIndex];
                 if (!objField.IsViewColumn) {
-                    if (objField.IsPrimaryKey && objField.IsIdentity == false && objField.IsRowGuidCol == false) {
-                        objOldField = objField.Copy();
-                        objOldField.ColumnName = "Old" + objOldField.ColumnName;
-                        sb.Append("\t\t\t\t" + objOldField.CreateSqlParameter(false, true));
-					
-                        objNewField = objField.Copy();
-                        objNewField.ColumnName = "New" + objNewField.ColumnName;
-                        sb.Append("\t\t\t\t" + objNewField.CreateSqlParameter(false, true));
-                    } else {
+//                    if (objField.IsPrimaryKey && objField.IsIdentity == false && objField.IsRowGuidCol == false) {
+//                        objOldField = objField.Copy();
+//                        objOldField.ColumnName = "Old" + objOldField.ColumnName;
+//                        sb.Append("\t\t\t\t" + objOldField.CreateSqlParameter(false, true));
+//					
+//                        objNewField = objField.Copy();
+//                        objNewField.ColumnName = "New" + objNewField.ColumnName;
+//                        sb.Append("\t\t\t\t" + objNewField.CreateSqlParameter(false, true));
+//                    } else {
                         sb.Append("\t\t\t\t" + objField.CreateSqlParameter(false, true));
-                    }
+//                    }
                 }
                 objField = null;
             }
@@ -352,7 +353,7 @@ namespace Spring2.DataTierGenerator {
                     sb.Append("\t\t/// Deletes a record from the " + table + " table by " + objField.ColumnName + ".\n");
                     sb.Append("\t\t/// </summary>\n");
                     sb.Append("\t\t/// <param name=\"\"></param>\n");
-                    sb.Append("\t\tpublic SqlDataReader DeleteBy" + strColumnName.Replace(" ", "_") + "(" + objField.CreateMethodParameter() + ", string strConnectionString) {\n");
+                    sb.Append("\t\tpublic SqlDataReader DeleteBy" + strColumnName.Replace(" ", "_") + "(" + objField.CreateMethodParameter() + ", SqlConnection connection) {\n");
 					
                     // Append the variable declarations
                     sb.Append("\t\t\tSqlConnection	objConnection;\n");
@@ -414,7 +415,7 @@ namespace Spring2.DataTierGenerator {
                     objField = (Field)arrKeyList[intIndex];
                     sb.Append(objField.CreateMethodParameter() + ", ");
                 }
-                sb.Append("string strConnectionString) {\n");
+                sb.Append("SqlConnection connection) {\n");
 				
                 // Append the variable declarations
                 sb.Append("\t\t\tSqlConnection	objConnection;\n");
@@ -501,7 +502,7 @@ namespace Spring2.DataTierGenerator {
             sb.Append("\t\t/// Selects a record from the " + table + " table.\n");
             sb.Append("\t\t/// </summary>\n");
             sb.Append("\t\t/// <param name=\"\"></param>\n");
-            sb.Append("\t\tpublic SqlDataReader Select(string strConnectionString) {\n");
+            sb.Append("\t\tpublic SqlDataReader Select(SqlConnection connection) {\n");
 			
             // Append the variable declarations
             sb.Append("\t\t\tSqlConnection	objConnection;\n");
@@ -550,7 +551,7 @@ namespace Spring2.DataTierGenerator {
                     sb.Append("\t\t/// Selects a record from the " + table + " table by " + objField.ColumnName + ".\n");
                     sb.Append("\t\t/// </summary>\n");
                     sb.Append("\t\t/// <param name=\"\"></param>\n");
-                    sb.Append("\t\tpublic SqlDataReader SelectBy" + strColumnName.Replace(" ", "_") + "(" + objField.CreateMethodParameter() + ", string strConnectionString) {\n");
+                    sb.Append("\t\tpublic SqlDataReader SelectBy" + strColumnName.Replace(" ", "_") + "(" + objField.CreateMethodParameter() + ", SqlConnection connection) {\n");
 					
                     // Append the variable declarations
                     sb.Append("\t\t\tSqlConnection	objConnection;\n");
@@ -613,7 +614,7 @@ namespace Spring2.DataTierGenerator {
                     objField = (Field)arrKeyList[intIndex];
                     sb.Append(objField.CreateMethodParameter() + ", ");
                 }
-                sb.Append("string strConnectionString) {\n");
+                sb.Append("SqlConnection connection) {\n");
 				
                 // Append the variable declarations
                 sb.Append("\t\t\tSqlConnection	objConnection;\n");
@@ -667,72 +668,89 @@ namespace Spring2.DataTierGenerator {
             int			intIndex;
 			
             // Append the method header
-            sb.Append("\t\t/// <summary>\n");
-            sb.Append("\t\t/// Inserts a record into the " + table + " table.\n");
-            sb.Append("\t\t/// </summary>\n");
-            sb.Append("\t\t/// <param name=\"\"></param>\n");
-
-            sb.Append("\t\tprivate SqlDataReader GetListReader() { \n");
-            sb.Append("\t\treturn GetListReader(\"\", \"\"); \n");
+            sb.Append("\t\tprotected override String GetViewName() { \n");
+            sb.Append("\t\t	return VIEW; \n");
             sb.Append("\t\t} \n");
             sb.Append("\t\t \n");
-            sb.Append("\t\tprivate SqlDataReader GetListReader(String whereClause, String orderByClause) { \n");
-            sb.Append("\t\tSqlDataReader dataReader = null; \n");
-            sb.Append("\t\t \n");
-            sb.Append("\t\ttry { \n");
-            sb.Append("\t\t	Database data = new Database(); \n");
-            sb.Append("\t\t \n");
-            sb.Append("\t\t	String sql = \"select * from \" + VIEW;\n");
-            sb.Append("\t\t	if (whereClause.Trim().Length >0) { \n");
-            sb.Append("\t\t		sql = sql + \" where \" + whereClause; \n");
+            sb.Append("\t\tpublic override ICollection GetList(IWhere whereClause, IOrderBy orderByClause, SqlConnection connection) { \n");
+            sb.Append("\t\t	SqlDataReader dataReader = GetListReader(whereClause, orderByClause, connection); \n");
+            sb.Append("\t\t	 \n");
+            sb.Append("\t\t	ArrayList list = new ArrayList(); \n");
+            sb.Append("\t\t	while (dataReader.Read()) { \n");
+            sb.Append("\t\t		list.Add(GetDataObjectFromReader(dataReader)); \n");
             sb.Append("\t\t	} \n");
-            sb.Append("\t\t	if (orderByClause.Trim().Length >0) { \n");
-            sb.Append("\t\t		sql = sql + \" order by \" + orderByClause; \n");
-            sb.Append("\t\t	} \n");
-            sb.Append("\t\t \n");
-            sb.Append("\t\t	data.ExecuteSQLSelect (sql, out dataReader); \n");
-            sb.Append("\t\t} catch (Exception ex) { \n");
-            sb.Append("\t\t	Error.Log(ex.ToString()); \n");
+            sb.Append("\t\t	dataReader.Close(); \n");
+            sb.Append("\t\t	return list; \n");
             sb.Append("\t\t} \n");
-            sb.Append("\t\t \n");
-            sb.Append("\t\treturn dataReader; \n");
-            sb.Append("\t\t}\n");
-            sb.Append("\n");
 
-            sb.Append("\t\t	public ICollection GetList() {\n");
-            sb.Append("\t\t		return GetList(\"\", \"\");\n");
-            sb.Append("\t\t	}\n");
-            sb.Append("\n");
-            sb.Append("\t\tpublic ICollection GetList(String whereClause) {\n");
-            sb.Append("\t\t	return GetList(whereClause, \"\");\n");
-            sb.Append("\t\t}\n");
-            sb.Append("\n");
-            sb.Append("\t\tpublic ICollection GetList(String whereClause, String orderByClause) {\n");
-            sb.Append("\t\t	SqlDataReader dataReader = GetListReader();\n");
-            sb.Append("\t\t    \n");
-            sb.Append("\t\t	ArrayList list = new ArrayList();\n");
-            sb.Append("\t\t	while (dataReader.Read()) {\n");
-            sb.Append("\t\t		list.Add(getDataObjectFromReader(dataReader));\n");
-            sb.Append("\t\t	}\n");
-            sb.Append("\t\t	dataReader.Close();\n");
-            sb.Append("\t\t	return list;\n");
-            sb.Append("\t\t}\n");
-            sb.Append("\n");			
+//            sb.Append("\t\tprivate SqlDataReader GetListReader() { \n");
+//            sb.Append("\t\treturn GetListReader(\"\", \"\"); \n");
+//            sb.Append("\t\t} \n");
+//            sb.Append("\t\t \n");
+//            sb.Append("\t\tprivate SqlDataReader GetListReader(String whereClause, String orderByClause) { \n");
+//            sb.Append("\t\tSqlDataReader dataReader = null; \n");
+//            sb.Append("\t\t \n");
+//            sb.Append("\t\ttry { \n");
+//            sb.Append("\t\t	Database data = new Database(); \n");
+//            sb.Append("\t\t \n");
+//            sb.Append("\t\t	String sql = \"select * from \" + VIEW;\n");
+//            sb.Append("\t\t	if (whereClause.Trim().Length >0) { \n");
+//            sb.Append("\t\t		sql = sql + \" where \" + whereClause; \n");
+//            sb.Append("\t\t	} \n");
+//            sb.Append("\t\t	if (orderByClause.Trim().Length >0) { \n");
+//            sb.Append("\t\t		sql = sql + \" order by \" + orderByClause; \n");
+//            sb.Append("\t\t	} \n");
+//            sb.Append("\t\t \n");
+//            sb.Append("\t\t	data.ExecuteSQLSelect (sql, out dataReader); \n");
+//            sb.Append("\t\t} catch (Exception ex) { \n");
+//            sb.Append("\t\t	Error.Log(ex.ToString()); \n");
+//            sb.Append("\t\t} \n");
+//            sb.Append("\t\t \n");
+//            sb.Append("\t\treturn dataReader; \n");
+//            sb.Append("\t\t}\n");
+//            sb.Append("\n");
+//
+//            sb.Append("\t\t	public ICollection GetList() {\n");
+//            sb.Append("\t\t		return GetList(\"\", \"\");\n");
+//            sb.Append("\t\t	}\n");
+//            sb.Append("\n");
+//            sb.Append("\t\tpublic ICollection GetList(String whereClause) {\n");
+//            sb.Append("\t\t	return GetList(whereClause, \"\");\n");
+//            sb.Append("\t\t}\n");
+//            sb.Append("\n");
+//            sb.Append("\t\tpublic ICollection GetList(String whereClause, String orderByClause) {\n");
+//            sb.Append("\t\t	SqlDataReader dataReader = GetListReader();\n");
+//            sb.Append("\t\t    \n");
+//            sb.Append("\t\t	ArrayList list = new ArrayList();\n");
+//            sb.Append("\t\t	while (dataReader.Read()) {\n");
+//            sb.Append("\t\t		list.Add(GetDataObjectFromReader(dataReader));\n");
+//            sb.Append("\t\t	}\n");
+//            sb.Append("\t\t	dataReader.Close();\n");
+//            sb.Append("\t\t	return list;\n");
+//            sb.Append("\t\t}\n");
+//            sb.Append("\n");			
 
-            sb.Append("\t\tpublic ").Append(options.GetDOClassName(table)).Append(" load(Int32 id) {\n");
-            sb.Append("\t\t	SqlDataReader dataReader = GetListReader(\"").Append(Field.GetIdentityColumn(fields)).Append("=\" + id.ToString(), \"\");\n");
+            sb.Append("\t\tpublic ").Append(options.GetDOClassName(table)).Append(" Load(Int32 id, SqlConnection connection) {\n");
+			sb.Append("\t\t	SqlDataReader dataReader = GetListReader(new WhereClause(\"").Append(Field.GetIdentityColumn(fields)).Append("\", id), null, connection);\n");
             sb.Append("\t\t    \n");
             sb.Append("\t\t	dataReader.Read();\n");
-            sb.Append("\t\t	return getDataObjectFromReader(dataReader);\n");
+            sb.Append("\t\t	return GetDataObjectFromReader(dataReader);\n");
             sb.Append("\t\t}\n");
             sb.Append("\n");			
 
-            sb.Append("\t\tprivate ").Append(options.GetDOClassName(table)).Append(" getDataObjectFromReader(SqlDataReader dataReader) {\n");
+            sb.Append("\t\tprivate ").Append(options.GetDOClassName(table)).Append(" GetDataObjectFromReader(SqlDataReader dataReader) {\n");
             sb.Append("\t\t	").Append(options.GetDOClassName(table)).Append(" data = new ").Append(options.GetDOClassName(table)).Append("();\n");
 
             for (intIndex = 0; intIndex < fields.Count; intIndex++) {
                 objField = (Field)fields[intIndex];
-                sb.Append("\t\t\tdata.").Append(objField.ColumnName).Append(" = ").Append("dataReader.Get").Append(objField.ParameterType).Append("(").Append(intIndex).Append(");\n");
+				switch (objField.ReaderType.ToLower()) {
+					case "bytes":
+						sb.Append("\t\t\tdataReader.GetBytes(").Append(intIndex).Append(", 0, data.").Append(objField.ColumnName).Append(", 0, ").Append(objField.Length).Append(");\n");
+						break;
+					default: 
+						sb.Append("\t\t\tdata.").Append(objField.ColumnName).Append(" = ").Append("dataReader.Get").Append(objField.ReaderType).Append("(").Append(intIndex).Append(");\n");
+						break;
+				}
                 objField = null;
             }
             /*

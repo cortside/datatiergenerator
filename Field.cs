@@ -225,6 +225,71 @@ namespace Spring2.DataTierGenerator {
             }
         }
 
+		/// <summary>
+		/// Creates a String for a method parameter representing the specified field.
+		/// </summary>
+		/// <param name="this">Object that stores the information for the field the parameter represents.</param>
+		/// <returns>String containing parameter information of the specified field for a method call.</returns>
+		public String ReaderType {
+			get {
+				switch (dbType.ToLower()) {
+					case "binary":
+						return "Bytes";
+					case "bigint":
+						return "Int64";
+					case "bit":
+						return "Boolean";
+					case "char":
+						return "String";
+					case "datetime":
+						return "DateTime";
+					case "decimal":
+						return "Decimal";
+					case "float":
+						return "Double";
+					case "image":
+						return "Bytes";
+					case "int":
+						return "Int32";
+					case "money":
+						return "Decimal";
+					case "nchar":
+						return "String";
+					case "ntext":
+						return "String";
+					case "nvarchar":
+						return "String";
+					case "numeric":
+						return "Decimal";
+					case "real":
+						return "Single";
+					case "smalldatetime":
+						return "DateTime";
+					case "smallint":
+						return "Int16";
+					case "smallmoney":
+						return "Decimal";
+					case "sql_variant":
+						return "Object";
+					case "sysname":
+						return "String";
+					case "text":
+						return "String";
+					case "timestamp":
+						return "DateTime";
+					case "tinyint":
+						return "Byte";
+					case "varbinary":
+						return "Bytes";
+					case "varchar":
+						return "String";
+					case "uniqueidentifier":
+						return "Guid";
+					default:  // Unknow data type
+						throw(new Exception("Invalid SQL Server data type specified: " + dbType));
+				}
+			}
+		}
 
         /// <summary>
         /// Matches a SQL Server data type to a SqlClient.SqlDbType.
@@ -250,7 +315,7 @@ namespace Spring2.DataTierGenerator {
                 case "image":
                     return "Image";
                 case "int":
-                    return "Int32";
+                    return "Int";
                 case "money":
                     return "Money";
                 case "nchar":
@@ -536,16 +601,15 @@ namespace Spring2.DataTierGenerator {
         // static helper method
         public static Field GetIdentityColumn(ArrayList arrFieldList) {
             Int32 intIndex;
-            Field objField;
 
             for (intIndex = 0; intIndex < arrFieldList.Count; intIndex++) {
-                objField = (Field)arrFieldList[intIndex];
+                Field objField = (Field)arrFieldList[intIndex];
                 if (objField.IsIdentity) {
                     return objField;
                 }
             }
 
-            return new Field();
+			return null;
         }
 
 

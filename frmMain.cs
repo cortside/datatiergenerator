@@ -440,13 +440,13 @@ namespace Spring2.DataTierGenerator {
 		}
 
 		private void frmMain_Load(object sender, System.EventArgs e) {
-			txtServerName.Text = "olympus";
+			txtServerName.Text = "hal";
 			txtDatabaseName.Text = "cort_seamless";
 			txtUserID.Text = "sa";
-            txtPassword.Text = "1qaz2wsx";
+            txtPassword.Text = "";
 			chkBlankPassword.Checked = true;
 
-			txtProjectNamespace.Text = "Spring2.Project";
+			txtProjectNamespace.Text = "Seamless.Manhattan";
 
 			chkCreateViews.Checked = true;
 			chkUseViewsInStoreProc.Checked = true;

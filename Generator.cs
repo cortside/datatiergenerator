@@ -40,20 +40,20 @@ namespace Spring2.DataTierGenerator {
 			string strFileName;
 
 			// Check to see if the "SQL Scripts" directory exists; if not, create it; otherwise, clear it out
-			if (!Directory.Exists(options.SqlScriptDirectory))
-				Directory.CreateDirectory(options.SqlScriptDirectory);
+			if (!Directory.Exists(options.RootDirectory + options.SqlScriptDirectory))
+				Directory.CreateDirectory(options.RootDirectory + options.SqlScriptDirectory);
 
 			// Check to see if the "Data Access Classes" directory exists; if not, create it; otherwise, clear it out
-			if (!Directory.Exists(options.DaoClassDirectory))
-				Directory.CreateDirectory(options.DaoClassDirectory);
+			if (!Directory.Exists(options.RootDirectory + options.DaoClassDirectory))
+				Directory.CreateDirectory(options.RootDirectory + options.DaoClassDirectory);
 
 			// Check to see if the "Data Object Classes" directory exists; if not, create it; otherwise, clear it out
-			if (!Directory.Exists(options.DoClassDirectory))
-				Directory.CreateDirectory(options.DoClassDirectory);
+			if (!Directory.Exists(options.RootDirectory + options.DoClassDirectory))
+				Directory.CreateDirectory(options.RootDirectory + options.DoClassDirectory);
 
 			// Get a list of the entities in the database
 			objDataTable = new DataTable();
-			objDataAdapter = new SqlDataAdapter("SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_CATALOG = '" + connection.Database + "'", connection);
+			objDataAdapter = new SqlDataAdapter("SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_CATALOG = '" + connection.Database + "' and TABLE_NAME in ('Firm', 'Orders', 'OrderDetail', 'OrderVendor', 'OrderAllocation', 'OrderDelivery', 'OrderDetailOption')", connection);
 			objDataAdapter.Fill(objDataTable);
 			
 			// Create and open the file stream - if in single file mode
@@ -85,11 +85,11 @@ namespace Spring2.DataTierGenerator {
 		/// <param name="strTableName">Name of the table to be processed.</param>
 		private void ProcessTable(string strTableName) {
 			ArrayList		arrFieldList;
-			int				intIndex;
+//			int				intIndex;
 			Field		objField;
 			SqlDataAdapter	objDataAdapter;
 			DataTable		objDataTable;
-			DataTable		objDataTableConstraint;
+//			DataTable		objDataTableConstraint;
 			int				intLength;
 			String			sql;
 
@@ -97,8 +97,12 @@ namespace Spring2.DataTierGenerator {
 			sql = "	SELECT	INFORMATION_SCHEMA.COLUMNS.*, ";
  			sql = sql + " 		systypes.length AS COLUMN_LENGTH, ";
  			sql = sql + " 		syscolumns.iscomputed AS COLUMN_COMPUTED, ";
- 			sql = sql + "		'0' VIEW_COLUMN, ";
- 			sql = sql + "		coalesce(VC.colid, 1000+ORDINAL_POSITION) COLUMN_ID ";
+ 			sql = sql + "		'0' IsViewColumn, ";
+ 			sql = sql + "		coalesce(VC.colid, 1000+ORDINAL_POSITION) COLUMN_ID, ";
+ 			sql = sql + "		ColumnProperty(OBJECT_ID(INFORMATION_SCHEMA.COLUMNS.TABLE_NAME), INFORMATION_SCHEMA.COLUMNS.COLUMN_NAME, 'IsIdentity') AS IsIdentity, ";
+ 			sql = sql + "		ColumnProperty(OBJECT_ID(INFORMATION_SCHEMA.COLUMNS.TABLE_NAME), INFORMATION_SCHEMA.COLUMNS.COLUMN_NAME, 'IsRowGuidCol') AS IsRowGuidCol, ";
+ 			sql = sql + "		case when INFORMATION_SCHEMA.COLUMNS.COLUMN_NAME in (SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE INNER JOIN INFORMATION_SCHEMA.TABLE_CONSTRAINTS ON INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE.CONSTRAINT_NAME = INFORMATION_SCHEMA.TABLE_CONSTRAINTS.CONSTRAINT_NAME WHERE INFORMATIoN_SCHEMA.TABLE_CONSTRAINTS.TABLE_NAME = INFORMATION_SCHEMA.COLUMNS.TABLE_NAME AND CONSTRAINT_TYPE = 'FOREIGN KEY') then 1 else 0 end IsForeignKey, ";
+ 			sql = sql + "		case when INFORMATION_SCHEMA.COLUMNS.COLUMN_NAME in (SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE INNER JOIN INFORMATION_SCHEMA.TABLE_CONSTRAINTS ON INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE.CONSTRAINT_NAME = INFORMATION_SCHEMA.TABLE_CONSTRAINTS.CONSTRAINT_NAME WHERE INFORMATIoN_SCHEMA.TABLE_CONSTRAINTS.TABLE_NAME = INFORMATION_SCHEMA.COLUMNS.TABLE_NAME AND CONSTRAINT_TYPE = 'PRIMARY KEY') then 1 else 0 end IsPrimaryKey ";
  			sql = sql + " 	FROM INFORMATION_SCHEMA.COLUMNS ";
  			sql = sql + "  	INNER JOIN systypes ON INFORMATION_SCHEMA.COLUMNS.DATA_TYPE = systypes.name ";
  			sql = sql + "  	INNER JOIN syscolumns ON INFORMATION_SCHEMA.COLUMNS.COLUMN_NAME = syscolumns.name  AND syscolumns.id = OBJECT_ID('" + strTableName + "') ";
@@ -111,9 +115,13 @@ namespace Spring2.DataTierGenerator {
  				sql = sql + " 	SELECT	INFORMATION_SCHEMA.COLUMNS.*, ";
  				sql = sql + "  		systypes.length AS COLUMN_LENGTH, ";
  				sql = sql + "  		syscolumns.iscomputed AS COLUMN_COMPUTED, ";
- 				sql = sql + " 		'1' VIEW_COLUMN, ";
- 				sql = sql + "		ORDINAL_POSITION COLUMN_ID ";
- 				sql = sql + " 	FROM INFORMATION_SCHEMA.COLUMNS ";
+ 				sql = sql + " 		'1' IsViewColumn, ";
+ 				sql = sql + "		ORDINAL_POSITION COLUMN_ID, ";
+				sql = sql + "		ColumnProperty(OBJECT_ID(INFORMATION_SCHEMA.COLUMNS.TABLE_NAME), INFORMATION_SCHEMA.COLUMNS.COLUMN_NAME, 'IsIdentity') AS IsIdentity, ";
+				sql = sql + "		ColumnProperty(OBJECT_ID(INFORMATION_SCHEMA.COLUMNS.TABLE_NAME), INFORMATION_SCHEMA.COLUMNS.COLUMN_NAME, 'IsRowGuidCol') AS IsRowGuidCol, ";
+				sql = sql + "		case when INFORMATION_SCHEMA.COLUMNS.COLUMN_NAME in (SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE INNER JOIN INFORMATION_SCHEMA.TABLE_CONSTRAINTS ON INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE.CONSTRAINT_NAME = INFORMATION_SCHEMA.TABLE_CONSTRAINTS.CONSTRAINT_NAME WHERE INFORMATIoN_SCHEMA.TABLE_CONSTRAINTS.TABLE_NAME = INFORMATION_SCHEMA.COLUMNS.TABLE_NAME AND CONSTRAINT_TYPE = 'FOREIGN KEY') then 1 else 0 end IsForeignKey, ";
+				sql = sql + "		case when INFORMATION_SCHEMA.COLUMNS.COLUMN_NAME in (SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE INNER JOIN INFORMATION_SCHEMA.TABLE_CONSTRAINTS ON INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE.CONSTRAINT_NAME = INFORMATION_SCHEMA.TABLE_CONSTRAINTS.CONSTRAINT_NAME WHERE INFORMATIoN_SCHEMA.TABLE_CONSTRAINTS.TABLE_NAME = INFORMATION_SCHEMA.COLUMNS.TABLE_NAME AND CONSTRAINT_TYPE = 'PRIMARY KEY') then 1 else 0 end IsPrimaryKey ";
+				sql = sql + " 	FROM INFORMATION_SCHEMA.COLUMNS ";
  				sql = sql + " 	INNER JOIN systypes ON INFORMATION_SCHEMA.COLUMNS.DATA_TYPE = systypes.name ";
  				sql = sql + " 	INNER JOIN syscolumns ON INFORMATION_SCHEMA.COLUMNS.COLUMN_NAME = syscolumns.name ";
  				sql = sql + " 	WHERE INFORMATION_SCHEMA.COLUMNS.TABLE_NAME = 'vw" + strTableName + "' AND syscolumns.id = OBJECT_ID('vw" + strTableName + "') ";
@@ -141,8 +149,11 @@ namespace Spring2.DataTierGenerator {
 						objField.Length = (Int32)(Int16)objDataRow["COLUMN_LENGTH"];
 					if (System.DBNull.Value.GetType() != objDataRow["NUMERIC_PRECISION"].GetType() ) objField.Precision = (Int32)(Byte)objDataRow["NUMERIC_PRECISION"];
 					if (!System.DBNull.Value.Equals(objDataRow["NUMERIC_SCALE"])) objField.Scale = (Int32)objDataRow["NUMERIC_SCALE"];
-					objField.IsPrimaryKey = false;
-					objField.IsViewColumn = objDataRow["VIEW_COLUMN"].ToString() == "1";
+					objField.IsIdentity = objDataRow["IsIdentity"].ToString() == "1";
+					objField.IsPrimaryKey = objDataRow["IsPrimaryKey"].ToString() == "1";
+					objField.IsRowGuidCol = objDataRow["IsRowGuidCol"].ToString() == "1";
+					objField.IsForeignKey = objDataRow["IsForeignKey"].ToString() == "1";
+					objField.IsViewColumn = objDataRow["IsViewColumn"].ToString() == "1";
 
 					// Check for unicode columns
 					if (objField.DBType.ToLower() == "nchar" || objField.DBType.ToLower() == "nvarchar" || objField.DBType.ToLower() == "ntext") {
@@ -157,6 +168,7 @@ namespace Spring2.DataTierGenerator {
 					else if (objField.DBType.ToLower() == "ntext")
 						objField.Length = 1073741823;
 
+/*
 					// Check to see if the current field is a primary key
 					objDataTableConstraint = new DataTable();
 					objDataAdapter = new SqlDataAdapter("SELECT * FROM INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE INNER JOIN INFORMATION_SCHEMA.TABLE_CONSTRAINTS ON INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE.CONSTRAINT_NAME = INFORMATION_SCHEMA.TABLE_CONSTRAINTS.CONSTRAINT_NAME WHERE INFORMATION_SCHEMA.TABLE_CONSTRAINTS.TABLE_NAME = '" + strTableName + "'", connection);
@@ -166,15 +178,21 @@ namespace Spring2.DataTierGenerator {
 						if (objDataRowConstraint["COLUMN_NAME"].ToString() == objField.ColumnName && objDataRowConstraint["CONSTRAINT_TYPE"].ToString() == "PRIMARY KEY") {
 							objField.IsPrimaryKey = true;
 						}
-					}
+					} 
+*/
+					objField.IsIdentity = objDataRow["IsIdentity"].ToString() == "1";
+					objField.IsPrimaryKey = objDataRow["IsPrimaryKey"].ToString() == "1";
+					objField.IsRowGuidCol = objDataRow["IsRowGuidCol"].ToString() == "1";
+					objField.IsForeignKey = objDataRow["IsForeignKey"].ToString() == "1";
 					
 					// Append the array to the array list
 					arrFieldList.Add(objField);
 					objField = null;
-					objDataTableConstraint = null;
+//					objDataTableConstraint = null;
 				}
 			}
 			
+/*
 			// Check for an identity column
 			for (intIndex = 0; intIndex < arrFieldList.Count; intIndex++) {
 				objField = (Field)arrFieldList[intIndex];
@@ -225,20 +243,21 @@ namespace Spring2.DataTierGenerator {
 				objDataTable = null;
 				objDataAdapter = null;
 			}
+*/			
 
 			// create views
             SQLGenerator sqlgen = new SQLGenerator(options, writer, strTableName, arrFieldList);
-			//sqlgen.CreateView();
-			//sqlgen.CreateInsertStoredProcedure();
-			//sqlgen.CreateUpdateStoredProcedure();
+			sqlgen.CreateView();
+			sqlgen.CreateInsertStoredProcedure();
+			sqlgen.CreateUpdateStoredProcedure();
 			sqlgen.CreateDeleteStoredProcedures();
 			if (options.GenerateSelectStoredProcs) sqlgen.CreateSelectStoredProcedures();
 
 			// create classes
             DAOGenerator daogen = new DAOGenerator(options, writer, strTableName, arrFieldList);
             DOGenerator dogen = new DOGenerator(options, writer, strTableName, arrFieldList);
-			//dogen.CreateDataObjectClass();
-			//daogen.CreateDataAccessClass();
+			dogen.CreateDataObjectClass();
+			daogen.CreateDataAccessClass();
 		}
 
 	}

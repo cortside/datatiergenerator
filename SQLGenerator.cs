@@ -3,6 +3,7 @@ using System.Data;
 using System.IO;
 using System.Collections;
 using System.Text;
+using System.Windows.Forms;
 
 namespace Spring2.DataTierGenerator {
     /// <summary>
@@ -152,48 +153,67 @@ namespace Spring2.DataTierGenerator {
             sb.Append("CREATE PROCEDURE " + options.GetProcName(table, "Update") + "\n\n");
 
             // Create the parameter list
-            for (i = 0; i < fields.Count; i++) {
-                objField = (Field)fields[i];
-                if (!objField.IsViewColumn) {
-                    if (i>0) {
-                        sb.Append(",\n");
-                    }
-                    if (objField.IsPrimaryKey && objField.IsIdentity == false && objField.IsRowGuidCol == false) {
-                        objOldField = objField.Copy();
-                        objOldField.ColumnName = "Old" + objOldField.ColumnName;
+			Boolean first = true;
+				for (i = 0; i < fields.Count; i++) {
+					objField = (Field)fields[i];
+					if (!objField.IsViewColumn) {
+//						if (!first) {
+//							sb.Append(",\n");
+//						} else {
+//							first=false;
+//						}
+						//MessageBox.Show("isPrimaryKey=" + objField.IsPrimaryKey.ToString() + "\nisIdentity=" + objField.IsIdentity.ToString() + "\n", objField.ColumnName);
+
+						//if (!objField.IsPrimaryKey && !objField.IsIdentity && !objField.IsRowGuidCol) {
+							if (!first) {
+								sb.Append(",\n");
+							} else {
+								first=false;
+							}
+
+							sb.Append(objField.CreateParameterString(false));
+						//}
+						/*							objOldField = objField.Copy();
+													objOldField.ColumnName = "Old" + objOldField.ColumnName;
 					
-                        objNewField = objField.Copy();
-                        objNewField.ColumnName = "New" + objNewField.ColumnName;
+													objNewField = objField.Copy();
+													objNewField.ColumnName = "New" + objNewField.ColumnName;
 					
-                        sb.Append(objOldField.CreateParameterString(false));
-                        sb.Append(",\n");
-                        sb.Append(objNewField.CreateParameterString(false));
-                    } else {
-                        sb.Append(objField.CreateParameterString(false));
-                    }
-                }
-                objField = null;
-            }
-            sb.Append("\n");
+													sb.Append(objOldField.CreateParameterString(false));
+													sb.Append(",\n");
+													sb.Append(objNewField.CreateParameterString(false));
+												} else {
+													sb.Append(objField.CreateParameterString(false));
+												} */
+					}
+					objField = null;
+				}
+				sb.Append("\n");
 
             sb.Append("\nAS\n");
             sb.Append("\nUPDATE\n\t[" + table + "]\n");
             sb.Append("SET\n");
 			
             // Create the set statement
-            Boolean first = true;
+            first = true;
             for (i = 0; i < fields.Count; i++) {
                 objField = (Field)fields[i];
                 if (!objField.IsViewColumn) {
                     if (objField.IsIdentity == false && objField.IsRowGuidCol == false) {
-                        if (!first) {
-                            sb.Append(",\n");
-                        } else {
-                            first=false;
-                        }
+//                        if (!first) {
+//                            sb.Append(",\n");
+//                        } else {
+//                            first=false;
+//                        }
                         if (objField.IsPrimaryKey) {
-                            sb.Append("\t[" + objField.ColumnName + "] = @New" + objField.ColumnName.Replace(" ", "_"));
+                            //sb.Append("\t[" + objField.ColumnName + "] = @New" + objField.ColumnName.Replace(" ", "_"));
                         } else {
+							if (!first) {
+								sb.Append(",\n");
+							} else {
+								first=false;
+							}
+
                             sb.Append("\t[" + objField.ColumnName + "] = @" + objField.ColumnName.Replace(" ", "_"));
                         }
                     }
@@ -205,31 +225,32 @@ namespace Spring2.DataTierGenerator {
 			
             // Create the where clause
             intWhereClauseCount = 0;
-            for (i = 0; i < fields.Count; i++) {
-                objField = (Field)fields[i];
-                if (!objField.IsViewColumn) {
-                    if (objField.IsIdentity || objField.IsRowGuidCol || objField.IsPrimaryKey) {
-                        intWhereClauseCount++;
+			for (i = 0; i < fields.Count; i++) {
+				objField = (Field)fields[i];
+				if (!objField.IsViewColumn) {
+					if (objField.IsIdentity || objField.IsRowGuidCol || objField.IsPrimaryKey) {
+						intWhereClauseCount++;
 				
-                        if (i == (fields.Count  - 1))
-                            sb.Append("\t");
-                        else if (i < (fields.Count - 1) && i > 0 && intWhereClauseCount > 1)
-                            sb.Append("\tAND ");
-                        else
-                            sb.Append("\t");
+						if (i == (fields.Count  - 1))
+							sb.Append("\t");
+						else if (i < (fields.Count - 1) && i > 0 && intWhereClauseCount > 1)
+							sb.Append("\tAND ");
+						else
+							sb.Append("\t");
 					
-                        if (objField.IsPrimaryKey && objField.IsIdentity == false && objField.IsRowGuidCol == false)
-                            sb.Append("[" + objField.ColumnName + "] = @Old" + objField.ColumnName.Replace(" ", "_") + "\n");
-                        else
-                            sb.Append("[" + objField.ColumnName + "] = @" + objField.ColumnName.Replace(" ", "_") + "\n");
-                    }
-                }
-                objField = null;
-            }
+//						if (objField.IsPrimaryKey && !objField.IsIdentity && objField.IsRowGuidCol)
+//							sb.Append("[" + objField.ColumnName + "] = @Old" + objField.ColumnName.Replace(" ", "_") + "\n");
+//						else
+							sb.Append("[" + objField.ColumnName + "] = @" + objField.ColumnName.Replace(" ", "_") + "\n");
+					}
+				}
+				objField = null;
+			}
 
             sb.Append("\n\nif @@ROWCOUNT <> 1\n");
             sb.Append("    BEGIN\n");
-            sb.Append("        RAISERROR  ('").Append(options.GetProcName(table, "Update")).Append(": ").Append(Field.GetIdentityColumn(fields).ColumnName).Append(" %d not found to update', 16,1, @").Append(Field.GetIdentityColumn(fields).ColumnName).Append(")\n");
+            //sb.Append("        RAISERROR  ('").Append(options.GetProcName(table, "Update")).Append(": ").Append(Field.GetIdentityColumn(fields).ColumnName).Append(" %d not found to update', 16,1, @").Append(Field.GetIdentityColumn(fields).ColumnName).Append(")\n");
+			sb.Append("        RAISERROR  ('").Append(options.GetProcName(table, "Update")).Append(":  update was expected to update a single row and updated %d rows', 16,1, @@ROWCOUNT)\n");
             sb.Append("        RETURN(-1)\n");
             sb.Append("    END\n");
 
@@ -276,6 +297,12 @@ namespace Spring2.DataTierGenerator {
 
                 // Is is an identity or uniqueidentifier column?
                 if (objField.IsIdentity || (options.GenerateProcsForForeignKey && (objField.IsRowGuidCol || objField.IsPrimaryKey || objField.IsForeignKey))) {
+
+					// if this option is on, only generate the PK 
+					if (options.GenerateOnlyPrimaryDeleteStoredProc) {
+						arrKeyList.Clear();
+					}
+
                     // Format the column name to make sure the first character is upper case
                     strColumnName = objField.ColumnName;
                     strColumnName = strColumnName.Substring(0, 1).ToUpper() + strColumnName.Substring(1);
@@ -324,7 +351,11 @@ namespace Spring2.DataTierGenerator {
                 // Create the SQL for the stored procedure
                 sb = new StringBuilder(1024);
 
-                strProcName = options.GetProcName(table, "DeleteBy" + strPrimaryKeyList);
+				if (options.GenerateOnlyPrimaryDeleteStoredProc) {
+					strProcName = options.GetProcName(table, "Delete");
+				} else {
+					strProcName = options.GetProcName(table, "DeleteBy" + strPrimaryKeyList);
+				}
 
                 sb.Append("CREATE PROCEDURE " + strProcName + "\n\n");				
 				
@@ -337,18 +368,39 @@ namespace Spring2.DataTierGenerator {
                     sb.Append("@" + objField.ColumnName.Replace(" ", "_") + "\t" + objField.DBType);
                     objField = null;
 					
-                    if (i == arrKeyList.Count)
+                    if (i == arrKeyList.Count-1)
                         sb.Append("\n");
                     else
                         sb.Append(",\n");
                 }
 				
                 sb.Append("\n\nAS\n\n");
+
+				// Create the where clause
+				StringBuilder where = new StringBuilder();
+				for (i = 0; i < arrKeyList.Count; i++) {
+					objField = (Field)arrKeyList[i];
+					where.Append("\t[" + objField.ColumnName + "] = @" + objField.ColumnName.Replace(" ", "_"));
+					
+					if (i != arrKeyList.Count-1)
+						where.Append(" and \n");
+					else
+						where.Append("\n");
+				}
+
+
+				sb.Append("if not exists(SELECT ").Append("*").Append(" FROM ").Append(table).Append(" WHERE (").Append(where.ToString()).Append("))\n");
+				sb.Append("    BEGIN\n");
+				sb.Append("        RAISERROR  ('").Append(strProcName).Append(": ").Append("record").Append(" not found to delete', 16,1)\n");
+				sb.Append("        RETURN(-1)\n");
+				sb.Append("    END\n\n");
+
+
                 sb.Append("DELETE\n");
                 sb.Append("FROM\n\t[" + table + "]\n");
                 sb.Append("WHERE \n");
 
-                // Create the where clause
+/*                // Create the where clause
                 for (i = 0; i < arrKeyList.Count; i++) {
                     objField = (Field)fields[i];
                     sb.Append("\t[" + objField.ColumnName + "] = @" + objField.ColumnName.Replace(" ", "_"));
@@ -357,7 +409,8 @@ namespace Spring2.DataTierGenerator {
                         sb.Append(",\n");
                     else
                         sb.Append("\n");
-                }
+                } */
+				sb.Append(where.ToString());
 				
                 // Write out the stored procedure
                 WriteProcToFile(strProcName, sb.ToString() + "\nGO\n\n");
@@ -538,7 +591,8 @@ namespace Spring2.DataTierGenerator {
             sb.Append("]\n");
 
             // Write out the stored procedure
-            WriteToFile(strProcName, sb.ToString() + "\nGO\n\n");
+			String fileName = options.RootDirectory + options.SqlScriptDirectory + "\\view\\" + strProcName + ".view.sql";
+            WriteToFile(fileName, sb.ToString() + "\nGO\n\n");
             sb = null;
         }
 
@@ -557,7 +611,9 @@ namespace Spring2.DataTierGenerator {
             }
 
             sb.Append(strStoredProcText);
-            WriteToFile(strStoredProcName, sb.ToString());
+
+			String fileName = options.RootDirectory + options.SqlScriptDirectory + "\\proc\\" + strStoredProcName + ".proc.sql";
+            WriteToFile(fileName, sb.ToString());
         }
 
         /// <summary>
@@ -565,25 +621,21 @@ namespace Spring2.DataTierGenerator {
         /// </summary>
         /// <param name="strStoredProcName">Name of stored procedure (used to name file if not outputting as single file)</param>
         /// <param name="strStoredProcText">Text to create stored procedure.</param>
-        private void WriteToFile(String strStoredProcName, String strStoredProcText) {
-            StringBuilder sb;
+        private void WriteToFile(String fileName, String text) {
+            StringBuilder sb = new StringBuilder();
 
             if (!options.SingleFile) {
-                String strFileName = options.SqlScriptDirectory + "\\" + strStoredProcName + ".sql";
-                if (File.Exists(strFileName))
-                    File.Delete(strFileName);
-                writer = new StreamWriter(strFileName);
-            }
-
-            sb = new StringBuilder();
-            if (options.SingleFile) {
+                if (File.Exists(fileName))
+                    File.Delete(fileName);
+                writer = new StreamWriter(fileName);
+            } else {
                 sb.Append("/*\n");
                 sb.Append("******************************************************************************\n");
                 sb.Append("******************************************************************************\n");
                 sb.Append("*/\n");
             }
 
-            sb.Append(strStoredProcText);
+            sb.Append(text);
             writer.Write(sb.ToString());
 
             if (!options.SingleFile) {

@@ -69,7 +69,7 @@ namespace Spring2.DataTierGenerator {
             sb.Append("}\n");
 
             // Create the output stream
-            strFileName = options.DoClassDirectory + "\\" + options.GetDOClassName(table) + ".cs";
+            strFileName = options.RootDirectory + options.DoClassDirectory + "\\" + options.GetDOClassName(table) + ".cs";
             if (File.Exists(strFileName))
                 File.Delete(strFileName);
             objStreamWriter = new StreamWriter(strFileName);

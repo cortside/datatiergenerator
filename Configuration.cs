@@ -3,6 +3,7 @@ using System;
 namespace Spring2.DataTierGenerator {
     public class Configuration {
         private String database;
+		private String rootDirectory;
         private String sqlScriptDirectory;
         private String daoClassDirectory;
         private String doClassDirectory;
@@ -16,6 +17,8 @@ namespace Spring2.DataTierGenerator {
         private String projectNameSpace;
         private Boolean generateProcsForForeignKey;
         private Boolean generateSelectStoredProcs;
+		private Boolean generateOnlyPrimaryDeleteStoredProc;
+		private Boolean allowUpdateOfPrimaryKey;
 
         public Configuration() {
             this.sqlScriptDirectory = "sql";
@@ -23,6 +26,9 @@ namespace Spring2.DataTierGenerator {
             this.doClassDirectory = "DataObject";
             this.generateProcsForForeignKey = false;
             this.generateSelectStoredProcs = false;
+			this.generateOnlyPrimaryDeleteStoredProc = true;
+			this.rootDirectory = "c:\\data\\work\\seamlessweb\\manhattan\\src\\";
+			this.allowUpdateOfPrimaryKey = false;
         }
 
 // properties
@@ -30,6 +36,11 @@ namespace Spring2.DataTierGenerator {
             get { return this.database; }
             set { this.database = value; }
         }
+
+		public String RootDirectory {
+			get { return this.rootDirectory; }
+			set { this.rootDirectory = value; }
+		}
 
         public String SqlScriptDirectory {
             get { return this.sqlScriptDirectory; }
@@ -93,6 +104,16 @@ namespace Spring2.DataTierGenerator {
             get { return this.generateSelectStoredProcs; }
             set { this.generateSelectStoredProcs = value; }
         }
+
+		public Boolean GenerateOnlyPrimaryDeleteStoredProc {
+			get { return this.generateOnlyPrimaryDeleteStoredProc; }
+			set { this.generateOnlyPrimaryDeleteStoredProc = value; }
+		}
+
+		public Boolean AllowUpdateOfPrimaryKey {
+			get { return this.allowUpdateOfPrimaryKey; }
+			set { this.allowUpdateOfPrimaryKey = value; }
+		}
 
 // methods
         public String GetProcName(String table, String type) {
