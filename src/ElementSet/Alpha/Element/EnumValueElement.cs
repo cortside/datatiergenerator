@@ -13,7 +13,6 @@ namespace Spring2.DataTierGenerator.Element {
 	private static readonly String CODE = "code";
 
 	protected String code = String.Empty;
-	protected String description = String.Empty;
 
 	public String Code {
 	    get { return this.code; }

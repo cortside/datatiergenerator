@@ -31,7 +31,6 @@ namespace Spring2.DataTierGenerator.Element {
 	private Boolean writable = true;
 	
 	private String accessModifier = "private";
-	private String description = String.Empty;
 
 	public TypeElement Type {
 	    get { return this.type; }
@@ -185,6 +184,7 @@ namespace Spring2.DataTierGenerator.Element {
 			    }
 
 			    field.Description = node.InnerText.Trim();
+
 			    // the concrete type is the *real* type, type can be the same or can be in interface or coersable type
 			    if (node.Attributes["type"] != null) {
 				String type = node.Attributes["type"].Value;
