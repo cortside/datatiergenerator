@@ -500,7 +500,7 @@ namespace Spring2.DataTierGenerator {
 	private ArrayList DiscoverColumns(SqlEntity sqlentity, SqlConnection connection) {
 	    ArrayList list = new ArrayList();
 
-	    Boolean foundNewProperties=false;
+//	    Boolean foundNewProperties=false;
 	    DataTable columns = GetTableColumns(sqlentity, connection);
 	    foreach (DataRow row in columns.Rows) {
 		if (row["COLUMN_COMPUTED"].ToString() == "0") {

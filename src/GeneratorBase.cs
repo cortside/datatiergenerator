@@ -6,6 +6,7 @@ using System.Text;
 using System.Windows.Forms;
 
 namespace Spring2.DataTierGenerator {
+
     public abstract class GeneratorBase {
 
 	private readonly String REGION = "#region";
@@ -52,7 +53,7 @@ namespace Spring2.DataTierGenerator {
 		String textLine = textReader.ReadLine();
 		while (fileLine != null) {
 		    // Check to see if we have entered a region.
-		    inRegion = inRegion || fileLine.Trim().StartsWith(REGION);
+		    inRegion = inRegion || fileLine.Trim().StartsWith(RegionTag);
 
 		    // If we are in a region, save the line.  Otherwise, check
 		    // to see if the line in the file is different than the line
@@ -65,7 +66,7 @@ namespace Spring2.DataTierGenerator {
 		    }
 
 		    // Check to see if we have left a region.
-		    inRegion = inRegion && !fileLine.Trim().StartsWith(END_REGION);
+		    inRegion = inRegion && !fileLine.Trim().StartsWith(EndRegionTag);
 
 		    // Read the next line from both the file and the generated text.
 		    fileLine = fileReader.ReadLine();
@@ -90,11 +91,7 @@ namespace Spring2.DataTierGenerator {
 		// of the class.  Otherwise, write the generated text to the file.
 		String regionsString = regions.ToString();
 		if (regionsString != String.Empty) {
-		    Int32 index = text.Substring(0, text.LastIndexOf('}')).LastIndexOf('}');
-		    writer.Write(text.Substring(0, index));
-		    writer.Write(regionsString);
-		    writer.WriteLine("    }");
-		    writer.Write('}');
+		    WriteRegion(writer, text, regionsString);
 		} else {
 		    writer.Write(text);
 		}
@@ -160,6 +157,23 @@ namespace Spring2.DataTierGenerator {
 	    if (added) {
 		writer.WriteLine();
 	    }
+	}
+
+	public virtual void WriteRegion(StreamWriter writer, String text, String regionsString) {
+	    Int32 index = text.Substring(0, text.LastIndexOf('}')).LastIndexOf('}');
+	    writer.Write(text.Substring(0, index));
+	    writer.Write(regionsString);
+	    writer.WriteLine("    }");
+	    writer.Write('}');
+	}
+    
+
+	public virtual String RegionTag {
+	    get { return REGION; }
+	}
+
+	public virtual String EndRegionTag {
+	    get { return END_REGION; }
 	}
     }
 }

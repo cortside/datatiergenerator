@@ -590,7 +590,18 @@ namespace Spring2.DataTierGenerator {
 	    sb = null;
 	}
 
+	public override void WriteRegion(StreamWriter writer, String text, String regionsString) {
+	    writer.Write(text);
+	    writer.Write(regionsString);
+	}
 
+	public override String RegionTag {
+	    get { return "-- #region"; }
+	}
+
+	public override String EndRegionTag {
+	    get { return "-- #endregion"; }
+	}
     }
 }
 
