@@ -129,6 +129,11 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "Element\Argument.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Element\Collection.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -185,6 +190,11 @@
                 />
                 <File
                     RelPath = "Element\Index.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Element\Parser.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -269,6 +279,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Parser\ConfigParser.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Parser\DatabaseCompareParser.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -317,6 +332,14 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "Template\dataobject.vm"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Template\dtg_csharp_library.vm"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "Template\enum.vm"
                     BuildAction = "EmbeddedResource"
                 />
@@ -326,6 +349,18 @@
                 />
                 <File
                     RelPath = "Template\header.vm"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Template\sql_delete.vm"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Template\sql_insert.vm"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Template\sql_update.vm"
                     BuildAction = "EmbeddedResource"
                 />
                 <File
