@@ -56,7 +56,7 @@ namespace Spring2.DataTierGenerator {
                 objField = (Field)fields[i];
                 if (!objField.IsViewColumn) {
                     if (objField.IsRowGuidCol) {
-                        sb.Append("SET @" + objField.ColumnName.Replace(" ", "_") + " = @@NEWID()\n\n");
+                        sb.Append("SET @" + objField.Name.Replace(" ", "_") + " = @@NEWID()\n\n");
                         break;
                     }
                 }
@@ -76,7 +76,7 @@ namespace Spring2.DataTierGenerator {
                         } else {
                             first=false;
                         }
-                        sb.Append("\t[" + objField.ColumnName + "]");
+                        sb.Append("\t[" + objField.Name + "]");
                     }
                 }
                 objField = null;
@@ -95,7 +95,7 @@ namespace Spring2.DataTierGenerator {
                         } else {
                             first=false;
                         }
-                        sb.Append("\t@" + objField.ColumnName.Replace(" ", "_"));
+                        sb.Append("\t@" + objField.Name.Replace(" ", "_"));
                     }
                 }
                 objField = null;
@@ -116,7 +116,7 @@ namespace Spring2.DataTierGenerator {
                 if (!objField.IsViewColumn) {
                     // Is the current field an identity column?
                     if (objField.IsIdentity)
-                        sb.Append("\nSET @" + objField.ColumnName.Replace(" ", "_") + " = @@IDENTITY\n");
+                        sb.Append("\nSET @" + objField.Name.Replace(" ", "_") + " = @@IDENTITY\n");
                 }
                 objField = null;
             }
@@ -154,7 +154,7 @@ namespace Spring2.DataTierGenerator {
 //						} else {
 //							first=false;
 //						}
-						//MessageBox.Show("isPrimaryKey=" + objField.IsPrimaryKey.ToString() + "\nisIdentity=" + objField.IsIdentity.ToString() + "\n", objField.ColumnName);
+						//MessageBox.Show("isPrimaryKey=" + objField.IsPrimaryKey.ToString() + "\nisIdentity=" + objField.IsIdentity.ToString() + "\n", objField.Name);
 
 						//if (!objField.IsPrimaryKey && !objField.IsIdentity && !objField.IsRowGuidCol) {
 							if (!first) {
@@ -166,10 +166,10 @@ namespace Spring2.DataTierGenerator {
 							sb.Append(objField.CreateParameterString(false));
 						//}
 						/*							objOldField = objField.Copy();
-													objOldField.ColumnName = "Old" + objOldField.ColumnName;
+													objOldField.Name = "Old" + objOldField.Name;
 					
 													objNewField = objField.Copy();
-													objNewField.ColumnName = "New" + objNewField.ColumnName;
+													objNewField.Name = "New" + objNewField.Name;
 					
 													sb.Append(objOldField.CreateParameterString(false));
 													sb.Append(",\n");
@@ -198,7 +198,7 @@ namespace Spring2.DataTierGenerator {
 //                            first=false;
 //                        }
                         if (objField.IsPrimaryKey) {
-                            //sb.Append("\t[" + objField.ColumnName + "] = @New" + objField.ColumnName.Replace(" ", "_"));
+                            //sb.Append("\t[" + objField.Name + "] = @New" + objField.Name.Replace(" ", "_"));
                         } else {
 							if (!first) {
 								sb.Append(",\n");
@@ -206,7 +206,7 @@ namespace Spring2.DataTierGenerator {
 								first=false;
 							}
 
-                            sb.Append("\t[" + objField.ColumnName + "] = @" + objField.ColumnName.Replace(" ", "_"));
+                            sb.Append("\t[" + objField.Name + "] = @" + objField.Name.Replace(" ", "_"));
                         }
                     }
                 }
@@ -231,9 +231,9 @@ namespace Spring2.DataTierGenerator {
 							sb.Append("\t");
 					
 //						if (objField.IsPrimaryKey && !objField.IsIdentity && objField.IsRowGuidCol)
-//							sb.Append("[" + objField.ColumnName + "] = @Old" + objField.ColumnName.Replace(" ", "_") + "\n");
+//							sb.Append("[" + objField.Name + "] = @Old" + objField.Name.Replace(" ", "_") + "\n");
 //						else
-							sb.Append("[" + objField.ColumnName + "] = @" + objField.ColumnName.Replace(" ", "_") + "\n");
+							sb.Append("[" + objField.Name + "] = @" + objField.Name.Replace(" ", "_") + "\n");
 					}
 				}
 				objField = null;
@@ -241,7 +241,7 @@ namespace Spring2.DataTierGenerator {
 
             sb.Append("\n\nif @@ROWCOUNT <> 1\n");
             sb.Append("    BEGIN\n");
-            //sb.Append("        RAISERROR  ('").Append(options.GetProcName(entity.SqlObject, "Update")).Append(": ").Append(Field.GetIdentityColumn(fields).ColumnName).Append(" %d not found to update', 16,1, @").Append(Field.GetIdentityColumn(fields).ColumnName).Append(")\n");
+            //sb.Append("        RAISERROR  ('").Append(options.GetProcName(entity.SqlObject, "Update")).Append(": ").Append(Field.GetIdentityColumn(fields).Name).Append(" %d not found to update', 16,1, @").Append(Field.GetIdentityColumn(fields).Name).Append(")\n");
 			sb.Append("        RAISERROR  ('").Append(options.GetProcName(entity.SqlObject, "Update")).Append(":  update was expected to update a single row and updated %d rows', 16,1, @@ROWCOUNT)\n");
             sb.Append("        RETURN(-1)\n");
             sb.Append("    END\n");
@@ -273,7 +273,7 @@ namespace Spring2.DataTierGenerator {
                 objField = (Field)fields[i];
                 if (objField.IsPrimaryKey) {
                     arrKeyList.Add(objField);
-                    strPrimaryKeyList += objField.ColumnName.Replace(" ", "_") + "_";
+                    strPrimaryKeyList += objField.Name.Replace(" ", "_") + "_";
                 }
                 objField = null;
             }
@@ -296,7 +296,7 @@ namespace Spring2.DataTierGenerator {
 					}
 
                     // Format the column name to make sure the first character is upper case
-                    strColumnName = objField.ColumnName;
+                    strColumnName = objField.Name;
                     strColumnName = strColumnName.Substring(0, 1).ToUpper() + strColumnName.Substring(1);
 				
                     // Create the SQL for the stored procedure
@@ -313,12 +313,12 @@ namespace Spring2.DataTierGenerator {
 
                     sb.Append("CREATE PROCEDURE " + strProcName + "\n\n");
 
-                    sb.Append("@" + objField.ColumnName.Replace(" ", "_") + " " + objField.SqlType);
+                    sb.Append("@" + objField.Name.Replace(" ", "_") + " " + objField.SqlType);
                     sb.Append("\n\nAS\n\n");
 
-                    sb.Append("if not exists(SELECT ").Append(objField.ColumnName).Append(" FROM [").Append(entity.SqlObject).Append("] WHERE ([").Append(objField.ColumnName).Append("] = @").Append(objField.ColumnName).Append("))\n");
+                    sb.Append("if not exists(SELECT ").Append(objField.Name).Append(" FROM [").Append(entity.SqlObject).Append("] WHERE ([").Append(objField.Name).Append("] = @").Append(objField.Name).Append("))\n");
                     sb.Append("    BEGIN\n");
-                    sb.Append("        RAISERROR  ('").Append(strProcName).Append(": ").Append(objField.ColumnName).Append(" %d not found to delete', 16,1, @").Append(objField.ColumnName).Append(")\n");
+                    sb.Append("        RAISERROR  ('").Append(strProcName).Append(": ").Append(objField.Name).Append(" %d not found to delete', 16,1, @").Append(objField.Name).Append(")\n");
                     sb.Append("        RETURN(-1)\n");
                     sb.Append("    END\n\n");
 
@@ -326,7 +326,7 @@ namespace Spring2.DataTierGenerator {
                     sb.Append("DELETE\n");
                     sb.Append("FROM\n\t[" + entity.SqlObject + "]\n");
                     sb.Append("WHERE \n");
-                    sb.Append("\t[" + objField.ColumnName + "] = @" + objField.ColumnName.Replace(" ", "_") + "\n");
+                    sb.Append("\t[" + objField.Name + "] = @" + objField.Name.Replace(" ", "_") + "\n");
 
                     // Write out the stored procedure
                     WriteProcToFile(strProcName, sb.ToString() + "\nGO\n\n");
@@ -357,7 +357,7 @@ namespace Spring2.DataTierGenerator {
                 // Create the parameter list
                 for (i = 0; i < arrKeyList.Count; i++) {
                     objField = (Field)arrKeyList[i];
-                    sb.Append("@" + objField.ColumnName.Replace(" ", "_") + "\t" + objField.SqlType);
+                    sb.Append("@" + objField.Name.Replace(" ", "_") + "\t" + objField.SqlType);
                     objField = null;
 					
                     if (i == arrKeyList.Count-1)
@@ -372,7 +372,7 @@ namespace Spring2.DataTierGenerator {
 				StringBuilder where = new StringBuilder();
 				for (i = 0; i < arrKeyList.Count; i++) {
 					objField = (Field)arrKeyList[i];
-					where.Append("\t[" + objField.ColumnName + "] = @" + objField.ColumnName.Replace(" ", "_"));
+					where.Append("\t[" + objField.Name + "] = @" + objField.Name.Replace(" ", "_"));
 					
 					if (i != arrKeyList.Count-1)
 						where.Append(" and \n");
@@ -395,7 +395,7 @@ namespace Spring2.DataTierGenerator {
 /*                // Create the where clause
                 for (i = 0; i < arrKeyList.Count; i++) {
                     objField = (Field)fields[i];
-                    sb.Append("\t[" + objField.ColumnName + "] = @" + objField.ColumnName.Replace(" ", "_"));
+                    sb.Append("\t[" + objField.Name + "] = @" + objField.Name.Replace(" ", "_"));
 					
                     if (i != fields.Count)
                         sb.Append(",\n");
@@ -454,7 +454,7 @@ namespace Spring2.DataTierGenerator {
                 objField = (Field)fields[i];
                 if (objField.IsPrimaryKey) {
                     arrKeyList.Add(objField);
-                    strPrimaryKeyList += objField.ColumnName.Replace(" ", "_") + "_";
+                    strPrimaryKeyList += objField.Name.Replace(" ", "_") + "_";
                 }
                 objField = null;
             }
@@ -472,7 +472,7 @@ namespace Spring2.DataTierGenerator {
                 if (objField.IsIdentity || (options.GenerateProcsForForeignKey && (objField.IsRowGuidCol || objField.IsPrimaryKey || objField.IsForeignKey))) {
 
                     // Format the column name to make sure the first character is upper case
-                    strColumnName = objField.ColumnName;
+                    strColumnName = objField.Name;
                     strColumnName = strColumnName.Substring(0, 1).ToUpper() + strColumnName.Substring(1);
 				
                     // Create the SQL for the stored procedure
@@ -481,7 +481,7 @@ namespace Spring2.DataTierGenerator {
                     strProcName = options.GetProcName(entity.SqlObject, "SelectBy" + strColumnName.Replace(" ", "_"));
                     sb.Append("CREATE PROCEDURE " + strProcName + "\n\n");
 
-                    sb.Append("@" + objField.ColumnName.Replace(" ", "_") + "\t" + objField.SqlType);
+                    sb.Append("@" + objField.Name.Replace(" ", "_") + "\t" + objField.SqlType);
                     sb.Append("\n\nAS\n\n");
                     sb.Append("SELECT\n\t*\n");
                     sb.Append("FROM\n\t[");
@@ -491,7 +491,7 @@ namespace Spring2.DataTierGenerator {
                     sb.Append("]\n");
 
                     sb.Append("WHERE \n");
-                    sb.Append("\t[" + objField.ColumnName + "] = @" + objField.ColumnName.Replace(" ", "_") + "\n");
+                    sb.Append("\t[" + objField.Name + "] = @" + objField.Name.Replace(" ", "_") + "\n");
 					
                     // Write out the stored procedure
                     WriteProcToFile(strProcName, sb.ToString() + "\nGO\n\n");
@@ -514,7 +514,7 @@ namespace Spring2.DataTierGenerator {
                 // Create the parameter list
                 for (i = 0; i < arrKeyList.Count; i++) {
                     objField = (Field)arrKeyList[i];
-                    sb.Append("@" + objField.ColumnName.Replace(" ", "_") + "\t" + objField.SqlType);
+                    sb.Append("@" + objField.Name.Replace(" ", "_") + "\t" + objField.SqlType);
                     objField = null;
 					
                     if (i == arrKeyList.Count)
@@ -531,7 +531,7 @@ namespace Spring2.DataTierGenerator {
                 // Create the where clause
                 for (i = 0; i < arrKeyList.Count; i++) {
                     objField = (Field)fields[i];
-                    sb.Append("\t[" + objField.ColumnName + "] = @" + objField.ColumnName.Replace(" ", "_"));
+                    sb.Append("\t[" + objField.Name + "] = @" + objField.Name.Replace(" ", "_"));
 					
                     if (i != fields.Count)
                         sb.Append(",\n");
@@ -573,7 +573,7 @@ namespace Spring2.DataTierGenerator {
                     if (i>0) {
                         sb.Append(",\n");
                     }
-                    sb.Append("\t[" + objField.ColumnName + "]");
+                    sb.Append("\t[" + objField.Name + "]");
                 }
                 objField = null;
             }

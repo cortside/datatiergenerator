@@ -79,6 +79,11 @@
                     AssemblyName = "System.Xml"
                     HintPath = "..\..\..\..\WINNT\Microsoft.NET\Framework\v1.0.3705\System.XML.dll"
                 />
+                <Reference
+                    Name = "Spring2.Core"
+                    AssemblyName = "Spring2.Core"
+                    HintPath = "..\Core\src\bin\Debug\Spring2.Core.dll"
+                />
             </References>
         </Build>
         <Files>
@@ -98,6 +103,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "ConfigurationData.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "DAOGenerator.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -113,7 +123,17 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "EntityData.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Field.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "FieldData.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -139,6 +159,16 @@
                 />
                 <File
                     RelPath = "SQLGenerator.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "SqlTypeData.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "TypeData.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
