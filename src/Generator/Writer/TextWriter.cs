@@ -9,11 +9,22 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
     /// </summary>
     public class TextWriter : AbstractWriter, IWriter {
 
+	private String backupFilePath = "";
+
 	public TextWriter() {
 	}
 
 	public TextWriter(Hashtable options) {
             // currently does not support any configurable options
+	}
+
+	/// <summary>
+	/// String to backup the file to before it is overwritten.  Blank means no backup.
+	/// </summary>
+	public String BackupFilePath 
+	{
+	    get { return backupFilePath; }
+	    set { backupFilePath = value; }
 	}
 
 	/// <summary>
@@ -43,6 +54,21 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 
 	    // Only write to the file if it has changed or does not exist.
 	    if (changed) {
+		// make backup if the file exists
+		if (file.Exists && backupFilePath != "") {
+		    FileInfo backup = new FileInfo(backupFilePath);
+		    if (!backup.Directory.Exists) {
+			backup.Directory.Create();
+		    }
+		    if (File.Exists(backupFilePath) && (File.GetAttributes(backupFilePath) & FileAttributes.ReadOnly) == FileAttributes.ReadOnly) {
+			File.SetAttributes(backupFilePath, File.GetAttributes(backupFilePath) ^ FileAttributes.ReadOnly);
+		    }
+		    file.CopyTo(backupFilePath, true);
+		    if ((File.GetAttributes(backupFilePath) & FileAttributes.ReadOnly) == FileAttributes.ReadOnly) {
+			File.SetAttributes(backupFilePath, File.GetAttributes(backupFilePath) ^ FileAttributes.ReadOnly);
+		    }
+		}
+
 		StreamWriter writer = new StreamWriter(file.FullName, false);
 		writer.Write(text);
 		writer.Close();

@@ -597,6 +597,7 @@
 						<xs:attribute name="filenameformat" type="xs:string" use="required" />
 						<xs:attribute name="writer" type="xs:string" use="required" />
 						<xs:attribute name="styler" type="xs:string" use="optional" />
+						<xs:attribute name="backupdirectory" type="xs:string" use="optional" />
 					    </xs:complexType>
 					</xs:element>
 				    </xs:sequence>

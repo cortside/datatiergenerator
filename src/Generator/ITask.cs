@@ -20,7 +20,12 @@ namespace Spring2.DataTierGenerator.Generator {
 	    get;
 	}
 
-	Hashtable Parameters {
+	String BackupDirectory 
+	{
+	    get;
+	}
+	Hashtable Parameters 
+	{
 	    get;
 	}
 

@@ -88,8 +88,10 @@ namespace Spring2.DataTierGenerator.Generator {
 		    s.File = file.FullName;
 		    IWriter w = parser.GetWriter(task.Writer);
 		    try {
+			w.BackupFilePath = task.BackupDirectory + "\\" + file.Name + "~";
 			if (w.Write(file, s.Style(content))) {
 			    WriteToLog(w.Log);
+			    w.Log.Clear();
 			    WriteToLog("generating " + file.FullName);
 			} 
 		    } catch(Exception ex) { 

@@ -11,6 +11,7 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
     public class CSharpCodeWriter : AbstractWriter, IWriter {
 
 	private CodeGeneratorOptions cgOptions = new CodeGeneratorOptions ();
+	private String backupFilePath = "";
 
 	public CSharpCodeWriter() {
 	}
@@ -27,6 +28,14 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 		    cgOptions.BracingStyle = "Block";
 		}
 	    }
+	}
+
+	/// <summary>
+	/// String to backup the file to before it is overwritten.  Blank means no backup.
+	/// </summary>
+	public String BackupFilePath {
+	    get { return backupFilePath; }
+	    set { backupFilePath = value; }
 	}
 
 	public Boolean Write(FileInfo file, String contents) {
@@ -71,9 +80,21 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 		    sr.Close();
 		    if (!unit1.Generate().Equals(exitingContents)) {
 			// make backup
-			file.CopyTo(file.FullName + "~", true);
+			if (file.Exists && backupFilePath != "") {
+			    FileInfo backup = new FileInfo(backupFilePath);
+			    if (!backup.Directory.Exists) {
+				backup.Directory.Create();
+			    }
+			    if (File.Exists(backupFilePath) && (File.GetAttributes(backupFilePath) & FileAttributes.ReadOnly) == FileAttributes.ReadOnly) 
+			    {
+				File.SetAttributes(backupFilePath, File.GetAttributes(backupFilePath) ^ FileAttributes.ReadOnly);
+			    }
+			    file.CopyTo(backupFilePath, true);
+			    if ((File.GetAttributes(backupFilePath) & FileAttributes.ReadOnly) == FileAttributes.ReadOnly) {
+				File.SetAttributes(backupFilePath, File.GetAttributes(backupFilePath) ^ FileAttributes.ReadOnly);
+			    }
+			}
 
-			// 
 			StreamWriter writer = new StreamWriter(file.FullName, false);
 			writer.Write(unit1.Generate());
 			writer.Close();

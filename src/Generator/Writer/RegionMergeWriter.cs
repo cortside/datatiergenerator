@@ -12,12 +12,22 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 
 	private readonly String REGION = "#region";
 	private readonly String END_REGION = "#endregion";
+	private String backupFilePath = "";
 
-	public RegionMergeWriter() {
+	public RegionMergeWriter() 
+	{
 	}
 
 	public RegionMergeWriter(Hashtable options) {
             // currently does not support any configurable options
+	}
+
+	/// <summary>
+	/// String to backup the file to before it is overwritten.  Blank means no backup.
+	/// </summary>
+	public String BackupFilePath {
+	    get { return backupFilePath; }
+	    set { backupFilePath = value; }
 	}
 
 	/// <summary>
@@ -79,8 +89,19 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 	    // Only write to the file if it has changed or does not exist.
 	    if (changed) {
 		// make a backup of the current file if it exists
-		if (file.Exists) {
-		    file.CopyTo(file.FullName + "~", true);
+		if (file.Exists && backupFilePath != "") {
+		    FileInfo backup = new FileInfo(backupFilePath);
+		    if (!backup.Directory.Exists) {
+			backup.Directory.Create();
+		    }
+		    if (File.Exists(backupFilePath) && (File.GetAttributes(backupFilePath) & FileAttributes.ReadOnly) == FileAttributes.ReadOnly) 
+		    {
+			File.SetAttributes(backupFilePath, File.GetAttributes(backupFilePath) ^ FileAttributes.ReadOnly);
+		    }
+		    file.CopyTo(backupFilePath, true);
+		    if ((File.GetAttributes(backupFilePath) & FileAttributes.ReadOnly) == FileAttributes.ReadOnly) {
+			File.SetAttributes(backupFilePath, File.GetAttributes(backupFilePath) ^ FileAttributes.ReadOnly);
+		    }
 		}
 
 		// write the new file

@@ -115,10 +115,18 @@ namespace Spring2.DataTierGenerator.Parser {
 	    get { return ((Configuration)parser.Configuration).RootDirectory + "\\" + task.Directory; }
 	}
 
-	public Hashtable Parameters {
-	    get { 
+	public String BackupDirectory 
+	{
+	    get { return ((Configuration)parser.Configuration).RootDirectory + "\\" + task.BackupDirectory; }
+	}
+
+	public Hashtable Parameters 
+	{
+	    get 
+	    { 
 		Hashtable parameters = new Hashtable();
-		foreach(ParameterElement parameter in task.Parameters) {
+		foreach(ParameterElement parameter in task.Parameters) 
+		{
 		    parameters.Add(parameter.Name, parameter.Value);
 		}
 		return parameters;

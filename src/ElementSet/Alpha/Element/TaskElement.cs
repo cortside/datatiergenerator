@@ -16,10 +16,12 @@ namespace Spring2.DataTierGenerator.Element {
 	private static readonly String FILENAME_FORMAT = "filenameformat";
 	private static readonly String WRITER = "writer";
 	private static readonly String STYLER = "styler";
+	private static readonly String BACKUP_DIRECTORY = "backupdirectory";
 
 	protected String element = String.Empty;
 	protected String directory = String.Empty;
 	protected String filenameformat = String.Empty;
+	protected String backupDirectory = String.Empty;
 	private IList includes = new ArrayList();
 	private IList excludes = new ArrayList();
 	private IList parameters = new ArrayList();
@@ -42,7 +44,14 @@ namespace Spring2.DataTierGenerator.Element {
 	    set { this.directory = value; }
 	}
 
-	public IList Includes {
+	public String BackupDirectory 
+	{
+	    get { return this.backupDirectory; }
+	    set { this.backupDirectory = value; }
+	}
+
+	public IList Includes 
+	{
 	    get { return includes; }
 	    set { includes = value; }
 	}
@@ -95,7 +104,8 @@ namespace Spring2.DataTierGenerator.Element {
 		    taskElement.FileNameFormat = GetAttributeValue(taskNode, FILENAME_FORMAT, taskElement.FileNameFormat);
 		    taskElement.Writer = GetAttributeValue(taskNode, WRITER, taskElement.Writer);
 		    taskElement.Styler = GetAttributeValue(taskNode, STYLER, taskElement.Styler);
-		
+		    taskElement.BackupDirectory = GetAttributeValue(taskNode, BACKUP_DIRECTORY, taskElement.BackupDirectory);
+
 		    taskElements.Add(taskElement);
 		}
 	    }
@@ -114,6 +124,12 @@ namespace Spring2.DataTierGenerator.Element {
 		task.Template = node.Attributes["template"].Value;
 		task.Directory = node.Attributes["directory"].Value;
 		task.FileNameFormat = node.Attributes["filenameformat"].Value;
+		if (node.Attributes[BACKUP_DIRECTORY] != null) {
+		    task.BackupDirectory = node.Attributes["backupdirectory"].Value;
+		}
+		else {
+		    task.BackupDirectory = task.Directory;
+		}
 		if (!node.InnerText.Equals(String.Empty)) {
 		    task.Description = node.InnerText;
 		}
