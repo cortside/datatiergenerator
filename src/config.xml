@@ -1,8 +1,24 @@
 <?xml version="1.0" ?>
 <DataTierGenerator xmlns:xinc="http://www.w3.org/1999/XML/xinclude">
+	
+<!--
+	<task name="sql-tables" element="sqlentity" template="sql-table.vm"
+	    <context>
+		<put name="sqlentity" value="sqlentity" />
+		<put name="database" value="database" />
+	    </context>
+	</task>
+-->
+
+    <generator class="Spring2.DataTierGenerator.Generator.GeneratorTaskManager,Spring2.DataTierGenerator">
+	<task name="enum" element="enum" template="Template\enum.vm" directory="Types" filenameformat="vm{0}.cs" />
+	<task name="enum" element="enum" template="Template\EnumTest.vm" directory="Test" filenameformat="vm{0}Test.cs" />
+	<task name="collection" element="collection" template="Template\collection.vm" directory="DataObject" filenameformat="vm{0}Data.cs" />
+    </generator>
+
     <config-ref xinc:href="config.inc.xml" />
-    <sqltypes-ref xinc:href="sqltypes.inc.xml" />
-    <types-ref xinc:href="types.inc.xml" />
+    <sqltypes-ref xinc:href="config\sqltypes.inc.xml" />
+    <types-ref xinc:href="config\types.inc.xml" />
     <enums-ref xinc:href="enums.inc.xml" />
     <collections-ref xinc:href="collections.inc.xml" />
     <databases-ref xinc:href="databases.inc.xml" />
