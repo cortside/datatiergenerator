@@ -1,7 +1,5 @@
 Todo:
     - support generation of CHECK CONSTRAINTS in table scripts
-    - when comparing entity properties to database schema, match columns on lower-cased names
-    - data object Equals method
     - fix indentation in DAO classes
 	
     - sqltypes image and binary do not generate correct code for pulling data from a datareader (populating a dataobject).
@@ -13,6 +11,7 @@ Todo:
     - DataObject, DAO, stored proc, view name formats specifiable in config.xml
 	- ident level in generating code
     - look for read-only files when writing output and change the attribute before proceeding.
+    - ability to externally define sql keywords
 
 Completed:
     - preservation of custom regions (pull code from regions and insert into generated source before overwritting)
@@ -30,5 +29,7 @@ Completed:
     - support for defined finder methods
     - sort namespaces
     - generation of sql table scripts
-
+    - when comparing entity properties to database schema, match columns on lower-cased names
+    - data object Equals method (done in DataObject base class)
+    - only enclose tables and column names in sql scripts in [ ] if they have spaces or are a keyword
 	
