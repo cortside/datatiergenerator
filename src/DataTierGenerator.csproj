@@ -98,6 +98,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Collection.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "CollectionGenerator.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Column.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
