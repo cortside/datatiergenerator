@@ -4,17 +4,21 @@ using System.IO;
 using System.Collections;
 using System.Text;
 
-namespace Spring2.DataTierGenerator.Core {
+using Spring2.DataTierGenerator;
+using Spring2.DataTierGenerator.Element;
+using Spring2.DataTierGenerator.Util;
+
+namespace Spring2.DataTierGenerator.Generator {
     /// <summary>
     /// Generates stored procedures and associated data access code for the specified database.
     /// </summary>
-    public class DAOGenerator : GeneratorBase {
+    internal class DaoGenerator : GeneratorSkeleton, IGenerator {
 	private Entity entity;
 	/// <summary>
 	/// Contructor for the Generator class.
 	/// </summary>
 	/// <param name="strConnectionString">Connecion string to a SQL Server database.</param>
-	public DAOGenerator(Configuration options, Entity entity) : base(options) {
+	public DaoGenerator(Configuration options, Entity entity) : base(options) {
 	    this.entity = entity;
 	}
 		
@@ -23,60 +27,61 @@ namespace Spring2.DataTierGenerator.Core {
 	/// </summary>
 	/// <param name="table">Name of the table the class should be generated for.</param>
 	/// <param name="fields">ArrayList object containing one or more Field objects as defined in the table.</param>
-	public void CreateDataAccessClass() {
+	public override void Generate() {
+	    if (!String.Empty.Equals(entity.SqlEntity.Name)) {
+		IndentableStringWriter writer = new IndentableStringWriter();
 
-	    IndentableStringWriter writer = new IndentableStringWriter();
+		// Create the header for the class.
+		GetUsingNamespaces(writer, entity.Fields, true);
 
-	    // Create the header for the class.
-	    GetUsingNamespaces(writer, entity.Fields, true);
-
-	    writer.WriteLine();
-	    writer.WriteLine("namespace " + options.GetDAONameSpace(entity.Name) + " {");
-	    writer.Write(1, "public class " + options.GetDAOClassName(entity.Name));
-
-	    if (options.DataObjectBaseClass.Length>0) {
-		writer.Write(" : " + options.DaoBaseClass);
-	    }
-	    writer.WriteLine(" {");
-	    writer.WriteLine();
-
-	    writer.WriteLine(2, "private static readonly String VIEW = \"" + entity.SqlEntity.View + "\";");
-	    writer.WriteLine(2, "private static readonly String CONNECTION_STRING_KEY = \"" + entity.SqlEntity.Key + "\";");
-	    writer.WriteLine();
-
-	    CreateDAOListMethods(writer);
-
-	    // Append the access methods.
-	    if (entity.SqlEntity.GenerateInsertStoredProcScript) {
-		CreateInsertMethod(writer);
-	    }
-
-	    if (entity.SqlEntity.HasUpdatableColumns()) {
 		writer.WriteLine();
-		CreateUpdateMethod(writer);
-	    }
-	    writer.WriteLine();
+		writer.WriteLine("namespace " + options.GetDAONameSpace(entity.Name) + " {");
+		writer.Write(1, "public class " + options.GetDAOClassName(entity.Name));
 
-	    if (entity.SqlEntity.GenerateDeleteStoredProcScript) {
-		CreateDeleteMethods(writer);
-	    }
-
-	    if (entity.SqlEntity.GenerateSelectStoredProcScript) {
+		if (options.DataObjectBaseClass.Length>0) {
+		    writer.Write(" : " + options.DaoBaseClass);
+		}
+		writer.WriteLine(" {");
 		writer.WriteLine();
-		CreateSelectMethods(writer);
-	    }
 
-	    if (entity.Finders.Count>0) {
+		writer.WriteLine(2, "private static readonly String VIEW = \"" + entity.SqlEntity.View + "\";");
+		writer.WriteLine(2, "private static readonly String CONNECTION_STRING_KEY = \"" + entity.SqlEntity.Key + "\";");
 		writer.WriteLine();
-		writer.Write(CreateFinderMethods());
-	    }
+
+		CreateDAOListMethods(writer);
+
+		// Append the access methods.
+		if (entity.SqlEntity.GenerateInsertStoredProcScript) {
+		    CreateInsertMethod(writer);
+		}
+
+		if (entity.SqlEntity.HasUpdatableColumns()) {
+		    writer.WriteLine();
+		    CreateUpdateMethod(writer);
+		}
+		writer.WriteLine();
+
+		if (entity.SqlEntity.GenerateDeleteStoredProcScript) {
+		    CreateDeleteMethods(writer);
+		}
+
+		if (entity.SqlEntity.GenerateSelectStoredProcScript) {
+		    writer.WriteLine();
+		    CreateSelectMethods(writer);
+		}
+
+		if (entity.Finders.Count>0) {
+		    writer.WriteLine();
+		    writer.Write(CreateFinderMethods());
+		}
 		
-	    // Close out the class and namespace.
-	    writer.WriteLine(1, "}");
-	    writer.WriteLine("}");
+		// Close out the class and namespace.
+		writer.WriteLine(1, "}");
+		writer.WriteLine("}");
 
-	    FileInfo file = new FileInfo(options.RootDirectory + options.DaoClassDirectory + "\\" + options.GetDAOClassName(entity.Name) + ".cs");
-	    WriteToFile(file, writer.ToString(), false);
+		FileInfo file = new FileInfo(options.RootDirectory + options.DaoClassDirectory + "\\" + options.GetDAOClassName(entity.Name) + ".cs");
+		WriteToFile(file, writer.ToString(), false);
+	    }
 	}
 
 		
@@ -108,10 +113,6 @@ namespace Spring2.DataTierGenerator.Core {
 	    // Append the method call parameters - data object.
 	    writer.WriteLine(entity.Name + "Data data" + ") {");
 			
-	    // Append the variable declarations.
-	    writer.WriteLine(3, "SqlCommand cmd;");
-	    writer.WriteLine();
-
 	    GetCreateCommandSection(writer, options.GetProcName(entity.SqlEntity.Name, "Insert"));
 			
 	    if (idField != null) {
@@ -175,10 +176,6 @@ namespace Spring2.DataTierGenerator.Core {
 	    // Append the method header
 	    writer.WriteLine(") {");
 			
-	    // Append the variable declarations
-	    writer.WriteLine(3, "SqlCommand cmd;");
-	    writer.WriteLine();
-
 	    GetCreateCommandSection(writer, options.GetProcName(entity.SqlEntity.Name, "Update"));
 			
 	    // Append the parameter appends  ;)
@@ -245,9 +242,6 @@ namespace Spring2.DataTierGenerator.Core {
 		    writer.WriteLine(2, "/// <param name=\"\"></param>");
 		    writer.WriteLine(2, "public static void " + methodName + "(" + field.CreateMethodParameter() + ") {");
 					
-		    writer.WriteLine(3, "SqlCommand cmd;");
-		    writer.WriteLine();
-
 		    GetCreateCommandSection(writer, options.GetProcName(entity.SqlEntity.Name, methodName));
 
 		    // Append the parameters
@@ -359,10 +353,7 @@ namespace Spring2.DataTierGenerator.Core {
 	    writer.WriteLine(2, "/// <param name=\"\"></param>");
 	    writer.WriteLine(2, "public static SqlDataReader Select() {");
 			
-	    // Append the variable declarations
-	    //writer.WriteLine(3, "SqlConnection objConnection;");
-	    writer.WriteLine(3, "SqlCommand cmd;");
-	    writer.WriteLine();
+	    GetCreateCommandSection(writer, options.GetProcName(entity.SqlEntity.Name, "Insert"));
 
 	    // Append the try block
 	    writer.WriteLine(3, "try {");
@@ -609,7 +600,7 @@ namespace Spring2.DataTierGenerator.Core {
 
 	private String GetCreateCommandSection(IndentableStringWriter writer, String procName) {
 	    writer.WriteLine(3, "// Create and execute the command");
-	    writer.WriteLine(3, "cmd = GetSqlCommand(CONNECTION_STRING_KEY, \"" + procName + "\", CommandType.StoredProcedure);");
+	    writer.WriteLine(3, "SqlCommand cmd = GetSqlCommand(CONNECTION_STRING_KEY, \"" + procName + "\", CommandType.StoredProcedure);");
 	    writer.WriteLine();
 	    return writer.ToString();
 	}

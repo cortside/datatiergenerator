@@ -3,16 +3,20 @@ using System.Data;
 using System.IO;
 using System.Collections;
 
-namespace Spring2.DataTierGenerator.Core {
+using Spring2.DataTierGenerator;
+using Spring2.DataTierGenerator.Element;
+using Spring2.DataTierGenerator.Util;
 
-    public class EnumGenerator : GeneratorBase {
+namespace Spring2.DataTierGenerator.Generator {
+
+    internal class EnumGenerator : GeneratorSkeleton, IGenerator {
 	private EnumType type;
 
 	public EnumGenerator(Configuration options, EnumType type) : base(options) {
 	    this.type = type;
 	}
 
-	public void Generate() {
+	public override void Generate() {
 	    IndentableStringWriter writer = new IndentableStringWriter();
 
 	    writer.WriteLine("using System;");

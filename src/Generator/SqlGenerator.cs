@@ -3,20 +3,25 @@ using System.Data;
 using System.IO;
 using System.Collections;
 using System.Text;
-//using System.Windows.Forms;
 
-namespace Spring2.DataTierGenerator.Core {
+using Spring2.DataTierGenerator;
+using Spring2.DataTierGenerator.Element;
+using Spring2.DataTierGenerator.Util;
+
+using Constraint = Spring2.DataTierGenerator.Element.Constraint;
+
+namespace Spring2.DataTierGenerator.Generator {
     /// <summary>
     /// Generates stored procedures and associated data access code for the specified database.
     /// </summary>
-    public class SQLGenerator : GeneratorBase {
+    internal class SqlGenerator : GeneratorSkeleton, IGenerator {
 	private SqlEntity sqlentity;
 
 	/// <summary>
 	/// Contructor for the Generator class.
 	/// </summary>
 	/// <param name="strConnectionString">Connecion string to a SQL Server database.</param>
-	public SQLGenerator(Configuration options, SqlEntity sqlentity) : base(options) {
+	public SqlGenerator(Configuration options, SqlEntity sqlentity) : base(options) {
 	    this.sqlentity = sqlentity;
 //	    if (options.SingleFile) {
 //		String fileName = options.SqlScriptDirectory + "\\" + options.Database + ".sql";
@@ -24,13 +29,22 @@ namespace Spring2.DataTierGenerator.Core {
 //		    File.Delete(fileName);
 //	    }
 	}
+
+	public override void Generate() {
+	    if (sqlentity.GenerateSqlTableScripts) CreateTable();
+	    if (sqlentity.GenerateSqlViewScripts) CreateView();
+	    if (sqlentity.GenerateInsertStoredProcScript) CreateInsertStoredProcedure();
+	    if (sqlentity.GenerateUpdateStoredProcScript && sqlentity.HasUpdatableColumns()) CreateUpdateStoredProcedure();
+	    if (sqlentity.GenerateDeleteStoredProcScript) CreateDeleteStoredProcedures();
+	    //if (sqlentity.GenerateSelectStoredProcScript) CreateSelectStoredProcedures();
+	}
 		
 	/// <summary>
 	/// Creates an insert stored procedure SQL script for the specified table
 	/// </summary>
 	/// <param name="table">Name of the table the stored procedure should be generated from.</param>
 	/// <param name="fields">ArrayList object containing one or more Field objects as defined in the table.</param>
-	public void CreateInsertStoredProcedure() {
+	private void CreateInsertStoredProcedure() {
 	    StringBuilder sb = new StringBuilder();
 	    String strProcName = options.GetProcName(sqlentity.Name, "Insert");
 	
@@ -113,7 +127,7 @@ namespace Spring2.DataTierGenerator.Core {
 	/// </summary>
 	/// <param name="table">Name of the table the stored procedure should be generated from.</param>
 	/// <param name="fields">ArrayList object containing one or more Field objects as defined in the table.</param>
-	public void CreateUpdateStoredProcedure() {
+	private void CreateUpdateStoredProcedure() {
 	    StringBuilder sb = new StringBuilder();
 	
 	    sb.Append("CREATE PROCEDURE " + options.GetProcName(sqlentity.Name, "Update") + "\n\n");
@@ -180,7 +194,7 @@ namespace Spring2.DataTierGenerator.Core {
 	}
 	
 	
-	public void CreateDeleteStoredProcedures() {
+	private void CreateDeleteStoredProcedures() {
 	    String strProcName = options.GetProcName(sqlentity.Name, "Delete");
 	    StringBuilder sb = new StringBuilder();
 	
@@ -364,7 +378,7 @@ namespace Spring2.DataTierGenerator.Core {
 	//	    }
 	//	}
 	
-	public void CreateView() {
+	private void CreateView() {
 	    StringBuilder sb = new StringBuilder();
 	
 //	    if (options.SingleFile) {
@@ -434,7 +448,7 @@ namespace Spring2.DataTierGenerator.Core {
 	    WriteToFile(file, sb.ToString(), sqlentity.SingleFile);
 	}
 
-	public void CreateTable() {
+	private void CreateTable() {
 	    StringBuilder sb = new StringBuilder();
 
 	    if (sqlentity.Description.Length>0) {
@@ -590,16 +604,16 @@ namespace Spring2.DataTierGenerator.Core {
 	    sb = null;
 	}
 
-	public override void WriteRegion(StreamWriter writer, String text, String regionsString) {
+	protected override void WriteRegion(StreamWriter writer, String text, String regionsString) {
 	    writer.Write(text);
 	    writer.Write(regionsString);
 	}
 
-	public override String RegionTag {
+	protected override String RegionTag {
 	    get { return "-- #region"; }
 	}
 
-	public override String EndRegionTag {
+	protected override String EndRegionTag {
 	    get { return "-- #endregion"; }
 	}
     }
