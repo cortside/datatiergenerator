@@ -10,7 +10,7 @@
 
 using System;
 
-namespace Spring2.DataTierGenerator.DataObject {
+namespace $options.GetCollectionNameSpace($element.Name) {
 
     /// <summary>
     /// $element.Type generic collection
