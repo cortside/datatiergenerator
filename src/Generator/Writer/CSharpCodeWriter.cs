@@ -1,5 +1,7 @@
 using System;
+using System.Collections;
 using System.IO;
+using System.CodeDom.Compiler;
 
 namespace Spring2.DataTierGenerator.Generator.Writer {
 
@@ -8,10 +10,31 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
     /// </summary>
     public class CSharpCodeWriter : AbstractWriter, IWriter {
 
+	private CodeGeneratorOptions cgOptions = new CodeGeneratorOptions ();
+
 	public CSharpCodeWriter() {
 	}
 
+	public CSharpCodeWriter(Hashtable options) {
+	    if (options.Contains("BraceStyle")) {
+		// expect: block, c
+		String bstyle = options["BraceStyle"].ToString();
+		if (bstyle == "c") {
+		    cgOptions.BracingStyle = "C";
+		} else if (bstyle == "block") {
+		    cgOptions.BracingStyle = "Block";
+		} else if (bstyle == "mono") {
+		    cgOptions.BracingStyle = "Block";
+		}
+	    }
+	}
+
 	public Boolean Write(FileInfo file, String contents) {
+	    // Create the directory if it doesn't exist.
+	    if (!file.Directory.Exists) {
+		file.Directory.Create();
+	    }
+
 	    MemoryStream stream = new MemoryStream();
 	    StreamWriter sw = new StreamWriter(stream);
 	    sw.Write(contents);
@@ -21,7 +44,7 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 	    if (!file.Exists) {
 		CodeUnit unit1 = null;
 		try {
-		    unit1 = new CodeUnit(file.Name, stream, Log);
+		    unit1 = new CodeUnit(file.Name, stream, Log, cgOptions);
 		    StreamWriter writer = new StreamWriter(file.FullName, false);
 		    writer.Write(unit1.Generate());
 		    writer.Close();
@@ -37,10 +60,10 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 		CodeUnit unit2 = null;
 		try {
 		    fs = file.OpenRead();
-		    unit1 = new CodeUnit(file.Name, fs, Log);
+		    unit1 = new CodeUnit(file.Name, fs, Log, cgOptions);
 		    fs.Close();
 		    fs = null;
-		    unit2 = new CodeUnit(file.Name, stream, Log);
+		    unit2 = new CodeUnit(file.Name, stream, Log, cgOptions);
 		    unit1.Merge(unit2);
 
 		    StreamReader sr = file.OpenText();

@@ -16,6 +16,10 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 	public RegionMergeWriter() {
 	}
 
+	public RegionMergeWriter(Hashtable options) {
+            // currently does not support any configurable options
+	}
+
 	/// <summary>
 	/// Helper method to write generated source to file.  Directory will be created if it does not already exist.
 	/// </summary>

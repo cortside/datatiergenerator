@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.IO;
 
 namespace Spring2.DataTierGenerator.Generator.Writer {
@@ -9,6 +10,10 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
     public class TextWriter : AbstractWriter, IWriter {
 
 	public TextWriter() {
+	}
+
+	public TextWriter(Hashtable options) {
+            // currently does not support any configurable options
 	}
 
 	/// <summary>
