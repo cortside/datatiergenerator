@@ -28,8 +28,9 @@ namespace Spring2.DataTierGenerator.Element {
 	///	public static readonly string PROPERTY_NAME="Property.Name";
 	/// </summary>
 	public class PropertyName {
-	    public String fieldName = "";
-	    public String fieldValue = "";
+
+	    public String fieldName = String.Empty;
+	    public String fieldValue = String.Empty;
 
 	    private static readonly String PREFIX_SEPARATOR = "~";
 
@@ -69,8 +70,7 @@ namespace Spring2.DataTierGenerator.Element {
 	    public static String AppendPrefix(String prefix, String propertyName) {
 		if (prefix.Length > 0) {
 		    return prefix + PREFIX_SEPARATOR + propertyName;
-		}
-		else {
+		} else {
 		    return propertyName;
 		}
 	    }

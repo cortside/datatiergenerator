@@ -180,7 +180,7 @@ namespace Spring2.DataTierGenerator.Element {
 	/// Creates a string for a method parameter representing the specified field.
 	/// </summary>
 	/// <returns>String containing parameter information of the specified field for a method call.</returns>
-	public string CreateMethodParameter() {
+	public String CreateMethodParameter() {
 	    return type.Name + " " + GetFieldFormat();
 	}
 
@@ -455,7 +455,7 @@ namespace Spring2.DataTierGenerator.Element {
 	/// </summary>
 	/// <param name="this">Object that stores the information for the field the parameter represents.</param>
 	/// <returns>String containing SqlParameter information of the specified field for a method call.</returns>
-	public string CreateSqlParameter(bool blnOutput, bool useDataObject) {
+	public String CreateSqlParameter(Boolean blnOutput, Boolean useDataObject) {
 	    StringBuilder sb = new StringBuilder();
 	    sb.Append("cmd.Parameters.Add(new SqlParameter(\"@" + GetSqlAlias() + "\", SqlDbType." + GetSqlType().SqlDbType + ", " + GetSqlType().Length + ", ParameterDirection.");
 	    if (blnOutput) {
@@ -472,6 +472,20 @@ namespace Spring2.DataTierGenerator.Element {
 	    sb.Append("));" + Environment.NewLine);
 	    return sb.ToString();
 	}
+
+	public String CreateDataParameter(Boolean blnOutput, Boolean useDataObject) {
+	    StringBuilder buffer = new StringBuilder();
+	    buffer.Append("cmd.Parameters.Add(CreateDataParameter(\"@" + GetSqlAlias() + "\", ParameterDirection.");
+	    buffer.Append(blnOutput ? "Output, " : "Input, ");
+	    if (useDataObject) {
+		buffer.Append(String.Format(type.ConvertToSqlTypeFormat, "data", "data."+GetMethodFormat(), "", "", GetMethodFormat()));
+	    } else {
+		buffer.Append(String.Format(type.ConvertToSqlTypeFormat, "", GetFieldFormat(), "", "", GetFieldFormat()));
+	    }
+	    buffer.Append("));" + Environment.NewLine);
+	    return buffer.ToString();
+	}
+
 
 	/// <summary>
 	/// Returns string that compares two objects for the type of this property.
