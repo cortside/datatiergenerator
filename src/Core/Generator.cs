@@ -39,14 +39,25 @@ namespace Spring2.DataTierGenerator.Core {
 	}
 
 	public Generator(String filename) {
-	    if (filename.Length > 0) {
+	    FileInfo file = new FileInfo(filename);
+	    if (file.Exists) {
 		doc = new XmlDocument();
 		doc.Load(filename);
-
 		XmlNode root = doc.DocumentElement["config"];
 		if (root != null) {
 		    this.options = new Configuration(root);
 		}
+	    } else {
+		throw new FileNotFoundException("Could not load config file", filename);
+	    }
+
+	    // if the root directory is not specified, make it the directory the config file is loaded from
+	    if (options.RootDirectory.Equals(String.Empty)) {
+		options.RootDirectory = file.DirectoryName + "\\";
+	    }
+
+	    if (!options.RootDirectory.EndsWith("\\")) {
+		options.RootDirectory += "\\";
 	    }
 
 	    if (doc!=null) {
