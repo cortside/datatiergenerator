@@ -148,7 +148,7 @@ namespace Spring2.DataTierGenerator {
 	    foreach (Column column in sqlentity.Columns) {
 		if (column.Identity || column.RowGuidCol || sqlentity.IsPrimaryKeyColumn(column.Name)) {
 		    if (!first) {
-			sb.Append("\t");
+			sb.Append("\t AND ");
 		    } else {
 			first=false;
 		    }
@@ -492,57 +492,58 @@ namespace Spring2.DataTierGenerator {
 
 	    // create constraints, checking for existance
 	    foreach (Constraint constraint in sqlentity.Constraints) {
-		sb.Append("if not exists (select * from dbo.sysobjects where id = object_id(N'[").Append(constraint.Name).Append("]') and OBJECTPROPERTY(id, N'");
-		if (constraint.Type.ToUpper().Equals("PRIMARY KEY")) {
-		    sb.Append("IsPrimaryKey");
-		} else if (constraint.Type.ToUpper().Equals("FOREIGN KEY")) {
-		    sb.Append("IsForeignKey");
-		} else if (constraint.Type.ToUpper().Equals("UNIQUE")) {
-		    sb.Append("IsUniqueCnst");
-		}
-		sb.Append("') = 1)\n");
-
-		sb.Append("ALTER TABLE [").Append(sqlentity.Name).Append("] ");
-		if (constraint.Type.ToUpper().Equals("PRIMARY KEY")) {
-		    sb.Append("WITH NOCHECK ");
-		}
-		sb.Append("ADD \n");
-		sb.Append("	CONSTRAINT [").Append(constraint.Name).Append("] ").Append(constraint.Type).Append(" ");
-		if (constraint.Type.ToUpper().Equals("PRIMARY KEY")) {
-		    if (constraint.Clustered) {
-			sb.Append("CLUSTERED ");
-		    } else {
-			sb.Append("NONCLUSTERED ");
+		if (!constraint.Type.ToUpper().Equals("CHECK")) {
+		    sb.Append("if not exists (select * from dbo.sysobjects where id = object_id(N'[").Append(constraint.Name).Append("]') and OBJECTPROPERTY(id, N'");
+		    if (constraint.Type.ToUpper().Equals("PRIMARY KEY")) {
+			sb.Append("IsPrimaryKey");
+		    } else if (constraint.Type.ToUpper().Equals("FOREIGN KEY")) {
+			sb.Append("IsForeignKey");
+		    } else if (constraint.Type.ToUpper().Equals("UNIQUE")) {
+			sb.Append("IsUniqueCnst");
 		    }
-		}
-		sb.Append("\n");
-		sb.Append("	(\n");
+		    sb.Append("') = 1)\n");
 
-		first = true;
-		foreach (Column column in constraint.Columns) {
-		    if (!first) {
-			sb.Append(",\n");
-		    } else {
-			first=false;
+		    sb.Append("ALTER TABLE [").Append(sqlentity.Name).Append("] ");
+		    if (constraint.Type.ToUpper().Equals("PRIMARY KEY")) {
+			sb.Append("WITH NOCHECK ");
 		    }
-		    sb.Append("		[").Append(column.Name).Append("]");
-		}
-		sb.Append("\n	)");
-		if (constraint.Type.ToUpper().Equals("FOREIGN KEY")) {
-		    sb.Append(" REFERENCES [").Append(constraint.ForeignEntity).Append("] (\n");
-		    first=true;
+		    sb.Append("ADD \n");
+		    sb.Append("	CONSTRAINT [").Append(constraint.Name).Append("] ").Append(constraint.Type).Append(" ");
+		    if (constraint.Type.ToUpper().Equals("PRIMARY KEY")) {
+			if (constraint.Clustered) {
+			    sb.Append("CLUSTERED ");
+			} else {
+			    sb.Append("NONCLUSTERED ");
+			}
+		    }
+		    sb.Append("\n");
+		    sb.Append("	(\n");
+
+		    first = true;
 		    foreach (Column column in constraint.Columns) {
 			if (!first) {
 			    sb.Append(",\n");
 			} else {
 			    first=false;
 			}
-			sb.Append("		[").Append(column.ForeignColumn).Append("]");
+			sb.Append("		[").Append(column.Name).Append("]");
 		    }
 		    sb.Append("\n	)");
+		    if (constraint.Type.ToUpper().Equals("FOREIGN KEY")) {
+			sb.Append(" REFERENCES [").Append(constraint.ForeignEntity).Append("] (\n");
+			first=true;
+			foreach (Column column in constraint.Columns) {
+			    if (!first) {
+				sb.Append(",\n");
+			    } else {
+				first=false;
+			    }
+			    sb.Append("		[").Append(column.ForeignColumn).Append("]");
+			}
+			sb.Append("\n	)");
+		    }
+		    sb.Append("\nGO\n\n");
 		}
-		sb.Append("\nGO\n\n");
-
 	    }
 
 	    // create indexes, checking for existance
