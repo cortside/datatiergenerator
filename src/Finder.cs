@@ -56,7 +56,7 @@ namespace Spring2.DataTierGenerator {
 			if (!sort.Equals(String.Empty)) {
 			    sort += ", ";
 			}
-			sort += field.SqlName;
+			sort += field.Column.Name;
 			finder.Fields.Add(entity.FindFieldByName(n.Attributes["name"].Value).Clone());
 		    }
 		    if (finder.Sort.Equals(String.Empty) && !sort.Equals(String.Empty)) {

@@ -104,6 +104,18 @@ namespace Spring2.DataTierGenerator {
 	    return false;
 	}
 
+	public Boolean IsForeignKeyColumn(String name) {
+	    foreach (Constraint constraint in constraints) {
+		if (constraint.Type.ToUpper().Equals("FOREIGN KEY")) {
+		    foreach (Column column in constraint.Columns) {
+			if (column.Name.Equals(name)) {
+			    return true;
+			}
+		    }
+		}
+	    }
+	    return false;
+	}
 
 	public IList GetPrimaryKeyColumns() {
 	    ArrayList list = new ArrayList();
