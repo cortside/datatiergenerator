@@ -1,7 +1,7 @@
 <VisualStudioProject>
     <CSHARP
         ProjectType = "Local"
-        ProductVersion = "7.0.9372"
+        ProductVersion = "7.0.9466"
         SchemaVersion = "1.0"
         ProjectGuid = "{8C44AE3C-E997-4016-AAE5-4A66729DD36A}"
     >
@@ -16,7 +16,7 @@
                 DefaultTargetSchema = "IE50"
                 DelaySign = "false"
                 OutputType = "WinExe"
-                RootNamespace = "DataTierGenerator"
+                RootNamespace = "Spring2.DataTierGenerator"
                 StartupObject = ""
             >
                 <Config
@@ -66,16 +66,18 @@
                     AssemblyName = "System.Data"
                 />
                 <Reference
-                    Name = "System.Drawing"
-                    AssemblyName = "System.Drawing"
-                />
-                <Reference
                     Name = "System.Windows.Forms"
                     AssemblyName = "System.Windows.Forms"
                 />
                 <Reference
+                    Name = "System.Drawing"
+                    AssemblyName = "System.Drawing"
+                    HintPath = "..\..\..\..\WINNT\Microsoft.NET\Framework\v1.0.3705\System.Drawing.dll"
+                />
+                <Reference
                     Name = "System.XML"
-                    AssemblyName = "System.Xml"
+                    AssemblyName = "System.XML"
+                    HintPath = "..\..\..\..\WINNT\Microsoft.NET\Framework\v1.0.3705\System.XML.dll"
                 />
             </References>
         </Build>
@@ -91,12 +93,22 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "clsField.cs"
+                    RelPath = "Configuration.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "clsGenerator.cs"
+                    RelPath = "DAOGenerator.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "DOGenerator.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Field.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -109,6 +121,16 @@
                     RelPath = "frmMain.resx"
                     DependentUpon = "frmMain.cs"
                     BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Generator.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "SQLGenerator.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
                 />
             </Include>
         </Files>

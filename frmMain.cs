@@ -4,9 +4,8 @@ using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
 using System.Text;
-using DataTierGenerator;
 
-namespace DataTierGenerator {
+namespace Spring2.DataTierGenerator {
 	/// <summary>
 	/// Summary description for frmMain.
 	/// </summary>
@@ -385,10 +384,7 @@ namespace DataTierGenerator {
 
 		private void btnOK_Click(object sender, System.EventArgs e) {
 			StringBuilder	objStringBuilder;
-			clsGenerator	objGenerator;
-
-
-
+			Generator	objGenerator;
 
 			try {
 				// Build the database connection string
@@ -399,7 +395,17 @@ namespace DataTierGenerator {
 				objStringBuilder.Append("Password = " + txtPassword.Text + ";");
 				
 				// Generate the SQL and C#
-				objGenerator = new clsGenerator(objStringBuilder.ToString(), txtStoreProcNameFormatString.Text, chkSingleFile.Checked, chkCreateViews.Checked, chkUseViewsInStoreProc.Checked, chkGenerateDataObjects.Checked, chkScriptDropStatement.Checked, txtProjectNamespace.Text);
+                Configuration options = new Configuration();
+                options.ConnectionString = objStringBuilder.ToString();
+                options.StoredProcNameFormat = txtStoreProcNameFormatString.Text;
+                options.SingleFile = chkSingleFile.Checked;
+                options.CreateViews = chkCreateViews.Checked;
+                options.UseViews = chkUseViewsInStoreProc.Checked;
+                options.CreateDataObjects = chkGenerateDataObjects.Checked;
+                options.ScriptDropStatement = chkScriptDropStatement.Checked;
+                options.ProjectNameSpace = txtProjectNamespace.Text;
+
+				objGenerator = new Generator(options);
 				objGenerator.ProcessTables();
 				objGenerator = null;
 
@@ -434,9 +440,10 @@ namespace DataTierGenerator {
 		}
 
 		private void frmMain_Load(object sender, System.EventArgs e) {
-			txtServerName.Text = "HAL";
-			txtDatabaseName.Text = "cort_project";
+			txtServerName.Text = "olympus";
+			txtDatabaseName.Text = "cort_seamless";
 			txtUserID.Text = "sa";
+            txtPassword.Text = "1qaz2wsx";
 			chkBlankPassword.Checked = true;
 
 			txtProjectNamespace.Text = "Spring2.Project";
