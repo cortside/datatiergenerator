@@ -1,0 +1,46 @@
+##
+##      dao-test.vm - default dao test template for C#
+##	Generates class that will test the GetList method for each DAO which will test that 
+## 	sqlentity-entity mapping has been done correctly and that no properties are DEFAULT after loading
+##
+using System;
+using System.Collections;
+
+using Spring2.Core.DAO;
+using Spring2.Core.Types;
+using Spring2.DataTierGenerator.Attribute;
+
+using ${options.RootNameSpace}.DAO;
+using ${options.RootNameSpace}.DataObject;
+
+using NUnit.Framework;
+
+namespace ${options.RootNameSpace}.Test {
+
+    [TestFixture]
+    public class DaoTest {
+
+#foreach($entity in $element.List)
+#if(!$entity.SqlEntity.Name.Equals(""))
+	[Generate()]
+	[Test]
+	public void Test${entity.Name}DAO() {
+	    // get 100 random rows
+	    IList list = ${entity.Name}DAO.GetList(#if($entity.GetIdentityField())new OrderByClause("$entity.GetIdentityField().Column.Name desc"), #end#**#100);
+
+	    // make sure that none of the rows have DEFAULT values
+	    foreach(${entity.Name}Data entity in list) {
+#foreach($property in $entity.Fields)
+#if(!$property.Type.Name.EndsWith("Enum") && !$property.Type.Name.EndsWith("Data") && !$property.Type.Name.EndsWith("List") && $property.Type.Name!="BooleanType" && $property.Type.Name!="Hashtable")
+#if(!$property.Column.Name.Equals(""))
+		Assertion.Assert("${property.GetMethodFormat()} is DEFAULT", !entity.${property.GetMethodFormat()}.IsDefault);
+#end
+#end
+#end
+	    }
+	}
+
+#end
+#end
+    }
+}
