@@ -127,7 +127,7 @@ namespace Spring2.DataTierGenerator.Parser {
 		if (entity.SqlEntity.Name.Length>0) {
 		    foreach(Column column in entity.SqlEntity.Columns) {
 			if (entity.FindFieldByColumnName(column.Name)==null) {
-			    vd(ParserValidationArgs.NewError("could not find field represending column " + column.Name + " in entity " + entity.Name + "."));
+			    vd(ParserValidationArgs.NewWarning("could not find field representing column " + column.Name + " in entity " + entity.Name + "."));
 			}
 		    }
 		}
