@@ -18,8 +18,8 @@
     </parser>
 
     <generator class="Spring2.DataTierGenerator.Generator.GeneratorTaskManager,Spring2.DataTierGenerator">
-	<task name="sql entities" element="sqlentity" template="Template\config_sqlentity.vm" directory="config" filenameformat="config_sqlentity_{0}.xml" />
-	<task name="entities" element="entity" template="Template\config_entity.vm" directory="config" filenameformat="config_entity_{0}.xml" />
+	<task name="sql entities" element="sqlentities" template="Template\config_sqlentities.vm" directory="config" filenameformat="config_sqlentities.xml" />
+	<task name="entities" element="entities" template="Template\config_entities.vm" directory="config" filenameformat="config_entities.xml" />
     </generator>
 
     <config>

@@ -333,7 +333,15 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "Template\config_entities.vm"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "Template\config_entity.vm"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Template\config_sqlentities.vm"
                     BuildAction = "EmbeddedResource"
                 />
                 <File
