@@ -1,7 +1,15 @@
 using System;
 using System.Collections;
 
-namespace $options.GetTypeNameSpace($element.Name) {
+##
+## formulate the namespace, class name and the collected class name
+##
+#set ($directory = $task.Directory)
+#if($directory.StartsWith('.\'))
+#set ($directory = $directory.Substring(2))
+#end
+#set ($namespace = "$options.RootNameSpace$directory.Replace('\','.')")
+namespace $namespace {
 
     public class $element.Name : $options.EnumBaseClass {
 
