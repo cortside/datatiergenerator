@@ -39,13 +39,15 @@ namespace Spring2.DataTierGenerator {
 	    // Create the parameter list
 	    Boolean first = true;
 	    foreach (Column column in sqlentity.Columns) {
-		if (!column.Identity) {
-		    if (!first) {
-			sb.Append(",\n");
-		    } else {
-			first=false;
+		if (!column.ViewColumn) {
+		    if (!column.Identity) {
+			if (!first) {
+			    sb.Append(",\n");
+			} else {
+			    first=false;
+			}
+			sb.Append("\t").Append(column.SqlParameter);
 		    }
-		    sb.Append("\t").Append(column.SqlParameter);
 		}
 	    }
 	    sb.Append("\n\nAS\n\n");
@@ -63,13 +65,15 @@ namespace Spring2.DataTierGenerator {
 	    first = true;
 	    foreach (Column column in sqlentity.Columns) {
 		// Is the current field an identity column?
-		if (!column.Identity) {
-		    if (!first) {
-			sb.Append(",\n");
-		    } else {
-			first=false;
+		if (!column.ViewColumn) {
+		    if (!column.Identity) {
+			if (!first) {
+			    sb.Append(",\n");
+			} else {
+			    first=false;
+			}
+			sb.Append("\t[" + column.Name + "]");
 		    }
-		    sb.Append("\t[" + column.Name + "]");
 		}
 	    }
 	    sb.Append(")\nVALUES (\n");
@@ -77,13 +81,15 @@ namespace Spring2.DataTierGenerator {
 	    // Create the parameter list
 	    first=true;
 	    foreach (Column column in sqlentity.Columns) {
-		if (!column.Identity) {
-		    if (!first) {
-			sb.Append(",\n");
-		    } else {
-			first=false;
+		if (!column.ViewColumn) {
+		    if (!column.Identity) {
+			if (!first) {
+			    sb.Append(",\n");
+			} else {
+			    first=false;
+			}
+			sb.Append("\t@" + column.Name);
 		    }
-		    sb.Append("\t@" + column.Name);
 		}
 	    }
 	    sb.Append(")\n");
@@ -115,12 +121,14 @@ namespace Spring2.DataTierGenerator {
 	    // Create the parameter list
 	    Boolean first = true;
 	    foreach (Column column in sqlentity.Columns) {
-		if (!first) {
-		    sb.Append(",\n");
-		} else {
-		    first=false;
+		if (!column.ViewColumn) {
+		    if (!first) {
+			sb.Append(",\n");
+		    } else {
+			first=false;
+		    }
+		    sb.Append("\t").Append(column.SqlParameter);
 		}
-		sb.Append("\t").Append(column.SqlParameter);
 	    }
 	    sb.Append("\n\nAS\n\n");
 	    sb.Append("\nUPDATE\n\t[" + sqlentity.Name + "]\n");
@@ -129,14 +137,16 @@ namespace Spring2.DataTierGenerator {
 	    // Create the set statement
 	    first = true;
 	    foreach (Column column in sqlentity.Columns) {
-		if (!column.Identity && !column.RowGuidCol) {
-		    if (!sqlentity.IsPrimaryKeyColumn(column.Name)) {
-			if (!first) {
-			    sb.Append(",\n");
-			} else {
-			    first=false;
+		if (!column.ViewColumn) {
+		    if (!column.Identity && !column.RowGuidCol) {
+			if (!sqlentity.IsPrimaryKeyColumn(column.Name)) {
+			    if (!first) {
+				sb.Append(",\n");
+			    } else {
+				first=false;
+			    }
+			    sb.Append("\t[" + column.Name + "] = @" + column.Name);
 			}
-			sb.Append("\t[" + column.Name + "] = @" + column.Name);
 		    }
 		}
 	    }
@@ -146,13 +156,15 @@ namespace Spring2.DataTierGenerator {
 	    // Create the where clause
 	    first = true;
 	    foreach (Column column in sqlentity.Columns) {
-		if (column.Identity || column.RowGuidCol || sqlentity.IsPrimaryKeyColumn(column.Name)) {
-		    if (!first) {
-			sb.Append("\t AND ");
-		    } else {
-			first=false;
+		if (!column.ViewColumn) {
+		    if (column.Identity || column.RowGuidCol || sqlentity.IsPrimaryKeyColumn(column.Name)) {
+			if (!first) {
+			    sb.Append("\t AND ");
+			} else {
+			    first=false;
+			}
+			sb.Append("[" + column.Name + "] = @" + column.Name + "\n");
 		    }
-		    sb.Append("[" + column.Name + "] = @" + column.Name + "\n");
 		}
 	    }
 	
@@ -437,24 +449,26 @@ namespace Spring2.DataTierGenerator {
 
 	    Boolean first = true;
 	    foreach (Column column in sqlentity.Columns) {
-		if (!first) {
-		    sb.Append(",\n");
-		} else {
-		    first=false;
-		}
-		sb.Append("\t[").Append(column.Name).Append("] ").Append(column.SqlType.Declaration);
-		if (column.Identity) {
-		    sb.Append(" IDENTITY(").Append(column.Seed).Append(",").Append(column.Increment).Append(")");
-		}
-		if (column.RowGuidCol) {
-		    sb.Append(" ROWGUIDCOL");
-		}
-		if (column.Identity || column.Required || column.RowGuidCol || column.Default.Length>0) {
-		    sb.Append(" NOT");
-		}
-		sb.Append(" NULL");
-		if (column.Default.Length>0) {
-		    sb.Append(" CONSTRAINT [DF_").Append(sqlentity.Name).Append("_").Append(column.Name).Append("] DEFAULT (").Append(column.Default).Append(")");
+		if (!column.ViewColumn) {
+		    if (!first) {
+			sb.Append(",\n");
+		    } else {
+			first=false;
+		    }
+		    sb.Append("\t[").Append(column.Name).Append("] ").Append(column.SqlType.Declaration);
+		    if (column.Identity) {
+			sb.Append(" IDENTITY(").Append(column.Seed).Append(",").Append(column.Increment).Append(")");
+		    }
+		    if (column.RowGuidCol) {
+			sb.Append(" ROWGUIDCOL");
+		    }
+		    if (column.Identity || column.Required || column.RowGuidCol || column.Default.Length>0) {
+			sb.Append(" NOT");
+		    }
+		    sb.Append(" NULL");
+		    if (column.Default.Length>0) {
+			sb.Append(" CONSTRAINT [DF_").Append(sqlentity.Name).Append("_").Append(column.Name).Append("] DEFAULT (").Append(column.Default).Append(")");
+		    }
 		}
 	    }
 	    sb.Append("\n)\n");
@@ -462,32 +476,34 @@ namespace Spring2.DataTierGenerator {
 
 	    // create alter table scripts for each column - don't know when they got added
 	    foreach (Column column in sqlentity.Columns) {
-		if (column.Required && column.Default.Length==0) {
-		    sb.Append("/* -- commented out because column does not have default value and is required\n");
+		if (!column.ViewColumn) {
+		    if (column.Required && column.Default.Length==0) {
+			sb.Append("/* -- commented out because column does not have default value and is required\n");
+		    }
+		    sb.Append("if not exists(select * from syscolumns where id=object_id('[").Append(sqlentity.Name).Append("]') and name = '").Append(column.Name).Append("')\n");
+		    sb.Append("  BEGIN\n");
+		    sb.Append("	ALTER TABLE [").Append(sqlentity.Name).Append("] ADD\n");
+		    sb.Append("	    [").Append(column.Name).Append("] ").Append(column.SqlType.Declaration);
+		    if (column.Identity) {
+			sb.Append(" IDENTITY(").Append(column.Seed).Append(",").Append(column.Increment).Append(")");
+		    }
+		    if (column.RowGuidCol) {
+			sb.Append(" ROWGUIDCOL");
+		    }
+		    if (column.Identity || column.Required || column.RowGuidCol || column.Default.Length>0) {
+			sb.Append(" NOT");
+		    }
+		    sb.Append(" NULL\n");
+		    if (column.Default.Length>0) {
+			sb.Append("	 CONSTRAINT\n");
+			sb.Append("		DF_").Append(sqlentity.Name).Append("_").Append(column.Name).Append(" DEFAULT ").Append(column.Default).Append(" WITH VALUES\n");
+		    }
+		    sb.Append("  END\n");
+		    if (column.Required && column.Default.Length==0) {
+			sb.Append("*/\n");
+		    }
+		    sb.Append("GO\n\n");
 		}
-		sb.Append("if not exists(select * from syscolumns where id=object_id('[").Append(sqlentity.Name).Append("]') and name = '").Append(column.Name).Append("')\n");
-		sb.Append("  BEGIN\n");
-		sb.Append("	ALTER TABLE [").Append(sqlentity.Name).Append("] ADD\n");
-		sb.Append("	    [").Append(column.Name).Append("] ").Append(column.SqlType.Declaration);
-		if (column.Identity) {
-		    sb.Append(" IDENTITY(").Append(column.Seed).Append(",").Append(column.Increment).Append(")");
-		}
-		if (column.RowGuidCol) {
-		    sb.Append(" ROWGUIDCOL");
-		}
-		if (column.Identity || column.Required || column.RowGuidCol || column.Default.Length>0) {
-		    sb.Append(" NOT");
-		}
-		sb.Append(" NULL\n");
-		if (column.Default.Length>0) {
-		    sb.Append("	 CONSTRAINT\n");
-		    sb.Append("		DF_").Append(sqlentity.Name).Append("_").Append(column.Name).Append(" DEFAULT ").Append(column.Default).Append(" WITH VALUES\n");
-		}
-		sb.Append("  END\n");
-		if (column.Required && column.Default.Length==0) {
-		    sb.Append("*/\n");
-		}
-		sb.Append("GO\n\n");
 	    }
 
 	    // create constraints, checking for existance
