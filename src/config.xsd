@@ -83,6 +83,7 @@
                                 <xs:complexType>
                                     <xs:attribute name="name" type="xs:string" />
                                     <xs:attribute name="type" type="xs:string" />
+                                    <xs:attribute name="template" type="xs:string" />
                                 </xs:complexType>
                             </xs:element>
                         </xs:sequence>
@@ -107,6 +108,7 @@
                                     </xs:sequence>
                                     <xs:attribute name="name" type="xs:string" />
                                     <xs:attribute name="integerbased" type="BooleanEnum" />
+                                    <xs:attribute name="template" type="xs:string" />
                                 </xs:complexType>
                             </xs:element>
                         </xs:sequence>
@@ -171,6 +173,7 @@
                                                                                     <xs:attribute name="viewcolumn" type="BooleanEnum" />
                                                                                     <xs:attribute name="precision" type="xs:nonNegativeInteger" />
                                                                                     <xs:attribute name="scale" type="xs:nonNegativeInteger" />
+                                                                                    <xs:attribute name="expression" type="xs:string" />
                                                                                 </xs:complexType>
                                                                             </xs:element>
                                                                         </xs:sequence>
@@ -294,6 +297,23 @@
                         <xs:attribute name="allowupdateofprimarykey" type="BooleanEnum" />
                         <xs:attribute name="commandtimeout" type="xs:positiveInteger" />
                         <xs:attribute name="scriptforindexedviews" type="BooleanEnum" />
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="generator" minOccurs="0" maxOccurs="1">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="task" minOccurs="0" maxOccurs="unbounded">
+                                <xs:complexType>
+                                    <xs:sequence />
+                                    <xs:attribute name="name" type="xs:string" />
+                                    <xs:attribute name="template" type="xs:string" />
+                                    <xs:attribute name="element" type="xs:string" />
+                                    <xs:attribute name="directory" type="xs:string" />
+                                    <xs:attribute name="filenameformat" type="xs:string" />
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                        <xs:attribute name="class" type="xs:string" />
                     </xs:complexType>
                 </xs:element>
             </xs:choice>
