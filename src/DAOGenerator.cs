@@ -9,12 +9,14 @@ namespace Spring2.DataTierGenerator {
     /// Generates stored procedures and associated data access code for the specified database.
     /// </summary>
     public class DAOGenerator : GeneratorBase {
-
+	private Entity entity;
 	/// <summary>
 	/// Contructor for the Generator class.
 	/// </summary>
 	/// <param name="strConnectionString">Connecion string to a SQL Server database.</param>
-	public DAOGenerator(Configuration options, Entity entity) : base(options, entity) {}
+	public DAOGenerator(Configuration options, Entity entity) : base(options) {
+	    this.entity = entity;
+	}
 		
 	/// <summary>
 	/// Creates a C# data access class for all of the table's stored procedures.
@@ -26,7 +28,7 @@ namespace Spring2.DataTierGenerator {
 	    StringBuilder sb = new StringBuilder(4096);
 
 	    // Create the header for the class.
-	    sb.Append(GetUsingNamespaces(true));
+	    sb.Append(GetUsingNamespaces(entity.Fields, true));
 	    sb.Append(Environment.NewLine);
 	    sb.Append("namespace " + options.GetDAONameSpace(entity.Name) + " {\n");
 	    sb.Append("    public class " + options.GetDAOClassName(entity.Name));

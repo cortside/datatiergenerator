@@ -7,15 +7,17 @@ using System.Text;
 namespace Spring2.DataTierGenerator {
 
     public class DOGenerator : GeneratorBase {
+	private Entity entity;
 
-	public DOGenerator(Configuration options, Entity entity) : base(options, entity) {
+	public DOGenerator(Configuration options, Entity entity) : base(options) {
+	    this.entity = entity;
 	}
 
 	public void CreateDataObjectClass() {
 	    StringBuilder sb = new StringBuilder(4096);
 			
 	    // Create the header for the class
-	    sb.Append(GetUsingNamespaces(false)).Append("\n");
+	    sb.Append(GetUsingNamespaces(entity.Fields, false)).Append("\n");
 
 	    // class definition
 	    sb.Append("namespace " + options.GetDONameSpace(entity.Name) + " {\n");

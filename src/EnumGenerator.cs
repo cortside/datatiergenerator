@@ -9,7 +9,7 @@ namespace Spring2.DataTierGenerator {
     public class EnumGenerator : GeneratorBase {
 	private EnumType type;
 
-	public EnumGenerator(Configuration options, EnumType type) : base(options, null) {
+	public EnumGenerator(Configuration options, EnumType type) : base(options) {
 	    this.type = type;
 	}
 
