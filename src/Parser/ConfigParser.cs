@@ -115,12 +115,12 @@ namespace Spring2.DataTierGenerator.Parser {
 	    catch(UnauthorizedAccessException ex) {
 		//dont have access permission
 		isValid=false;
-		errors.Add(ParserValidationArgs.NewError(ex.Message));
+		WriteToLog(ParserValidationArgs.NewError(ex.Message).ToString());
 	    }
 	    catch(Exception ex) {
 		//and other things that could go wrong
 		isValid=false;
-		errors.Add(ParserValidationArgs.NewError(ex.Message));
+		WriteToLog(ParserValidationArgs.NewError(ex.Message).ToString());
 	    }
 	}
 
@@ -132,9 +132,9 @@ namespace Spring2.DataTierGenerator.Parser {
 	internal void SchemaValidationEventHandler(object sender, ValidationEventArgs args) {
 	    if (args.Severity.Equals(XmlSeverityType.Error)) {
 		isValid = false;
-		errors.Add(ParserValidationArgs.NewError(args.Message));
+		WriteToLog(ParserValidationArgs.NewError(args.Message).ToString());
 	    } else {
-		errors.Add(ParserValidationArgs.NewWarning(args.Message));
+		WriteToLog(ParserValidationArgs.NewWarning(args.Message).ToString());
 	    }
 	}
 

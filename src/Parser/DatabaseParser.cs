@@ -87,10 +87,10 @@ namespace Spring2.DataTierGenerator.Parser {
 				if (types.Contains(field.Column.SqlType.Type)) {
 				    field.Type = (TypeElement)((TypeElement)types[field.Column.SqlType.Type]).Clone();
 				} else {
-				    Console.Out.WriteLine("Type " + field.Column.SqlType.Type + " was not defined");
+				    WriteToLog("Type " + field.Column.SqlType.Type + " was not defined");
 				}
 			    } else {
-				Console.Out.WriteLine("SqlType " + field.Column.SqlType.Name + " was not defined");
+				WriteToLog("SqlType " + field.Column.SqlType.Name + " was not defined");
 			    }
 
 			    field.Column.SqlType.Length = objDataRow["CHARACTER_MAXIMUM_LENGTH"].ToString().Length > 0 ? (Int32)objDataRow["CHARACTER_MAXIMUM_LENGTH"] : (Int32)(Int16)objDataRow["COLUMN_LENGTH"];
@@ -371,7 +371,7 @@ namespace Spring2.DataTierGenerator.Parser {
 		    if (sqltypes.ContainsKey(column.SqlType.Name)) {
 			column.SqlType = (SqlTypeElement)((SqlTypeElement)sqltypes[column.SqlType.Name]).Clone();
 		    } else {
-			Console.Out.WriteLine("SqlType " + column.SqlType.Name + " was not defined");
+			WriteToLog("SqlType " + column.SqlType.Name + " was not defined");
 		    }
 
 		    column.SqlType.Length = row["CHARACTER_MAXIMUM_LENGTH"].ToString().Length > 0 ? (Int32)row["CHARACTER_MAXIMUM_LENGTH"] : (Int32)(Int16)row["COLUMN_LENGTH"];

@@ -13,19 +13,7 @@ namespace Spring2.DataTierGenerator.Parser {
 	    get;
 	}
 
-	Boolean HasWarnings {
-	    get;
-	}
-
 	Boolean IsValid {
-	    get;
-	}
-
-	IList Errors {
-	    get;
-	}
-
-	String ErrorDescription {
 	    get;
 	}
 
@@ -58,6 +46,13 @@ namespace Spring2.DataTierGenerator.Parser {
 	}
 
 	ParserElement Parser {
+	    get;
+	}
+
+	/// <summary>
+	/// List of log messages (String) that were created durring parse
+	/// </summary>
+	IList Log {
 	    get;
 	}
 

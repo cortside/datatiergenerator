@@ -30,7 +30,17 @@ namespace Spring2.DataTierGenerator.Parser {
 	protected ParserElement parser = new ParserElement();
 
 	protected Boolean isValid = false;
-	protected IList errors = new ArrayList();
+
+	private IList log = new ArrayList();
+
+	protected void WriteToLog(String s) {
+	    log.Add(s);
+	}
+
+	public IList Log {
+	    get { return log; }
+	}
+
 
 	public Configuration Configuration {
 	    get { return options; }
@@ -38,24 +48,6 @@ namespace Spring2.DataTierGenerator.Parser {
 
 	public Boolean IsValid {
 	    get { return isValid; }
-	}
-
-	public Boolean HasWarnings {
-	    get { return errors.Count>0; }
-	}
-
-	public IList Errors {
-	    get { return errors; }
-	}
-
-	public String ErrorDescription {
-	    get {
-		String s = String.Empty;
-		foreach(Object o in errors) {
-		    s += o.ToString() + Environment.NewLine;
-		}
-		return s;
-	    }
 	}
 
 	public IList Databases {
@@ -98,7 +90,7 @@ namespace Spring2.DataTierGenerator.Parser {
 	    if (args.Severity.Equals(ParserValidationSeverity.ERROR)) {
 		isValid = false;
 	    }
-	    errors.Add(args);
+	    WriteToLog(args.ToString());
 	}
 
 

@@ -36,14 +36,6 @@ namespace Spring2.DataTierGenerator.Parser {
 			PropertyElement f = PropertyElement.FindByColumnName(e.Fields, dbf.Column.Name);
 			if (f == null) {
 			    fields.Add(dbf);
-			} else {
-			    // not sure if this is a good idea - the assumption that the config file is most correct might be a better way
-//			    if (!dbf.Column.Name.Equals(f.Column.Name) || !dbf.Type.Name.Equals(f.Type.Name)) {
-//				fields.Add(dbf);
-//				Console.Out.WriteLine("new field:" + dbe.Name + "." + dbf.Name);
-//			    } else {
-//				Console.Out.WriteLine("found " + dbe.Name + "." + dbf.Name + ": " + f.Equals(dbf));
-//			    }
 			}
 		    }
 		    // if there were any new or different fields, create a clone of the db.Entity and replace the fields collection
@@ -51,7 +43,7 @@ namespace Spring2.DataTierGenerator.Parser {
 			EntityElement ne = (EntityElement)dbe.Clone();
 			ne.Fields = (ArrayList)fields;
 			this.entities.Add(ne);
-			Console.Out.WriteLine("adding partial entity: " + ne.Name);
+			WriteToLog("adding partial entity: " + ne.Name);
 		    }
 		} else {
 		    this.entities.Add(dbe);
@@ -112,7 +104,7 @@ namespace Spring2.DataTierGenerator.Parser {
 			nse.Columns = columns;
 			nse.Constraints = constraints;
 			database.SqlEntities.Add(nse);
-			Console.Out.WriteLine("adding partial sql entity: " + nse.Name);
+			WriteToLog("adding partial sql entity: " + nse.Name);
 		    }
 		} else {
 		    database.SqlEntities.Add(dbse);
