@@ -124,6 +124,18 @@ namespace Spring2.DataTierGenerator.Parser {
 		    }
 		}
 	    }
+
+	    // make sure that enum values are unique
+	    foreach(EnumElement enumtype in enumtypes) {
+		Hashtable values = new Hashtable();
+		foreach(EnumValueElement value in enumtype.Values) {
+		    if (values.Contains(value.Code)) {
+			vd(ParserValidationArgs.NewError("Enum " + enumtype.Name + " has the code '" + value.Code + "' specified more than once."));
+		    } else {
+			values.Add(value.Code, value.Code);
+		    }
+		}
+	    }
 	}
 
 
