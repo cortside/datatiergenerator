@@ -2,6 +2,9 @@ using System;
 using System.Collections;
 using System.Xml;
 
+using Spring2.DataTierGenerator.Generator.Writer;
+using Spring2.DataTierGenerator.Generator.Styler;
+
 namespace Spring2.DataTierGenerator.Generator {
 
     /// <summary>
@@ -40,6 +43,10 @@ namespace Spring2.DataTierGenerator.Generator {
 	IList Log {
 	    get;
 	}
+
+	IWriter GetWriter(String name);
+
+	IStyler GetStyler(String name);
 
     }
 }
