@@ -25,7 +25,7 @@
 	<sqltype name="char" sqldbtype="Char" length="1" type="StringType" readermethodformat='{0}.GetString({0}.GetOrdinal("{1}"))' declarationformat="{0}({1})" />
 	<sqltype name="datetime" sqldbtype="DateTime" type="DateType" readermethodformat='{0}.GetDateTime({0}.GetOrdinal("{1}"))' />
 	<sqltype name="decimal" sqldbtype="Decimal" type="DecimalType" readermethodformat='{0}.GetDecimal({0}.GetOrdinal("{1}"))' declarationformat="{0}({2}, {3})" />
-	<sqltype name="float" sqldbtype="Float" type="DecimalType" readermethodformat='{0}.GetDouble({0}.GetOrdinal("{1}"))' declarationformat="{0}({1})" />
+	<sqltype name="float" sqldbtype="Float" type="DecimalType" readermethodformat='{0}.GetDouble({0}.GetOrdinal("{1}"))' declarationformat="{0}({2})" />
 	<sqltype name="int" sqldbtype="Int" scale="0" precision="10" type="IntegerType" readermethodformat='{0}.GetInt32({0}.GetOrdinal("{1}"))' />
 	<sqltype name="money" sqldbtype="Money" type="CurrencyType" readermethodformat='{0}.GetDecimal({0}.GetOrdinal("{1}"))' />
 	<sqltype name="nchar" sqldbtype="NChar" type="StringType" readermethodformat='{0}.GetString({0}.GetOrdinal("{1}"))' declarationformat="{0}({1})" />
