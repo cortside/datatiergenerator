@@ -28,7 +28,7 @@
 	<sqltype name="money" type="CurrencyType" readermethodformat='{0}.GetDecimal({0}.GetOrdinal("{1}"))' />
 	<!-- images need some special support, so alias them as varchar -->
 	<sqltype name="image" sqldbtype="VarChar" length="50" type="StringType" readermethodformat='{0}.GetString({0}.GetOrdinal("{1}"))' />
-	<sqltype name="text" length="50" type="StringType" readermethodformat='{0}.GetString({0}.GetOrdinal("{1}"))' />
+	<sqltype name="text" length="0" type="StringType" readermethodformat='{0}.GetString({0}.GetOrdinal("{1}"))' />
 	<sqltype name="smalldatetime" sqldbtype="SmallDateTime" type="DateType" readermethodformat='{0}.GetDateTime({0}.GetOrdinal("{1}"))' />
 	<sqltype name="char" length="1" type="StringType" readermethodformat='{0}.GetString({0}.GetOrdinal("{1}"))' declarationformat="{0}({1})" />
 	<sqltype name="varchar" sqldbtype="VarChar" length="50" type="StringType" readermethodformat='{0}.GetString({0}.GetOrdinal("{1}"))' declarationformat="{0}({1})" />
