@@ -22,9 +22,9 @@
 		<setting name="GenerateSelectStoredProcs" value="False" />
 		<setting name="GenerateOnlyPrimaryDeleteStoredProc" value="True" />
 		<setting name="AllowUpdateOfPrimaryKey" value="False" />
-		<setting name="AutoDiscoverEntities" value="True" />
-		<setting name="AutoDiscoverProperties" value="True" />
-		<setting name="AutoDiscoverAttributes" value="True" />
+		<setting name="AutoDiscoverEntities" value="False" />
+		<setting name="AutoDiscoverProperties" value="False" />
+		<setting name="AutoDiscoverAttributes" value="False" />
 		<setting name="DataObjectBaseClass" value="Spring2.Core.DataObject.DataObject" />
 		<setting name="DAOBaseClass" value="Spring2.Core.DAO.EntityDAO" />
 		<setting name="DataObjectNameFormat" value="{0}Data" />
@@ -116,8 +116,15 @@
 	</entities>
 	<enums>
 		<enum name="OrderType">
-			<value name="Personal" internalvalue="P" dbvalue="P" />
-			<value name="Firm" internalvalue="F" dbvalue="F" />
+			<value name="Personal" code="P" />
+			<value name="Firm" code="F" />
+		</enum>
+		<enum name="FormatType">
+			<value name="HTML" code="H" />
+			<value name="Text" code="T" />
+			<value name="JavaScript" code="J" />
+			<value name="RTF" code="R" />
+			<value name="None" code="N" />
 		</enum>
 	</enums>
 	<datatypes>
