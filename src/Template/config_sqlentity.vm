@@ -15,11 +15,12 @@
 #end
 #foreach ($column in $element.Columns)
 		<column name="$column.Name" sqltype="$column.SqlType.Name" #if ($column.SqlType.Length > 0)length="$column.SqlType.Length" #end
-#if ($column.SqlType.Precision > 0)length="$column.SqlType.Precision" #end
-#if ($column.SqlType.Scale > 0)length="$column.SqlType.Scale" #end
+#if ($column.SqlType.Precision > 0)precision="$column.SqlType.Precision" #end
+#if ($column.SqlType.Scale > 0)scale="$column.SqlType.Scale" #end
 #if ($column.Identity)identity="True" increment="$column.Increment" seed="$column.Seed" #end
 #if ($column.Required)required="True" #end
 #if ($column.ViewColumn)viewcolumn="True" #end
+#if ($column.Default.Length > 0)default="$column.Default" #end
 />
 #end
 #if ($element.Columns.Count > 0)
