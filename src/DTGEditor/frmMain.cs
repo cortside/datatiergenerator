@@ -11,6 +11,8 @@ using System.Reflection;
 
 using Spring2.Core.Xml;
 
+using Spring2.DataTierGenerator.Element;
+using Spring2.DataTierGenerator.Parser;
 using Spring2.DataTierGenerator.Generator;
 
 namespace Spring2.DataTierGenerator.DTGEditor {
@@ -245,11 +247,11 @@ namespace Spring2.DataTierGenerator.DTGEditor {
 	[STAThread]
 	static void Main(string[] args) {
 	    // decide whether to parse XML file and go or bring up form
-	    if (args.Length==1) {
-		Generate(args[0]);
-	    } else {
+	    //if (args.Length==1) {
+	    //	Generate(args[0]);
+	    //} else {
 		Application.Run(new frmMain());
-	    }
+	    //}
 	}
 
 	private static void Generate(String filename) {
@@ -345,14 +347,15 @@ namespace Spring2.DataTierGenerator.DTGEditor {
 
 	private void LoadDoc() {
 	    try {
-//		ConfigParser p = new ConfigParser(file.Text);
-//		result.Text = p.IsValid ? "" : "Document is invalid - fix errors";
-//		generate.Visible = p.IsValid;
-//		resultErrors.Text=String.Empty;
-//		foreach(String s in p.Log) {
-//		    resultErrors.Text += s;
-//		}
-//		LoadTree(treeView1, p);
+		XmlParser p = new XmlParser();
+		p.Parse(file.Text);
+		result.Text = p.IsValid ? "" : "Document is invalid - fix errors";
+		generate.Visible = p.IsValid;
+		resultErrors.Text=String.Empty;
+		foreach(String s in p.Log) {
+		    resultErrors.Text += s;
+		}
+		LoadTree(treeView1, p);
 	    } catch (Exception ex) {
 		MessageBox.Show("An error occcurred while loading.\n\n" + ex.ToString());
 	    }
@@ -371,11 +374,11 @@ namespace Spring2.DataTierGenerator.DTGEditor {
 	    LoadDoc();
 	}
     
-	private void LoadTree(TreeView tree, IParser p) {
+	private void LoadTree(TreeView tree, XmlParser p) {
 	    tree.Nodes.Clear();
 
-//	    TreeNode node;
-//
+	    TreeNode node;
+
 //	    sqltypes = p.SqlTypes;
 //	    node = new TreeNode("SqlTypes");
 //	    foreach(SqlTypeElement sqltype in sqltypes) {
@@ -389,66 +392,66 @@ namespace Spring2.DataTierGenerator.DTGEditor {
 //		node.Nodes.Add(type.Name);
 //	    }
 //	    tree.Nodes.Add(node);
-//
-//	    enums = p.Enums;
-//	    node = new TreeNode("Enums");
-//	    foreach(EnumElement e in enums) {
-//		TreeNode n = new TreeNode(e.Name);
-//		TreeNode v = new TreeNode("values");
-//		n.Nodes.Add(v);
-//		node.Nodes.Add(n);
-//	    }
-//	    tree.Nodes.Add(node);
-//
-//	    collections = p.Collections;
-//	    node = new TreeNode("Collections");
-//	    foreach(CollectionElement c in collections) {
-//		node.Nodes.Add(c.Name);
-//	    }
-//	    tree.Nodes.Add(node);
-//
-//	    databases = p.Databases;
-//	    node = new TreeNode("Databases");
-//	    foreach(DatabaseElement database in databases) {
-//		TreeNode d = new TreeNode(database.Name);
-//		foreach(SqlEntityElement sqlentity in database.SqlEntities) {
-//		    TreeNode n = new TreeNode(sqlentity.Name);
-//		    if (sqlentity.Constraints.Count>0) {
-//			TreeNode c = new TreeNode("contraints");
-//			foreach (ConstraintElement constraint in sqlentity.Constraints) {
-//			    c.Nodes.Add(constraint.Name);
-//			}
-//			n.Nodes.Add(c);
-//		    }
-//		    if (sqlentity.Indexes.Count>0) {
-//			TreeNode i = new TreeNode("indexes");
-//			foreach (IndexElement index in sqlentity.Indexes) {
-//			    i.Nodes.Add(index.Name);
-//			}
-//			n.Nodes.Add(i);
-//		    }
-//
-//		    d.Nodes.Add(n);
-//		}
-//		node.Nodes.Add(d);
-//	    }
-//	    tree.Nodes.Add(node);
-//
-//	    entities = p.Entities;
-//	    node = new TreeNode("Entities");
-//	    foreach(EntityElement entity in entities) {
-//		TreeNode n = new TreeNode(entity.Name);
-//		if (entity.Finders.Count>0) {
-//		    TreeNode f = new TreeNode("finders");
-//		    foreach (FinderElement finder in entity.Finders) {
-//			f.Nodes.Add(finder.Name);
-//		    }
-//		    n.Nodes.Add(f);
-//		}
-//
-//		node.Nodes.Add(n);
-//	    }
-//	    tree.Nodes.Add(node);
+
+	    enums = p.Enums;
+	    node = new TreeNode("Enums");
+	    foreach(EnumElement e in enums) {
+		TreeNode n = new TreeNode(e.Name);
+		TreeNode v = new TreeNode("values");
+		n.Nodes.Add(v);
+		node.Nodes.Add(n);
+	    }
+	    tree.Nodes.Add(node);
+
+	    collections = p.Collections;
+	    node = new TreeNode("Collections");
+	    foreach(CollectionElement c in collections) {
+		node.Nodes.Add(c.Name);
+	    }
+	    tree.Nodes.Add(node);
+
+	    databases = p.Databases;
+	    node = new TreeNode("Databases");
+	    foreach(DatabaseElement database in databases) {
+		TreeNode d = new TreeNode(database.Name);
+		foreach(SqlEntityElement sqlentity in database.SqlEntities) {
+		    TreeNode n = new TreeNode(sqlentity.Name);
+		    if (sqlentity.Constraints.Count>0) {
+			TreeNode c = new TreeNode("contraints");
+			foreach (ConstraintElement constraint in sqlentity.Constraints) {
+			    c.Nodes.Add(constraint.Name);
+			}
+			n.Nodes.Add(c);
+		    }
+		    if (sqlentity.Indexes.Count>0) {
+			TreeNode i = new TreeNode("indexes");
+			foreach (IndexElement index in sqlentity.Indexes) {
+			    i.Nodes.Add(index.Name);
+			}
+			n.Nodes.Add(i);
+		    }
+
+		    d.Nodes.Add(n);
+		}
+		node.Nodes.Add(d);
+	    }
+	    tree.Nodes.Add(node);
+
+	    entities = p.Entities;
+	    node = new TreeNode("Entities");
+	    foreach(EntityElement entity in entities) {
+		TreeNode n = new TreeNode(entity.Name);
+		if (entity.Finders.Count>0) {
+		    TreeNode f = new TreeNode("finders");
+		    foreach (FinderElement finder in entity.Finders) {
+			f.Nodes.Add(finder.Name);
+		    }
+		    n.Nodes.Add(f);
+		}
+
+		node.Nodes.Add(n);
+	    }
+	    tree.Nodes.Add(node);
 	}
 
 	private void treeView1_AfterSelect(object sender, System.Windows.Forms.TreeViewEventArgs e) {
@@ -508,26 +511,26 @@ namespace Spring2.DataTierGenerator.DTGEditor {
 		    list = databases;
 		} else if (level==1) {
 		    list = new ArrayList();
-//		    list.Add(DatabaseElement.FindByName((ArrayList)databases, nodeText));
+		    list.Add(DatabaseElement.FindByName((ArrayList)databases, nodeText));
 		} else {
 		    list = new ArrayList();
-//		    DatabaseElement database = DatabaseElement.FindByName((ArrayList)databases,treeView1.SelectedNode.Parent.Text);
-//		    SqlEntityElement sqlentity = database.FindSqlEntityByName(nodeText);
-//		    list.Add(sqlentity);
+		    DatabaseElement database = DatabaseElement.FindByName((ArrayList)databases,treeView1.SelectedNode.Parent.Text);
+		    SqlEntityElement sqlentity = database.FindSqlEntityByName(nodeText);
+		    list.Add(sqlentity);
 		}
 
-//		foreach (SqlEntityData database in list) {
-//		    //SqlEntityData database = (SqlEntityData)o;
-//		    ListViewItem lvi = new ListViewItem(database.Name);
-//		    lvi.SubItems.Add(database.Key);
-//		    lvi.SubItems.Add(database.SqlScriptDirectory);
-//		    lvi.SubItems.Add(database.GenerateInsertStoredProcScript.ToString());
-//		    lvi.SubItems.Add(database.GenerateUpdateStoredProcScript.ToString());
-//		    lvi.SubItems.Add(database.GenerateDeleteStoredProcScript.ToString());
-//		    lvi.SubItems.Add(database.GenerateSelectStoredProcScript.ToString());
-//		    lvi.SubItems.Add(database.CommandTimeout.ToString());
-//		    listView1.Items.Add(lvi);
-//		}
+		foreach (SqlEntityData database in list) {
+		    //SqlEntityData database = (SqlEntityData)o;
+		    ListViewItem lvi = new ListViewItem(database.Name);
+		    lvi.SubItems.Add(database.Key);
+		    lvi.SubItems.Add(database.SqlScriptDirectory);
+		    lvi.SubItems.Add(database.GenerateInsertStoredProcScript.ToString());
+		    lvi.SubItems.Add(database.GenerateUpdateStoredProcScript.ToString());
+		    lvi.SubItems.Add(database.GenerateDeleteStoredProcScript.ToString());
+		    lvi.SubItems.Add(database.GenerateSelectStoredProcScript.ToString());
+		    lvi.SubItems.Add(database.CommandTimeout.ToString());
+		    listView1.Items.Add(lvi);
+		}
 	    }
 	}
 
@@ -539,52 +542,52 @@ namespace Spring2.DataTierGenerator.DTGEditor {
 		listView1.Columns.Add("Base Entity", -1, HorizontalAlignment.Left);		
 		listView1.Columns.Add("Abstract", -1, HorizontalAlignment.Left);		
 
-//		foreach (EntityElement entity in entities) {
-//		    ListViewItem lvi = new ListViewItem(entity.Name);
-//		    lvi.SubItems.Add(entity.BaseEntity.Name);
-//		    lvi.SubItems.Add(entity.IsAbstract.ToString());
-//		    listView1.Items.Add(lvi);
-//		}
+		foreach (EntityElement entity in entities) {
+		    ListViewItem lvi = new ListViewItem(entity.Name);
+		    lvi.SubItems.Add(entity.BaseEntity.Name);
+		    lvi.SubItems.Add(entity.IsAbstract.ToString());
+		    listView1.Items.Add(lvi);
+		}
 	    }
 
 	    if (level==1) {
 		listView1.Items.Clear();
-//		EntityElement entity = EntityElement.FindEntityByName((ArrayList)entities, nodeText);
-//		listView1.Columns.Clear();
-//		listView1.Columns.Add("Name", -1, HorizontalAlignment.Left);
-//		listView1.Columns.Add("Type", -1, HorizontalAlignment.Left);
-//		listView1.Columns.Add("Concrete Type", -1, HorizontalAlignment.Left);
-//		listView1.Columns.Add("SqlEntity Column", -1, HorizontalAlignment.Left);
-//		listView1.Columns.Add("ViewColumn", -1, HorizontalAlignment.Left);
-//		listView1.Columns.Add("Convert From SqlType Format", -1, HorizontalAlignment.Left);
-//		listView1.Columns.Add("Access Modifier", -1, HorizontalAlignment.Left);
-//		listView1.Columns.Add("Description", -1, HorizontalAlignment.Left);
-//		listView1.Columns.Add("Readable", -1, HorizontalAlignment.Left);
-//		listView1.Columns.Add("Writable", -1, HorizontalAlignment.Left);
-//		foreach(PropertyElement field in entity.Fields) {
-//		    ListViewItem lvi = new ListViewItem(field.Name);
-//		    lvi.SubItems.Add(field.Type.Name);
-//		    lvi.SubItems.Add(field.Type.ConcreteType);
-//		    lvi.SubItems.Add(field.Column.Name);
-//		    lvi.SubItems.Add(field.Column.ViewColumn.ToString());
-//		    lvi.SubItems.Add(field.Type.ConvertFromSqlTypeFormat);
-//		    lvi.SubItems.Add(field.AccessModifier);
-//		    lvi.SubItems.Add(field.Description);
-//		    lvi.SubItems.Add(field.Readable.ToString());
-//		    lvi.SubItems.Add(field.Writable.ToString());
-//		    listView1.Items.Add(lvi);
-//		}
+		EntityElement entity = EntityElement.FindEntityByName((ArrayList)entities, nodeText);
+		listView1.Columns.Clear();
+		listView1.Columns.Add("Name", -1, HorizontalAlignment.Left);
+		listView1.Columns.Add("Type", -1, HorizontalAlignment.Left);
+		listView1.Columns.Add("Concrete Type", -1, HorizontalAlignment.Left);
+		listView1.Columns.Add("SqlEntity Column", -1, HorizontalAlignment.Left);
+		listView1.Columns.Add("ViewColumn", -1, HorizontalAlignment.Left);
+		listView1.Columns.Add("Convert From SqlType Format", -1, HorizontalAlignment.Left);
+		listView1.Columns.Add("Access Modifier", -1, HorizontalAlignment.Left);
+		listView1.Columns.Add("Description", -1, HorizontalAlignment.Left);
+		listView1.Columns.Add("Readable", -1, HorizontalAlignment.Left);
+		listView1.Columns.Add("Writable", -1, HorizontalAlignment.Left);
+		foreach(PropertyElement field in entity.Fields) {
+		    ListViewItem lvi = new ListViewItem(field.Name);
+		    lvi.SubItems.Add(field.Type.Name);
+		    lvi.SubItems.Add(field.Type.ConcreteType);
+		    lvi.SubItems.Add(field.Column.Name);
+		    lvi.SubItems.Add(field.Column.ViewColumn.ToString());
+		    lvi.SubItems.Add(field.Type.ConvertFromSqlTypeFormat);
+		    lvi.SubItems.Add(field.AccessModifier);
+		    lvi.SubItems.Add(field.Description);
+		    lvi.SubItems.Add(field.Readable.ToString());
+		    lvi.SubItems.Add(field.Writable.ToString());
+		    listView1.Items.Add(lvi);
+		}
 	    }
 	    if (level==3) {
 		listView1.Items.Clear();
-//		EntityElement entity = EntityElement.FindEntityByName((ArrayList)entities, treeView1.SelectedNode.Parent.Parent.Text);
-//		listView1.Columns.Clear();
-//		listView1.Columns.Add("Finder Property Name", -1, HorizontalAlignment.Left);
-//		FinderElement finder = entity.FindFinderByName(nodeText);
-//
-//		foreach (PropertyElement field in finder.Fields) {
-//		    listView1.Items.Add(field.Name);
-//		}
+		EntityElement entity = EntityElement.FindEntityByName((ArrayList)entities, treeView1.SelectedNode.Parent.Parent.Text);
+		listView1.Columns.Clear();
+		listView1.Columns.Add("Finder Property Name", -1, HorizontalAlignment.Left);
+		FinderElement finder = entity.FindFinderByName(nodeText);
+
+		foreach (PropertyElement field in finder.Fields) {
+		    listView1.Items.Add(field.Name);
+		}
 	    }
 	}
 
@@ -598,20 +601,20 @@ namespace Spring2.DataTierGenerator.DTGEditor {
 		listView1.Columns.Add("IntegerBased", -1, HorizontalAlignment.Left);
 		listView1.Columns.Add("Template", -1, HorizontalAlignment.Left);
 
-//		IList list;
-//		if (level==0) {
-//		    list = enums;
-//		} else {
-//		    list = new ArrayList();
-//		    list.Add(EnumElement.FindByName((ArrayList)enums, nodeText));
-//		}
-//		foreach(EnumElement e in list) {
-//		    ListViewItem lvi = new ListViewItem(e.Name);
-//		    lvi.SubItems.Add(e.Description);
-//		    lvi.SubItems.Add(e.IntegerBased.ToString());
-//		    lvi.SubItems.Add(e.Template);
-//		    listView1.Items.Add(lvi);
-//		}
+		IList list;
+		if (level==0) {
+		    list = enums;
+		} else {
+		    list = new ArrayList();
+		    list.Add(EnumElement.FindByName((ArrayList)enums, nodeText));
+		}
+		foreach(EnumElement e in list) {
+		    ListViewItem lvi = new ListViewItem(e.Name);
+		    lvi.SubItems.Add(e.Description);
+		    lvi.SubItems.Add(e.IntegerBased.ToString());
+		    lvi.SubItems.Add(e.Template);
+		    listView1.Items.Add(lvi);
+		}
 	    }
 
 	    if (level==2 && nodeText.Equals("values")) {
@@ -619,13 +622,13 @@ namespace Spring2.DataTierGenerator.DTGEditor {
 		listView1.Columns.Add("Code", -1, HorizontalAlignment.Left);
 		listView1.Columns.Add("Description", -1, HorizontalAlignment.Left);
 
-//		EnumElement e = EnumElement.FindByName((ArrayList)enums, parentNodeText);
-//		foreach(EnumValueElement v in e.Values) {
-//		    ListViewItem lvi = new ListViewItem(v.Name);
-//		    lvi.SubItems.Add(v.Code);
-//		    lvi.SubItems.Add(v.Description);
-//		    listView1.Items.Add(lvi);
-//		}
+		EnumElement e = EnumElement.FindByName((ArrayList)enums, parentNodeText);
+		foreach(EnumValueElement v in e.Values) {
+		    ListViewItem lvi = new ListViewItem(v.Name);
+		    lvi.SubItems.Add(v.Code);
+		    lvi.SubItems.Add(v.Description);
+		    listView1.Items.Add(lvi);
+		}
 
 	    }
 	}
@@ -640,20 +643,20 @@ namespace Spring2.DataTierGenerator.DTGEditor {
 		listView1.Columns.Add("Type", -1, HorizontalAlignment.Left);
 		listView1.Columns.Add("Template", -1, HorizontalAlignment.Left);
 
-//		IList list;
-//		if (level==0) {
-//		    list = collections;
-//		} else {
-//		    list = new ArrayList();
-//		    list.Add(CollectionElement.FindByName((ArrayList)collections, nodeText));
-//		}
-//		foreach(CollectionElement e in list) {
-//		    ListViewItem lvi = new ListViewItem(e.Name);
-//		    lvi.SubItems.Add(e.Description);
-//		    lvi.SubItems.Add(e.Type);
-//		    lvi.SubItems.Add(e.Template);
-//		    listView1.Items.Add(lvi);
-//		}
+		IList list;
+		if (level==0) {
+		    list = collections;
+		} else {
+		    list = new ArrayList();
+		    list.Add(CollectionElement.FindByName((ArrayList)collections, nodeText));
+		}
+		foreach(CollectionElement e in list) {
+		    ListViewItem lvi = new ListViewItem(e.Name);
+		    lvi.SubItems.Add(e.Description);
+		    lvi.SubItems.Add(e.Type);
+		    lvi.SubItems.Add(e.Template);
+		    listView1.Items.Add(lvi);
+		}
 	    }
 	}	
     }
