@@ -4,12 +4,13 @@ using System.Text;
 using System.Xml;
 
 namespace Spring2.DataTierGenerator {
-    public class Entity : Spring2.Core.DataObject.DataObject {
+    public class Entity : Spring2.Core.DataObject.DataObject, ICloneable {
 
 	protected String name = String.Empty;
 	protected String sqlObject = String.Empty;
 	protected String sqlView = String.Empty;
 	protected ArrayList fields = new ArrayList();
+	private ArrayList finders = new ArrayList();
 
 	public String Name {
 	    get { return this.name; }
@@ -31,6 +32,10 @@ namespace Spring2.DataTierGenerator {
 	    set { this.fields = value; }
 	}
 
+	public ArrayList Finders {
+	    get { return this.finders; }
+	    set { this.finders = value; }
+	}
 
 	public String ToXml() {
 	    StringBuilder sb = new StringBuilder();
@@ -68,6 +73,7 @@ namespace Spring2.DataTierGenerator {
 		    entity.SqlView = node.Attributes["sqlview"].Value;
 		}
 		entity.Fields = Field.ParseFromXml(doc, entity, sqltypes, types);
+		entity.Finders = Finder.ParseFromXml(node, entity);
 		entities.Add(entity);
 	    }
 	    return entities;
@@ -115,6 +121,19 @@ namespace Spring2.DataTierGenerator {
 		}
 	    }
 	    return null;
+	}
+
+	public Field FindFieldByName(String name) {
+	    foreach (Field field in fields) {
+		if (field.Name == name) {
+		    return field;
+		}
+	    }
+	    return null;
+	}
+
+	public Object Clone() {
+	    return MemberwiseClone();
 	}
 
 
