@@ -39,6 +39,7 @@ namespace Spring2.DataTierGenerator.Generator.Task {
 	    vc.Put("elements", elements);
 
 	    Template template = Velocity.GetTemplate("Template\\dtg_csharp_library.vm");
+	    template = Velocity.GetTemplate("Template\\dtg_java_library.vm");
 	    template = Velocity.GetTemplate(task.Template);
 	    template.Merge(vc, writer);
 

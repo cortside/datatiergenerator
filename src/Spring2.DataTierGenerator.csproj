@@ -345,6 +345,10 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "Template\dtg_java_library.vm"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "Template\enum.vm"
                     BuildAction = "EmbeddedResource"
                 />
