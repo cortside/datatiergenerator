@@ -49,6 +49,7 @@ namespace Spring2.DataTierGenerator.Test {
 	    pass = pass && CompareFile(compareRoot, "DAO", "TeamDAO.cs");
 	    pass = pass && CompareFile(compareRoot, "DAO", "TournamentDAO.cs");
 	    pass = pass && CompareFile(compareRoot, "DAO", "TournamentFeeDAO.cs");
+	    pass = pass && CompareFile(compareRoot, "DAO", "TestSqlEntitiesDAO.cs");
 
 	    pass = pass && CompareFile(compareRoot, "DataObject", "ALaCarteItemCollection.cs");
 	    pass = pass && CompareFile(compareRoot, "DataObject", "ParticipantCollection.cs");
@@ -77,6 +78,7 @@ namespace Spring2.DataTierGenerator.Test {
 	    pass = pass && CompareFile(compareRoot, "DataObject", "TournamentData.cs");
 	    pass = pass && CompareFile(compareRoot, "DataObject", "TournamentFeeData.cs");
 	    pass = pass && CompareFile(compareRoot, "DataObject", "WaitListData.cs");
+	    pass = pass && CompareFile(compareRoot, "DataObject", "TestSqlEntitiesData.cs");
 
 	    pass = pass && CompareFile(compareRoot, "Sql\\proc", "spGolfer_Delete.proc.sql");
 	    pass = pass && CompareFile(compareRoot, "Sql\\proc", "spGolfer_Insert.proc.sql");
@@ -99,6 +101,7 @@ namespace Spring2.DataTierGenerator.Test {
 	    pass = pass && CompareFile(compareRoot, "Sql\\proc", "spTournamentFee_Delete.proc.sql");
 	    pass = pass && CompareFile(compareRoot, "Sql\\proc", "spTournamentFee_Insert.proc.sql");
 	    pass = pass && CompareFile(compareRoot, "Sql\\proc", "spTournamentFee_Update.proc.sql");
+	    pass = pass && CompareFile(compareRoot, "Sql\\proc", "spTestSqlEntities_Update.proc.sql");
 
 	    pass = pass && CompareFile(compareRoot, "Sql\\table", "Golfer.table.sql");
 	    pass = pass && CompareFile(compareRoot, "Sql\\table", "Organizer.table.sql");
@@ -107,12 +110,14 @@ namespace Spring2.DataTierGenerator.Test {
 	    pass = pass && CompareFile(compareRoot, "Sql\\table", "Team.table.sql");
 	    pass = pass && CompareFile(compareRoot, "Sql\\table", "Tournament.table.sql");
 	    pass = pass && CompareFile(compareRoot, "Sql\\table", "TournamentFee.table.sql");
+	    pass = pass && CompareFile(compareRoot, "Sql\\table", "TestSqlEntities.table.sql");
 
 	    pass = pass && CompareFile(compareRoot, "Sql\\view", "vwGolfer.view.sql");
 	    pass = pass && CompareFile(compareRoot, "Sql\\view", "vwOrganizer.view.sql");
 	    pass = pass && CompareFile(compareRoot, "Sql\\view", "vwPayment.view.sql");
 	    pass = pass && CompareFile(compareRoot, "Sql\\view", "vwTeam.view.sql");
 	    pass = pass && CompareFile(compareRoot, "Sql\\view", "vwTournamentFee.view.sql");
+	    pass = pass && CompareFile(compareRoot, "Sql\\view", "vwTestSqlEntities.view.sql");
 
 	    pass = pass && CompareFile(compareRoot, "Sql\\data", "GolferStatusEnum.data.sql");
 	    pass = pass && CompareFile(compareRoot, "Sql\\data", "FunctionEnum.data.sql");
