@@ -641,7 +641,7 @@ namespace Spring2.DataTierGenerator.DTGEditor {
 		listView1.Columns.Add("Name", -1, HorizontalAlignment.Left);
 		listView1.Columns.Add("Description", -1, HorizontalAlignment.Left);
 		listView1.Columns.Add("Type", -1, HorizontalAlignment.Left);
-		listView1.Columns.Add("Template", -1, HorizontalAlignment.Left);
+		listView1.Columns.Add("Package", -1, HorizontalAlignment.Left);
 
 		IList list;
 		if (level==0) {
@@ -653,8 +653,8 @@ namespace Spring2.DataTierGenerator.DTGEditor {
 		foreach(CollectionElement e in list) {
 		    ListViewItem lvi = new ListViewItem(e.Name);
 		    lvi.SubItems.Add(e.Description);
-		    lvi.SubItems.Add(e.Type);
-		    lvi.SubItems.Add(e.Template);
+		    lvi.SubItems.Add(e.Type.Name);
+		    lvi.SubItems.Add(e.Type.Package);
 		    listView1.Items.Add(lvi);
 		}
 	    }
