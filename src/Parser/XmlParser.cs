@@ -61,9 +61,9 @@ namespace Spring2.DataTierGenerator.Parser {
 	    types = TypeElement.ParseFromXml(options, doc, vd);
 
 	    enumtypes = EnumElement.ParseFromXml(options,doc,sqltypes,types, vd);
-	    collections = CollectionElement.ParseFromXml(options,doc,sqltypes,types, vd);
 	    databases = DatabaseElement.ParseFromXml(options, doc, sqltypes, types, vd);
 	    entities = EntityElement.ParseFromXml(options, doc, sqltypes, types, DatabaseElement.GetAllSqlEntities(databases), vd);
+	    collections = CollectionElement.ParseFromXml(options,doc,sqltypes,types, vd, (ArrayList)entities);
 
 	    Validate(vd);
 	}
@@ -74,9 +74,9 @@ namespace Spring2.DataTierGenerator.Parser {
 	    this.sqltypes = sqltypes;
 	    this.types = types;
 	    enumtypes = EnumElement.ParseFromXml(options,doc,sqltypes,types, vd);
-	    collections = CollectionElement.ParseFromXml(options,doc,sqltypes,types, vd);
 	    databases = DatabaseElement.ParseFromXml(options, doc, sqltypes, types, vd);
 	    entities = EntityElement.ParseFromXml(options, doc, sqltypes, types, DatabaseElement.GetAllSqlEntities(databases), vd);
+	    collections = CollectionElement.ParseFromXml(options,doc,sqltypes,types, vd, (ArrayList)entities);
 
 	    Validate(vd);
 	}

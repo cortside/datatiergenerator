@@ -22,7 +22,6 @@ namespace Spring2.DataTierGenerator.Parser {
 	    this.sqltypes = sqltypes;
 	    this.types = types;
 	    enumtypes = EnumElement.ParseFromXml(options,doc,sqltypes,types, vd);
-	    collections = CollectionElement.ParseFromXml(options,doc,sqltypes,types, vd);
 
 	    if (parser.FindArgumentByName("server") == null || parser.FindArgumentByName("database") == null || parser.FindArgumentByName("user") == null || parser.FindArgumentByName("password") == null) {
 		vd(ParserValidationArgs.NewError("expected to find the following arguments, but didn't: server, database, user, password."));
@@ -42,6 +41,8 @@ namespace Spring2.DataTierGenerator.Parser {
 		databases.Add(db);
 		entities = GetEntities(doc, conn, new ArrayList(), vd);
 	    }
+
+	    collections = CollectionElement.ParseFromXml(options,doc,sqltypes,types, vd, (ArrayList)entities);
 
 	    Validate(vd);
 	}

@@ -62,9 +62,9 @@ namespace Spring2.DataTierGenerator.Parser {
 
 	    if (parser.Class.Equals(String.Empty)) {
 		enumtypes = EnumElement.ParseFromXml(options,doc,sqltypes,types, vd);
-		collections = CollectionElement.ParseFromXml(options,doc,sqltypes,types, vd);
 		databases = DatabaseElement.ParseFromXml(options, doc, sqltypes, types, vd);
 		entities = EntityElement.ParseFromXml(options, doc, sqltypes, types, DatabaseElement.GetAllSqlEntities(databases), vd);
+		collections = CollectionElement.ParseFromXml(options,doc,sqltypes,types,vd, (ArrayList)entities);
 	    } else {
 		Object o = null;
 		try {
