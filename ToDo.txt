@@ -4,8 +4,6 @@ Todo:
     - when comparing entity properties to database schema, match columns on lower-cased names
     - data object Equals method
     - fix indentation in DAO classes
-    - add GetList method with just sort
-    - some delete methods still have connection as parameter (when multiple PK columns)
 	
 	- sqltypes image and binary do not generate correct code for pulling data from a datareader (populating a dataobject).
 	- data objects could/should support ICloneable with MemberwiseClone().
@@ -26,5 +24,8 @@ Completed:
 	- load method does not take the correct parameters and types based on identity or primary key columns.
 	- configurable base classes for DataObjects, DAOs and Enums.
     - parse enums as types, when parsing types
+    - add GetList method with just sort
+    - some delete methods still have connection as parameter (when multiple PK columns)
+	- support for defined finder methods
 
 	
