@@ -31,8 +31,6 @@
 		<setting name="DataObjectNameFormat" value="{0}Data" />
 		<setting name="DaoNameFormat" value="{0}Dao" />
 	</config>
-	
-	
 	<!--
 		Application entites (objects)
 	-->
@@ -46,22 +44,75 @@
 			<property name="Country" sqlname="" type="StringType" />
 		</entity>
 		<entity name="TestSqlObject" sqlobject="TestSqlObject">
-			<property name="StringColumn" sqlname="sqlstringcolumn" sqltype="varchar" isprimarykey="True" />
-			<property name="Int32Column" sqlname="sqlintcolumn" sqltype="int" type="IdType" isprimarykey="True" />
-			<property name="EmailFormat" sqltype="char" type="FormatType" />
-			<property name="Address" sqlname="" type="AddressData" />
-			<property name="Address.Address1" sqlname="addr1" sqltype="varchar" type="StringType" />
-			<property name="Address.Address2" sqlname="addr2" sqltype="varchar" type="StringType" />
-			<property name="Address.City" sqlname="city" sqltype="varchar" type="StringType" />
-			<property name="Address.State" sqlname="state" sqltype="varchar" type="StringType" />
-			<property name="Address.PostalCode" sqlname="zip" sqltype="varchar" type="StringType" />
+			<!-- 
+				NOT SUPPORTED YET.
+				finder could be defined this way - needs a name and a set of fields/properties.  
+				Everything needed to generate the code should be contained within the fields.
+			-->
+			<finders>
+				<finder name="FindByPostalCode">
+					<columns>
+						<column name="zip" />
+					</columns>
+				</finder>
+			</finders>
+			<!-- 
+				property elements should now be defined inside a properties element - this will allow for ability to define other tags under entity.
+			-->
+			<properties>
+				<property name="StringColumn" sqlname="sqlstringcolumn" sqltype="varchar" isprimarykey="True" />
+				<property name="Int32Column" sqlname="sqlintcolumn" sqltype="int" type="IdType" isprimarykey="True" />
+				<property name="EmailFormat" sqltype="char" type="FormatType" />
+				<property name="Address" sqlname="" type="AddressData" />
+				<property name="Address.Address1" sqlname="addr1" sqltype="varchar" type="StringType" />
+				<property name="Address.Address2" sqlname="addr2" sqltype="varchar" type="StringType" />
+				<property name="Address.City" sqlname="city" sqltype="varchar" type="StringType" />
+				<property name="Address.State" sqlname="state" sqltype="varchar" type="StringType" />
+				<property name="Address.PostalCode" sqlname="zip" sqltype="varchar" type="StringType" />
+			</properties>
 		</entity>
 		<entity name="TestSqlObject2" sqlobject="TestSqlObject2">
-			<property name="Id" sqltype="int" type="IdType" isidentity="True" />
+				<property name="Id" sqltype="int" type="IdType" isidentity="True" />
+			</properties>
 		</entity>
 	</entities>
-
-
+	<!--
+		sqlobject definitions
+		NOT SUPPORTED YET
+		
+		this is how we might be able to define enough information to be able to create table scripts.
+		the following need to be able to be supported in order to create table scripts:
+			column nullability
+			identity specification (including seed an increment value)
+			constraints:
+				primary key
+				foreign key
+				default values
+				unique
+				check - I haven't seen this used in any code at spring2, but we should double check
+	-->
+	<sqlobjects>
+		<sqlobject name="TestSqlObject">
+			<primarykeycolumn name="sqlstringcolumn" />
+			<primarykeycolumn name="sqlintcolumn" />
+			<columns>
+				<column name="sqlstringcolumn" sqltype="varchar" required="True" />
+				<column name="sqlintcolumn" sqltype="int" required="True" />
+				<column name="EmailFormat" sqltype="char" length="1" />
+				<column name="addr1" sqltype="varchar" length="50" />
+				<column name="addr2" sqltype="varchar" length="50" />
+				<column name="city" sqltype="varchar" length="50" />
+				<column name="state" sqltype="varchar" length="50" />
+				<column name="zip" sqltype="varchar" length="50" />
+			</columns>
+			<indexes>
+				<index name="PK_TestSqlObject" isPrimaryKey="True" isUnique="True">
+					<indexcolumn name="sqlstringcolumn" />
+					<indexcolumn name="sqlintcolumn" />
+				</index>
+			</indexes>
+		</sqlobject>
+	</sqlobjects>
 	<!--
 		Enum definitions
 		Elements:
@@ -89,8 +140,6 @@
 			<value name="None" code="N" />
 		</enum>
 	</enums>
-
-
 	<!--
 	This section defines the actual sql types that can be queried from the 
 	database.  Each sqltype can have the following attributes:
@@ -137,8 +186,6 @@
 		<sqltype name="uniqueidentifier" sqldbtype="UniqueIdentifier" type="Guid" />
 		<sqltype name="timestamp" type="DateTime" readermethodformat='{0}.GetDateTime({0}.GetOrdinal("{1}"))' />
 	</sqltypes>
-	
-	
 	<!--
 		conversion format replacement parameters:
 			0=data object variable name
@@ -156,12 +203,10 @@
 		<type name="Boolean" newinstanceformat="false" />
 		<type name="Double" newinstanceformat="0" />
 		<type name="Decimal" newinstanceformat="0" />
-		
 		<!-- .Net FCL types -->
 		<type name="IList" namespace="System.Collections" />
 		<type name="ArrayList" namespace="System.Collections" newinstanceformat="new ArrayList()" />
 		<type name="Hashtable" namespace="System.Collections" newinstanceformat="new Hashtable()" />
-		
 		<!-- Spring2.Core.Types -->
 		<type name="BooleanType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="BooleanType.GetInstance({2})" newinstanceformat="BooleanType.DEFAULT" nullinstanceformat="BooleanType.UNSET" />
 		<type name="StringType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="StringType.NewInstance({2})" newinstanceformat="StringType.DEFAULT" nullinstanceformat="StringType.UNSET" />
