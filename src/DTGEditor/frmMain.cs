@@ -11,6 +11,8 @@ using System.Data;
 using System.Xml;
 using System.Xml.Schema;
 
+using Spring2.DataTierGenerator.Core;
+
 namespace Spring2.DataTierGenerator {
     /// <summary>
     /// Summary description for frmMain.
@@ -25,7 +27,7 @@ namespace Spring2.DataTierGenerator {
 	private static string header;
 
 	private IList entities = new ArrayList();
-	private IList sqlentities = new ArrayList();
+	private IList databases = new ArrayList();
 	private ICollection types = new ArrayList();
 	private ICollection sqltypes = new ArrayList();
 	private IList enums = new ArrayList();
@@ -335,7 +337,7 @@ namespace Spring2.DataTierGenerator {
 
 	    types = g.Types;
 	    node = new TreeNode("Types");
-	    foreach(Type type in types) {
+	    foreach(Core.Type type in types) {
 		node.Nodes.Add(type.Name);
 	    }
 	    tree.Nodes.Add(node);
@@ -354,26 +356,30 @@ namespace Spring2.DataTierGenerator {
 	    }
 	    tree.Nodes.Add(node);
 
-	    sqlentities = g.SqlEntities;
-	    node = new TreeNode("SqlEntities");
-	    foreach(SqlEntity sqlentity in sqlentities) {
-		TreeNode n = new TreeNode(sqlentity.Name);
-		if (sqlentity.Constraints.Count>0) {
-		    TreeNode c = new TreeNode("contraints");
-		    foreach (Constraint constraint in sqlentity.Constraints) {
-			c.Nodes.Add(constraint.Name);
+	    databases = g.Databases;
+	    node = new TreeNode("Databases");
+	    foreach(Database database in databases) {
+		TreeNode d = new TreeNode(database.Name);
+		foreach(SqlEntity sqlentity in database.SqlEntities) {
+		    TreeNode n = new TreeNode(sqlentity.Name);
+		    if (sqlentity.Constraints.Count>0) {
+			TreeNode c = new TreeNode("contraints");
+			foreach (Core.Constraint constraint in sqlentity.Constraints) {
+			    c.Nodes.Add(constraint.Name);
+			}
+			n.Nodes.Add(c);
 		    }
-		    n.Nodes.Add(c);
-		}
-		if (sqlentity.Indexes.Count>0) {
-		    TreeNode i = new TreeNode("indexes");
-		    foreach (Index index in sqlentity.Indexes) {
-			i.Nodes.Add(index.Name);
+		    if (sqlentity.Indexes.Count>0) {
+			TreeNode i = new TreeNode("indexes");
+			foreach (Index index in sqlentity.Indexes) {
+			    i.Nodes.Add(index.Name);
+			}
+			n.Nodes.Add(i);
 		    }
-		    n.Nodes.Add(i);
-		}
 
-		node.Nodes.Add(n);
+		    d.Nodes.Add(n);
+		}
+		node.Nodes.Add(d);
 	    }
 	    tree.Nodes.Add(node);
 
@@ -405,11 +411,58 @@ namespace Spring2.DataTierGenerator {
 		top = top.Parent;
 	    }
 
-//	    MessageBox.Show(top.Text);
-//	    MessageBox.Show(level.ToString());
-//	    MessageBox.Show(treeView1.SelectedNode.Text);
-
 	    String s = treeView1.SelectedNode.Text;
+
+	    if (top.Text.Equals("Databases")) {
+		if (level==0 || level==1 || level==2) {
+		    listView1.Items.Clear();
+		    listView1.Columns.Clear();
+		    listView1.Columns.Add("Name", -1, HorizontalAlignment.Left);
+		    listView1.Columns.Add("Key", -1, HorizontalAlignment.Left);
+		    listView1.Columns.Add("Directory", -1, HorizontalAlignment.Left);
+		    listView1.Columns.Add("Generate Insert", -1, HorizontalAlignment.Left);
+		    listView1.Columns.Add("Generate Update", -1, HorizontalAlignment.Left);
+		    listView1.Columns.Add("Generate Delete", -1, HorizontalAlignment.Left);
+		    listView1.Columns.Add("Generate Select", -1, HorizontalAlignment.Left);
+		}
+		if (level==0) {
+		    foreach (Database database in databases) {
+			ListViewItem lvi = new ListViewItem(database.Name);
+			lvi.SubItems.Add(database.Key);
+			lvi.SubItems.Add(database.SqlScriptDirectory);
+			lvi.SubItems.Add(database.GenerateInsertStoredProcScript.ToString());
+			lvi.SubItems.Add(database.GenerateUpdateStoredProcScript.ToString());
+			lvi.SubItems.Add(database.GenerateDeleteStoredProcScript.ToString());
+			lvi.SubItems.Add(database.GenerateSelectStoredProcScript.ToString());
+			listView1.Items.Add(lvi);
+		    }
+		}
+		if (level==1) {
+		    Database database = Database.FindByName((ArrayList)databases,s);
+		    ListViewItem lvi = new ListViewItem(database.Name);
+		    lvi.SubItems.Add(database.Key);
+		    lvi.SubItems.Add(database.SqlScriptDirectory);
+		    lvi.SubItems.Add(database.GenerateInsertStoredProcScript.ToString());
+		    lvi.SubItems.Add(database.GenerateUpdateStoredProcScript.ToString());
+		    lvi.SubItems.Add(database.GenerateDeleteStoredProcScript.ToString());
+		    lvi.SubItems.Add(database.GenerateSelectStoredProcScript.ToString());
+		    listView1.Items.Add(lvi);
+		}
+		if (level==2) {
+		    Database database = Database.FindByName((ArrayList)databases,treeView1.SelectedNode.Parent.Text);
+		    SqlEntity sqlentity = database.FindSqlEntityByName(s);
+		    ListViewItem lvi = new ListViewItem(sqlentity.Name);
+		    lvi.SubItems.Add(sqlentity.Key);
+		    lvi.SubItems.Add(sqlentity.SqlScriptDirectory);
+		    lvi.SubItems.Add(sqlentity.GenerateInsertStoredProcScript.ToString());
+		    lvi.SubItems.Add(sqlentity.GenerateUpdateStoredProcScript.ToString());
+		    lvi.SubItems.Add(sqlentity.GenerateDeleteStoredProcScript.ToString());
+		    lvi.SubItems.Add(sqlentity.GenerateSelectStoredProcScript.ToString());
+		    listView1.Items.Add(lvi);
+		}
+
+	    }
+
 	    if (top.Text.Equals("Entities")) {
 		if (level==1) {
 		    listView1.Items.Clear();
@@ -447,6 +500,7 @@ namespace Spring2.DataTierGenerator {
 		    ResizeListViewColumns(listView1, -2);
 		}
 	    }
+	    ResizeListViewColumns(listView1, -2);
 	}
 
 	private void ResizeListViewColumns(ListView lv, Int32 size) {
