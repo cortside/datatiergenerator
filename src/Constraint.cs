@@ -11,6 +11,7 @@ namespace Spring2.DataTierGenerator {
 	private String type = String.Empty;
 	private String foreignEntity = String.Empty;
 	private Boolean clustered = false;
+	private String checkClause = String.Empty;
 	private ArrayList columns = new ArrayList();
 
 	public String Name {
@@ -31,6 +32,11 @@ namespace Spring2.DataTierGenerator {
 	public Boolean Clustered {
 	    get { return this.clustered; }
 	    set { this.clustered = value; }
+	}
+
+	public String CheckClause {
+	    get { return this.checkClause; }
+	    set { this.checkClause = value; }
 	}
 
 	public ArrayList Columns {
@@ -63,6 +69,9 @@ namespace Spring2.DataTierGenerator {
 		    if (node.Attributes["foreignentity"] != null) {
 			constraint.ForeignEntity = node.Attributes["foreignentity"].Value;
 		    }
+		    if (node.Attributes["checkclause"] != null) {
+			constraint.CheckClause = node.Attributes["checkclause"].Value;
+		    }
 		    foreach (XmlNode n in node.ChildNodes) {
 			Column column = sqlentity.FindColumnByName(n.Attributes["name"].Value);
 			if (column == null) {
@@ -79,6 +88,36 @@ namespace Spring2.DataTierGenerator {
 		}
 	    }
 	    return constraints;
+	}
+
+	public String ToXml() {
+	    StringBuilder sb = new StringBuilder();
+	    sb.Append("<constraint");
+	    sb.Append(" name=\"").Append(name).Append("\"");
+	    sb.Append(" type=\"").Append(type).Append("\"");
+
+	    if (clustered) {
+		sb.Append(" clustered=\"True\"");
+	    }
+
+	    if (foreignEntity.Length!=0) {
+		sb.Append(" foreignentity=\"").Append(foreignEntity).Append("\"");
+	    }
+	    if (checkClause.Length!=0) {
+		sb.Append(" checkclause=\"").Append(checkClause).Append("\"");
+	    }
+
+	    if (columns.Count>0) {
+		sb.Append(">\n");
+		foreach (Column column in columns) {
+		    sb.Append("        ").Append(column.ToXml()).Append("\n");
+		}
+		sb.Append("      </constraint>");
+	    } else {
+		sb.Append(" />");
+	    }
+
+	    return sb.ToString();
 	}
 
     
