@@ -183,58 +183,63 @@ namespace Spring2.DataTierGenerator.Element {
 	    }
 	    if (elements != null) {
 		foreach (XmlNode node in elements) {
-		    ColumnElement column = new ColumnElement();
-		    column.Name = node.Attributes["name"].Value;
-		    column.Description = node.InnerText.Trim();
-
-		    if (node.Attributes["sqltype"] != null) {
-			column.SqlType.Name = node.Attributes["sqltype"].Value;
-			if (sqltypes.ContainsKey(column.SqlType.Name)) {
-			    column.SqlType = (SqlTypeElement)((SqlTypeElement)sqltypes[column.SqlType.Name]).Clone();
-			} else {
-			    vd(ParserValidationArgs.NewError("SqlType " + column.SqlType.Name + " was not defined [column=" + sqlentity.Name + "." + column.Name + "]"));
+		    if (node.Name.Equals("column")) {
+			ColumnElement column = new ColumnElement();
+			column.Name = GetAttributeValue(node, NAME, String.Empty);
+			if (column.Name.Equals(String.Empty)) {
+			    vd(ParserValidationArgs.NewError("SqlEntity " + sqlentity.Name + " has a column that a name was not specified or was blank"));
 			}
-		    }
+			column.Description = node.InnerText.Trim();
 
-		    if (node.Attributes["required"] != null) {
-			column.Required = Boolean.Parse(node.Attributes["required"].Value);
-		    }
-		    if (node.Attributes["identity"] != null) {
-			column.Identity = Boolean.Parse(node.Attributes["identity"].Value);
-		    }
-		    if (node.Attributes["rowguidcol"] != null) {
-			column.RowGuidCol = Boolean.Parse(node.Attributes["rowguidcol"].Value);
-		    }
-		    if (node.Attributes["viewcolumn"] != null) {
-			column.ViewColumn = Boolean.Parse(node.Attributes["viewcolumn"].Value);
-		    }
+			if (node.Attributes["sqltype"] != null) {
+			    column.SqlType.Name = node.Attributes["sqltype"].Value;
+			    if (sqltypes.ContainsKey(column.SqlType.Name)) {
+				column.SqlType = (SqlTypeElement)((SqlTypeElement)sqltypes[column.SqlType.Name]).Clone();
+			    } else {
+				vd(ParserValidationArgs.NewError("SqlType " + column.SqlType.Name + " was not defined [column=" + sqlentity.Name + "." + column.Name + "]"));
+			    }
+			}
 
-		    if (node.Attributes["increment"] != null) {
-			column.Increment = Int32.Parse(node.Attributes["increment"].Value);
-		    }
-		    if (node.Attributes["seed"] != null) {
-			column.Seed = Int32.Parse(node.Attributes["seed"].Value);
-		    }
-		    if (node.Attributes["default"] != null) {
-			column.Default = node.Attributes["default"].Value;
-		    }
-		    if (node.Attributes["formula"] != null) {
-			column.Formula = node.Attributes["formula"].Value;
-		    }
-		    if (node.Attributes["length"] != null) {
-			column.SqlType.Length = Int32.Parse(node.Attributes["length"].Value);
-		    }
-		    if (node.Attributes["scale"] != null) {
-			column.SqlType.Scale = Int32.Parse(node.Attributes["scale"].Value);
-		    }
-		    if (node.Attributes["precision"] != null) {
-			column.SqlType.Precision = Int32.Parse(node.Attributes["precision"].Value);
-		    }
-		    if (node.Attributes["expression"] != null) {
-			column.Expression = node.Attributes["expression"].Value;
-		    }
+			if (node.Attributes["required"] != null) {
+			    column.Required = Boolean.Parse(node.Attributes["required"].Value);
+			}
+			if (node.Attributes["identity"] != null) {
+			    column.Identity = Boolean.Parse(node.Attributes["identity"].Value);
+			}
+			if (node.Attributes["rowguidcol"] != null) {
+			    column.RowGuidCol = Boolean.Parse(node.Attributes["rowguidcol"].Value);
+			}
+			if (node.Attributes["viewcolumn"] != null) {
+			    column.ViewColumn = Boolean.Parse(node.Attributes["viewcolumn"].Value);
+			}
 
-		    columns.Add(column);
+			if (node.Attributes["increment"] != null) {
+			    column.Increment = Int32.Parse(node.Attributes["increment"].Value);
+			}
+			if (node.Attributes["seed"] != null) {
+			    column.Seed = Int32.Parse(node.Attributes["seed"].Value);
+			}
+			if (node.Attributes["default"] != null) {
+			    column.Default = node.Attributes["default"].Value;
+			}
+			if (node.Attributes["formula"] != null) {
+			    column.Formula = node.Attributes["formula"].Value;
+			}
+			if (node.Attributes["length"] != null) {
+			    column.SqlType.Length = Int32.Parse(node.Attributes["length"].Value);
+			}
+			if (node.Attributes["scale"] != null) {
+			    column.SqlType.Scale = Int32.Parse(node.Attributes["scale"].Value);
+			}
+			if (node.Attributes["precision"] != null) {
+			    column.SqlType.Precision = Int32.Parse(node.Attributes["precision"].Value);
+			}
+			if (node.Attributes["expression"] != null) {
+			    column.Expression = node.Attributes["expression"].Value;
+			}
+
+			columns.Add(column);
+		    }
 		}
 	    }
 	    return columns;
