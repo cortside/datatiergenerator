@@ -40,6 +40,10 @@ namespace Spring2.DataTierGenerator.Parser {
 	    get { return isValid; }
 	}
 
+	public Boolean HasWarnings {
+	    get { return errors.Count>0; }
+	}
+
 	public IList Errors {
 	    get { return errors; }
 	}
@@ -105,9 +109,16 @@ namespace Spring2.DataTierGenerator.Parser {
 	protected void Validate(ParserValidationDelegate vd) {
 	    //TODO: walk through collection to make sure that cross relations are correct.
 
-	    foreach(Entity entity in entities) {
-		if (entity.SqlEntity.Name.Length>0 && !entity.SqlEntity.HasUpdatableColumns()) {
-		    vd(ParserValidationArgs.NewWarning("entity " + entity.Name + " does not have any editable fields and does not have x specified.  No update stored procedures or update DAO methods will be generated."));
+	    foreach (Database database in databases) {
+		foreach(SqlEntity sqlentity in database.SqlEntities) {
+		    if (sqlentity.GetPrimaryKeyColumns().Count==0 && (sqlentity.GenerateDeleteStoredProcScript || sqlentity.GenerateUpdateStoredProcScript || sqlentity.GenerateInsertStoredProcScript)) {
+			vd(ParserValidationArgs.NewWarning("SqlEntity " + sqlentity.Name + " does not have any primary key columns defined."));
+		    }
+
+		    if (!sqlentity.HasUpdatableColumns() && sqlentity.GenerateUpdateStoredProcScript) {
+			vd(ParserValidationArgs.NewWarning("SqlEntity " + sqlentity.Name + " does not have any editable columns and does not have generateupdatestoredprocscript=\"false\" specified."));
+		    }
+
 		}
 	    }
 

@@ -12,6 +12,10 @@ namespace Spring2.DataTierGenerator.Parser {
 	    get;
 	}
 
+	Boolean HasWarnings {
+	    get;
+	}
+
 	Boolean IsValid {
 	    get;
 	}
