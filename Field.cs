@@ -7,24 +7,26 @@ namespace Spring2.DataTierGenerator {
 	/// </summary>
 	public class Field {
 		// Private variable used to hold the property values
-		String columnName;
-		String sqlType;
-		String dataType;
+		String columnName="";
+		String sqlType="";
+		String dataType="";
+        String type="";
+        String concreteType="";
 		String constructor ="";
-		Int32 length;
-		Int32 precision;
-		Int32 scale;
-		Boolean	isRowGuidCol;
-		Boolean	isIdentity;
-		Boolean	isPrimaryKey;
-		Boolean	isForeignKey;
-		Boolean	isViewColumn;
+		Int32 length=0;
+		Int32 precision=0;
+		Int32 scale=0;
+		Boolean	isRowGuidCol=false;
+		Boolean	isIdentity=false;
+		Boolean	isPrimaryKey=false;
+		Boolean	isForeignKey=false;
+		Boolean	isViewColumn=false;
 
-		Boolean isText;
-		Boolean isNumber;
-		Boolean isDate;
-		Boolean isCurrency;
-		Boolean isDecimal;
+		Boolean isText=false;
+		Boolean isNumber=false;
+		Boolean isDate=false;
+		Boolean isCurrency=false;
+		Boolean isDecimal=false;
 	
 		/// <summary>
 		/// Copies one field object to another.
@@ -73,15 +75,24 @@ namespace Spring2.DataTierGenerator {
 			set { this.constructor = value; }
 		}
 
-		public String DataType {
+        public String Type {
+            get { return type; }
+            set { type = value; }
+        }
+        public String ConcreteType {
+            get { return concreteType; }
+            set { concreteType = value; }
+        }
+        
+        public String DataType {
 			get { return dataType; }
 			set { dataType = value; }
 		}
 		public String DataTypeClass {
-			get { return dataType.Substring(dataType.LastIndexOf('.')+1); }
+			get { return dataType.IndexOf('.')<0 ? dataType : dataType.Substring(dataType.LastIndexOf('.')+1); }
 		}
 		public String DataTypeNamespace {
-			get { return dataType.Substring(0,dataType.LastIndexOf('.')); }
+            get { return dataType.IndexOf('.')<0 ? "" : dataType.Substring(0,dataType.LastIndexOf('.')); }
 		}
 
 
@@ -387,7 +398,7 @@ namespace Spring2.DataTierGenerator {
 		/// <param name="this">Object that stores the information for the field the parameter represents.</param>
 		/// <returns>String containing SqlParameter information of the specified field for a method call.</returns>
 		public string CreateSqlParameter(bool blnOutput, bool useDataObject, Boolean useDataTypes) {
-			String[]	strMethodParameter;
+			String[] strMethodParameter;
 			
 			// Get an array of data types and variable names
 			strMethodParameter = this.CreateMethodParameter().Split(new Char[] {' '});
@@ -397,23 +408,23 @@ namespace Spring2.DataTierGenerator {
 			if (blnOutput) {
 				if (useDataObject) {
 					if (useDataTypes) {
-						return "objCommand.Parameters.Add(new SqlParameter(\"@" + this.ColumnName + "\", SqlDbType." + GetSqlDbType(this.SqlType) + ", " + this.Length + ", ParameterDirection.Output, false, " + this.Precision + ", " + this.Scale + ", \"" + this.ColumnName + "\", DataRowVersion.Proposed, data." + this.GetMethodFormat() + ".DBValue));\n";
+						return "cmd.Parameters.Add(new SqlParameter(\"@" + this.ColumnName + "\", SqlDbType." + GetSqlDbType(this.SqlType) + ", " + this.Length + ", ParameterDirection.Output, false, " + this.Precision + ", " + this.Scale + ", \"" + this.ColumnName + "\", DataRowVersion.Proposed, data." + this.GetMethodFormat() + ".DBValue));\n";
 					} else {
-						return "objCommand.Parameters.Add(new SqlParameter(\"@" + this.ColumnName + "\", SqlDbType." + GetSqlDbType(this.SqlType) + ", " + this.Length + ", ParameterDirection.Output, false, " + this.Precision + ", " + this.Scale + ", \"" + this.ColumnName + "\", DataRowVersion.Proposed, data." + this.GetMethodFormat() + "));\n";
+						return "cmd.Parameters.Add(new SqlParameter(\"@" + this.ColumnName + "\", SqlDbType." + GetSqlDbType(this.SqlType) + ", " + this.Length + ", ParameterDirection.Output, false, " + this.Precision + ", " + this.Scale + ", \"" + this.ColumnName + "\", DataRowVersion.Proposed, data." + this.GetMethodFormat() + "));\n";
 					}
 				} else {
-					return "objCommand.Parameters.Add(new SqlParameter(\"@" + this.ColumnName + "\", SqlDbType." + GetSqlDbType(this.SqlType) + ", " + this.Length + ", ParameterDirection.Output, false, " + this.Precision + ", " + this.Scale + ", \"" + this.ColumnName + "\", DataRowVersion.Proposed, " + strMethodParameter[1] + "));\n";
+					return "cmd.Parameters.Add(new SqlParameter(\"@" + this.ColumnName + "\", SqlDbType." + GetSqlDbType(this.SqlType) + ", " + this.Length + ", ParameterDirection.Output, false, " + this.Precision + ", " + this.Scale + ", \"" + this.ColumnName + "\", DataRowVersion.Proposed, " + strMethodParameter[1] + "));\n";
 				}
 			} else {
 				//return "objCommand.Parameters.Add(new SqlParameter(\"@" + this.ColumnName + "\", SqlDbType." + GetSqlDbType(this.SqlType) + ", " + this.Length + ", ParameterDirection.Input, false, " + this.Precision + ", " + this.Scale + ", \"" + this.ColumnName + "\", DataRowVersion.Proposed, " + strMethodParameter[1] + "));\n";
 				if (useDataObject) {
 					if (useDataTypes) {
-						return "objCommand.Parameters.Add(new SqlParameter(\"@" + this.ColumnName + "\", SqlDbType." + GetSqlDbType(this.SqlType) + ", " + this.Length + ", ParameterDirection.Input, false, " + this.Precision + ", " + this.Scale + ", \"" + this.ColumnName + "\", DataRowVersion.Proposed, data." + this.GetMethodFormat() + ".DBValue));\n";
+						return "cmd.Parameters.Add(new SqlParameter(\"@" + this.ColumnName + "\", SqlDbType." + GetSqlDbType(this.SqlType) + ", " + this.Length + ", ParameterDirection.Input, false, " + this.Precision + ", " + this.Scale + ", \"" + this.ColumnName + "\", DataRowVersion.Proposed, data." + this.GetMethodFormat() + ".DBValue));\n";
 					} else { 
-						return "objCommand.Parameters.Add(new SqlParameter(\"@" + this.ColumnName + "\", SqlDbType." + GetSqlDbType(this.SqlType) + ", " + this.Length + ", ParameterDirection.Input, false, " + this.Precision + ", " + this.Scale + ", \"" + this.ColumnName + "\", DataRowVersion.Proposed, data." + this.GetMethodFormat() + "));\n";
+						return "cmd.Parameters.Add(new SqlParameter(\"@" + this.ColumnName + "\", SqlDbType." + GetSqlDbType(this.SqlType) + ", " + this.Length + ", ParameterDirection.Input, false, " + this.Precision + ", " + this.Scale + ", \"" + this.ColumnName + "\", DataRowVersion.Proposed, data." + this.GetMethodFormat() + "));\n";
 					}
 				} else {
-					return "objCommand.Parameters.Add(new SqlParameter(\"@" + this.ColumnName + "\", SqlDbType." + GetSqlDbType(this.SqlType) + ", " + this.Length + ", ParameterDirection.Input, false, " + this.Precision + ", " + this.Scale + ", \"" + this.ColumnName + "\", DataRowVersion.Proposed, " + strMethodParameter[1] + "));\n";
+					return "cmd.Parameters.Add(new SqlParameter(\"@" + this.ColumnName + "\", SqlDbType." + GetSqlDbType(this.SqlType) + ", " + this.Length + ", ParameterDirection.Input, false, " + this.Precision + ", " + this.Scale + ", \"" + this.ColumnName + "\", DataRowVersion.Proposed, " + strMethodParameter[1] + "));\n";
 				}
 			}
 		}
