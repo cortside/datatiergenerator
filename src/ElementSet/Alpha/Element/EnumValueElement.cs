@@ -19,6 +19,13 @@ namespace Spring2.DataTierGenerator.Element {
 	    set { this.code = value; }
 	}
 
+	// Returns name 
+	public String StaticName() {
+
+	    string[] sarr = this.name.Replace(" ", "_").Split("~`!@#$%^&*()-+={};:'\"|\\[].>,</?".ToCharArray());
+	    return String.Concat(sarr).ToUpper();
+	}
+
 	public String ToXml() {
 	    StringBuilder sb = new StringBuilder();
 	    sb.Append("<value name=\"").Append(name).Append("\"");

@@ -16,8 +16,7 @@ namespace $options.GetTypeNameSpace($element.Name) {
 	/// $value.Description
 	/// </summary>
 #end
-#set ($s = $value.Name.Replace(' ','_').ToUpper() )
-	public static readonly $element.Name $s = new ${element.Name}("$value.Code", "$value.Name");
+	public static readonly $element.Name $value.StaticName() = new ${element.Name}("$value.Code", "$value.Name");
 #end
 
 	public static $element.Name GetInstance(Object value) {
