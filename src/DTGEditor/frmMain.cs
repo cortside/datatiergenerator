@@ -274,7 +274,7 @@ namespace Spring2.DataTierGenerator.DTGEditor {
 		Object o = System.Activator.CreateInstance(clazz);
 		if (o is IParser) {
 		    IParser parser = (IParser) o;
-		    parser.Parse(doc);
+		    parser.Parse(filename);
 
 		    if (parser.IsValid) {
 			IGenerator generator = null;

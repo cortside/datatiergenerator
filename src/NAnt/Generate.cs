@@ -61,7 +61,7 @@ namespace Spring2.DataTierGenerator.NAnt {
 		Object o = System.Activator.CreateInstance(clazz);
 		if (o is IParser) {
 		    IParser parser = (IParser) o;
-		    parser.Parse(doc);
+		    parser.Parse(configFile.FullName);
 
 		    if (parser.IsValid) {
 			IGenerator generator = null;
