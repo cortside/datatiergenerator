@@ -40,10 +40,10 @@ namespace Spring2.DataTierGenerator.DTGEditor {
 	private System.Windows.Forms.RadioButton documentTypeSchema;
 	private System.Windows.Forms.RadioButton documentTypeDTD;
 	private System.Windows.Forms.RadioButton documentTypeNone;
-        private System.Windows.Forms.TreeView treeView1;
-        private System.Windows.Forms.Splitter splitter1;
-        private System.Windows.Forms.ListView listView1;
-        private System.Windows.Forms.Button generate;
+	private System.Windows.Forms.TreeView treeView1;
+	private System.Windows.Forms.Splitter splitter1;
+	private System.Windows.Forms.ListView listView1;
+	private System.Windows.Forms.Button generate;
 	private System.Windows.Forms.TextBox file;
 
 	public frmMain() {
@@ -359,7 +359,10 @@ namespace Spring2.DataTierGenerator.DTGEditor {
 	    enums = p.Enums;
 	    node = new TreeNode("Enums");
 	    foreach(EnumType e in enums) {
-		node.Nodes.Add(e.Name);
+		TreeNode n = new TreeNode(e.Name);
+		TreeNode v = new TreeNode("values");
+		n.Nodes.Add(v);
+		node.Nodes.Add(n);
 	    }
 	    tree.Nodes.Add(node);
 
@@ -416,7 +419,7 @@ namespace Spring2.DataTierGenerator.DTGEditor {
 
 	}
 
-        private void treeView1_AfterSelect(object sender, System.Windows.Forms.TreeViewEventArgs e) {
+	private void treeView1_AfterSelect(object sender, System.Windows.Forms.TreeViewEventArgs e) {
 	    TreeNode top = treeView1.SelectedNode;
 	    Int32 level = 0;
 
@@ -425,95 +428,20 @@ namespace Spring2.DataTierGenerator.DTGEditor {
 		top = top.Parent;
 	    }
 
-	    String s = treeView1.SelectedNode.Text;
+	    String nodeText = treeView1.SelectedNode.Text;
+	    String parentNodeText = String.Empty;
+	    if (treeView1.SelectedNode.Parent != null) {
+		parentNodeText = treeView1.SelectedNode.Parent.Text;
+	    }
 
 	    if (top.Text.Equals("Databases")) {
-		if (level==0 || level==1 || level==2) {
-		    listView1.Items.Clear();
-		    listView1.Columns.Clear();
-		    listView1.Columns.Add("Name", -1, HorizontalAlignment.Left);
-		    listView1.Columns.Add("Key", -1, HorizontalAlignment.Left);
-		    listView1.Columns.Add("Directory", -1, HorizontalAlignment.Left);
-		    listView1.Columns.Add("Generate Insert", -1, HorizontalAlignment.Left);
-		    listView1.Columns.Add("Generate Update", -1, HorizontalAlignment.Left);
-		    listView1.Columns.Add("Generate Delete", -1, HorizontalAlignment.Left);
-		    listView1.Columns.Add("Generate Select", -1, HorizontalAlignment.Left);
-		}
-		if (level==0) {
-		    foreach (Database database in databases) {
-			ListViewItem lvi = new ListViewItem(database.Name);
-			lvi.SubItems.Add(database.Key);
-			lvi.SubItems.Add(database.SqlScriptDirectory);
-			lvi.SubItems.Add(database.GenerateInsertStoredProcScript.ToString());
-			lvi.SubItems.Add(database.GenerateUpdateStoredProcScript.ToString());
-			lvi.SubItems.Add(database.GenerateDeleteStoredProcScript.ToString());
-			lvi.SubItems.Add(database.GenerateSelectStoredProcScript.ToString());
-			listView1.Items.Add(lvi);
-		    }
-		}
-		if (level==1) {
-		    Database database = Database.FindByName((ArrayList)databases,s);
-		    ListViewItem lvi = new ListViewItem(database.Name);
-		    lvi.SubItems.Add(database.Key);
-		    lvi.SubItems.Add(database.SqlScriptDirectory);
-		    lvi.SubItems.Add(database.GenerateInsertStoredProcScript.ToString());
-		    lvi.SubItems.Add(database.GenerateUpdateStoredProcScript.ToString());
-		    lvi.SubItems.Add(database.GenerateDeleteStoredProcScript.ToString());
-		    lvi.SubItems.Add(database.GenerateSelectStoredProcScript.ToString());
-		    listView1.Items.Add(lvi);
-		}
-		if (level==2) {
-		    Database database = Database.FindByName((ArrayList)databases,treeView1.SelectedNode.Parent.Text);
-		    SqlEntity sqlentity = database.FindSqlEntityByName(s);
-		    ListViewItem lvi = new ListViewItem(sqlentity.Name);
-		    lvi.SubItems.Add(sqlentity.Key);
-		    lvi.SubItems.Add(sqlentity.SqlScriptDirectory);
-		    lvi.SubItems.Add(sqlentity.GenerateInsertStoredProcScript.ToString());
-		    lvi.SubItems.Add(sqlentity.GenerateUpdateStoredProcScript.ToString());
-		    lvi.SubItems.Add(sqlentity.GenerateDeleteStoredProcScript.ToString());
-		    lvi.SubItems.Add(sqlentity.GenerateSelectStoredProcScript.ToString());
-		    listView1.Items.Add(lvi);
-		}
-
+		ShowDatabases(level, nodeText, parentNodeText);
+	    } else if (top.Text.Equals("Entities")) {
+		ShowEntities(level, nodeText, parentNodeText);
+	    } else if (top.Text.Equals("Enums")) {
+		ShowEnums(level, nodeText, parentNodeText);
 	    }
 
-	    if (top.Text.Equals("Entities")) {
-		if (level==1) {
-		    listView1.Items.Clear();
-		    Entity entity = Entity.FindEntityByName((ArrayList)entities, s);
-		    listView1.Columns.Clear();
-		    listView1.Columns.Add("Name", -1, HorizontalAlignment.Left);
-		    listView1.Columns.Add("Type", -1, HorizontalAlignment.Left);
-		    listView1.Columns.Add("Concrete Type", -1, HorizontalAlignment.Left);
-		    listView1.Columns.Add("SqlEntity Column", -1, HorizontalAlignment.Left);
-		    listView1.Columns.Add("Convert From SqlType Format", -1, HorizontalAlignment.Left);
-		    listView1.Columns.Add("Access Modifier", -1, HorizontalAlignment.Left);
-		    listView1.Columns.Add("Description", -1, HorizontalAlignment.Left);
-		    foreach(Field field in entity.Fields) {
-			ListViewItem lvi = new ListViewItem(field.Name);
-			lvi.SubItems.Add(field.Type.Name);
-			lvi.SubItems.Add(field.Type.ConcreteType);
-			lvi.SubItems.Add(field.Column.Name);
-			lvi.SubItems.Add(field.Type.ConvertFromSqlTypeFormat);
-			lvi.SubItems.Add(field.AccessModifier);
-			lvi.SubItems.Add(field.Description);
-			listView1.Items.Add(lvi);
-		    }
-		    ResizeListViewColumns(listView1, -1);
-		}
-		if (level==3) {
-		    listView1.Items.Clear();
-		    Entity entity = Entity.FindEntityByName((ArrayList)entities, treeView1.SelectedNode.Parent.Parent.Text);
-		    listView1.Columns.Clear();
-		    listView1.Columns.Add("Finder Property Name", -1, HorizontalAlignment.Left);
-		    Finder finder = entity.FindFinderByName(s);
-
-		    foreach (Field field in finder.Fields) {
-			listView1.Items.Add(field.Name);
-		    }
-		    ResizeListViewColumns(listView1, -2);
-		}
-	    }
 	    ResizeListViewColumns(listView1, -2);
 	}
 
@@ -523,11 +451,129 @@ namespace Spring2.DataTierGenerator.DTGEditor {
 	    }
 	}
 
-        private void generate_Click(object sender, System.EventArgs e) {
+	private void generate_Click(object sender, System.EventArgs e) {
 	    Generate(file.Text);
 	    MessageBox.Show("Data tier generated successfully.");
 	}
 
+	private void ShowDatabases(Int32 level, String nodeText, String parentNodeText) {
+	    if (level==0 || level==1 || level==2) {
+		listView1.Items.Clear();
+		listView1.Columns.Clear();
+		listView1.Columns.Add("Name", -1, HorizontalAlignment.Left);
+		listView1.Columns.Add("Key", -1, HorizontalAlignment.Left);
+		listView1.Columns.Add("Directory", -1, HorizontalAlignment.Left);
+		listView1.Columns.Add("Gen Insert", -1, HorizontalAlignment.Left);
+		listView1.Columns.Add("Gen Update", -1, HorizontalAlignment.Left);
+		listView1.Columns.Add("Gen Delete", -1, HorizontalAlignment.Left);
+		listView1.Columns.Add("Gen Select", -1, HorizontalAlignment.Left);
+		listView1.Columns.Add("Timeout", -1, HorizontalAlignment.Right);
+
+		IList list;
+		if (level==0) {
+		    list = databases;
+		} else if (level==1) {
+		    list = new ArrayList();
+		    list.Add(Database.FindByName((ArrayList)databases, nodeText));
+		} else {
+		    list = new ArrayList();
+		    Database database = Database.FindByName((ArrayList)databases,treeView1.SelectedNode.Parent.Text);
+		    SqlEntity sqlentity = database.FindSqlEntityByName(nodeText);
+		    list.Add(sqlentity);
+		}
+
+		foreach (SqlEntityData database in list) {
+		    //SqlEntityData database = (SqlEntityData)o;
+		    ListViewItem lvi = new ListViewItem(database.Name);
+		    lvi.SubItems.Add(database.Key);
+		    lvi.SubItems.Add(database.SqlScriptDirectory);
+		    lvi.SubItems.Add(database.GenerateInsertStoredProcScript.ToString());
+		    lvi.SubItems.Add(database.GenerateUpdateStoredProcScript.ToString());
+		    lvi.SubItems.Add(database.GenerateDeleteStoredProcScript.ToString());
+		    lvi.SubItems.Add(database.GenerateSelectStoredProcScript.ToString());
+		    lvi.SubItems.Add(database.CommandTimeout.ToString());
+		    listView1.Items.Add(lvi);
+		}
+	    }
+	}
+
+	private void ShowEntities(Int32 level, String nodeText, String parentNodeText) {
+	    if (level==1) {
+		listView1.Items.Clear();
+		Entity entity = Entity.FindEntityByName((ArrayList)entities, nodeText);
+		listView1.Columns.Clear();
+		listView1.Columns.Add("Name", -1, HorizontalAlignment.Left);
+		listView1.Columns.Add("Type", -1, HorizontalAlignment.Left);
+		listView1.Columns.Add("Concrete Type", -1, HorizontalAlignment.Left);
+		listView1.Columns.Add("SqlEntity Column", -1, HorizontalAlignment.Left);
+		listView1.Columns.Add("Convert From SqlType Format", -1, HorizontalAlignment.Left);
+		listView1.Columns.Add("Access Modifier", -1, HorizontalAlignment.Left);
+		listView1.Columns.Add("Description", -1, HorizontalAlignment.Left);
+		foreach(Field field in entity.Fields) {
+		    ListViewItem lvi = new ListViewItem(field.Name);
+		    lvi.SubItems.Add(field.Type.Name);
+		    lvi.SubItems.Add(field.Type.ConcreteType);
+		    lvi.SubItems.Add(field.Column.Name);
+		    lvi.SubItems.Add(field.Type.ConvertFromSqlTypeFormat);
+		    lvi.SubItems.Add(field.AccessModifier);
+		    lvi.SubItems.Add(field.Description);
+		    listView1.Items.Add(lvi);
+		}
+	    }
+	    if (level==3) {
+		listView1.Items.Clear();
+		Entity entity = Entity.FindEntityByName((ArrayList)entities, treeView1.SelectedNode.Parent.Parent.Text);
+		listView1.Columns.Clear();
+		listView1.Columns.Add("Finder Property Name", -1, HorizontalAlignment.Left);
+		Finder finder = entity.FindFinderByName(nodeText);
+
+		foreach (Field field in finder.Fields) {
+		    listView1.Items.Add(field.Name);
+		}
+	    }
+	}
+
+	private void ShowEnums(Int32 level, String nodeText, String parentNodeText) {
+	    listView1.Items.Clear();
+	    listView1.Columns.Clear();
+
+	    if (level==0 || level==1) {
+		listView1.Columns.Add("Name", -1, HorizontalAlignment.Left);
+		listView1.Columns.Add("Description", -1, HorizontalAlignment.Left);
+		listView1.Columns.Add("IntegerBased", -1, HorizontalAlignment.Left);
+
+		IList list;
+		if (level==0) {
+		    list = enums;
+		} else {
+		    list = new ArrayList();
+		    list.Add(EnumType.FindByName((ArrayList)enums, nodeText));
+		}
+		foreach(EnumType e in list) {
+		    ListViewItem lvi = new ListViewItem(e.Name);
+		    lvi.SubItems.Add(e.Description);
+		    lvi.SubItems.Add(e.IntegerBased.ToString());
+		    listView1.Items.Add(lvi);
+		}
+	    }
+
+	    if (level==2 && nodeText.Equals("values")) {
+		listView1.Columns.Add("Name", -1, HorizontalAlignment.Left);
+		listView1.Columns.Add("Code", -1, HorizontalAlignment.Left);
+		listView1.Columns.Add("Description", -1, HorizontalAlignment.Left);
+
+		EnumType e = EnumType.FindByName((ArrayList)enums, parentNodeText);
+		foreach(EnumValue v in e.Values) {
+		    ListViewItem lvi = new ListViewItem(v.Name);
+		    lvi.SubItems.Add(v.Code);
+		    lvi.SubItems.Add(v.Description);
+		    listView1.Items.Add(lvi);
+		}
+
+	    }
+	}
+
+	
     }
 
 }
