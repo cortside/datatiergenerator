@@ -7,26 +7,23 @@ using System.Collections;
 using System.Text;
 using System.Xml;
 
-namespace Spring2.DataTierGenerator {
+namespace Spring2.DataTierGenerator.Core {
 
     public class Generator : GeneratorBase {
 	private ArrayList entities = new ArrayList();
-	private ArrayList sqlentities = new ArrayList();
 	private ArrayList enumtypes = new ArrayList();
 	private ArrayList collections = new ArrayList();
+	private ArrayList databases = new ArrayList();
 	private Hashtable types = new Hashtable();
 	private Hashtable sqltypes = new Hashtable();
 	private XmlDocument doc = null;
 	private SqlConnection connection = null;
 
-	//private ProgressForm form = new ProgressForm();
-
-
+	public IList Databases {
+	    get { return (ArrayList)databases.Clone(); }
+	}
 	public IList Entities {
 	    get { return (ArrayList)entities.Clone(); }
-	}
-	public IList SqlEntities {
-	    get { return (ArrayList)sqlentities.Clone(); }
 	}
 	public IList Enums {
 	    get { return (ArrayList)enumtypes.Clone(); }
@@ -41,9 +38,7 @@ namespace Spring2.DataTierGenerator {
 	    get { return sqltypes.Values; }
 	}
 
-
 	public Generator(String filename) {
-	    //this.form = form;
 	    if (filename.Length > 0) {
 		doc = new XmlDocument();
 		doc.Load(filename);
@@ -62,13 +57,13 @@ namespace Spring2.DataTierGenerator {
 		types=new Hashtable();
 	    }
 
-	    if (options.AutoDiscoverEntities || options.AutoDiscoverProperties) {
-		connection = new SqlConnection(options.ConnectionString);
-		connection.Open();
-	    }
+//	    if (options.AutoDiscoverEntities || options.AutoDiscoverProperties) {
+//		connection = new SqlConnection(options.ConnectionString);
+//		connection.Open();
+//	    }
 
-	    sqlentities = GetSqlEntities(doc, connection);
-	    entities = GetEntities(doc, connection, sqlentities);
+	    databases = GetDatabases(doc);
+	    entities = GetEntities(doc, connection, Database.GetAllSqlEntities(databases));
 
 	    enumtypes = EnumType.ParseFromXml(options,doc,sqltypes,types);
 	    collections = Collection.ParseFromXml(options,doc,sqltypes,types);
@@ -81,14 +76,16 @@ namespace Spring2.DataTierGenerator {
 	    Console.Out.WriteLine(String.Empty.PadLeft(20,'='));
 
 	    // Process each table
-	    foreach (SqlEntity sqlentity in sqlentities) {
-		SQLGenerator sqlgen = new SQLGenerator(options, sqlentity);
-		if (options.GenerateSqlTableScripts) sqlgen.CreateTable();
-		if (options.GenerateSqlViewScripts) sqlgen.CreateView();
-		sqlgen.CreateInsertStoredProcedure();
-		if (sqlentity.HasUpdatableColumns()) sqlgen.CreateUpdateStoredProcedure();
-		sqlgen.CreateDeleteStoredProcedures();
-//		if (options.GenerateSelectStoredProcs) sqlgen.CreateSelectStoredProcedures();
+	    foreach (Database database in databases) {
+		foreach (SqlEntity sqlentity in database.SqlEntities) {
+		    SQLGenerator sqlgen = new SQLGenerator(options, sqlentity);
+		    if (sqlentity.GenerateSqlTableScripts) sqlgen.CreateTable();
+		    if (sqlentity.GenerateSqlViewScripts) sqlgen.CreateView();
+		    if (sqlentity.GenerateInsertStoredProcScript) sqlgen.CreateInsertStoredProcedure();
+		    if (sqlentity.GenerateUpdateStoredProcScript && sqlentity.HasUpdatableColumns()) sqlgen.CreateUpdateStoredProcedure();
+		    if (sqlentity.GenerateDeleteStoredProcScript) sqlgen.CreateDeleteStoredProcedures();
+		    //if (sqlentity.GenerateSelectStoredProcScript) sqlgen.CreateSelectStoredProcedures();
+		}
 	    }
 
 	    foreach (Entity entity in entities) {
@@ -116,8 +113,8 @@ namespace Spring2.DataTierGenerator {
 	}
 
 	public void GenerateXML() {
-	    SqlConnection connection = new SqlConnection(options.ConnectionString);
-	    connection.Open();
+//	    SqlConnection connection = new SqlConnection(options.ConnectionString);
+//	    connection.Open();
 
 	    //form.Clear();
 	    //form.Show();
@@ -169,59 +166,68 @@ namespace Spring2.DataTierGenerator {
 	    if (doc != null) {
 		entities.AddRange(Entity.ParseFromXml(options, doc, sqltypes, types, sqlentities));
 
-		if (options.AutoDiscoverProperties) {
-		    foreach (Entity entity in entities) {
-			entity.Fields = GetFields(entity, connection, doc, sqltypes, types);
-		    }
-		}
+//		if (options.AutoDiscoverProperties) {
+//		    foreach (Entity entity in entities) {
+//			entity.Fields = GetFields(entity, connection, doc, sqltypes, types);
+//		    }
+//		}
 	    }
 
-	    if (options.AutoDiscoverEntities) {
-		// Get a list of the entities in the database
-		DataTable objDataTable = new DataTable();
-		SqlDataAdapter objDataAdapter = new SqlDataAdapter("SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_CATALOG = '" + connection.Database + "'", connection);
-		objDataAdapter.Fill(objDataTable);
-		foreach (DataRow row in objDataTable.Rows) {
-		    if (row["TABLE_TYPE"].ToString() == "BASE TABLE" && row["TABLE_NAME"].ToString() != "dtproperties") {
-			if (Entity.FindEntityBySqlEntity(entities, row["TABLE_NAME"].ToString()) == null) {
-			    Entity entity = new Entity();
-			    entity.Name = row["TABLE_NAME"].ToString();
-			    entity.SqlEntity.Name = row["TABLE_NAME"].ToString();
-			    if (options.UseViews) {
-				entity.SqlEntity.View = "vw" + entity.SqlEntity.Name;
-			    }
-			    entity.Fields = GetFields(entity, connection, doc, sqltypes, types);
-			    entities.Add(entity);
-			}
-		    }
-		}	    
-	    }
+//	    if (options.AutoDiscoverEntities) {
+//		// Get a list of the entities in the database
+//		DataTable objDataTable = new DataTable();
+//		SqlDataAdapter objDataAdapter = new SqlDataAdapter("SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_CATALOG = '" + connection.Database + "'", connection);
+//		objDataAdapter.Fill(objDataTable);
+//		foreach (DataRow row in objDataTable.Rows) {
+//		    if (row["TABLE_TYPE"].ToString() == "BASE TABLE" && row["TABLE_NAME"].ToString() != "dtproperties") {
+//			if (Entity.FindEntityBySqlEntity(entities, row["TABLE_NAME"].ToString()) == null) {
+//			    Entity entity = new Entity();
+//			    entity.Name = row["TABLE_NAME"].ToString();
+//			    entity.SqlEntity.Name = row["TABLE_NAME"].ToString();
+//			    if (options.UseViews) {
+//				entity.SqlEntity.View = "vw" + entity.SqlEntity.Name;
+//			    }
+//			    entity.Fields = GetFields(entity, connection, doc, sqltypes, types);
+//			    entities.Add(entity);
+//			}
+//		    }
+//		}	    
+//	    }
 
 	    return entities;
 	}
 
 
-	private ArrayList GetSqlEntities(XmlDocument doc, SqlConnection connection) {
-	    ArrayList entities = new ArrayList();
+	private ArrayList GetDatabases(XmlDocument doc) {
+	    ArrayList list = new ArrayList();
 
 	    if (doc != null) {
-		entities.AddRange(SqlEntity.ParseFromXml(options, doc, sqltypes, types));
-
-		if (options.AutoDiscoverProperties) {
-		    foreach (Entity entity in entities) {
-			entity.Fields = GetFields(entity, connection, doc, sqltypes, types);
-		    }
-		}
+		list.AddRange(Database.ParseFromXml(options, doc, sqltypes, types));
 	    }
-	    return entities;
+	    return list;
 	}
+
+//	private ArrayList GetSqlEntities(XmlDocument doc, SqlConnection connection) {
+//	    ArrayList entities = new ArrayList();
+//
+//	    if (doc != null) {
+//		entities.AddRange(SqlEntity.ParseFromXml(options, doc, sqltypes, types));
+//
+////		if (options.AutoDiscoverProperties) {
+////		    foreach (Entity entity in entities) {
+////			entity.Fields = GetFields(entity, connection, doc, sqltypes, types);
+////		    }
+////		}
+//	    }
+//	    return entities;
+//	}
 
 
 	private ArrayList GetFields(Entity entity, SqlConnection connection, XmlDocument doc, Hashtable sqltypes, Hashtable types) {
 	    ArrayList fields = entity.Fields;
 
 	    Boolean foundNewProperties=false;
-	    if (options.AutoDiscoverProperties) {
+	    if (entity.SqlEntity.AutoDiscoverProperties) {
 		DataTable columns = GetTableColumns(entity.SqlEntity, connection);
 		foreach (DataRow objDataRow in columns.Rows) {
 		    if (objDataRow["COLUMN_COMPUTED"].ToString() == "0") {
@@ -306,7 +312,7 @@ namespace Spring2.DataTierGenerator {
 	    sql = sql + "  	WHERE INFORMATION_SCHEMA.COLUMNS.TABLE_NAME = '" + sqlentity.Name + "' \n";
 
 	    // if basing data objects on views, get additional fields found in the corresponding view (by naming convention of vw + tablename) -- should be configuration option
-	    if (options.UseViews && sqlentity.View.Length>1) {
+	    if (sqlentity.UseViews && sqlentity.View.Length>1) {
 		sql = sql + "union \n";
 		sql = sql + "	SELECT	INFORMATION_SCHEMA.COLUMNS.COLUMN_NAME, \n";
 		sql = sql + " 		INFORMATION_SCHEMA.COLUMNS.DATA_TYPE, \n";
