@@ -18,6 +18,11 @@ Todo:
     - use of log4net for logging instead of caputuring System.Out to a file stream.
     - if 2 properties on an entity have the same name, no errors or warnings are generated
     - ability to generate stored procs based on finder methods
+    - DAO classes should be internal
+    - look for generated code that rethrows execptions incorrectly
+    - support for nolock in view generation
+    - support for joining view in view generation
+    - ability to create check constraint based on enum
 
 Completed:
     - preservation of custom regions (pull code from regions and insert into generated source before overwritting)
@@ -43,3 +48,4 @@ Completed:
     - ident level in generating code
     - define default types and sqltypes so that they don't have to be defined in every config file if they are default.
     - DataObject, DAO, stored proc, view name formats specifiable in config.xml (via VelocityTask)
+    - COMMAND_TIMEOUT in read-only DAO classes does not need to be output
