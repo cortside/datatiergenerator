@@ -14,6 +14,7 @@ using Spring2.DataTierGenerator.Util;
 namespace Spring2.DataTierGenerator.Generator.Task {
 
     internal class VelocityTask : GeneratorSkeleton, IGenerator {
+	private IList elements;
 	private Object element;
 	private Element.Task task;
 	private String name;
@@ -21,10 +22,11 @@ namespace Spring2.DataTierGenerator.Generator.Task {
 	// NOTES:  instead of a single object, a velocity context could be passed or a hashtable.
 	// Might want to support an ITask interface that has an execute and uses a writer
 
-	public VelocityTask(Configuration options, Object element, Element.Task task, String name) : base(options) {
+	public VelocityTask(Configuration options, IList elements, Object element, Element.Task task, String name) : base(options) {
 	    this.element = element;
 	    this.task = task;
 	    this.name = name;
+	    this.elements = elements;
 	}
 
 	public override void Generate() {
@@ -34,6 +36,7 @@ namespace Spring2.DataTierGenerator.Generator.Task {
 	    vc.put("dtgversion", this.GetType().Assembly.FullName);
 	    vc.put("options", options);
 	    vc.put("element", element);
+	    vc.put("elements", elements);
 
 	    Template template = Velocity.GetTemplate("Template\\dtg_csharp_library.vm");
 	    template = Velocity.GetTemplate(task.Template);

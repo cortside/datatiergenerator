@@ -35,10 +35,11 @@ namespace Spring2.DataTierGenerator.Generator {
 		    foreach (Database database in parser.Databases) {
 			foreach (SqlEntity sqlentity in database.SqlEntities) {
 			    foreach(Element.Task task in tasks) {
-				IGenerator g = new VelocityTask(options, sqlentity, task, sqlentity.Name);
+				IGenerator g = new VelocityTask(options, database.SqlEntities, sqlentity, task, sqlentity.Name);
 				g.Generate();
 			    }
 
+			    // foreach database
 			    // foreach index
 			    // foreach constraint
 			}
@@ -49,7 +50,7 @@ namespace Spring2.DataTierGenerator.Generator {
 		if (tasks.Count > 0) {
 		    foreach (Entity entity in parser.Entities) {
 			foreach(Element.Task task in tasks) {
-			    IGenerator g = new VelocityTask(options, entity, task, entity.Name);
+			    IGenerator g = new VelocityTask(options, parser.Entities, entity, task, entity.Name);
 			    g.Generate();
 			}
 
@@ -61,7 +62,7 @@ namespace Spring2.DataTierGenerator.Generator {
 		if (tasks.Count > 0) {
 		    foreach (EnumType type in parser.Enums) {
 			foreach(Element.Task task in tasks) {
-			    IGenerator g = new VelocityTask(options, type, task, type.Name);
+			    IGenerator g = new VelocityTask(options, parser.Enums, type, task, type.Name);
 			    g.Generate();
 			}
 		    }
@@ -71,7 +72,7 @@ namespace Spring2.DataTierGenerator.Generator {
 		if (tasks.Count > 0) {
 		    foreach (Collection collection in parser.Collections) {
 			foreach(Element.Task task in tasks) {
-			    IGenerator g = new VelocityTask(options, collection, task, collection.Name);
+			    IGenerator g = new VelocityTask(options, parser.Collections, collection, task, collection.Name);
 			    g.Generate();
 			}
 		    }
