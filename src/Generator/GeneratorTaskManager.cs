@@ -77,6 +77,19 @@ namespace Spring2.DataTierGenerator.Generator {
 			}
 		    }
 		}
+
+		tasks = parser.Generator.FindTasksByElement("sqlentities");
+		foreach(Element.Task task in tasks) {
+		    IGenerator g = new VelocityTask(options, Database.GetAllSqlEntities(parser.Databases), null, task, "sqlentities");
+		    g.Generate();
+		}
+
+		tasks = parser.Generator.FindTasksByElement("entities");
+		foreach(Element.Task task in tasks) {
+		    IGenerator g = new VelocityTask(options, parser.Entities, null, task, "entities");
+		    g.Generate();
+		}
+
 	    } else {
 		Console.Out.WriteLine("Parser was not in a valid state and reported the following errors:\n" + parser.Errors);
 	    }
