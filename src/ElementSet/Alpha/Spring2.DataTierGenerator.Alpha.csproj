@@ -353,6 +353,10 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Template\BusinessEntity.vm"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "Template\collection.vm"
                     BuildAction = "EmbeddedResource"
                 />
@@ -379,6 +383,10 @@
                 <File
                     RelPath = "Template\dao-test.vm"
                     SubType = "Code"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Template\datadictionary.vm"
                     BuildAction = "EmbeddedResource"
                 />
                 <File
@@ -451,6 +459,26 @@
                 />
                 <File
                     RelPath = "Template\SUReportExtractionDAO.vm"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Template\PassThroughInterface\BusinessEntity.vm"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Template\PassThroughInterface\DAO.vm"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Template\PassThroughInterface\dataobject.vm"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Template\PassThroughInterface\dataobject-collection.vm"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Template\PassThroughInterface\interface.vm"
                     BuildAction = "EmbeddedResource"
                 />
                 <File
