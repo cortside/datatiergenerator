@@ -3,23 +3,27 @@ using System.Data;
 using System.IO;
 using System.Collections;
 using System.Text;
-//using System.Windows.Forms;
 
-namespace Spring2.DataTierGenerator.Core {
+using Spring2.DataTierGenerator;
+using Spring2.DataTierGenerator.Element;
+using Spring2.DataTierGenerator.Util;
 
-    public abstract class GeneratorBase {
+namespace Spring2.DataTierGenerator.Generator {
+
+    public abstract class GeneratorSkeleton : IGenerator {
 
 	private readonly String REGION = "#region";
 	private readonly String END_REGION = "#endregion";
 
 	protected Configuration options;
 
-	public GeneratorBase() {
-	}
+	public GeneratorSkeleton() {}
 
-	public GeneratorBase(Configuration options) {
+	public GeneratorSkeleton(Configuration options) {
 	    this.options = options;
 	}
+
+	public abstract void Generate();
 
 	/// <summary>
 	/// Helper method to write generated source to file.  Directory will be created if it does not already exist.
@@ -99,7 +103,7 @@ namespace Spring2.DataTierGenerator.Core {
 	    }
 	}
 
-	public void GetUsingNamespaces(TextWriter writer, ArrayList fields, Boolean isDaoClass) {
+	protected void GetUsingNamespaces(TextWriter writer, ArrayList fields, Boolean isDaoClass) {
 
 	    ArrayList namespaces = new ArrayList();
 	    namespaces.Add("System");
@@ -157,7 +161,7 @@ namespace Spring2.DataTierGenerator.Core {
 	    }
 	}
 
-	public virtual void WriteRegion(StreamWriter writer, String text, String regionsString) {
+	protected virtual void WriteRegion(StreamWriter writer, String text, String regionsString) {
 	    Int32 index = text.Substring(0, text.LastIndexOf('}')).LastIndexOf('}');
 	    writer.Write(text.Substring(0, index));
 	    writer.Write(regionsString);
@@ -166,11 +170,11 @@ namespace Spring2.DataTierGenerator.Core {
 	}
     
 
-	public virtual String RegionTag {
+	protected virtual String RegionTag {
 	    get { return REGION; }
 	}
 
-	public virtual String EndRegionTag {
+	protected virtual String EndRegionTag {
 	    get { return END_REGION; }
 	}
     }
