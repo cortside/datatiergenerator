@@ -28,11 +28,17 @@ Generator Todo:
 
     - ability to describe business logic methods
     - ability to describe and generate facade classes and methods
+    - api docs
+    - ability to specify a filter on a task so that only a subset of a collection is processes (currently this is done in the template and the output of the template is nothing, then no file is written)
+    - ability to define begin and end region markers on a task
+    - to support generating business logic entities:
+	- add attribute to entity (
 
 Template Todo:
     - data objects could/should support ICloneable with MemberwiseClone().
     - DAO classes should be internal
     - look for generated code that rethrows execptions incorrectly (throw ex; vs throw;)
+    - end user documentation based on information descibed in config files
 
 
 Completed:
