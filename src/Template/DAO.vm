@@ -135,7 +135,7 @@ namespace $options.GetDAONameSpace($element.Name) {
 #end
 	}
 #end
-#if($element.SqlEntity.HasUpdatableColumns())
+#if($element.SqlEntity.HasUpdatableColumns() && $element.SqlEntity.GenerateUpdateStoredProcScript))
 
 	/// <summary>
 	/// Updates a record in the $element.SqlEntity.Name table.
