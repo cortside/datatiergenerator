@@ -26,7 +26,7 @@ namespace Spring2.DataTierGenerator.Element {
 	private String nullInstanceFormat = String.Empty;
 
 	public String ConcreteType {
-	    get { return this.concreteType; }
+	    get { return this.concreteType.Equals(String.Empty) ? this.Name : this.concreteType; }
 	    set { this.concreteType = value; }
 	}
     
@@ -58,6 +58,10 @@ namespace Spring2.DataTierGenerator.Element {
 	public String NullInstanceFormat {
 	    get { return this.nullInstanceFormat; }
 	    set { this.nullInstanceFormat = value; }
+	}
+
+	public Boolean IsConcreteType {
+	    get { return ConcreteType.Equals(Name); }
 	}
 
 	/// <summary>
