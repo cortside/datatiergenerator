@@ -46,6 +46,7 @@ namespace Spring2.DataTierGenerator.Generator {
 
 		writer.WriteLine(2, "private static readonly String VIEW = \"" + entity.SqlEntity.View + "\";");
 		writer.WriteLine(2, "private static readonly String CONNECTION_STRING_KEY = \"" + entity.SqlEntity.Key + "\";");
+		writer.WriteLine(2, "private static readonly Int32 COMMAND_TIMEOUT = " + entity.SqlEntity.CommandTimeout.ToString() + ";");
 		writer.WriteLine();
 
 		CreateDAOListMethods(writer);
@@ -597,7 +598,7 @@ namespace Spring2.DataTierGenerator.Generator {
 
 	private String GetCreateCommandSection(IndentableStringWriter writer, String procName) {
 	    writer.WriteLine(3, "// Create and execute the command");
-	    writer.WriteLine(3, "SqlCommand cmd = GetSqlCommand(CONNECTION_STRING_KEY, \"" + procName + "\", CommandType.StoredProcedure);");
+	    writer.WriteLine(3, "SqlCommand cmd = GetSqlCommand(CONNECTION_STRING_KEY, \"" + procName + "\", CommandType.StoredProcedure, COMMAND_TIMEOUT);");
 	    writer.WriteLine();
 	    return writer.ToString();
 	}
