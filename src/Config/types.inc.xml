@@ -23,11 +23,11 @@ conversion format replacement parameters:
 
 	<!-- Spring2.Core.Types -->
 	<type name="BooleanType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="BooleanType.GetInstance({2})" newinstanceformat="BooleanType.DEFAULT" nullinstanceformat="BooleanType.UNSET" />
-	<type name="StringType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="StringType.NewInstance({2})" newinstanceformat="StringType.DEFAULT" nullinstanceformat="StringType.UNSET" />
-	<type name="IdType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="IdType.NewInstance({2})" newinstanceformat="IdType.DEFAULT" nullinstanceformat="IdType.UNSET" />
-	<type name="DateType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="DateType.NewInstance({2})" newinstanceformat="DateType.DEFAULT" nullinstanceformat="DateType.UNSET" />
-	<type name="NumberType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="NumberType.NewInstance({2})" newinstanceformat="NumberType.DEFAULT" nullinstanceformat="NumberType.UNSET" />
-	<type name="DecimalType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="DecimalType.NewInstance({2})" newinstanceformat="DecimalType.DEFAULT" nullinstanceformat="DecimalType.UNSET" />
-	<type name="CurrencyType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="CurrencyType.NewInstance({2})" newinstanceformat="CurrencyType.DEFAULT" nullinstanceformat="CurrencyType.UNSET" />
-	<type name="QuantityType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="QuantityType.NewInstance({2})" newinstanceformat="QuantityType.DEFAULT" nullinstanceformat="QuantityType.UNSET" />
+	<type name="StringType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="StringType.Parse({2})" newinstanceformat="StringType.DEFAULT" nullinstanceformat="StringType.UNSET" />
+	<type name="IdType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="new IdType({2})" newinstanceformat="IdType.DEFAULT" nullinstanceformat="IdType.UNSET" />
+	<type name="DateType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="new DateType({2})" newinstanceformat="DateType.DEFAULT" nullinstanceformat="DateType.UNSET" />
+	<type name="NumberType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="new NumberType({2})" newinstanceformat="NumberType.DEFAULT" nullinstanceformat="NumberType.UNSET" />
+	<type name="DecimalType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="new DecimalType({2})" newinstanceformat="DecimalType.DEFAULT" nullinstanceformat="DecimalType.UNSET" />
+	<type name="CurrencyType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="new CurrencyType({2})" newinstanceformat="CurrencyType.DEFAULT" nullinstanceformat="CurrencyType.UNSET" />
+	<type name="QuantityType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="new QuantityType({2})" newinstanceformat="QuantityType.DEFAULT" nullinstanceformat="QuantityType.UNSET" />
 </types>
