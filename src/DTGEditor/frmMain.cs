@@ -43,7 +43,6 @@ namespace Spring2.DataTierGenerator {
         private System.Windows.Forms.TreeView treeView1;
         private System.Windows.Forms.Splitter splitter1;
         private System.Windows.Forms.ListView listView1;
-        private System.Windows.Forms.ColumnHeader columnHeader1;
 	private System.Windows.Forms.TextBox file;
 
 	public frmMain() {
@@ -88,7 +87,6 @@ namespace Spring2.DataTierGenerator {
 	    this.treeView1 = new System.Windows.Forms.TreeView();
 	    this.splitter1 = new System.Windows.Forms.Splitter();
 	    this.listView1 = new System.Windows.Forms.ListView();
-	    this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
 	    this.SuspendLayout();
 	    // 
 	    // label1
@@ -105,6 +103,7 @@ namespace Spring2.DataTierGenerator {
 		| System.Windows.Forms.AnchorStyles.Right);
 	    this.file.Location = new System.Drawing.Point(8, 32);
 	    this.file.Name = "file";
+	    this.file.ReadOnly = true;
 	    this.file.Size = new System.Drawing.Size(712, 20);
 	    this.file.TabIndex = 1;
 	    this.file.Text = "";
@@ -208,8 +207,6 @@ namespace Spring2.DataTierGenerator {
 	    this.listView1.Anchor = (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
 		| System.Windows.Forms.AnchorStyles.Left) 
 		| System.Windows.Forms.AnchorStyles.Right);
-	    this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-											this.columnHeader1});
 	    this.listView1.FullRowSelect = true;
 	    this.listView1.GridLines = true;
 	    this.listView1.Location = new System.Drawing.Point(176, 56);
@@ -257,14 +254,22 @@ namespace Spring2.DataTierGenerator {
 	}
 
 	private void validate_Click(object sender, System.EventArgs e) {
-	    String errors = ValidateSchema();
-	    Boolean isValid = errors.Equals(String.Empty);
-
-	    result.Text = isValid.ToString();
-	    resultErrors.Text = errors;
-
-	    LoadTree(treeView1, file.Text);
+	    LoadDoc();
 	} 
+
+	private void LoadDoc() {
+	    try {
+		String errors = ValidateSchema();
+		Boolean isValid = errors.Equals(String.Empty);
+
+		result.Text = isValid ? "" : "Document is invalid - fix errors";
+		resultErrors.Text = errors;
+
+		LoadTree(treeView1, file.Text);
+	    } catch (Exception ex) {
+		MessageBox.Show("An error occcurred while loading.\n\n" + ex.ToString());
+	    }
+	}
 
 	private String ValidateSchema() {
 	    error = "";
@@ -272,20 +277,7 @@ namespace Spring2.DataTierGenerator {
 	    try {
 		XmlTextReader xml = new XmlTextReader(file.Text);
 		XmlValidatingReader xsd = new XmlValidatingReader(xml);
-
-		//use schemas or DTDs
-		if (documentTypeSchema.Checked == true) {
-		    //schemas - YAAAAAAA
-		    xsd.ValidationType = ValidationType.Schema;
-		}
-		else if (documentTypeNone.Checked == true) {
-		    //so you just want to see if your XML is well formed?
-		    xsd.ValidationType = ValidationType.None;
-		}
-		else {
-		    //why do you want to learn this? its old, no one uses it and they are laughing behind your back. Shame on you!
-		    xsd.ValidationType = ValidationType.DTD;
-		}
+		xsd.ValidationType = ValidationType.Schema;
 
 		//and validation errors events go to...
 		xsd.ValidationEventHandler += new ValidationEventHandler(MyValidationEventHandler);
@@ -309,7 +301,7 @@ namespace Spring2.DataTierGenerator {
 	//handle our XML validation errors
 	public static void MyValidationEventHandler(object sender, ValidationEventArgs args) {
 	    isValid = false;
-	    error += args.Message + "\n\n";
+	    error += args.Severity.ToString() + " :: " + args.Message + "\n\n";
 	}
 
 	//start file browser 
@@ -324,14 +316,7 @@ namespace Spring2.DataTierGenerator {
 	private void BrowserSelection(object sender, System.ComponentModel.CancelEventArgs e) {			
 	    file.Text = openFileDialog.FileName;
 	    openFileDialog.Dispose();
-
-	    String errors = ValidateSchema();
-	    Boolean isValid = errors.Equals(String.Empty);
-
-	    result.Text = isValid.ToString();
-	    resultErrors.Text = errors;
-
-	    LoadTree(treeView1, file.Text);
+	    LoadDoc();
 	}
 
     
@@ -365,8 +350,6 @@ namespace Spring2.DataTierGenerator {
 	    collections = g.Collections;
 	    node = new TreeNode("Collections");
 	    foreach(Collection c in collections) {
-		TreeNode n = new TreeNode();
-		n.CreateObjRef(typeof(SqlType));
 		node.Nodes.Add(c.Name);
 	    }
 	    tree.Nodes.Add(node);
