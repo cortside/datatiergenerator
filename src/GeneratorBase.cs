@@ -12,14 +12,12 @@ namespace Spring2.DataTierGenerator {
 	private readonly String END_REGION = "#endregion";
 
 	protected Configuration options;
-	protected Entity entity;
 
 	public GeneratorBase() {
 	}
 
-	public GeneratorBase(Configuration options, Entity entity) {
+	public GeneratorBase(Configuration options) {
 	    this.options = options;
-	    this.entity = entity;
 	}
 
 	/// <summary>
@@ -78,12 +76,14 @@ namespace Spring2.DataTierGenerator {
 		// Handle the case where the generated text has more lines than the
 		// existing file but up to that point they were identical.  Don't
 		// know how that could happen, but this should handle it.
-		if (fileLine != null) {
+		if (textLine != null) {
 		    changed = true;
 		}
 
 		fileReader.Close();
 		textReader.Close();
+	    } else {
+		changed = true;
 	    }
 
 	    // Only write to the file if it has changed or does not exist.
@@ -106,7 +106,7 @@ namespace Spring2.DataTierGenerator {
 	    }
 	}
 
-	public String GetUsingNamespaces(Boolean isDaoClass) {
+	public String GetUsingNamespaces(ArrayList fields, Boolean isDaoClass) {
 
 	    ArrayList namespaces = new ArrayList();
 	    namespaces.Add("System");
@@ -120,7 +120,7 @@ namespace Spring2.DataTierGenerator {
 		namespaces.Add(options.GetDONameSpace(null));
 	    }
 
-	    foreach (Field field in entity.Fields) {
+	    foreach (Field field in fields) {
 		if (field.Name.IndexOf('.') < 0) {
 		    if (!field.Type.Package.Equals(String.Empty) && !namespaces.Contains(field.Type.Package)) {
 			namespaces.Add(field.Type.Package);
