@@ -86,6 +86,15 @@ namespace Spring2.DataTierGenerator {
 			case "autodiscoverattributes":
 			    this.autoDiscoverAttributes = Boolean.Parse(node.Attributes["value"].Value);
 			    break;
+			case "dataobjectbaseclass":
+			    this.dataObjectBaseClass= node.Attributes["value"].Value;
+			    break;
+			case "daobaseclass":
+			    this.daoBaseClass= node.Attributes["value"].Value;
+			    break;
+			case "enumbaseclass":
+			    this.enumBaseClass= node.Attributes["value"].Value;
+			    break;
 			default:
 			    Console.Out.WriteLine("Unrecognized configuration option: " + node.Attributes["name"].Value + " = " + node.Attributes["value"].Value);
 			    break;

@@ -19,7 +19,11 @@ namespace Spring2.DataTierGenerator {
 
 	    // class definition
 	    sb.Append("namespace " + options.GetDONameSpace(entity.Name) + " {\n");
-	    sb.Append("    public class " + options.GetDOClassName(entity.Name) + " : Spring2.Core.DataObject.DataObject {\n\n");
+	    sb.Append("    public class " + options.GetDOClassName(entity.Name));
+	    if (options.DataObjectBaseClass.Length>0) {
+		sb.Append(" : ").Append(options.DataObjectBaseClass);
+	    }
+	    sb.Append(" {\n\n");
 
 	    // declaration of private member variables
 	    foreach (Field field in entity.Fields) {

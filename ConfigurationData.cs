@@ -29,6 +29,9 @@ namespace Spring2.DataTierGenerator {
 	protected Boolean autoDiscoverEntities = true;
 	protected Boolean autoDiscoverProperties = true;
 	protected Boolean autoDiscoverAttributes = true;
+	protected String dataObjectBaseClass = "Spring2.Core.DataObject.DataObject";
+	protected String daoBaseClass = "Spring2.Core.DAO.EntityDAO";
+	protected String enumBaseClass = "Spring2.Core.Types.EnumDataType";
 
 	/// <summary>		
 	/// Name of database server.		
@@ -162,6 +165,21 @@ namespace Spring2.DataTierGenerator {
 	public Boolean AutoDiscoverAttributes {
 	    get { return this.autoDiscoverAttributes; }
 	    set { this.autoDiscoverAttributes = value; }
+	}
+
+	public String DataObjectBaseClass {
+	    get { return this.dataObjectBaseClass; }
+	    set { this.dataObjectBaseClass = value; }
+	}
+
+	public String DaoBaseClass {
+	    get { return this.daoBaseClass; }
+	    set { this.daoBaseClass = value; }
+	}
+
+	public String EnumBaseClass {
+	    get { return this.enumBaseClass; }
+	    set { this.enumBaseClass = value; }
 	}
 
     }

@@ -21,7 +21,7 @@ namespace Spring2.DataTierGenerator {
 	    sb.Append("\n");
 	    sb.Append("namespace ").Append(options.GetTypeNameSpace(type.Name)).Append(" {\n");
 	    sb.Append("\n");
-	    sb.Append("\tpublic class ").Append(type.Name).Append(" : Spring2.Core.Types.EnumDataType	{\n");
+	    sb.Append("\tpublic class ").Append(type.Name).Append(" : ").Append(options.EnumBaseClass).Append(" {\n");
 	    sb.Append("\t\n");
 	    sb.Append("\t\tprivate static readonly IList OPTIONS = new ArrayList();\n");
 	    sb.Append("\t\t\n");
