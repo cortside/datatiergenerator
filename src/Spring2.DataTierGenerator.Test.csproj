@@ -92,6 +92,11 @@
                     Project = "{2844DE77-37C4-4DD5-A1B2-F217D40EEEFE}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
+                <Reference
+                    Name = "Spring2.DataTierGenerator.Tool"
+                    Project = "{0AFCF054-A3E0-4502-B41C-347AD69DBFA5}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+                />
             </References>
         </Build>
         <Files>
@@ -247,6 +252,7 @@
                     RelPath = "Test\Sanity\DataObject\WaitListData.cs.cmp"
                     BuildAction = "None"
                 />
+                <Folder RelPath = "Test\Sanity\Sql\data\" />
                 <File
                     RelPath = "Test\Sanity\Sql\proc\spGolfer_Delete.proc.sql.cmp"
                     BuildAction = "None"
