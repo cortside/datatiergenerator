@@ -1,6 +1,11 @@
 Todo:
     - preservation of custom regions (pull code from regions and insert into generated source before overwritting)
     - generation of sql table scripts
+    - when comparing entity properties to database schema, match columns on lower-cased names
+    - data object Equals method
+    - fix indentation in DAO classes
+    - add GetList method with just sort
+    - some delete methods still have connection as parameter (when multiple PK columns)
 	
 	- sqltypes image and binary do not generate correct code for pulling data from a datareader (populating a dataobject).
 	- data objects could/should support ICloneable with MemberwiseClone().
@@ -9,7 +14,7 @@ Todo:
 	- better validation on load
     - define default types and sqltypes so that they don't have to be defined in every config file if they are default.
     - DataObject, DAO, stored proc, view name formats specifiable in config.xml
-
+	- ident level in generating code
 
 Completed:
 	- when parsing type - add any entities as data objects
