@@ -377,6 +377,11 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "Template\dao-test.vm"
+                    SubType = "Code"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "Template\dataobject.vm"
                     BuildAction = "EmbeddedResource"
                 />
@@ -434,6 +439,10 @@
                 />
                 <File
                     RelPath = "Template\sql_view.vm"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Template\sql-dependencies.vm"
                     BuildAction = "EmbeddedResource"
                 />
                 <File
