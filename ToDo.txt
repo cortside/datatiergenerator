@@ -27,5 +27,6 @@ Completed:
     - add GetList method with just sort
     - some delete methods still have connection as parameter (when multiple PK columns)
     - support for defined finder methods
+    - sort namespaces
 
 	

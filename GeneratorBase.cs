@@ -131,8 +131,39 @@ namespace Spring2.DataTierGenerator {
 	    Array names = namespaces.ToArray(typeof(String));
 	    Array.Sort(names);
 	    StringBuilder sb = new StringBuilder();
+
+	    // append system
+	    Boolean added = false;
 	    foreach (String s in names) {
-		sb.Append("using ").Append(s).Append(";\n");
+		if (s.StartsWith("System")) {
+		    added = true;
+		    sb.Append("using ").Append(s).Append(";\n");
+		}
+	    }
+	    if (added) {
+		sb.Append("\n");
+	    }
+
+	    added = false;
+	    foreach (String s in names) {
+		if (s.StartsWith("Spring2")) {
+		    added = true;
+		    sb.Append("using ").Append(s).Append(";\n");
+		}
+	    }
+	    if (added) {
+		sb.Append("\n");
+	    }
+
+	    added = false;
+	    foreach (String s in names) {
+		if (!s.StartsWith("Spring2") && !s.StartsWith("System")) {
+		    added = true;
+		    sb.Append("using ").Append(s).Append(";\n");
+		}
+	    }
+	    if (added) {
+		sb.Append("\n");
 	    }
 
 	    return sb.ToString();
