@@ -9,14 +9,14 @@
             <Settings
                 ApplicationIcon = ""
                 AssemblyKeyContainerName = ""
-                AssemblyName = "Core"
+                AssemblyName = "Spring2.DataTierGenerator.Core"
                 AssemblyOriginatorKeyFile = ""
                 DefaultClientScript = "JScript"
                 DefaultHTMLPageLayout = "Grid"
                 DefaultTargetSchema = "IE50"
                 DelaySign = "false"
                 OutputType = "Library"
-                RootNamespace = "Core"
+                RootNamespace = "Spring2.DataTierGenerator.Core"
                 StartupObject = ""
             >
                 <Config
@@ -122,6 +122,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Database.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "DOGenerator.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -178,6 +183,11 @@
                 />
                 <File
                     RelPath = "SqlEntity.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "SqlEntityData.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
