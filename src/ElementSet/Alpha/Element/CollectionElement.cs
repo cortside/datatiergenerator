@@ -13,17 +13,17 @@ namespace Spring2.DataTierGenerator.Element {
 	private static readonly String TYPE = "type";
 	private static readonly String TEMPLATE = "template";
 
-	protected String type = String.Empty;
+	protected TypeElement type = new TypeElement();
 	protected ICollectable collectedClass = new EntityElement();
 
- 	protected EntityElement entity = new EntityElement();
+	protected EntityElement entity = new EntityElement();
 
 	public EntityElement Entity {
 	    get { return this.entity; }
 	    set { this.entity = value; }
 	}
 
-	public String Type {
+	public TypeElement Type {
 	    get { return this.type; }
 	    set { this.type = value; }
 	}
@@ -47,7 +47,7 @@ namespace Spring2.DataTierGenerator.Element {
 			CollectionElement collectionElement = new CollectionElement();
 
 			collectionElement.Name = GetAttributeValue(collectionNode, NAME, collectionElement.Name);
-			collectionElement.Type = GetAttributeValue(collectionNode, TYPE, collectionElement.Type);
+			collectionElement.Type.Name = GetAttributeValue(collectionNode, TYPE, collectionElement.Type.Name);
 			collectionElement.Template = GetAttributeValue(collectionNode, TEMPLATE, collectionElement.Template);
 		
 			collectionElements.Add(collectionElement);
@@ -68,27 +68,23 @@ namespace Spring2.DataTierGenerator.Element {
 	/// <param name="autoGenerateClasses">List of classes that should have collections generated if generateall is specified.</param>
 	/// <returns>List of collection elements created</returns>
 	public static ArrayList ParseFromXml(Configuration options, XmlDocument doc, Hashtable sqltypes, Hashtable types, ParserValidationDelegate vd, 
-					    IList collectableClasses, IList autoGenerateClasses, ArrayList entities) 
-	{
+	    IList collectableClasses, IList autoGenerateClasses, ArrayList entities) {
 
 	    // see if we want to generate collections for all classes.
 	    XmlNodeList collectionElement = doc.DocumentElement.GetElementsByTagName ("collections");
 	    XmlNode collectionNode = collectionElement[0];
 	    Boolean generateAll = false;
-	    if (collectionNode.Attributes["generateall"] != null)
-	    {
+	    if (collectionNode.Attributes["generateall"] != null) {
 		generateAll = Boolean.Parse (collectionNode.Attributes["generateall"].Value.ToString ());
 	    }
 
 	    // Add all collectable classses if chosen.
 	    ArrayList list = new ArrayList();
-	    if (generateAll)
-	    {
-		foreach (ICollectable collectableClass in autoGenerateClasses)
-		{
+	    if (generateAll) {
+		foreach (ICollectable collectableClass in autoGenerateClasses) {
 		    CollectionElement collection  = new CollectionElement ();
 		    collection.Name = collectableClass.Name + "List";
-		    collection.Type = collectableClass.Name + "Data";
+		    collection.Type.Name = collectableClass.Name + "Data";
 		    collection.Description = "Auto-generated collection for " + collectableClass.Name + "Data type.";
 		    collection.CollectedClass = collectableClass;
 		    list.Add (collection);
@@ -98,26 +94,21 @@ namespace Spring2.DataTierGenerator.Element {
 	    // Now add explicitly mentioned elements.  Note we add explicit elements
 	    // as well as we might have lists of enums here.
 	    XmlNodeList elements = doc.DocumentElement.GetElementsByTagName("collection");
-	    foreach (XmlNode node in elements) 
-	    {
-		if (node.NodeType == XmlNodeType.Comment)
-		{
+	    foreach (XmlNode node in elements) {
+		if (node.NodeType == XmlNodeType.Comment) {
 		    continue;
 		}
 		CollectionElement collection = new CollectionElement();
 		collection.Name = node.Attributes["name"].Value;
-		collection.Type = node.Attributes["type"].Value;
-		if (node.Attributes["template"] != null) 
-		{
+		collection.Type.Name = node.Attributes["type"].Value;
+		if (node.Attributes["template"] != null) {
 		    collection.Template = node.Attributes["template"].Value;
 		}
 	
 		// TODO: this is a hack - need to specify entity as an attribute so that "Data" does not have to be assumed
 		// and so that an error can be reported if it does not exist
-		foreach(ICollectable collectableClass in collectableClasses) 
-		{
-		    if (collection.Type.Equals(collectableClass.Name + "Data")) 
-		    {
+		foreach(ICollectable collectableClass in collectableClasses) {
+		    if (collection.Type.Equals(collectableClass.Name + "Data")) {
 			collection.CollectedClass = collectableClass;
 		    }
 		}
