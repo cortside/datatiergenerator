@@ -29,6 +29,11 @@ namespace Spring2.DataTierGenerator.Generator {
 	    Console.Out.WriteLine("Parse/Load entities and properties");
 	    Console.Out.WriteLine(String.Empty.PadLeft(20,'='));
 
+	    if (parser.Generator.Tasks.Count > 0) {
+		Console.Out.WriteLine("ERROR: this generator does not support tasks.");
+		return;
+	    }
+
 	    if (parser.IsValid) {
 		// Process each table
 		foreach (Database database in parser.Databases) {
