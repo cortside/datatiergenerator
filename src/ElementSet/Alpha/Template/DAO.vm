@@ -5,8 +5,12 @@
 ##      DaoGenerator class.
 ##
 #if(!$element.SqlEntity.Name.Equals(""))
-#nameSpaces($options $element true)
+#set ($namespaces = "#nameSpaces($options $element true)")
+$namespaces
+#if ($namespaces.IndexOf("${options.RootNameSpace}.Types") < 0)
+using ${options.RootNameSpace}.Types;
 
+#end
 namespace $options.GetDAONameSpace($element.Name) {
     public class $options.GetDAOClassName($element.Name) : $options.DaoBaseClass {
 
@@ -19,12 +23,12 @@ namespace $options.GetDAONameSpace($element.Name) {
 #if($element.SqlEntity.GenerateInsertStoredProcScript || $element.SqlEntity.GenerateUpdateStoredProcScript || $element.SqlEntity.GenerateDeleteStoredProcScript)
 	private static readonly Int32 COMMAND_TIMEOUT = $element.SqlEntity.CommandTimeout;
 #end
-#set ($listtype="void")
-#if($options.GenerateAllCollections)
-#set ($listtype="${element.Name}List")
-#else
-#set ($listtype="IList")
-#end
+###set ($listtype = "void")
+###if($options.GenerateAllCollections)
+#set ($listtype = "${element.Name}List")
+###else
+###set ($listtype="IList")
+###end
 
 	/// <summary>
 	/// Hash table mapping entity property names to sql code.
@@ -180,7 +184,7 @@ namespace $options.GetDAONameSpace($element.Name) {
 	public static $listtype GetList(IWhere whereClause, IOrderBy orderByClause, Int32 maxRows) { 
 	    SqlDataReader dataReader = GetListReader(CONNECTION_STRING_KEY, VIEW, whereClause, orderByClause, maxRows); 
 
-	    ArrayList list = new ArrayList(); 
+	    $listtype list = new #if($listtype=="IList")ArrayList#else$listtype#end();
 	    while (dataReader.Read()) { 
 		list.Add(GetDataObjectFromReader(dataReader)); 
 	    }
