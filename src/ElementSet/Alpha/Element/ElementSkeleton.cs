@@ -4,11 +4,12 @@ using System.Text;
 using System.Xml;
 
 using Spring2.DataTierGenerator;
+using Spring2.DataTierGenerator.Generator;
 using Spring2.DataTierGenerator.Parser;
 
 namespace Spring2.DataTierGenerator.Element {
 
-    public class ElementSkeleton : Spring2.Core.DataObject.DataObject, ICloneable {
+    public class ElementSkeleton : Spring2.Core.DataObject.DataObject, ICloneable, IElement {
 
 	protected static readonly String NAME = "name";
 
