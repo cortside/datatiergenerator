@@ -1,3 +1,9 @@
+##
+##      dao.vm - default dao template for C#
+##
+##      NOTE: this template may have some screwy things in it to EXACTLY match the ouput of the 
+##      DaoGenerator class.
+##
 #if(!$element.SqlEntity.Name.Equals(""))
 #macro(parameterComments $includeIf $fieldList $comment)
 #foreach($field in $fieldList)
@@ -191,69 +197,36 @@ namespace $options.GetDAONameSpace($element.Name) {
 	    cmd.ExecuteNonQuery();
 	    cmd.Connection.Close();
 	}
-
 #end
 #if($element.SqlEntity.GenerateDeleteStoredProcScript)
-#foreach($field in $element.Fields)
-#if($field.Column.Identity || ($element.SqlEntity.GenerateProcsForForeignKey && ($field.Column.RowGuidCol || $element.SqlEntity.IsPrimaryKeyColumn($field.Column.Name))))
+
 	/// <summary>
-	/// Deletes a record from the $element.SqlEntity.Name table by $field.Name.
+	/// Deletes a record from the $element.SqlEntity.Name table by#if($element.GetPrimaryKeyFields().Count == 1 && $element.GetPrimaryKeyFields().get_Item(0).Column.Identity) $element.GetPrimaryKeyFields().get_Item(0).Name#else a composite primary key#end.
 	/// </summary>
 	/// <param name=""></param>
-#set($t="Delete")
-#set($methodName="$t$field.Name.Substring(0,1).ToUpper()$field.Name.Substring(1)")
-#set($methodName=$methodName.Replace(" ", "_"))
-#if($element.SqlEntity.GenerateOnlyPrimaryDeleteStoredProc)
-#set($methodName="Delete")
-#end
-	public static void $methodName($field.CreateMethodParameter()) {
+	public static void Delete(#foreach( $field in $element.GetPrimaryKeyFields() )#if($velocityCount>1), #end$field.CreateMethodParameter()#end) {
 	    // Create and execute the command
-	    SqlCommand cmd = GetSqlCommand(CONNECTION_STRING_KEY, "$options.GetProcName($element.SqlEntity.Name, $methodName)", CommandType.StoredProcedure, COMMAND_TIMEOUT);
+	    SqlCommand cmd = GetSqlCommand(CONNECTION_STRING_KEY, "$options.GetProcName($element.SqlEntity.Name, "Delete")", CommandType.StoredProcedure, COMMAND_TIMEOUT);
 
 	    // Create and append the parameters
-	    $field.CreateSqlParameter(false, false)
+#foreach( $field in $element.GetPrimaryKeyFields() )
+	    $field.CreateSqlParameter(false, false)#end
+#if($element.GetPrimaryKeyFields().Count == 1 && $element.GetPrimaryKeyFields().get_Item(0).Column.Identity)
+
+#end
 	    // Execute the query and return the result
 	    cmd.ExecuteNonQuery();
 	    cmd.Connection.Close();
 	}
-#end
-#end
-#if(!$element.SqlEntity.GenerateOnlyPrimaryDeleteStoredProc)
-
-	/// <summary>
-	/// Deletes a record from the $element.SqlEntity.Name table by a composite primary key.
-	/// </summary>
-	/// <param name=""></param>
-#set($methodName="DeleteBy")
-#set($separator="")
-#foreach($field in $element.Fields)
-#if($element.SqlEntity.IsPrimaryKeyColumn($field.Column.Name))
-#set($t=$field.Name.Replace(" ","_"))
-#set($methodName="$methodName$separator$t")
-#set($separator="_")
-#end
-#end
-	public static void $methodName(#parameterList($element.SqlEntity.IsPrimaryKeyColumn($field.Column.Name) $element.Fields)) {
-	    // Create and execute the command
-	    SqlCommand cmd = GetSqlCommand(CONNECTION_STRING_KEY, "$options.GetProcName($element.SqlEntity.Name, $methodName)", CommandType.StoredProcedure, COMMAND_TIMEOUT);
-
-	    // Create and append the parameters
-#foreach($field in $element.Fields)
-#if($element.SqlEntity.IsPrimaryKeyColumn($field.Column.Name))	    $field.CreateSqlParameter(false, false)#end
-#end
-
-	    // Execute the query and return the result
-	    cmd.ExecuteNonQuery();
-	    cmd.Connection.Close();
-	}
-#end
 #end
 #if($element.SqlEntity.GenerateSelectStoredProcScript)
 ##Not implemented
 #end
 
-#foreach($finder in $element.Finders)
+#if($element.Finders.Count > 0)
 
+#end
+#foreach($finder in $element.Finders)
 	/// <summary>
 #if($finder.Unique)
 	/// Returns an object which matches the values for the fields specified.
@@ -265,7 +238,7 @@ namespace $options.GetDAONameSpace($element.Name) {
 #if($finder.Unique)
 	/// <returns>The object found.</returns>
 #else
-   /// <returns>The list of $options.GetDAOClassName($element.Name) objects found.</returns>
+	/// <returns>The list of $options.GetDAOClassName($element.Name) objects found.</returns>
 #end
 	/// <exception cref="Spring2.Core.DAO.FinderException">Thrown when no rows are found.</exception>
 #if($finder.Unique)
@@ -290,6 +263,7 @@ namespace $options.GetDAONameSpace($element.Name) {
 		dataReader.Close();
 		return data;
 #else
+
 		return GetList(filter, sort);
 #end
 	}
