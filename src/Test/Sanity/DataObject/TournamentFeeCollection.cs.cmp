@@ -1,10 +1,12 @@
 using System;
 
 namespace Golf.Tournament.DataObject {
+
     /// <summary>
     /// TournamentFeeData generic collection
     /// </summary>
     public class TournamentFeeCollection : System.Collections.CollectionBase {
+
 	public static readonly TournamentFeeCollection UNSET = new TournamentFeeCollection(true);
 	public static readonly TournamentFeeCollection DEFAULT = new TournamentFeeCollection(true);
 
@@ -22,9 +24,25 @@ namespace Golf.Tournament.DataObject {
 	    get { return (TournamentFeeData) List[index]; }
 	}
 
-	public void Add(TournamentFeeData a) {
+	public void Add(TournamentFeeData value) {
 	    if (!immutable) {
-		List.Add(a);
+		List.Add(value);
+	    } else {
+		throw new System.Data.ReadOnlyException();
+	    }
+	}
+
+	public Boolean Contains(TournamentFeeData value) {
+	    return List.Contains(value);
+	}
+	
+	public Int32 IndexOf(TournamentFeeData value) {
+	    return List.IndexOf(value);
+	}
+	
+	public void Insert(Int32 index, TournamentFeeData value) {
+	    if (!immutable) {
+	    	List.Insert(index, value);
 	    } else {
 		throw new System.Data.ReadOnlyException();
 	    }
@@ -42,6 +60,14 @@ namespace Golf.Tournament.DataObject {
 	    }
 	}
 
+	public void Remove(TournamentFeeData value) {
+	    if (!immutable) {
+		List.Remove(value); 
+	    } else {
+		throw new System.Data.ReadOnlyException();
+	    }
+	}
+
 	public void AddRange(System.Collections.IList list) {
 	    foreach(Object o in list) {
 		if (o is TournamentFeeData) {
@@ -49,6 +75,20 @@ namespace Golf.Tournament.DataObject {
 		} else {
 		    throw new System.InvalidCastException("object in list could not be cast to TournamentFeeData");
 		}
+	    }
+	}
+	
+	public Boolean IsDefault {
+	    get { return Object.ReferenceEquals(this, DEFAULT); }
+	}
+
+	public Boolean IsUnset {
+	    get { return Object.ReferenceEquals(this, UNSET); }
+	}
+	
+	public Boolean IsValid {
+	    get {
+		return !(IsDefault || IsUnset);
 	    }
 	}
 

@@ -1,4 +1,8 @@
 if not exists (select * from dbo.sysobjects where id = object_id(N'[Tournament]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
+GO
+
 CREATE TABLE Tournament (
 	TournamentId int IDENTITY(1,1) NOT NULL,
 	Name varchar(50) NOT NULL,
@@ -166,26 +170,28 @@ if not exists(select * from syscolumns where id=object_id('Tournament') and name
 GO
 
 if not exists (select * from dbo.sysobjects where id = object_id(N'PK_Tournament') and OBJECTPROPERTY(id, N'IsPrimaryKey') = 1)
-ALTER TABLE Tournament WITH NOCHECK ADD 
-	CONSTRAINT PK_Tournament PRIMARY KEY NONCLUSTERED 
+ALTER TABLE Tournament WITH NOCHECK ADD
+	CONSTRAINT PK_Tournament PRIMARY KEY NONCLUSTERED
 	(
 		TournamentId
 	)
 GO
 
 if not exists (select * from dbo.sysobjects where id = object_id(N'FK_Tournament_Organizer') and OBJECTPROPERTY(id, N'IsForeignKey') = 1)
-ALTER TABLE Tournament ADD 
-	CONSTRAINT FK_Tournament_Organizer FOREIGN KEY 
+ALTER TABLE Tournament ADD
+	CONSTRAINT FK_Tournament_Organizer FOREIGN KEY
 	(
 		OrganizerId
-	) REFERENCES Organizer (
+	)
+	REFERENCES Organizer
+	(
 		OrganizerId
 	)
 GO
 
 if not exists (select * from dbo.sysobjects where id = object_id(N'UN_Tournament_Host') and OBJECTPROPERTY(id, N'IsUniqueCnst') = 1)
-ALTER TABLE Tournament ADD 
-	CONSTRAINT UN_Tournament_Host UNIQUE 
+ALTER TABLE Tournament ADD
+	CONSTRAINT UN_Tournament_Host UNIQUE
 	(
 		Host
 	)

@@ -1,10 +1,12 @@
 using System;
 
 namespace Golf.Tournament.DataObject {
+
     /// <summary>
     /// ParticipantData generic collection
     /// </summary>
     public class ParticipantCollection : System.Collections.CollectionBase {
+
 	public static readonly ParticipantCollection UNSET = new ParticipantCollection(true);
 	public static readonly ParticipantCollection DEFAULT = new ParticipantCollection(true);
 
@@ -22,9 +24,25 @@ namespace Golf.Tournament.DataObject {
 	    get { return (ParticipantData) List[index]; }
 	}
 
-	public void Add(ParticipantData a) {
+	public void Add(ParticipantData value) {
 	    if (!immutable) {
-		List.Add(a);
+		List.Add(value);
+	    } else {
+		throw new System.Data.ReadOnlyException();
+	    }
+	}
+
+	public Boolean Contains(ParticipantData value) {
+	    return List.Contains(value);
+	}
+	
+	public Int32 IndexOf(ParticipantData value) {
+	    return List.IndexOf(value);
+	}
+	
+	public void Insert(Int32 index, ParticipantData value) {
+	    if (!immutable) {
+	    	List.Insert(index, value);
 	    } else {
 		throw new System.Data.ReadOnlyException();
 	    }
@@ -42,6 +60,14 @@ namespace Golf.Tournament.DataObject {
 	    }
 	}
 
+	public void Remove(ParticipantData value) {
+	    if (!immutable) {
+		List.Remove(value); 
+	    } else {
+		throw new System.Data.ReadOnlyException();
+	    }
+	}
+
 	public void AddRange(System.Collections.IList list) {
 	    foreach(Object o in list) {
 		if (o is ParticipantData) {
@@ -49,6 +75,20 @@ namespace Golf.Tournament.DataObject {
 		} else {
 		    throw new System.InvalidCastException("object in list could not be cast to ParticipantData");
 		}
+	    }
+	}
+	
+	public Boolean IsDefault {
+	    get { return Object.ReferenceEquals(this, DEFAULT); }
+	}
+
+	public Boolean IsUnset {
+	    get { return Object.ReferenceEquals(this, UNSET); }
+	}
+	
+	public Boolean IsValid {
+	    get {
+		return !(IsDefault || IsUnset);
 	    }
 	}
 

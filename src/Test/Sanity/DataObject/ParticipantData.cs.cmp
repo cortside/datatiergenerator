@@ -117,12 +117,12 @@ namespace Golf.Tournament.DataObject {
 	public static readonly String PAYMENT_TOURNAMENT_ORGANIZER_ADDRESS_POSTALCODE = "Payment.Tournament.Organizer.Address.PostalCode";
 	public static readonly String PAYMENT_TOURNAMENT_ORGANIZER_ORGANIZERCONTACT = "Payment.Tournament.Organizer.OrganizerContact";
 	public static readonly String PAYMENT_TOURNAMENT_ORGANIZER_ORGANIZERCONTACT_NAME = "Payment.Tournament.Organizer.OrganizerContact.Name";
-	public static readonly String AYMENT_TOURNAMENT_ORGANIZER_ORGANIZERCONTACT_PHONE = "Payment.Tournament.Organizer.OrganizerContact.Phone";
-	public static readonly String AYMENT_TOURNAMENT_ORGANIZER_ORGANIZERCONTACT_EMAIL = "Payment.Tournament.Organizer.OrganizerContact.Email";
+	public static readonly String PAYMENT_TOURNAMENT_ORGANIZER_ORGANIZERCONTACT_PHONE = "Payment.Tournament.Organizer.OrganizerContact.Phone";
+	public static readonly String PAYMENT_TOURNAMENT_ORGANIZER_ORGANIZERCONTACT_EMAIL = "Payment.Tournament.Organizer.OrganizerContact.Email";
 	public static readonly String PAYMENT_TOURNAMENT_ORGANIZER_TECHNICALCONTACT = "Payment.Tournament.Organizer.TechnicalContact";
 	public static readonly String PAYMENT_TOURNAMENT_ORGANIZER_TECHNICALCONTACT_NAME = "Payment.Tournament.Organizer.TechnicalContact.Name";
-	public static readonly String AYMENT_TOURNAMENT_ORGANIZER_TECHNICALCONTACT_PHONE = "Payment.Tournament.Organizer.TechnicalContact.Phone";
-	public static readonly String AYMENT_TOURNAMENT_ORGANIZER_TECHNICALCONTACT_EMAIL = "Payment.Tournament.Organizer.TechnicalContact.Email";
+	public static readonly String PAYMENT_TOURNAMENT_ORGANIZER_TECHNICALCONTACT_PHONE = "Payment.Tournament.Organizer.TechnicalContact.Phone";
+	public static readonly String PAYMENT_TOURNAMENT_ORGANIZER_TECHNICALCONTACT_EMAIL = "Payment.Tournament.Organizer.TechnicalContact.Email";
 	public static readonly String PAYMENT_TOURNAMENT_REGISTEREDPARTICIPANTS = "Payment.Tournament.RegisteredParticipants";
 	public static readonly String PAYMENT_TOURNAMENT_MAXIMUMHANDICAP = "Payment.Tournament.MaximumHandicap";
 	public static readonly String PAYMENT_TOURNAMENT_TEAMS = "Payment.Tournament.Teams";

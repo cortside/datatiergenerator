@@ -2,6 +2,10 @@ if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[spTeam_Ins
 drop procedure [dbo].[spTeam_Insert]
 GO
 
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
+GO
+
 CREATE PROCEDURE spTeam_Insert
 	@RegistrationKey	varchar(6),
 	@Status	char(1),

@@ -2,6 +2,10 @@ if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[spGolfer_D
 drop procedure [dbo].[spGolfer_Delete]
 GO
 
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
+GO
+
 CREATE PROCEDURE spGolfer_Delete
 
 @GolferId	int

@@ -1,4 +1,8 @@
 if not exists (select * from dbo.sysobjects where id = object_id(N'[Payment]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
+GO
+
 CREATE TABLE Payment (
 	PaymentId int IDENTITY(1,1) NOT NULL,
 	TournamentId int NULL,
@@ -164,36 +168,40 @@ if not exists(select * from syscolumns where id=object_id('Payment') and name = 
 GO
 
 if not exists (select * from dbo.sysobjects where id = object_id(N'PK_Payment') and OBJECTPROPERTY(id, N'IsPrimaryKey') = 1)
-ALTER TABLE Payment WITH NOCHECK ADD 
-	CONSTRAINT PK_Payment PRIMARY KEY NONCLUSTERED 
+ALTER TABLE Payment WITH NOCHECK ADD
+	CONSTRAINT PK_Payment PRIMARY KEY NONCLUSTERED
 	(
 		PaymentId
 	)
 GO
 
 if not exists (select * from dbo.sysobjects where id = object_id(N'FK_Payment_Tournament') and OBJECTPROPERTY(id, N'IsForeignKey') = 1)
-ALTER TABLE Payment ADD 
-	CONSTRAINT FK_Payment_Tournament FOREIGN KEY 
+ALTER TABLE Payment ADD
+	CONSTRAINT FK_Payment_Tournament FOREIGN KEY
 	(
 		TournamentId
-	) REFERENCES Tournament (
+	)
+	REFERENCES Tournament
+	(
 		TournamentId
 	)
 GO
 
 if not exists (select * from dbo.sysobjects where id = object_id(N'FK_Payment_Golfer') and OBJECTPROPERTY(id, N'IsForeignKey') = 1)
-ALTER TABLE Payment ADD 
-	CONSTRAINT FK_Payment_Golfer FOREIGN KEY 
+ALTER TABLE Payment ADD
+	CONSTRAINT FK_Payment_Golfer FOREIGN KEY
 	(
 		GolferId
-	) REFERENCES Golfer (
+	)
+	REFERENCES Golfer
+	(
 		GolferId
 	)
 GO
 
 if not exists (select * from sysindexes where name='IX_Payment_ConfirmationCode' and id=object_id(N'[Payment]'))
-CREATE UNIQUE INDEX IX_Payment_ConfirmationCode ON Payment
-    (
-		ConfirmationCode 
-    )
+	CREATE UNIQUE INDEX IX_Payment_ConfirmationCode ON Payment
+	(
+        	ConfirmationCode
+	)
 GO

@@ -2,26 +2,29 @@ if exists (select * from sysobjects where id = object_id(N'[vwOrganizer]') and O
 drop view [vwOrganizer]
 GO
 
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
+GO
+
 CREATE VIEW vwOrganizer
 
 AS
 
-SELECT 	OrganizerId,
-	Name,
-	Address1,
-	Address2,
-	City,
-	State,
-	Country,
-	PostalCode,
-	OrganizerContactName,
-	OrganizerContactPhone,
-	OrganizerContactEmail,
-	TechnicalContactName,
-	TechnicalContactPhone,
-	TechnicalContactEmail
+SELECT
+	Organizer.OrganizerId,
+	Organizer.Name,
+	Organizer.Address1,
+	Organizer.Address2,
+	Organizer.City,
+	Organizer.State,
+	Organizer.Country,
+	Organizer.PostalCode,
+	Organizer.OrganizerContactName,
+	Organizer.OrganizerContactPhone,
+	Organizer.OrganizerContactEmail,
+	Organizer.TechnicalContactName,
+	Organizer.TechnicalContactPhone,
+	Organizer.TechnicalContactEmail
 FROM
 	Organizer
-
 GO
-

@@ -2,6 +2,10 @@ if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[spTeam_Upd
 drop procedure [dbo].[spTeam_Update]
 GO
 
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
+GO
+
 CREATE PROCEDURE spTeam_Update
 
 	@TeamId	int,

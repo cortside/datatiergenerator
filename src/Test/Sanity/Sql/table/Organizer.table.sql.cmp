@@ -1,4 +1,8 @@
 if not exists (select * from dbo.sysobjects where id = object_id(N'[Organizer]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
+GO
+
 CREATE TABLE Organizer (
 	OrganizerId int IDENTITY(1,1) NOT NULL,
 	Name varchar(50) NOT NULL,
@@ -118,8 +122,8 @@ if not exists(select * from syscolumns where id=object_id('Organizer') and name 
 GO
 
 if not exists (select * from dbo.sysobjects where id = object_id(N'PK_Organizer') and OBJECTPROPERTY(id, N'IsPrimaryKey') = 1)
-ALTER TABLE Organizer WITH NOCHECK ADD 
-	CONSTRAINT PK_Organizer PRIMARY KEY NONCLUSTERED 
+ALTER TABLE Organizer WITH NOCHECK ADD
+	CONSTRAINT PK_Organizer PRIMARY KEY NONCLUSTERED
 	(
 		OrganizerId
 	)

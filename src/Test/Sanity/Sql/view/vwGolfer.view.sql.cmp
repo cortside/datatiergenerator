@@ -2,30 +2,33 @@ if exists (select * from sysobjects where id = object_id(N'[vwGolfer]') and OBJE
 drop view [vwGolfer]
 GO
 
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
+GO
+
 CREATE VIEW vwGolfer
 
 AS
 
-SELECT 	GolferId,
-	FirstName,
-	MiddleInitial,
-	LastName,
-	Phone,
-	Email,
-	Address1,
-	Address2,
-	City,
-	State,
-	Country,
-	PostalCode,
-	DateOfBirth,
-	Handicap,
-	CourseNumber,
-	PlayerNumber,
-	Gender,
-	GolferStatus
+SELECT
+	Golfer.GolferId,
+	Golfer.FirstName,
+	Golfer.MiddleInitial,
+	Golfer.LastName,
+	Golfer.Phone,
+	Golfer.Email,
+	Golfer.Address1,
+	Golfer.Address2,
+	Golfer.City,
+	Golfer.State,
+	Golfer.Country,
+	Golfer.PostalCode,
+	Golfer.DateOfBirth,
+	Golfer.Handicap,
+	Golfer.CourseNumber,
+	Golfer.PlayerNumber,
+	Golfer.Gender,
+	Golfer.GolferStatus
 FROM
 	Golfer
-
 GO
-

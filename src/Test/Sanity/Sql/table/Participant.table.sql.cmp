@@ -1,4 +1,8 @@
 if not exists (select * from dbo.sysobjects where id = object_id(N'[Participant]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
+GO
+
 CREATE TABLE Participant (
 	ParticipantId int IDENTITY(1,1) NOT NULL,
 	TeamId int NULL,
@@ -60,39 +64,45 @@ if not exists(select * from syscolumns where id=object_id('Participant') and nam
 GO
 
 if not exists (select * from dbo.sysobjects where id = object_id(N'PK_Participant') and OBJECTPROPERTY(id, N'IsPrimaryKey') = 1)
-ALTER TABLE Participant WITH NOCHECK ADD 
-	CONSTRAINT PK_Participant PRIMARY KEY NONCLUSTERED 
+ALTER TABLE Participant WITH NOCHECK ADD
+	CONSTRAINT PK_Participant PRIMARY KEY NONCLUSTERED
 	(
 		ParticipantId
 	)
 GO
 
 if not exists (select * from dbo.sysobjects where id = object_id(N'FK_Participant_Tournament') and OBJECTPROPERTY(id, N'IsForeignKey') = 1)
-ALTER TABLE Participant ADD 
-	CONSTRAINT FK_Participant_Tournament FOREIGN KEY 
+ALTER TABLE Participant ADD
+	CONSTRAINT FK_Participant_Tournament FOREIGN KEY
 	(
 		TournamentId
-	) REFERENCES Tournament (
+	)
+	REFERENCES Tournament
+	(
 		TournamentId
 	)
 GO
 
 if not exists (select * from dbo.sysobjects where id = object_id(N'FK_Participant_Golfer') and OBJECTPROPERTY(id, N'IsForeignKey') = 1)
-ALTER TABLE Participant ADD 
-	CONSTRAINT FK_Participant_Golfer FOREIGN KEY 
+ALTER TABLE Participant ADD
+	CONSTRAINT FK_Participant_Golfer FOREIGN KEY
 	(
 		GolferId
-	) REFERENCES Golfer (
+	)
+	REFERENCES Golfer
+	(
 		GolferId
 	)
 GO
 
 if not exists (select * from dbo.sysobjects where id = object_id(N'FK_Participant_Payment') and OBJECTPROPERTY(id, N'IsForeignKey') = 1)
-ALTER TABLE Participant ADD 
-	CONSTRAINT FK_Participant_Payment FOREIGN KEY 
+ALTER TABLE Participant ADD
+	CONSTRAINT FK_Participant_Payment FOREIGN KEY
 	(
 		PaymentId
-	) REFERENCES Payment (
+	)
+	REFERENCES Payment
+	(
 		PaymentId
 	)
 GO

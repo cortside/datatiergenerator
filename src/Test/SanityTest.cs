@@ -49,6 +49,29 @@ namespace Spring2.DataTierGenerator.Test {
 	    pass = pass && CompareFile(compareRoot, "DataObject", "TeamCollection.cs");
 	    pass = pass && CompareFile(compareRoot, "DataObject", "TournamentFeeCollection.cs");
 
+	    pass = pass && CompareFile(compareRoot, "DataObject", "AddressData.cs");
+	    pass = pass && CompareFile(compareRoot, "DataObject", "ALaCarteItemData.cs");
+	    pass = pass && CompareFile(compareRoot, "DataObject", "ContactData.cs");
+	    pass = pass && CompareFile(compareRoot, "DataObject", "CreditCardData.cs");
+	    pass = pass && CompareFile(compareRoot, "DataObject", "FlightData.cs");
+	    pass = pass && CompareFile(compareRoot, "DataObject", "GolferData.cs");
+	    pass = pass && CompareFile(compareRoot, "DataObject", "LocationData.cs");
+	    pass = pass && CompareFile(compareRoot, "DataObject", "NotificationData.cs");
+	    pass = pass && CompareFile(compareRoot, "DataObject", "OrganizationData.cs");
+	    pass = pass && CompareFile(compareRoot, "DataObject", "OrganizerData.cs");
+	    pass = pass && CompareFile(compareRoot, "DataObject", "PairingData.cs");
+	    pass = pass && CompareFile(compareRoot, "DataObject", "ParticipantData.cs");
+	    pass = pass && CompareFile(compareRoot, "DataObject", "PaymentData.cs");
+	    pass = pass && CompareFile(compareRoot, "DataObject", "PrizeData.cs");
+	    pass = pass && CompareFile(compareRoot, "DataObject", "ProfileData.cs");
+	    pass = pass && CompareFile(compareRoot, "DataObject", "RoundData.cs");
+	    pass = pass && CompareFile(compareRoot, "DataObject", "ScorecardData.cs");
+	    pass = pass && CompareFile(compareRoot, "DataObject", "SponsorData.cs");
+	    pass = pass && CompareFile(compareRoot, "DataObject", "TeamData.cs");
+	    pass = pass && CompareFile(compareRoot, "DataObject", "TournamentData.cs");
+	    pass = pass && CompareFile(compareRoot, "DataObject", "TournamentFeeData.cs");
+	    pass = pass && CompareFile(compareRoot, "DataObject", "WaitListData.cs");
+
 	    pass = pass && CompareFile(compareRoot, "Sql\\proc", "spGolfer_Delete.proc.sql");
 	    pass = pass && CompareFile(compareRoot, "Sql\\proc", "spGolfer_Insert.proc.sql");
 	    pass = pass && CompareFile(compareRoot, "Sql\\proc", "spGolfer_Update.proc.sql");

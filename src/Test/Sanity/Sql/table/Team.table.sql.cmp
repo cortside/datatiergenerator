@@ -1,4 +1,8 @@
 if not exists (select * from dbo.sysobjects where id = object_id(N'[Team]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
+GO
+
 CREATE TABLE Team (
 	TeamId int IDENTITY(1,1) NOT NULL,
 	RegistrationKey varchar(6) NULL,
@@ -36,19 +40,21 @@ if not exists(select * from syscolumns where id=object_id('Team') and name = 'To
 GO
 
 if not exists (select * from dbo.sysobjects where id = object_id(N'PK_Team') and OBJECTPROPERTY(id, N'IsPrimaryKey') = 1)
-ALTER TABLE Team WITH NOCHECK ADD 
-	CONSTRAINT PK_Team PRIMARY KEY NONCLUSTERED 
+ALTER TABLE Team WITH NOCHECK ADD
+	CONSTRAINT PK_Team PRIMARY KEY NONCLUSTERED
 	(
 		TeamId
 	)
 GO
 
 if not exists (select * from dbo.sysobjects where id = object_id(N'FK_Team_Tournament') and OBJECTPROPERTY(id, N'IsForeignKey') = 1)
-ALTER TABLE Team ADD 
-	CONSTRAINT FK_Team_Tournament FOREIGN KEY 
+ALTER TABLE Team ADD
+	CONSTRAINT FK_Team_Tournament FOREIGN KEY
 	(
 		TournamentId
-	) REFERENCES Tournament (
+	)
+	REFERENCES Tournament
+	(
 		TournamentId
 	)
 GO
