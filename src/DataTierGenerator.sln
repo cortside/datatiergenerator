@@ -1,6 +1,10 @@
 Microsoft Visual Studio Solution File, Format Version 7.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataTierGenerator", "DataTierGenerator.csproj", "{8C44AE3C-E997-4016-AAE5-4A66729DD36A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DTGEditor", "DTGEditor\DTGEditor.csproj", "{6A2FB4F6-83E4-455C-800B-21C9267D9651}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "Core\Core.csproj", "{8BE555A1-8BBA-4CF7-9B4A-6BBEF7E20FA8}"
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		ConfigName.0 = Debug
@@ -13,11 +17,24 @@ Global
 		{8C44AE3C-E997-4016-AAE5-4A66729DD36A}.Debug.Build.0 = Debug|.NET
 		{8C44AE3C-E997-4016-AAE5-4A66729DD36A}.Release.ActiveCfg = Release|.NET
 		{8C44AE3C-E997-4016-AAE5-4A66729DD36A}.Release.Build.0 = Release|.NET
+		{6A2FB4F6-83E4-455C-800B-21C9267D9651}.Debug.ActiveCfg = Debug|.NET
+		{6A2FB4F6-83E4-455C-800B-21C9267D9651}.Debug.Build.0 = Debug|.NET
+		{6A2FB4F6-83E4-455C-800B-21C9267D9651}.Release.ActiveCfg = Release|.NET
+		{6A2FB4F6-83E4-455C-800B-21C9267D9651}.Release.Build.0 = Release|.NET
+		{8BE555A1-8BBA-4CF7-9B4A-6BBEF7E20FA8}.Debug.ActiveCfg = Debug|.NET
+		{8BE555A1-8BBA-4CF7-9B4A-6BBEF7E20FA8}.Debug.Build.0 = Debug|.NET
+		{8BE555A1-8BBA-4CF7-9B4A-6BBEF7E20FA8}.Release.ActiveCfg = Release|.NET
+		{8BE555A1-8BBA-4CF7-9B4A-6BBEF7E20FA8}.Release.Build.0 = Release|.NET
 	EndGlobalSection
 	GlobalSection(SolutionItems) = postSolution
-		Item:1 = bin\DataTierGenerator.log
-		Item:2 = dtg-config.xml
-		Item:3 = ToDo.txt
+		Item:1 = config.xml
+		Item:2 = config.xsd
+		Item:3 = bin\DataTierGenerator.log
+		Item:4 = dtg-config.xml
+		Item:5 = golf.config.xml
+		Item:6 = project.config.xml
+		Item:7 = seamless.config.xml
+		Item:8 = ToDo.txt
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection
