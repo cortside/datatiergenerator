@@ -14,7 +14,7 @@ namespace Spring2.DataTierGenerator {
 	/// Contructor for the Generator class.
 	/// </summary>
 	/// <param name="strConnectionString">Connecion string to a SQL Server database.</param>
-	public DAOGenerator(Configuration options, StreamWriter writer, Entity entity, ArrayList fields) : base(options, writer, entity, fields) {
+	public DAOGenerator(Configuration options, Entity entity) : base(options, entity) {
 	}
 		
 
@@ -31,25 +31,7 @@ namespace Spring2.DataTierGenerator {
 	    sb = new StringBuilder(4096);
 
 	    // Create the header for the class
-	    sb.Append("using System;\n");
-	    sb.Append("using System.Data;\n");
-	    sb.Append("using System.Data.SqlClient;\n");
-	    sb.Append("using System.Configuration;\n");
-	    sb.Append("using System.Collections;\n");
-	    sb.Append("using Spring2.Core.DAO;\n");
-	    sb.Append("using ").Append(options.GetDONameSpace(null)).Append(";\n");
-
-		Hashtable namespaces = new Hashtable();
-		foreach (Field field in fields) {
-		    TypeData type = (TypeData)entity.Types[field.Type.Name];
-		    if (!type.Package.Equals(String.Empty) && !namespaces.Contains(type.Package)) {
-			namespaces.Add(type.Package, type.Package);
-		    }		
-		}
-		foreach (Object o in namespaces.Keys) {
-		    sb.Append("using ").Append(o.ToString()).Append(";\n");
-		}
-
+	    sb.Append(GetUsingNamespaces(true));
 	    sb.Append("\n");
 	    sb.Append("namespace " + options.GetDAONameSpace(entity.Name) + " {\n");
 	    sb.Append("\tpublic class " + options.GetDAOClassName(entity.Name) + " : Spring2.Core.DAO.EntityDAO {\n");
@@ -94,9 +76,8 @@ namespace Spring2.DataTierGenerator {
 	/// <param name="fields">ArrayList object containing one or more Field objects as defined in the table.</param>
 	/// <param name="sb">StreamBuilder object that the resulting string should be appended to.</param>
 	private void CreateInsertMethod(StringBuilder sb) {
-	    Field	objField;
-	    int			intIndex;
-	    bool		blnReturnVoid;
+//	    Field field;
+//	    int intIndex;
 			
 	    // Append the method header
 	    sb.Append("\t\t/// <summary>\n");
@@ -105,32 +86,45 @@ namespace Spring2.DataTierGenerator {
 	    sb.Append("\t\t/// <param name=\"\"></param>\n");
 			
 	    // Determine the return type of the insert function
-	    blnReturnVoid = true;
-	    for (intIndex = 0; intIndex < fields.Count; intIndex++) {
-		objField = (Field)fields[intIndex];
-		if (objField.IsIdentity) {
-		    sb.Append("\t\tpublic Int32 Insert(");
-		    blnReturnVoid = false;
-		    break;
-		} else if (objField.IsRowGuidCol) {
-		    sb.Append("\t\tpublic Guid Insert(");
-		    blnReturnVoid = false;
-		    break;
-		}
+	    sb.Append("\t\tpublic ");
+	    //blnReturnVoid = true;
+	    Field idField = Field.GetIdentityColumn(entity.Fields);
+	    // this is a hack becuase the method above returns a new Field instead of null - fix the method above and remove this code
+	    if (idField != null && idField.Name.Equals(String.Empty)) {
+		idField = null;
 	    }
-			
-	    if (blnReturnVoid)
-		sb.Append("\t\tpublic void Insert(");
+	    if (idField != null) {
+		sb.Append(idField.Type.Name);
+	    } else {
+		sb.Append("void");
+	    }
+
+//	    for (intIndex = 0; intIndex < entity.Fields.Count; intIndex++) {
+//		field = (Field)entity.Fields[intIndex];
+//		if (field.IsIdentity) {
+//		    sb.Append("\t\tpublic Int32 Insert(");
+//		    blnReturnVoid = false;
+//		    break;
+//		} else if (field.IsRowGuidCol) {
+//		    sb.Append("\t\tpublic Guid Insert(");
+//		    blnReturnVoid = false;
+//		    break;
+//		}
+//	    }
+	    sb.Append(" Insert(");
+//			
+//	    if (blnReturnVoid)
+//		sb.Append("\t\tpublic void Insert(");
 			
 	    // Append the method call parameters
 	    /*			for (intIndex = 0; intIndex < fields.Count; intIndex++) {
-			    objField = (Field)fields[intIndex];
-			    if (objField.IsIdentity == false && objField.IsRowGuidCol == false) {
-				strMethodParameter = CreateMethodParameter(objField);
+			    field = (Field)fields[intIndex];
+			    if (field.IsIdentity == false && field.IsRowGuidCol == false) {
+				strMethodParameter = CreateMethodParameter(field);
 				sb.Append(strMethodParameter);
 				sb.Append(", ");
 			    }
-			    objField = null;
+			    field = null;
 			}
 	    */			
 
@@ -153,21 +147,21 @@ namespace Spring2.DataTierGenerator {
 
 	    sb.Append(GetCreateCommandSection(options.GetProcName(entity.Name, "Insert")));
 			
-	    sb.Append("\t\t\t\tSqlParameter rv = cmd.Parameters.Add(\"RETURN_VALUE\", SqlDbType.Int);\n");
-	    sb.Append("\t\t\t\trv.Direction = ParameterDirection.ReturnValue;\n");
+	    if (idField != null) {
+		sb.Append("\t\t\t\tSqlParameter rv = cmd.Parameters.Add(\"RETURN_VALUE\", SqlDbType.Int);\n");
+		sb.Append("\t\t\t\trv.Direction = ParameterDirection.ReturnValue;\n");
+	    }
 
 	    // Append the parameter appends  ;)
 	    sb.Append("\t\t\t\t//Create the parameters and append them to the command object\n");
-	    for (intIndex = 0; intIndex < fields.Count; intIndex++) {
-		objField = (Field)fields[intIndex];
-		if (!objField.IsViewColumn) {
-		    if (objField.IsIdentity || objField.IsRowGuidCol) {
-			//sb.Append("\t\t\t\t" + objField.CreateSqlParameter(true, true));
+	    foreach (Field field in entity.Fields) {
+		if (!field.IsViewColumn && field.SqlName.Length>0) {
+		    if (field.IsIdentity || field.IsRowGuidCol) {
+			//sb.Append("\t\t\t\t" + field.CreateSqlParameter(true, true));
 		    } else {
-			sb.Append("\t\t\t\t" + objField.CreateSqlParameter(false, true));
+			sb.Append("\t\t\t\t" + field.CreateSqlParameter(false, true));
 		    }
 		}
-		objField = null;
 	    }
 	    sb.Append("\n");
 
@@ -176,18 +170,30 @@ namespace Spring2.DataTierGenerator {
 	    sb.Append("\t\t\t\tcmd.ExecuteNonQuery();\n");
 			
 	    // Append the parameter value extraction
-	    for (intIndex = 0; intIndex < fields.Count; intIndex++) {
-		objField = (Field)fields[intIndex];
-		if (objField.IsIdentity || objField.IsRowGuidCol) {
-		    sb.Append("\n\t\t\t\t// Set the output paramter value(s)\n");
-		    if (objField.IsIdentity)
-			//sb.Append("\t\t\t\treturn Int32.Parse(cmd.Parameters[\"@" + objField.Name.Replace(" ", "_") + "\"].Value.ToString());\n");
-			sb.Append("\t\t\t\treturn Int32.Parse(cmd.Parameters[\"RETURN_VALUE\"].Value.ToString());\n");
-		    else
-			sb.Append("\t\t\t\treturn Guid.NewGuid(cmd.Parameters[\"@" + objField.Name.Replace(" ", "_") + "\"].Value.ToString());\n");
+	    if (idField != null) {
+		sb.Append("\n\t\t\t\t// Set the output paramter value(s)\n");
+		sb.Append("\t\t\t\treturn ");
+		String readerMethod = "cmd.Parameters[\"RETURN_VALUE\"].Value";
+		if (idField.Type.ConvertFromSqlTypeFormat.Length >0) {
+		    sb.Append(String.Format(idField.Type.ConvertFromSqlTypeFormat, "", "", readerMethod, "", ""));
+		} else {
+		    sb.Append(readerMethod);
 		}
-		objField = null;
+		sb.Append(";\n");
 	    }
+
+//	    for (intIndex = 0; intIndex < entity.Fields.Count; intIndex++) {
+//		field = (Field)entity.Fields[intIndex];
+//		if (field.IsIdentity || field.IsRowGuidCol) {
+//		    sb.Append("\n\t\t\t\t// Set the output paramter value(s)\n");
+//		    if (field.IsIdentity)
+//			//sb.Append("\t\t\t\treturn Int32.Parse(cmd.Parameters[\"@" + field.Name.Replace(" ", "_") + "\"].Value.ToString());\n");
+//			sb.Append("\t\t\t\treturn Int32.Parse(cmd.Parameters[\"RETURN_VALUE\"].Value.ToString());\n");
+//		    else
+//			sb.Append("\t\t\t\treturn Guid.NewGuid(cmd.Parameters[\"@" + field.Name.Replace(" ", "_") + "\"].Value.ToString());\n");
+//		}
+//		field = null;
+//	    }
 			
 	    // Append the catch block
 	    //            sb.Append("\t\t\t} catch (Exception objException) {\n");
@@ -206,7 +212,7 @@ namespace Spring2.DataTierGenerator {
 	/// <param name="fields">ArrayList object containing one or more Field objects as defined in the table.</param>
 	/// <param name="sb">StreamBuilder object that the resulting string should be appended to.</param>
 	private void CreateUpdateMethod(StringBuilder sb) {
-	    Field objField;
+	    Field field;
 	    Field objNewField;
 	    Field objOldField;
 	    //string		strMethodParameter;
@@ -221,25 +227,25 @@ namespace Spring2.DataTierGenerator {
 			
 	    // Append the method call parameters
 	    /*			for (intIndex = 0; intIndex < fields.Count; intIndex++) {
-			    objField = (Field)fields[intIndex];
-			    if (objField.IsPrimaryKey && objField.IsIdentity == false && objField.IsRowGuidCol == false) {
-				objOldField = objField.Copy();
+			    field = (Field)fields[intIndex];
+			    if (field.IsPrimaryKey && field.IsIdentity == false && field.IsRowGuidCol == false) {
+				objOldField = field.Copy();
 				objOldField.Name = "Old" + objOldField.Name;
 				strMethodParameter = CreateMethodParameter(objOldField);
 				sb.Append(strMethodParameter);
 				sb.Append(", ");
 					
-				objNewField = objField.Copy();
+				objNewField = field.Copy();
 				objNewField.Name = "New" + objNewField.Name;
 				strMethodParameter = CreateMethodParameter(objNewField);
 				sb.Append(strMethodParameter);
 				sb.Append(", ");
 			    } else {
-				strMethodParameter = CreateMethodParameter(objField);
+				strMethodParameter = CreateMethodParameter(field);
 				sb.Append(strMethodParameter);
 				sb.Append(", ");
 			    }
-			    objField = null;
+			    field = null;
 			}
 	    */
 	    // Append the method call parameters - data object
@@ -264,22 +270,22 @@ namespace Spring2.DataTierGenerator {
 			
 	    // Append the parameter appends  ;)
 	    sb.Append("\t\t\t\t//Create the parameters and append them to the command object\n");
-	    for (intIndex = 0; intIndex < fields.Count; intIndex++) {
-		objField = (Field)fields[intIndex];
-		if (!objField.IsViewColumn) {
-		    //                    if (objField.IsPrimaryKey && objField.IsIdentity == false && objField.IsRowGuidCol == false) {
-		    //                        objOldField = objField.Copy();
+	    for (intIndex = 0; intIndex < entity.Fields.Count; intIndex++) {
+		field = (Field)entity.Fields[intIndex];
+		if (!field.IsViewColumn && field.SqlName.Length>0) {
+		    //                    if (field.IsPrimaryKey && field.IsIdentity == false && field.IsRowGuidCol == false) {
+		    //                        objOldField = field.Copy();
 		    //                        objOldField.Name = "Old" + objOldField.Name;
 		    //                        sb.Append("\t\t\t\t" + objOldField.CreateSqlParameter(false, true));
 		    //					
-		    //                        objNewField = objField.Copy();
+		    //                        objNewField = field.Copy();
 		    //                        objNewField.Name = "New" + objNewField.Name;
 		    //                        sb.Append("\t\t\t\t" + objNewField.CreateSqlParameter(false, true));
 		    //                    } else {
-		    sb.Append("\t\t\t\t" + objField.CreateSqlParameter(false, true));
+		    sb.Append("\t\t\t\t" + field.CreateSqlParameter(false, true));
 		    //                    }
 		}
-		objField = null;
+		field = null;
 	    }
 	    sb.Append("\n");
 			
@@ -304,7 +310,7 @@ namespace Spring2.DataTierGenerator {
 	/// <param name="fields">ArrayList object containing one or more Field objects as defined in the table.</param>
 	/// <param name="sb">StreamBuilder object that the resulting string should be appended to.</param>
 	private void CreateDeleteMethods(StringBuilder sb) {
-	    Field	objField;
+	    Field	field;
 	    int			intIndex;
 	    string		strColumnName;
 	    string		strPrimaryKeyList;
@@ -313,13 +319,13 @@ namespace Spring2.DataTierGenerator {
 	    // Create the array list of key fields
 	    strPrimaryKeyList = "";
 	    arrKeyList = new ArrayList();
-	    for (intIndex = 0; intIndex < fields.Count; intIndex++) {
-		objField = (Field)fields[intIndex];
-		if (objField.IsPrimaryKey) {
-		    arrKeyList.Add(objField);
-		    strPrimaryKeyList += objField.Name.Replace(" ", "_") + "_";
+	    for (intIndex = 0; intIndex < entity.Fields.Count; intIndex++) {
+		field = (Field)entity.Fields[intIndex];
+		if (field.IsPrimaryKey) {
+		    arrKeyList.Add(field);
+		    strPrimaryKeyList += field.Name.Replace(" ", "_") + "_";
 		}
-		objField = null;
+		field = null;
 	    }
 			
 	    // Trim off the last underscore
@@ -328,11 +334,11 @@ namespace Spring2.DataTierGenerator {
 
 	    /*********************************************************************************************************/
 	    // Create the remaining select functions based on identity columns or uniqueidentifiers
-	    for (intIndex = 0; intIndex < fields.Count; intIndex++) {
-		objField = (Field)fields[intIndex];
+	    for (intIndex = 0; intIndex < entity.Fields.Count; intIndex++) {
+		field = (Field)entity.Fields[intIndex];
 			
-		if (objField.IsIdentity || (options.GenerateProcsForForeignKey && (objField.IsRowGuidCol || objField.IsPrimaryKey || objField.IsForeignKey))) {
-		    strColumnName = objField.Name.Substring(0, 1).ToUpper() + objField.Name.Substring(1);
+		if (field.IsIdentity || (options.GenerateProcsForForeignKey && (field.IsRowGuidCol || field.IsPrimaryKey || field.IsForeignKey))) {
+		    strColumnName = field.Name.Substring(0, 1).ToUpper() + field.Name.Substring(1);
 					
 		    String methodName = "Delete" + strColumnName.Replace(" ", "_");
 		    // if this option is on, only generate the PK 
@@ -343,11 +349,11 @@ namespace Spring2.DataTierGenerator {
 
 		    // Append the method header
 		    sb.Append("\t\t/// <summary>\n");
-		    sb.Append("\t\t/// Deletes a record from the " + entity.Name + " table by " + objField.Name + ".\n");
+		    sb.Append("\t\t/// Deletes a record from the " + entity.Name + " table by " + field.Name + ".\n");
 		    sb.Append("\t\t/// </summary>\n");
 		    sb.Append("\t\t/// <param name=\"\"></param>\n");
-		    //sb.Append("\t\tpublic void DeleteBy" + strColumnName.Replace(" ", "_") + "(" + objField.CreateMethodParameter() + ", SqlConnection connection) {\n");
-		    sb.Append("\t\tpublic void " + methodName + "(" + objField.CreateMethodParameter() + ", SqlConnection connection) {\n");
+		    //sb.Append("\t\tpublic void DeleteBy" + strColumnName.Replace(" ", "_") + "(" + field.CreateMethodParameter() + ", SqlConnection connection) {\n");
+		    sb.Append("\t\tpublic void " + methodName + "(" + field.CreateMethodParameter() + ", SqlConnection connection) {\n");
 					
 		    // Append the variable declarations
 		    //                    sb.Append("\t\t\tSqlConnection	objConnection;\n");
@@ -361,7 +367,7 @@ namespace Spring2.DataTierGenerator {
 
 		    // Append the parameters
 		    sb.Append("\t\t\t\t// Create and append the parameters\n");
-		    sb.Append("\t\t\t\t" + objField.CreateSqlParameter(false, false));
+		    sb.Append("\t\t\t\t" + field.CreateSqlParameter(false, false));
 		    sb.Append("\n");
 
 		    // Append the execute statement
@@ -379,7 +385,7 @@ namespace Spring2.DataTierGenerator {
 		    else
 			sb.Append("\t\t}\n\n");
 				
-		    objField = null;
+		    field = null;
 		}
 	    }
 
@@ -401,8 +407,8 @@ namespace Spring2.DataTierGenerator {
 				
 		sb.Append("\t\tpublic void " + methodName + "(");
 		for (intIndex = 0; intIndex < arrKeyList.Count; intIndex++) {
-		    objField = (Field)arrKeyList[intIndex];
-		    sb.Append(objField.CreateMethodParameter() + ", ");
+		    field = (Field)arrKeyList[intIndex];
+		    sb.Append(field.CreateMethodParameter() + ", ");
 		}
 		sb.Append("SqlConnection connection) {\n");
 				
@@ -419,9 +425,9 @@ namespace Spring2.DataTierGenerator {
 		// Append the parameters
 		sb.Append("\t\t\t\t// Create and append the parameters\n");
 		for (intIndex = 0; intIndex < arrKeyList.Count; intIndex++) {
-		    objField = (Field)arrKeyList[intIndex];
-		    sb.Append("\t\t\t\t" + objField.CreateSqlParameter(false, false));
-		    objField = null;
+		    field = (Field)arrKeyList[intIndex];
+		    sb.Append("\t\t\t\t" + field.CreateSqlParameter(false, false));
+		    field = null;
 		}
 		sb.Append("\n");
 
@@ -437,7 +443,7 @@ namespace Spring2.DataTierGenerator {
 		// Append the method footer
 		sb.Append("\t\t}\n\n\n");
 			
-		objField = null;
+		field = null;
 	    }
 	}
 
@@ -449,7 +455,7 @@ namespace Spring2.DataTierGenerator {
 	/// <param name="fields">ArrayList object containing one or more Field objects as defined in the table.</param>
 	/// <param name="sb">StreamBuilder object that the resulting string should be appended to.</param>
 	private void CreateSelectMethods(StringBuilder sb) {
-	    Field	objField;
+	    Field	field;
 	    int			intIndex;
 	    string		strColumnName;
 	    string		strPrimaryKeyList;
@@ -458,13 +464,13 @@ namespace Spring2.DataTierGenerator {
 	    // Create the array list of key fields
 	    strPrimaryKeyList = "";
 	    arrKeyList = new ArrayList();
-	    for (intIndex = 0; intIndex < fields.Count; intIndex++) {
-		objField = (Field)fields[intIndex];
-		if (objField.IsPrimaryKey) {
-		    arrKeyList.Add(objField);
-		    strPrimaryKeyList += objField.Name.Replace(" ", "_") + "_";
+	    for (intIndex = 0; intIndex < entity.Fields.Count; intIndex++) {
+		field = (Field)entity.Fields[intIndex];
+		if (field.IsPrimaryKey) {
+		    arrKeyList.Add(field);
+		    strPrimaryKeyList += field.Name.Replace(" ", "_") + "_";
 		}
-		objField = null;
+		field = null;
 	    }
 			
 	    // Trim off the last underscore
@@ -505,18 +511,18 @@ namespace Spring2.DataTierGenerator {
 
 	    /*********************************************************************************************************/
 	    // Create the remaining select functions based on identity columns or uniqueidentifiers
-	    for (intIndex = 0; intIndex < fields.Count; intIndex++) {
-		objField = (Field)fields[intIndex];
+	    for (intIndex = 0; intIndex < entity.Fields.Count; intIndex++) {
+		field = (Field)entity.Fields[intIndex];
 			
-		if (objField.IsIdentity || objField.IsRowGuidCol || objField.IsPrimaryKey || objField.IsForeignKey) {
-		    strColumnName = objField.Name.Substring(0, 1).ToUpper() + objField.Name.Substring(1);
+		if (field.IsIdentity || field.IsRowGuidCol || field.IsPrimaryKey || field.IsForeignKey) {
+		    strColumnName = field.Name.Substring(0, 1).ToUpper() + field.Name.Substring(1);
 				
 		    // Append the method header
 		    sb.Append("\t\t/// <summary>\n");
-		    sb.Append("\t\t/// Selects a record from the " + entity.Name + " table by " + objField.Name + ".\n");
+		    sb.Append("\t\t/// Selects a record from the " + entity.Name + " table by " + field.Name + ".\n");
 		    sb.Append("\t\t/// </summary>\n");
 		    sb.Append("\t\t/// <param name=\"\"></param>\n");
-		    sb.Append("\t\tpublic SqlDataReader SelectBy" + strColumnName.Replace(" ", "_") + "(" + objField.CreateMethodParameter() + ", SqlConnection connection) {\n");
+		    sb.Append("\t\tpublic SqlDataReader SelectBy" + strColumnName.Replace(" ", "_") + "(" + field.CreateMethodParameter() + ", SqlConnection connection) {\n");
 					
 		    // Append the variable declarations
 		    //                    sb.Append("\t\t\tSqlConnection	objConnection;\n");
@@ -530,7 +536,7 @@ namespace Spring2.DataTierGenerator {
 
 		    // Append the parameters
 		    sb.Append("\t\t\t\t// Create and append the parameters\n");
-		    sb.Append("\t\t\t\t" + objField.CreateSqlParameter(false, false));
+		    sb.Append("\t\t\t\t" + field.CreateSqlParameter(false, false));
 		    sb.Append("\n");
 
 		    // Append the execute statement
@@ -548,7 +554,7 @@ namespace Spring2.DataTierGenerator {
 		    else
 			sb.Append("\t\t}\n\n");
 				
-		    objField = null;
+		    field = null;
 		}
 	    }
 
@@ -563,8 +569,8 @@ namespace Spring2.DataTierGenerator {
 				
 		sb.Append("\t\tpublic SqlDataReader SelectBy" + strPrimaryKeyList + "(");
 		for (intIndex = 0; intIndex < arrKeyList.Count; intIndex++) {
-		    objField = (Field)arrKeyList[intIndex];
-		    sb.Append(objField.CreateMethodParameter() + ", ");
+		    field = (Field)arrKeyList[intIndex];
+		    sb.Append(field.CreateMethodParameter() + ", ");
 		}
 		sb.Append("SqlConnection connection) {\n");
 				
@@ -581,9 +587,9 @@ namespace Spring2.DataTierGenerator {
 		// Append the parameters
 		sb.Append("\t\t\t\t// Create and append the parameters\n");
 		for (intIndex = 0; intIndex < arrKeyList.Count; intIndex++) {
-		    objField = (Field)arrKeyList[intIndex];
-		    sb.Append("\t\t\t\t" + objField.CreateSqlParameter(false, false));
-		    objField = null;
+		    field = (Field)arrKeyList[intIndex];
+		    sb.Append("\t\t\t\t" + field.CreateSqlParameter(false, false));
+		    field = null;
 		}
 		sb.Append("\n");
 
@@ -599,7 +605,7 @@ namespace Spring2.DataTierGenerator {
 		// Append the method footer
 		sb.Append("\t\t}\n\n\n");
 			
-		objField = null;
+		field = null;
 	    }
 	}
 		
@@ -625,7 +631,7 @@ namespace Spring2.DataTierGenerator {
 
 	    // Load
 	    sb.Append("\t\tpublic ").Append(options.GetDOClassName(entity.Name)).Append(" Load(Int32 id, SqlConnection connection) {\n");
-	    sb.Append("\t\t	SqlDataReader dataReader = GetListReader(new WhereClause(\"").Append(Field.GetIdentityColumn(fields).Name).Append("\", id), null, connection);\n");
+	    sb.Append("\t\t	SqlDataReader dataReader = GetListReader(new WhereClause(\"").Append(Field.GetIdentityColumn(entity.Fields).Name).Append("\", id), null, connection);\n");
 	    sb.Append("\t\t    \n");
 	    sb.Append("\t\t	dataReader.Read();\n");
 	    sb.Append("\t\t	return GetDataObjectFromReader(dataReader);\n");
@@ -636,41 +642,42 @@ namespace Spring2.DataTierGenerator {
 	    sb.Append("\t\tprivate ").Append(options.GetDOClassName(entity.Name)).Append(" GetDataObjectFromReader(SqlDataReader dataReader) {\n");
 	    sb.Append("\t\t	").Append(options.GetDOClassName(entity.Name)).Append(" data = new ").Append(options.GetDOClassName(entity.Name)).Append("();\n");
 
-	    foreach (Field field in fields) {
+	    foreach (Field field in entity.Fields) {
+		if (field.SqlType.Name.Length>0) {
 		    sb.Append("\t\t\tdata.").Append(field.GetMethodFormat()).Append(" = "); //dataReader.IsDBNull(dataReader.GetOrdinal(\"").Append(field.Name).Append("\")) ? ").Append(field.DataTypeClass).Append(".UNSET : ").Append("new ").Append(field.DataTypeClass).Append("(dataReader.Get").Append(field.ReaderType).Append("(").Append("dataReader.GetOrdinal(\"").Append(field.Name).Append("\")").Append("));\n");
-		    //TypeData type = (TypeData)entity.Types[field.Type.Name];
-		    //SqlTypeData sqltype = (SqlTypeData)entity.SqlTypes[field.SqlType.Name];
+		    String readerMethod = String.Format(field.SqlType.ReaderMethodFormat, "dataReader", field.SqlName);
 		    if (field.Type.ConvertFromSqlTypeFormat.Length >0) {
-			sb.Append(String.Format(field.Type.ConvertFromSqlTypeFormat, "data", field.GetMethodFormat(), String.Format(field.SqlType.ReaderMethodFormat, "dataReader", field.GetMethodFormat()), "dataReader"));
+			sb.Append(String.Format(field.Type.ConvertFromSqlTypeFormat, "data", field.GetMethodFormat(), readerMethod, "dataReader", field.SqlName));
 		    } else {
-			sb.Append(String.Format(field.SqlType.ReaderMethodFormat, "dataReader", field.GetMethodFormat()));
+			sb.Append(readerMethod);
 		    }
 		    sb.Append(";\n");
 
-		//				if (options.UseDataTypes) {
-		//					switch(objField.SqlType.ToLower()) {
-		//						case "image":
-		//							sb.Append("\t\t\t//dataReader.GetBytes(").Append("dataReader.GetOrdinal(\"").Append(objField.Name).Append("\")").Append(", 0, data.").Append(objField.Name).Append(", 0, ").Append(objField.Length).Append(");\n");
-		//							break;
-		//						default: 
-		//							if (objField.Constructor.Length>0) {
-		//								sb.Append("\t\t\tdata.").Append(objField.GetMethodFormat()).Append(" = dataReader.IsDBNull(dataReader.GetOrdinal(\"").Append(objField.Name).Append("\")) ? ").Append(objField.DataTypeClass).Append(".UNSET : ").Append("").Append(objField.DataTypeClass).Append(".").Append(objField.Constructor).Append("(dataReader.Get").Append(objField.ReaderType).Append("(").Append("dataReader.GetOrdinal(\"").Append(objField.Name).Append("\")").Append("));\n");
-		//							} else {
-		//								sb.Append("\t\t\tdata.").Append(objField.GetMethodFormat()).Append(" = dataReader.IsDBNull(dataReader.GetOrdinal(\"").Append(objField.Name).Append("\")) ? ").Append(objField.DataTypeClass).Append(".UNSET : ").Append("new ").Append(objField.DataTypeClass).Append("(dataReader.Get").Append(objField.ReaderType).Append("(").Append("dataReader.GetOrdinal(\"").Append(objField.Name).Append("\")").Append("));\n");
-		//							}
-		//							break;
-		//					}
-		//				} else {
-		//					switch (objField.SqlType.ToLower()) {
-		//						case "bytes":
-		//							sb.Append("\t\t\t//dataReader.GetBytes(").Append("dataReader.GetOrdinal(\"").Append(objField.Name).Append("\")").Append(", 0, data.").Append(objField.Name).Append(", 0, ").Append(objField.Length).Append(");\n");
-		//							break;
-		//						default: 
-		//							sb.Append("\t\t\tdata.").Append(objField.Name).Append(" = ").Append("dataReader.Get").Append(objField.ReaderType).Append("(").Append("dataReader.GetOrdinal(\"").Append(objField.Name).Append("\")").Append(");\n");
-		//							break;
-		//					}
-		//				}
-		//				objField = null;
+		    //				if (options.UseDataTypes) {
+		    //					switch(field.SqlType.ToLower()) {
+		    //						case "image":
+		    //							sb.Append("\t\t\t//dataReader.GetBytes(").Append("dataReader.GetOrdinal(\"").Append(field.Name).Append("\")").Append(", 0, data.").Append(field.Name).Append(", 0, ").Append(field.Length).Append(");\n");
+		    //							break;
+		    //						default: 
+		    //							if (field.Constructor.Length>0) {
+		    //								sb.Append("\t\t\tdata.").Append(field.GetMethodFormat()).Append(" = dataReader.IsDBNull(dataReader.GetOrdinal(\"").Append(field.Name).Append("\")) ? ").Append(field.DataTypeClass).Append(".UNSET : ").Append("").Append(field.DataTypeClass).Append(".").Append(field.Constructor).Append("(dataReader.Get").Append(field.ReaderType).Append("(").Append("dataReader.GetOrdinal(\"").Append(field.Name).Append("\")").Append("));\n");
+		    //							} else {
+		    //								sb.Append("\t\t\tdata.").Append(field.GetMethodFormat()).Append(" = dataReader.IsDBNull(dataReader.GetOrdinal(\"").Append(field.Name).Append("\")) ? ").Append(field.DataTypeClass).Append(".UNSET : ").Append("new ").Append(field.DataTypeClass).Append("(dataReader.Get").Append(field.ReaderType).Append("(").Append("dataReader.GetOrdinal(\"").Append(field.Name).Append("\")").Append("));\n");
+		    //							}
+		    //							break;
+		    //					}
+		    //				} else {
+		    //					switch (field.SqlType.ToLower()) {
+		    //						case "bytes":
+		    //							sb.Append("\t\t\t//dataReader.GetBytes(").Append("dataReader.GetOrdinal(\"").Append(field.Name).Append("\")").Append(", 0, data.").Append(field.Name).Append(", 0, ").Append(field.Length).Append(");\n");
+		    //							break;
+		    //						default: 
+		    //							sb.Append("\t\t\tdata.").Append(field.Name).Append(" = ").Append("dataReader.Get").Append(field.ReaderType).Append("(").Append("dataReader.GetOrdinal(\"").Append(field.Name).Append("\")").Append(");\n");
+		    //							break;
+		    //					}
+		    //				}
+		    //				field = null;
+		}
 	    }
 	    /*
 	    sb.Append("\t\t	if (dataReader.IsDBNull(7)) { \n");

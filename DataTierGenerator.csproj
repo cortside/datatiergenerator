@@ -123,11 +123,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "EntityData.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "Field.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -163,12 +158,12 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "SqlTypeData.cs"
+                    RelPath = "SqlType.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "TypeData.cs"
+                    RelPath = "Type.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

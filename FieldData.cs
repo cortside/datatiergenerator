@@ -5,14 +5,14 @@ namespace Spring2.DataTierGenerator {
 
 	protected String name = String.Empty;
 	protected String sqlName = String.Empty;
-	protected SqlTypeData sqlType = new SqlTypeData();
-	protected TypeData type = new TypeData();
+	protected SqlType sqlType = new SqlType();
+	protected Type type = new Type();
 	protected Boolean isRowGuidCol = false;
 	protected Boolean isIdentity = false;
 	protected Boolean isPrimaryKey = false;
 	protected Boolean isForeignKey = false;
 	protected Boolean isViewColumn = false;
-	protected String accessModifier = String.Empty;
+	protected String accessModifier = "public";
 	protected String description = String.Empty;
 
 	public String Name {
@@ -25,12 +25,12 @@ namespace Spring2.DataTierGenerator {
 	    set { this.sqlName = value; }
 	}
 
-	public SqlTypeData SqlType {
+	public SqlType SqlType {
 	    get { return this.sqlType; }
 	    set { this.sqlType = value; }
 	}
 
-	public TypeData Type {
+	public Type Type {
 	    get { return this.type; }
 	    set { this.type = value; }
 	}

@@ -1,6 +1,3 @@
-// This component makes extensive use of inline documentation comments.
-// In Visual Studio .NET, select <Build Comment Web Pages> on the <Tools> menu to create HTML documentation of the class.
-
 using System;
 using System.Data;
 using System.Data.SqlClient;
@@ -11,69 +8,88 @@ using System.Text;
 using System.Xml;
 
 namespace Spring2.DataTierGenerator {
-    /// <summary>
-    /// Generates stored procedures and associated data access code for the specified database.
-    /// </summary>
-    public class Generator : GeneratorBase {
-	// Connection to the database
-	private	SqlConnection connection;
 
-	/// <summary>
-	/// Contructor for the Generator class.
-	/// </summary>
-	/// <param name="strConnectionString">Connecion string to a SQL Server database.</param>
+    public class Generator : GeneratorBase {
+	private ArrayList entities = new ArrayList();
+	private Hashtable types = new Hashtable();
+	private Hashtable sqltypes = new Hashtable();
+
 	public Generator(Configuration options) {
-	    connection = new SqlConnection(options.ConnectionString);
-	    connection.Open();
 	    this.options = options;
-	    this.options.Database = connection.Database.ToString();
 	}
 		
-	/// <summary>
-	/// Generates SQL scripts for the stored procedures for each table in the database.
-	/// </summary>
-	public void ProcessTables() {
-	    CreateDirectories();
+	public void GenerateSource() {
+	    Console.Out.Write("\n");
+	    Console.Out.WriteLine(String.Empty.PadLeft(20,'='));
+	    Console.Out.WriteLine("Parse/Load entities and properties");
+	    Console.Out.WriteLine(String.Empty.PadLeft(20,'='));
 
-	    // Create and open the file stream - if in single file mode
-	    if (options.SingleFile) {
-		String strFileName = options.SqlScriptDirectory + "\\" + connection.Database.Replace(" ", "_") + ".sql";
-		if (File.Exists(strFileName))
-		    File.Delete(strFileName);
-		writer = new StreamWriter(strFileName);
+	    SqlConnection connection = null;
+	    if (options.AutoDiscoverEntities || options.AutoDiscoverProperties) {
+		connection = new SqlConnection(options.ConnectionString);
+		connection.Open();
+	    }
+
+	    XmlDocument doc = null;
+	    if (options.XmlConfigFilename.Length > 0) {
+		doc = new XmlDocument();
+		doc.Load(options.XmlConfigFilename);
 	    }
 
 	    // Process each table
-	    ArrayList entities = GetEntities();
+	    sqltypes = SqlType.ParseFromXml(doc);
+	    types = Type.ParseFromXml(options, doc);
+	    entities = GetEntities(doc, connection);
 	    foreach (Entity entity in entities) {
-		ProcessTable(entity);
+		SQLGenerator sqlgen = new SQLGenerator(options, entity);
+		if (!String.Empty.Equals(entity.SqlObject)) sqlgen.CreateView();
+		if (!String.Empty.Equals(entity.SqlObject)) sqlgen.CreateInsertStoredProcedure();
+		if (!String.Empty.Equals(entity.SqlObject)) sqlgen.CreateUpdateStoredProcedure();
+		if (!String.Empty.Equals(entity.SqlObject)) sqlgen.CreateDeleteStoredProcedures();
+		if (options.GenerateSelectStoredProcs && !String.Empty.Equals(entity.SqlObject)) sqlgen.CreateSelectStoredProcedures();
+
+		// create classes
+		DAOGenerator daogen = new DAOGenerator(options, entity);
+		DOGenerator dogen = new DOGenerator(options, entity);
+		dogen.CreateDataObjectClass();
+		if (!String.Empty.Equals(entity.SqlObject)) daogen.CreateDataAccessClass();
 	    }
 			
-	    // Close and deallocate the file stream
-	    if (options.SingleFile) {
-		writer.Close();
-		writer = null;
-	    }
+	    Console.Out.WriteLine(String.Empty.PadLeft(20,'='));
 	}
 
-	private ArrayList GetEntities() {
+	public void GenerateXML() {
+	    SqlConnection connection = new SqlConnection(options.ConnectionString);
+	    connection.Open();
+
+	    ArrayList entities = GetEntities(null, connection);
+	    StringBuilder sb = new StringBuilder();
+	    sb.Append("\t<entities>\n");
+	    foreach (Entity entity in entities) {
+		sb.Append("\t\t<entity name=\"").Append(entity.Name).Append("\"");
+		sb.Append(" sqlobject=\"").Append(entity.SqlObject).Append("\"");
+		sb.Append(">\n");
+		//ArrayList columns = GetFields(entity, connection, null, new Hashtable(), new Hashtable());
+		foreach (Field field in entity.Fields) {
+		    sb.Append("\t\t\t").Append(field.ToXml(true)).Append("\n");
+		}
+		sb.Append("\t\t</entity>\n");
+	    }
+	    sb.Append("\t</entities>\n");
+	    WriteToFile(options.XmlConfigFilename + ".generated.xml", sb.ToString(), false);
+	}
+
+
+	private ArrayList GetEntities(XmlDocument doc, SqlConnection connection) {
 	    ArrayList entities = new ArrayList();
 
-	    if (options.XmlConfigFilename.Length > 0) {
-		// get entities from xml
-		XmlDocument doc = new XmlDocument();
-		doc.Load(options.XmlConfigFilename);
-		XmlNodeList elements = doc.DocumentElement.GetElementsByTagName("entity");
-		for (Int32 i = 0; i<elements.Count; i++) {
-		    XmlNode node = elements[i];
-		    Entity entity = new Entity();
-		    entity.Name = node.Attributes["name"].Value;
-		    if (node.Attributes["sqlobject"] != null) {
-			entity.SqlObject = node.Attributes["sqlobject"].Value;
+	    if (doc != null) {
+		entities.AddRange(Entity.ParseFromXml(options, doc, sqltypes, types));
+
+		if (options.AutoDiscoverProperties) {
+		    foreach (Entity entity in entities) {
+			entity.Fields = GetFields(entity, connection, doc, sqltypes, types);
 		    }
-		    entity.Types = GetTypes();
-		    entity.SqlTypes = GetSqlTypes();
-		    entities.Add(entity);
 		}
 	    }
 
@@ -84,10 +100,14 @@ namespace Spring2.DataTierGenerator {
 		objDataAdapter.Fill(objDataTable);
 		foreach (DataRow row in objDataTable.Rows) {
 		    if (row["TABLE_TYPE"].ToString() == "BASE TABLE" && row["TABLE_NAME"].ToString() != "dtproperties") {
-			if (FindEntityBySqlObject(entities, row["TABLE_NAME"].ToString()) == null) {
+			if (Entity.FindEntityBySqlObject(entities, row["TABLE_NAME"].ToString()) == null) {
 			    Entity entity = new Entity();
 			    entity.Name = row["TABLE_NAME"].ToString();
 			    entity.SqlObject = row["TABLE_NAME"].ToString();
+			    if (options.UseViews) {
+				entity.SqlView = "vw" + entity.SqlObject;
+			    }
+			    entity.Fields = GetFields(entity, connection, doc, sqltypes, types);
 			    entities.Add(entity);
 			}
 		    }
@@ -97,209 +117,32 @@ namespace Spring2.DataTierGenerator {
 	    return entities;
 	}
 
-	private Hashtable GetTypes () {
-	    Hashtable types = new Hashtable();
+	private ArrayList GetFields(Entity entity, SqlConnection connection, XmlDocument doc, Hashtable sqltypes, Hashtable types) {
+	    ArrayList fields = entity.Fields;
 
-	    if (options.XmlConfigFilename.Length > 0) {
-		// get entities from xml
-		XmlDocument doc = new XmlDocument();
-		doc.Load(options.XmlConfigFilename);
-		XmlNodeList elements = doc.DocumentElement.GetElementsByTagName("type");
-		foreach (XmlNode node in elements) {
-		    TypeData type = new TypeData();
-		    type.Name = node.Attributes["name"].Value;
-		    type.ConcreteType = type.Name;
-		    if (node.Attributes["concretetype"] != null) {
-			type.Package = node.Attributes["concretetype"].Value;
-		    }
-
-		    if (node.Attributes["namespace"] != null) {
-			type.Package = node.Attributes["namespace"].Value;
-		    }
-		    if (node.Attributes["newinstanceformat"] != null) {
-			type.NewInstanceFormat = node.Attributes["newinstanceformat"].Value;
-		    }
-		    if (node.Attributes["converttosqltypeformat"] != null) {
-			type.ConvertToSqlTypeFormat = node.Attributes["converttosqltypeformat"].Value;
-		    }
-		    if (node.Attributes["convertfromsqltypeformat"] != null) {
-			type.ConvertFromSqlTypeFormat = node.Attributes["convertfromsqltypeformat"].Value;
-		    }
-		    types.Add(type.Name, type);
-		}
-	    }
-
-	    return types;
-	}
-
-	private Hashtable GetSqlTypes () {
-	    Hashtable sqltypes = new Hashtable();
-
-	    if (options.XmlConfigFilename.Length > 0) {
-		// get entities from xml
-		XmlDocument doc = new XmlDocument();
-		doc.Load(options.XmlConfigFilename);
-		XmlNodeList elements = doc.DocumentElement.GetElementsByTagName("sqltype");
-		foreach (XmlNode node in elements) {
-		    SqlTypeData sqltype = new SqlTypeData();
-		    sqltype.Name = node.Attributes["name"].Value;
-		    if (node.Attributes["type"] != null) {
-			sqltype.Type = node.Attributes["type"].Value;
-		    }
-		    if (node.Attributes["length"] != null) {
-			sqltype.Length = Int32.Parse(node.Attributes["length"].Value);
-		    }
-		    if (node.Attributes["scale"] != null) {
-			sqltype.Scale = Int32.Parse(node.Attributes["scale"].Value);
-		    }
-		    if (node.Attributes["precision"] != null) {
-			sqltype.Precision = Int32.Parse(node.Attributes["precision"].Value);
-		    }
-		    if (node.Attributes["readermethodformat"] != null) {
-			sqltype.ReaderMethodFormat = node.Attributes["readermethodformat"].Value;
-		    }
-		    sqltypes.Add(sqltype.Name, sqltype);
-		}
-	    }
-
-	    return sqltypes;
-	}
-
-
-	private Entity FindEntityBySqlObject(ArrayList entities, String sqlObject) {
-	    foreach (Entity entity in entities) {
-		if (entity.SqlObject == sqlObject) {
-		    return entity;
-		}
-	    }
-	    return null;
-	}
-		
-	private void CreateDirectories() {
-	    // Check to see if the "SQL Scripts" directory exists; if not, create it; otherwise, clear it out
-	    if (!Directory.Exists(options.RootDirectory + options.SqlScriptDirectory))
-		Directory.CreateDirectory(options.RootDirectory + options.SqlScriptDirectory);
-
-	    // Check to see if the "Data Access Classes" directory exists; if not, create it; otherwise, clear it out
-	    if (!Directory.Exists(options.RootDirectory + options.DaoClassDirectory))
-		Directory.CreateDirectory(options.RootDirectory + options.DaoClassDirectory);
-
-	    // Check to see if the "Data Object Classes" directory exists; if not, create it; otherwise, clear it out
-	    if (!Directory.Exists(options.RootDirectory + options.DoClassDirectory))
-		Directory.CreateDirectory(options.RootDirectory + options.DoClassDirectory);
-	}
-
-
-	/// <summary>
-	/// Processes the specified table, creating stored procedures and C# data access classes for it.
-	/// </summary>
-	/// <param name="strTableName">Name of the table to be processed.</param>
-	private void ProcessTable(Entity entity) {
-	    ArrayList arrFieldList = GetFields(entity);
-
-	    // create views
-	    SQLGenerator sqlgen = new SQLGenerator(options, writer, entity, arrFieldList);
-	    if (!String.Empty.Equals(entity.SqlObject)) sqlgen.CreateView();
-	    if (!String.Empty.Equals(entity.SqlObject)) sqlgen.CreateInsertStoredProcedure();
-	    if (!String.Empty.Equals(entity.SqlObject)) sqlgen.CreateUpdateStoredProcedure();
-	    if (!String.Empty.Equals(entity.SqlObject)) sqlgen.CreateDeleteStoredProcedures();
-	    if (options.GenerateSelectStoredProcs && !String.Empty.Equals(entity.SqlObject)) sqlgen.CreateSelectStoredProcedures();
-
-	    // create classes
-	    DAOGenerator daogen = new DAOGenerator(options, writer, entity, arrFieldList);
-	    DOGenerator dogen = new DOGenerator(options, writer, entity, arrFieldList);
-	    dogen.CreateDataObjectClass();
-	    if (!String.Empty.Equals(entity.SqlObject)) daogen.CreateDataAccessClass();
-	}
-
-	private ArrayList GetFields(Entity entity) {
-	    ArrayList fields = new ArrayList();
-
-	    if (options.XmlConfigFilename.Length > 0) {
-		// get entities from xml
-		XmlDocument doc = new XmlDocument();
-		doc.Load(options.XmlConfigFilename);
-		XmlNodeList elements = doc.DocumentElement.GetElementsByTagName("entity");
-		foreach (XmlNode element in elements) {
-		    String name = element.Attributes["name"].Value;
-		    String sqlObject = (element.Attributes["sqlobject"] == null) ? "" : element.Attributes["sqlobject"].Value;
-		    if (((entity.SqlObject.Length>0 && sqlObject == entity.SqlObject) || (entity.SqlObject.Length==0 && name == entity.Name)) && element.HasChildNodes) {
-			foreach (XmlNode node in element.ChildNodes) {
-			    // for properties  - collections and nested elements to be handled seperately
-			    if (node.Name.ToLower().Equals("property")) {
-				Field field = new Field();
-				if (node.Attributes["name"] != null) {
-				    field.Name = node.Attributes["name"].Value;
-				    field.SqlName = field.Name;
-				}
-				if (node.Attributes["sqlname"] != null) {
-				    field.SqlName = node.Attributes["sqlname"].Value;
-				}
-				field.Description = node.InnerText;
-				if (node.Attributes["sqltype"] != null) {
-				    field.SqlType.Name = node.Attributes["sqltype"].Value;
-
-				    // if the sql type is defined, default to all values defined in it
-				    if (entity.SqlTypes.ContainsKey(field.SqlType.Name)) {
-					field.SqlType = (SqlTypeData)entity.SqlTypes[field.SqlType.Name];
-					if (entity.Types.Contains(field.SqlType.Type)) {
-					    field.Type = (TypeData)entity.Types[field.SqlType.Type];
-					} else {
-					    Console.Out.WriteLine("Type " + field.SqlType.Type + " was not defined");
-					}
-				    } else {
-					Console.Out.WriteLine("SqlType " + field.SqlType.Name + " was not defined");
-				    }
-				}
-				if (node.Attributes["length"] != null) {
-				    field.SqlType.Length = Int32.Parse(node.Attributes["length"].Value);
-				}
-				if (node.Attributes["scale"] != null) {
-				    field.SqlType.Scale = Int32.Parse(node.Attributes["scale"].Value);
-				}
-				if (node.Attributes["precision"] != null) {
-				    field.SqlType.Precision = Int32.Parse(node.Attributes["precision"].Value);
-				}
-
-				if (node.Attributes["type"] != null) {
-				    field.Type.Name = node.Attributes["type"].Value;
-				    field.Type.ConcreteType = field.Type.Name;
-
-				    // if the data type is defined, default it as the property and left be overridden
-				    if (entity.Types.Contains(field.Type.Name)) {
-					field.Type = (TypeData)entity.Types[field.Type.Name];
-				    } else {
-					Console.Out.WriteLine("Type " + field.Type.Name + " was not defined");
-				    }
-				}
-				if (node.Attributes["concretetype"] != null) {
-				    field.Type.ConcreteType = node.Attributes["concretetype"].Value;
-				}
-
-				if (node.Attributes["accessmodifier"] != null) {
-				    field.AccessModifier = node.Attributes["accessmodifier"].Value;
-				}
-
-				field.IsIdentity = (node.Attributes["isidentity"] != null);
-				field.IsPrimaryKey = (node.Attributes["isprimarykey"] != null);
-				field.IsRowGuidCol = (node.Attributes["isrowguidcol"] != null);
-				field.IsForeignKey = (node.Attributes["isforeignkey"] != null);
-				field.IsViewColumn = (node.Attributes["isviewcolumn"] != null);
-				fields.Add(field);
-			    }
-			}
-		    }
-		}
-	    }
-
+	    Boolean foundNewProperties=false;
 	    if (options.AutoDiscoverProperties) {
-		DataTable columns = GetTableColumns(entity.SqlObject);
+		DataTable columns = GetTableColumns(entity, connection);
 		foreach (DataRow objDataRow in columns.Rows) {
 		    if (objDataRow["COLUMN_COMPUTED"].ToString() == "0") {
-			if (FindFieldByName(fields, objDataRow["COLUMN_NAME"].ToString()) == null) {
+			if (Field.FindFieldBySqlName(fields, objDataRow["COLUMN_NAME"].ToString()) == null) {
 			    Field field = new Field();
 			    field.Name = objDataRow["COLUMN_NAME"].ToString();
+			    field.SqlName = field.Name;
+
 			    field.SqlType.Name = objDataRow["DATA_TYPE"].ToString();
+			    // if the sql type is defined, default to all values defined in it
+			    if (sqltypes.ContainsKey(field.SqlType.Name)) {
+				field.SqlType = (SqlType)((SqlType)sqltypes[field.SqlType.Name]).Clone();
+				if (types.Contains(field.SqlType.Type)) {
+				    field.Type = (Type)((Type)types[field.SqlType.Type]).Clone();
+				} else {
+				    Console.Out.WriteLine("Type " + field.SqlType.Type + " was not defined");
+				}
+			    } else {
+				Console.Out.WriteLine("SqlType " + field.SqlType.Name + " was not defined");
+			    }
+
 			    field.SqlType.Length = objDataRow["CHARACTER_MAXIMUM_LENGTH"].ToString().Length > 0 ? (Int32)objDataRow["CHARACTER_MAXIMUM_LENGTH"] : (Int32)(Int16)objDataRow["COLUMN_LENGTH"];
 			    if (!System.DBNull.Value.Equals(objDataRow["NUMERIC_PRECISION"])) field.SqlType.Precision = (Int32)(Byte)objDataRow["NUMERIC_PRECISION"];
 			    if (!System.DBNull.Value.Equals(objDataRow["NUMERIC_SCALE"])) field.SqlType.Scale = (Int32)objDataRow["NUMERIC_SCALE"];
@@ -308,14 +151,6 @@ namespace Spring2.DataTierGenerator {
 			    field.IsRowGuidCol = objDataRow["IsRowGuidCol"].ToString() == "1";
 			    field.IsForeignKey = objDataRow["IsForeignKey"].ToString() == "1";
 			    field.IsViewColumn = objDataRow["IsViewColumn"].ToString() == "1";
-
-			    //			    if (options.UseDataTypes) {
-			    //				if (field.IsIdentity) {
-			    //				    field.DataType = "Spring2.Core.Types.IdType";
-			    //				} else {
-			    //				    field.DataType = Field.GetSpring2DataType(field.SqlType);
-			    //				}
-			    //			    }
 
 			    // Check for unicode columns
 			    if (field.SqlType.Name.ToLower() == "nchar" || field.SqlType.Name.ToLower() == "nvarchar" || field.SqlType.Name.ToLower() == "ntext") {
@@ -331,25 +166,26 @@ namespace Spring2.DataTierGenerator {
 					
 			    // Append the array to the array list
 			    fields.Add(field);
+
+			    if (!foundNewProperties) {
+				Console.Out.WriteLine(entity.ToXml());
+				foundNewProperties=true;
+			    }
+			    Console.Out.WriteLine("\t" + field.ToXml(true));
+
 			}
 		    }
 		}
+	    }
+	    if (foundNewProperties) {
+		Console.Out.WriteLine("</entity>\n");
 	    }
 
 	    return fields;
 	}
 
-	private Field FindFieldByName(ArrayList fields, String name) {
-	    foreach (Field field in fields) {
-		if (field.Name == name) {
-		    return field;
-		}
-	    }
-	    return null;
-	}
 
-
-	private DataTable GetTableColumns(string strTableName) {
+	private DataTable GetTableColumns(Entity entity, SqlConnection connection) {
 	    String sql = "	SELECT	INFORMATION_SCHEMA.COLUMNS.COLUMN_NAME, ";
 	    sql = sql + " 		INFORMATION_SCHEMA.COLUMNS.DATA_TYPE, ";
 	    sql = sql + " 		INFORMATION_SCHEMA.COLUMNS.CHARACTER_MAXIMUM_LENGTH, ";
@@ -365,14 +201,14 @@ namespace Spring2.DataTierGenerator {
 	    sql = sql + "		case when INFORMATION_SCHEMA.COLUMNS.COLUMN_NAME in (SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE INNER JOIN INFORMATION_SCHEMA.TABLE_CONSTRAINTS ON INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE.CONSTRAINT_NAME = INFORMATION_SCHEMA.TABLE_CONSTRAINTS.CONSTRAINT_NAME WHERE INFORMATIoN_SCHEMA.TABLE_CONSTRAINTS.TABLE_NAME = INFORMATION_SCHEMA.COLUMNS.TABLE_NAME AND CONSTRAINT_TYPE = 'PRIMARY KEY') then 1 else 0 end IsPrimaryKey ";
 	    sql = sql + " 	FROM INFORMATION_SCHEMA.COLUMNS ";
 	    sql = sql + "  	INNER JOIN systypes ON INFORMATION_SCHEMA.COLUMNS.DATA_TYPE = systypes.name ";
-	    sql = sql + "  	INNER JOIN syscolumns ON INFORMATION_SCHEMA.COLUMNS.COLUMN_NAME = syscolumns.name  AND syscolumns.id = OBJECT_ID('" + strTableName + "') ";
-	    sql = sql + "	left join syscolumns vc on INFORMATION_SCHEMA.COLUMNS.COLUMN_NAME = vc.name AND vc.id = OBJECT_ID('" + strTableName + "') ";
-	    sql = sql + "  	WHERE INFORMATION_SCHEMA.COLUMNS.TABLE_NAME = '" + strTableName + "' ";
+	    sql = sql + "  	INNER JOIN syscolumns ON INFORMATION_SCHEMA.COLUMNS.COLUMN_NAME = syscolumns.name  AND syscolumns.id = OBJECT_ID('" + entity.SqlObject + "') ";
+	    sql = sql + "	left join syscolumns vc on INFORMATION_SCHEMA.COLUMNS.COLUMN_NAME = vc.name AND vc.id = OBJECT_ID('" + entity.SqlObject + "') ";
+	    sql = sql + "  	WHERE INFORMATION_SCHEMA.COLUMNS.TABLE_NAME = '" + entity.SqlObject + "' ";
 
 	    // if basing data objects on views, get additional fields found in the corresponding view (by naming convention of vw + tablename) -- should be configuration option
-	    if (options.UseViews) {
+	    if (options.UseViews && entity.SqlView.Length>1) {
 		sql = sql + "union ";
-		sql = "	SELECT	INFORMATION_SCHEMA.COLUMNS.COLUMN_NAME, ";
+		sql = sql + "	SELECT	INFORMATION_SCHEMA.COLUMNS.COLUMN_NAME, ";
 		sql = sql + " 		INFORMATION_SCHEMA.COLUMNS.DATA_TYPE, ";
 		sql = sql + " 		INFORMATION_SCHEMA.COLUMNS.CHARACTER_MAXIMUM_LENGTH, ";
 		sql = sql + " 		INFORMATION_SCHEMA.COLUMNS.NUMERIC_SCALE, ";
@@ -388,8 +224,8 @@ namespace Spring2.DataTierGenerator {
 		sql = sql + " 	FROM INFORMATION_SCHEMA.COLUMNS ";
 		sql = sql + " 	INNER JOIN systypes ON INFORMATION_SCHEMA.COLUMNS.DATA_TYPE = systypes.name ";
 		sql = sql + " 	INNER JOIN syscolumns ON INFORMATION_SCHEMA.COLUMNS.COLUMN_NAME = syscolumns.name ";
-		sql = sql + " 	WHERE INFORMATION_SCHEMA.COLUMNS.TABLE_NAME = 'vw" + strTableName + "' AND syscolumns.id = OBJECT_ID('vw" + strTableName + "') ";
-		sql = sql + " 	and INFORMATION_SCHEMA.COLUMNS.COLUMN_NAME not in (select INFORMATION_SCHEMA.COLUMNS.COLUMN_NAME from INFORMATION_SCHEMA.COLUMNS where INFORMATION_SCHEMA.COLUMNS.TABLE_NAME = '" + strTableName + "') ";
+		sql = sql + " 	WHERE INFORMATION_SCHEMA.COLUMNS.TABLE_NAME = '" + entity.SqlView + "' AND syscolumns.id = OBJECT_ID('" + entity.SqlView + "') ";
+		sql = sql + " 	and INFORMATION_SCHEMA.COLUMNS.COLUMN_NAME not in (select INFORMATION_SCHEMA.COLUMNS.COLUMN_NAME from INFORMATION_SCHEMA.COLUMNS where INFORMATION_SCHEMA.COLUMNS.TABLE_NAME = '" + entity.SqlObject + "') ";
 	    }
 
 	    sql = sql + "order by column_id ";
@@ -398,54 +234,9 @@ namespace Spring2.DataTierGenerator {
 	    DataTable objDataTable = new DataTable();
 	    SqlDataAdapter objDataAdapter = new SqlDataAdapter(sql, connection);
 	    objDataAdapter.Fill(objDataTable);
+	    //objDataTable.R
 	    return objDataTable;
 	}
-
-	public void GenerateXML() {
-	    ArrayList entities = GetEntities();
-	    StringBuilder sb = new StringBuilder();
-	    sb.Append("\t<entities>\n");
-	    foreach (Entity entity in entities) {
-		sb.Append("\t\t<entity name=\"").Append(entity.Name).Append("\"");
-		sb.Append(" sqlobject=\"").Append(entity.SqlObject).Append("\"");
-		sb.Append(">\n");
-		ArrayList columns = GetFields(entity);
-		for (Int32 i = 0; i<columns.Count; i++) {
-		    Field field = (Field)columns[i];
-		    sb.Append("\t\t\t<property");
-		    sb.Append(" name=\"").Append(field.Name).Append("\"");
-		    sb.Append(" sqltype=\"").Append(field.SqlType).Append("\"");
-		    //		    if (field.IsText) {
-		    //			sb.Append(" length=\"").Append(field.Length.ToString()).Append("\"");
-		    //		    }
-		    //		    if (field.IsNumber || field.IsDecimal || field.IsCurrency) {
-		    //			sb.Append(" scale=\"").Append(field.Scale.ToString()).Append("\"");
-		    //			sb.Append(" precision=\"").Append(field.Precision.ToString()).Append("\"");
-		    //		    }
-		    //		    sb.Append(" datatype=\"").Append(Field.GetSpring2DataType(field.SqlType)).Append("\"");
-		    if (field.IsIdentity) {
-			sb.Append(" isidentity=\"True\"");
-		    }
-		    if (field.IsPrimaryKey) {
-			sb.Append(" isprimarykey=\"True\"");
-		    }
-		    if (field.IsRowGuidCol) {
-			sb.Append(" isrowguidcol=\"True\"");
-		    }
-		    if (field.IsForeignKey) {
-			sb.Append(" isforeignkey=\"True\"");
-		    }
-		    if (field.IsViewColumn) {
-			sb.Append(" isviewcolumn=\"True\"");
-		    }
-		    sb.Append(" />\n");
-		}
-		sb.Append("\t\t</entity>\n");
-	    }
-	    sb.Append("\t</entities>\n");
-	    WriteToFile(options.XmlConfigFilename + ".generated.xml", sb.ToString());
-	}
-
 
     }
 }
