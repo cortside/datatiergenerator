@@ -46,7 +46,7 @@ docs:
 	@rm -rf ../docs/api
 	../bin/NDoc/NDocConsole.exe -documenter=MSDN -project=Spring2.DataTierGenerator.ndoc
 
-package: clean solution regress changelog docs
+package: clean build regress changelog docs
 	rm -rf ${BUILDDIR}/Core
 	cp ../docs/api/Spring2.DataTierGenerator.chm ${BUILDDIR}
 	jar -cMvf ${RELEASEDIR}/Spring2.DataTierGenerator.$(shell getversion.sh).zip -C ${BUILDDIR} .
