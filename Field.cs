@@ -168,7 +168,18 @@ namespace Spring2.DataTierGenerator {
 		String name = element.Attributes["name"].Value;
 		String sqlObject = (element.Attributes["sqlobject"] == null) ? "" : element.Attributes["sqlobject"].Value;
 		if (((entity.SqlObject.Length>0 && sqlObject == entity.SqlObject) || (entity.SqlObject.Length==0 && name == entity.Name)) && element.HasChildNodes) {
-		    foreach (XmlNode node in element.ChildNodes) {
+		    // look for a properties element, if one does not exist, assume that everything under the entity is a property (for backward compatablility)
+		    XmlNodeList nodes = element.ChildNodes;
+		    Boolean hasProperties = false;
+		    foreach(XmlNode node in element.ChildNodes) {
+			if (node.Name.Equals("properties")) {
+			    nodes = node.ChildNodes;
+			}
+		    }
+		    if (!hasProperties) {
+			Console.Out.WriteLine("WARNING:  <property> elements should be defined within a <properties> element.");
+		    }
+		    foreach (XmlNode node in nodes) {
 			// for properties  - collections and nested elements to be handled seperately
 			if (node.Name.ToLower().Equals("property")) {
 			    Field field = new Field();
