@@ -9,6 +9,7 @@ using System.Xml;
 using NVelocity;
 using NVelocity.App;
 using NVelocity.Exception;
+using Spring2.Core.Util;
 using Spring2.DataTierGenerator;
 using Spring2.DataTierGenerator.Generator.Writer;
 using Spring2.DataTierGenerator.Generator.Styler;
@@ -19,6 +20,11 @@ namespace Spring2.DataTierGenerator.Generator {
     public class NVelocityGenerator : IGenerator {
 
 	private IList log = new ArrayList();
+	private Int64 generateTicks = 0;
+	private Int64 mergeTicks = 0;
+	private Int64 stylerTicks = 0;
+	private Int64 writerTicks = 0;
+	private Int64 files = 0;
 
 	public NVelocityGenerator() {
 	    InitNVelocity();
@@ -67,12 +73,19 @@ namespace Spring2.DataTierGenerator.Generator {
 		    }
 		}
 
+		WriteToLog(parser.Tasks.Count.ToString() + " generator tasks");
 		foreach(ITask task in parser.Tasks) {
 		    Template template = Velocity.GetTemplate(task.Template);
 		    foreach(IElement element in task.Elements) {
 			GenerateFile(parser, element, task, template);
 		    }
 		}
+
+		WriteToLog("files processed: " + files);
+		WriteToLog("generate: " + new TimeSpan(generateTicks).TotalMilliseconds + "ms");
+		WriteToLog("template merge: " + new TimeSpan(mergeTicks).TotalMilliseconds + "ms");
+		WriteToLog("styler: " + new TimeSpan(stylerTicks).TotalMilliseconds + "ms");
+		WriteToLog("writer: " + new TimeSpan(writerTicks).TotalMilliseconds + "ms");
 	    } else {
 		WriteToLog("Parser was not in a valid state and reported the following errors:");
 		foreach(String s in parser.Log) {
@@ -81,8 +94,9 @@ namespace Spring2.DataTierGenerator.Generator {
 	    }
 	}
 
-
 	private void GenerateFile(IParser parser, IElement element, ITask task, Template template) {
+	    Timer generateTimer = new Timer();
+	    files++;
 	    StringWriter writer = new StringWriter();
 
 	    VelocityContext vc = new VelocityContext();
@@ -98,8 +112,12 @@ namespace Spring2.DataTierGenerator.Generator {
 	    vc.Put("elements", task.Elements);
 	    vc.Put("task", task);
 
+	    Timer timer = new Timer();
 	    try {
+	    	timer.Start();
 		template.Merge(vc, writer);
+		timer.Stop();
+		mergeTicks += timer.TimeSpan.Ticks;
 
 		FileInfo file = new FileInfo(task.Directory + "\\" + task.FileNameFormat.Replace("{removewhitespace(element.Name)}", element.Name.Replace(" ", String.Empty)).Replace("{element.Name}", element.Name));
 		String content = writer.ToString();
@@ -112,7 +130,17 @@ namespace Spring2.DataTierGenerator.Generator {
 		    IWriter w = parser.GetWriter(task.Writer);
 		    try {
 			w.BackupFilePath = task.BackupDirectory + "\\" + file.Name + "~";
-			if (w.Write(file, s.Style(content))) {
+			timer.Start();
+			String styledContent = s.Style(content);
+			timer.Stop();
+			stylerTicks += timer.TimeSpan.Ticks;
+
+			timer.Start();
+			Boolean changed = w.Write(file, styledContent);
+			timer.Stop();
+			writerTicks += timer.TimeSpan.Ticks;
+			
+			if (changed) {
 			    WriteToLog(w.Log);
 			    w.Log.Clear();
 			    WriteToLog("generating " + file.FullName);
@@ -124,6 +152,9 @@ namespace Spring2.DataTierGenerator.Generator {
 	    } catch (Exception ex) {
 		WriteToLog(ex.ToString());                                                                      
 	    }
+	    
+	    generateTimer.Stop();
+	    generateTicks += generateTimer.TimeSpan.Ticks;
 	}
 
 	protected void WriteToLog(String s) {
