@@ -193,7 +193,7 @@ namespace Spring2.DataTierGenerator {
 	/// <returns>Reader syntax to use.</returns>
 	public String GetProcedureReturnString(PropertyElement field) 
 	{
-	    String readerMethod = "cmd.Parameters[\"RETURN_VALUE\"].Value";
+	    String readerMethod = "(Int32)(cmd.Parameters[\"RETURN_VALUE\"].Value)";
 	    if (field.Type.ConvertFromSqlTypeFormat.Length >0) 
 	    {
 		readerMethod = 
