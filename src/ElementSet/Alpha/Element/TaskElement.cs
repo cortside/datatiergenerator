@@ -182,7 +182,14 @@ namespace Spring2.DataTierGenerator.Element {
 			    t.Name = type.Name.Replace("{element.Name}", node.Attributes["name"].Value);
 			    t.NewInstanceFormat = type.NewInstanceFormat.Replace("{element.Name}", node.Attributes["name"].Value);
 			    t.NullInstanceFormat = type.NullInstanceFormat.Replace("{element.Name}", node.Attributes["name"].Value);
-			    t.Package = options.RootNameSpace + "." + task.Directory.Replace("\\", ".");
+			    if (type.Package.Equals(""))
+			    {
+				t.Package = options.RootNameSpace + "." + task.Directory.Replace("\\", ".");
+			    }
+			    else
+			    {
+				t.Package = type.Package;
+			    }
 
 			    if (!types.Contains(t.Name)) {{}
 				types.Add(t.Name, t);
