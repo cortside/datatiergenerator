@@ -72,7 +72,7 @@
 
 
     <target name="compile">
-	<solution solutionfile="DataTierGenerator.sln" configuration="debug" outputdir="${build.dir}" />
+	<solution solutionfile="DataTierGenerator.sln" configuration="debug"/>
 	<copy todir="${build.dir}">
             <fileset basedir="..\lib">
             	<include name="*.dll" />
