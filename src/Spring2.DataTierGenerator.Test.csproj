@@ -117,6 +117,33 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Test\CodeDomMerge\GolferDAO.cs"
+                    SubType = "Code"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\CodeDomMerge\GolferDAO.cs.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\CodeDomMerge\GolferDAO.generated.cs"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\CodeDomMerge\Vendor.cs"
+                    SubType = "Code"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\CodeDomMerge\Vendor.cs.cmp"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\CodeDomMerge\Vendor.generated.cs"
+                    SubType = "Code"
+                    BuildAction = "None"
+                />
+                <File
                     RelPath = "Test\Sanity\sanity.xml"
                     BuildAction = "Content"
                 />
