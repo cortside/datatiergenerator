@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 
+using Spring2.DataTierGenerator.Element;
 
 namespace Spring2.DataTierGenerator.Parser {
     /// <summary>
@@ -52,11 +53,11 @@ namespace Spring2.DataTierGenerator.Parser {
 	    get;
 	}
 
-	Element.Generator Generator {
+	GeneratorElement Generator {
 	    get;
 	}
 
-	Element.Parser Parser {
+	ParserElement Parser {
 	    get;
 	}
 

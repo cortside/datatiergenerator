@@ -164,7 +164,7 @@ namespace Spring2.DataTierGenerator {
 	/// </summary>
 	/// <param name="field">Field whose sql format is needed.</param>
 	/// <returns>String for converting the field to sql format (like artProjectId.DBValue)</returns>
-	public String GetSqlConversion(Field field) {
+	public String GetSqlConversion(PropertyElement field) {
 	    return String.Format(field.Type.ConvertToSqlTypeFormat, "", field.GetFieldFormat(), "", "", field.GetFieldFormat());
 	}
 
@@ -174,7 +174,7 @@ namespace Spring2.DataTierGenerator {
 	/// </summary>
 	/// <param name="field">Field whose reader syntax is needed.</param>
 	/// <returns>Reader syntax to use.</returns>
-	public String GetReaderString(Field field) {
+	public String GetReaderString(PropertyElement field) {
 	    String readerMethod = String.Format(field.Column.SqlType.ReaderMethodFormat, "dataReader", field.Column.Name);
 	    if (field.Type.ConvertFromSqlTypeFormat.Length >0) 
 	    {
@@ -191,7 +191,7 @@ namespace Spring2.DataTierGenerator {
 	/// </summary>
 	/// <param name="field">Field whose reader syntax is needed.</param>
 	/// <returns>Reader syntax to use.</returns>
-	public String GetProcedureReturnString(Field field) 
+	public String GetProcedureReturnString(PropertyElement field) 
 	{
 	    String readerMethod = "cmd.Parameters[\"RETURN_VALUE\"].Value";
 	    if (field.Type.ConvertFromSqlTypeFormat.Length >0) 
@@ -209,7 +209,7 @@ namespace Spring2.DataTierGenerator {
 	/// <param name="entity">Entity code is being generated for</param>
 	/// <param name="isDaoClass">Indicates if a DAO class is being generated.</param>
 	/// <returns></returns>
-	public ArrayList GetUsingNamespaces(Entity entity, Boolean isDaoClass) 
+	public ArrayList GetUsingNamespaces(EntityElement entity, Boolean isDaoClass) 
 	{
 
 	    ArrayList namespaces = new ArrayList();
@@ -225,7 +225,7 @@ namespace Spring2.DataTierGenerator {
 		namespaces.Add(GetDONameSpace(null));
 	    }
 
-	    foreach (Field field in entity.Fields) 
+	    foreach (PropertyElement field in entity.Fields) 
 	    {
 		if (!field.Type.Package.Equals(String.Empty) && !namespaces.Contains(field.Type.Package)) 
 		{

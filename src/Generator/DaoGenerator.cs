@@ -13,12 +13,12 @@ namespace Spring2.DataTierGenerator.Generator {
     /// Generates stored procedures and associated data access code for the specified database.
     /// </summary>
     internal class DaoGenerator : GeneratorSkeleton, IGenerator {
-	private Entity entity;
+	private EntityElement entity;
 	/// <summary>
 	/// Contructor for the Generator class.
 	/// </summary>
 	/// <param name="strConnectionString">Connecion string to a SQL Server database.</param>
-	public DaoGenerator(Configuration options, Entity entity) : base(options) {
+	public DaoGenerator(Configuration options, EntityElement entity) : base(options) {
 	    this.entity = entity;
 	}
 		
@@ -102,7 +102,7 @@ namespace Spring2.DataTierGenerator.Generator {
 			
 	    // Determine the return type of the insert function.
 	    writer.Write(2, "public static ");
-	    Field idField = entity.GetIdentityField();
+	    PropertyElement idField = entity.GetIdentityField();
 	    if (idField != null) {
 		writer.Write(idField.Type.Name);
 	    } else {
@@ -123,7 +123,7 @@ namespace Spring2.DataTierGenerator.Generator {
 
 	    // Append the parameter appends  ;)
 	    writer.WriteLine(3, "//Create the parameters and append them to the command object");
-	    foreach (Field field in entity.Fields) {
+	    foreach (PropertyElement field in entity.Fields) {
 		if (!field.Column.ViewColumn && field.Column.Name.Length>0) {
 		    if (field.Column.Identity || field.Column.RowGuidCol) {
 			//writer.Write(3, field.CreateSqlParameter(true, true));
@@ -183,7 +183,7 @@ namespace Spring2.DataTierGenerator.Generator {
 	    // Append the parameter appends  ;)
 	    writer.WriteLine(3, "//Create the parameters and append them to the command object");
 	    for (int i = 0; i < entity.Fields.Count; i++) {
-		Field field = (Field)entity.Fields[i];
+		PropertyElement field = (PropertyElement)entity.Fields[i];
 		if (!field.Column.ViewColumn && field.Column.Name.Length>0) {
 		    writer.Write(3, field.CreateSqlParameter(false, true));
 		}
@@ -212,7 +212,7 @@ namespace Spring2.DataTierGenerator.Generator {
 	    ArrayList keyList = new ArrayList();
 
 	    for (int i = 0; i < entity.Fields.Count; i++) {
-		Field field = (Field)entity.Fields[i];
+		PropertyElement field = (PropertyElement)entity.Fields[i];
 		if (entity.SqlEntity.IsPrimaryKeyColumn(field.Column.Name)) {
 		    keyList.Add(field);
 		    primaryKeyList += field.Name.Replace(" ", "_") + "_";
@@ -226,7 +226,7 @@ namespace Spring2.DataTierGenerator.Generator {
 	    /*********************************************************************************************************/
 	    // Create the remaining select functions based on identity columns or uniqueidentifiers
 	    for (int i = 0; i < entity.Fields.Count; i++) {
-		Field field = (Field)entity.Fields[i];
+		PropertyElement field = (PropertyElement)entity.Fields[i];
 			
 		if (field.Column.Identity || (entity.SqlEntity.GenerateProcsForForeignKey && (field.Column.RowGuidCol || entity.SqlEntity.IsPrimaryKeyColumn(field.Column.Name) || entity.SqlEntity.IsPrimaryKeyColumn(field.Column.Name)))) {
 		    String columnName = field.Name.Substring(0, 1).ToUpper() + field.Name.Substring(1);
@@ -287,7 +287,7 @@ namespace Spring2.DataTierGenerator.Generator {
 		writer.Write(2, "public static void " + methodName + "(");
 
 		String parms = String.Empty;
-		foreach (Field field in keyList) {
+		foreach (PropertyElement field in keyList) {
 		    if (parms.Length>0) {
 			parms += ", ";
 		    }
@@ -300,7 +300,7 @@ namespace Spring2.DataTierGenerator.Generator {
 		// Append the parameters
 		writer.WriteLine(3, "// Create and append the parameters");
 		for (int i = 0; i < keyList.Count; i++) {
-		    Field field = (Field)keyList[i];
+		    PropertyElement field = (PropertyElement)keyList[i];
 		    writer.Write(3, field.CreateSqlParameter(false, false));
 		}
 
@@ -323,7 +323,7 @@ namespace Spring2.DataTierGenerator.Generator {
 	/// <param name="fields">ArrayList object containing one or more Field objects as defined in the table.</param>
 	/// <param name="sb">StreamBuilder object that the resulting string should be appended to.</param>
 	private void CreateSelectMethods(IndentableStringWriter writer) {
-	    Field	field;
+	    PropertyElement	field;
 	    int			intIndex;
 	    string		strColumnName;
 	    string		strPrimaryKeyList;
@@ -333,7 +333,7 @@ namespace Spring2.DataTierGenerator.Generator {
 	    strPrimaryKeyList = String.Empty;
 	    arrKeyList = new ArrayList();
 	    for (intIndex = 0; intIndex < entity.Fields.Count; intIndex++) {
-		field = (Field)entity.Fields[intIndex];
+		field = (PropertyElement)entity.Fields[intIndex];
 		if (entity.SqlEntity.IsPrimaryKeyColumn(field.Column.Name)) {
 		    arrKeyList.Add(field);
 		    strPrimaryKeyList += field.Name.Replace(" ", "_") + "_";
@@ -378,7 +378,7 @@ namespace Spring2.DataTierGenerator.Generator {
 	    /*********************************************************************************************************/
 	    // Create the remaining select functions based on identity columns or uniqueidentifiers
 	    for (intIndex = 0; intIndex < entity.Fields.Count; intIndex++) {
-		field = (Field)entity.Fields[intIndex];
+		field = (PropertyElement)entity.Fields[intIndex];
 			
 		if (field.Column.Identity || field.Column.RowGuidCol || entity.SqlEntity.IsPrimaryKeyColumn(field.Column.Name) || entity.SqlEntity.IsForeignKeyColumn(field.Column.Name)) {
 		    strColumnName = field.Name.Substring(0, 1).ToUpper() + field.Name.Substring(1);
@@ -439,7 +439,7 @@ namespace Spring2.DataTierGenerator.Generator {
 				
 		writer.Write(2, "public static SqlDataReader SelectBy" + strPrimaryKeyList + "(");
 		for (intIndex = 0; intIndex < arrKeyList.Count; intIndex++) {
-		    field = (Field)arrKeyList[intIndex];
+		    field = (PropertyElement)arrKeyList[intIndex];
 		    writer.Write(field.CreateMethodParameter() + ", ");
 		}
 		writer.WriteLine("SqlConnection connection) {");
@@ -457,7 +457,7 @@ namespace Spring2.DataTierGenerator.Generator {
 		// Append the parameters
 		writer.WriteLine(4, "// Create and append the parameters");
 		for (intIndex = 0; intIndex < arrKeyList.Count; intIndex++) {
-		    field = (Field)arrKeyList[intIndex];
+		    field = (PropertyElement)arrKeyList[intIndex];
 		    writer.Write(4, field.CreateSqlParameter(false, false));
 		    field = null;
 		}
@@ -538,7 +538,7 @@ namespace Spring2.DataTierGenerator.Generator {
 	    // Load
 	    IList keys = entity.GetPrimaryKeyFields();
 	    String parms = String.Empty;
-	    foreach (Field field in keys) {
+	    foreach (PropertyElement field in keys) {
 		if (!parms.Equals(String.Empty)) {
 		    parms += ", ";
 		}
@@ -546,7 +546,7 @@ namespace Spring2.DataTierGenerator.Generator {
 	    }
 
 	    writer.WriteSummaryComment(2, "Finds a " + entity.Name + " entity using it's primary key.");
-	    foreach (Field field in keys)
+	    foreach (PropertyElement field in keys)
 	    {
 		writer.WriteParameterComment(2, field.Column.Name, "A key field.");
 	    }
@@ -554,7 +554,7 @@ namespace Spring2.DataTierGenerator.Generator {
 	    writer.WriteExceptionComment(2, "Spring2.Core.DAO.FinderException", "Thrown when no entity exists witht he specified primary key..");
 	    writer.WriteLine(2, "public static " + options.GetDOClassName(entity.Name) + " Load(" + parms + ") {");
 	    writer.WriteLine(3, "WhereClause w = new WhereClause();");
-	    foreach (Field field in keys) {
+	    foreach (PropertyElement field in keys) {
 		writer.WriteLine(3, "w.And(\"" + field.Column.Name + "\", " + String.Format(field.Type.ConvertToSqlTypeFormat, "", field.GetFieldFormat(), "", "", field.GetFieldFormat()) + ");");
 	    }
 	    writer.WriteLine(3, "SqlDataReader dataReader = GetListReader(CONNECTION_STRING_KEY, VIEW, w, null);");
@@ -576,7 +576,7 @@ namespace Spring2.DataTierGenerator.Generator {
 	    writer.WriteLine(2, "private static " + options.GetDOClassName(entity.Name) + " GetDataObjectFromReader(SqlDataReader dataReader) {");
 	    writer.WriteLine(3, options.GetDOClassName(entity.Name) + " data = new " + options.GetDOClassName(entity.Name) + "();");
 
-	    foreach (Field field in entity.Fields) {
+	    foreach (PropertyElement field in entity.Fields) {
 		if (field.Column.SqlType.Name.Length>0) {
 		    writer.WriteLine(3, "if (dataReader.IsDBNull(dataReader.GetOrdinal(\"" + field.Column.Name + "\"))) { ");
 		    writer.WriteLine(4, "data." + field.GetMethodFormat() + " = " + field.Type.NullInstanceFormat + ";"); 
@@ -611,10 +611,10 @@ namespace Spring2.DataTierGenerator.Generator {
 	private String CreateFinderMethods() {
 	    IndentableStringWriter writer = new IndentableStringWriter();
 
-	    foreach (Finder finder in entity.Finders) {
+	    foreach (FinderElement finder in entity.Finders) {
 
 		String parms = String.Empty;
-		foreach (Field field in finder.Fields) {
+		foreach (PropertyElement field in finder.Fields) {
 		    if (!parms.Equals(String.Empty)) {
 			parms += ", ";
 		    }
@@ -629,7 +629,7 @@ namespace Spring2.DataTierGenerator.Generator {
 		{
 		    writer.WriteSummaryComment(2, "Returns a list of objects which match the values for the fields specified.");
 		}
-		foreach (Field field in finder.Fields) 
+		foreach (PropertyElement field in finder.Fields) 
 		{
 		    writer.WriteParameterComment(2, field.Column.Name, "A field value to be matched.");
 		}
@@ -651,7 +651,7 @@ namespace Spring2.DataTierGenerator.Generator {
 		writer.WriteLine(" " + finder.Name + "(" + parms + ") {");
 		writer.WriteLine(2, "	WhereClause filter = new WhereClause();");
 		writer.WriteLine(2, "	OrderByClause sort = new OrderByClause(\"" + finder.Sort + "\");");
-		foreach (Field field in finder.Fields) {
+		foreach (PropertyElement field in finder.Fields) {
 		    writer.WriteLine(2, "	filter.And(\"" + field.Column.Name + "\", " + String.Format(field.Type.ConvertToSqlTypeFormat, "", field.GetFieldFormat(), "", "", field.GetFieldFormat()) + ");");
 		}
 

@@ -129,27 +129,27 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
-                    RelPath = "Element\Argument.cs"
+                    RelPath = "Element\ArgumentElement.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Element\Collection.cs"
+                    RelPath = "Element\CollectionElement.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Element\Column.cs"
+                    RelPath = "Element\ColumnElement.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Element\Constraint.cs"
+                    RelPath = "Element\ConstraintElement.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Element\Database.cs"
+                    RelPath = "Element\DatabaseElement.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -159,42 +159,47 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Element\Entity.cs"
+                    RelPath = "Element\EntityElement.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Element\EnumType.cs"
+                    RelPath = "Element\EnumElement.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Element\EnumValue.cs"
+                    RelPath = "Element\EnumValueElement.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Element\Field.cs"
+                    RelPath = "Element\FinderElement.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Element\Finder.cs"
+                    RelPath = "Element\GeneratorElement.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Element\Generator.cs"
+                    RelPath = "Element\IndexElement.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Element\Index.cs"
+                    RelPath = "Element\ParserElement.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Element\Parser.cs"
+                    RelPath = "Element\PropertyElement.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Element\RootElement.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -204,32 +209,32 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Element\SqlEntity.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "Element\SqlEntityData.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Element\SqlType.cs"
+                    RelPath = "Element\SqlEntityElement.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Element\Task.cs"
+                    RelPath = "Element\SqlTypeElement.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Element\Type.cs"
+                    RelPath = "Element\TaskElement.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Element\View.cs"
+                    RelPath = "Element\TypeElement.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Element\ViewElement.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

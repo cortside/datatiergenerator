@@ -360,21 +360,21 @@ namespace Spring2.DataTierGenerator.DTGEditor {
 
 	    sqltypes = p.SqlTypes;
 	    node = new TreeNode("SqlTypes");
-	    foreach(SqlType sqltype in sqltypes) {
+	    foreach(SqlTypeElement sqltype in sqltypes) {
 		node.Nodes.Add(sqltype.Name);
 	    }
 	    tree.Nodes.Add(node);
 
 	    types = p.Types;
 	    node = new TreeNode("Types");
-	    foreach(Element.Type type in types) {
+	    foreach(TypeElement type in types) {
 		node.Nodes.Add(type.Name);
 	    }
 	    tree.Nodes.Add(node);
 
 	    enums = p.Enums;
 	    node = new TreeNode("Enums");
-	    foreach(EnumType e in enums) {
+	    foreach(EnumElement e in enums) {
 		TreeNode n = new TreeNode(e.Name);
 		TreeNode v = new TreeNode("values");
 		n.Nodes.Add(v);
@@ -384,27 +384,27 @@ namespace Spring2.DataTierGenerator.DTGEditor {
 
 	    collections = p.Collections;
 	    node = new TreeNode("Collections");
-	    foreach(Collection c in collections) {
+	    foreach(CollectionElement c in collections) {
 		node.Nodes.Add(c.Name);
 	    }
 	    tree.Nodes.Add(node);
 
 	    databases = p.Databases;
 	    node = new TreeNode("Databases");
-	    foreach(Database database in databases) {
+	    foreach(DatabaseElement database in databases) {
 		TreeNode d = new TreeNode(database.Name);
-		foreach(SqlEntity sqlentity in database.SqlEntities) {
+		foreach(SqlEntityElement sqlentity in database.SqlEntities) {
 		    TreeNode n = new TreeNode(sqlentity.Name);
 		    if (sqlentity.Constraints.Count>0) {
 			TreeNode c = new TreeNode("contraints");
-			foreach (Element.Constraint constraint in sqlentity.Constraints) {
+			foreach (ConstraintElement constraint in sqlentity.Constraints) {
 			    c.Nodes.Add(constraint.Name);
 			}
 			n.Nodes.Add(c);
 		    }
 		    if (sqlentity.Indexes.Count>0) {
 			TreeNode i = new TreeNode("indexes");
-			foreach (Index index in sqlentity.Indexes) {
+			foreach (IndexElement index in sqlentity.Indexes) {
 			    i.Nodes.Add(index.Name);
 			}
 			n.Nodes.Add(i);
@@ -418,11 +418,11 @@ namespace Spring2.DataTierGenerator.DTGEditor {
 
 	    entities = p.Entities;
 	    node = new TreeNode("Entities");
-	    foreach(Entity entity in entities) {
+	    foreach(EntityElement entity in entities) {
 		TreeNode n = new TreeNode(entity.Name);
 		if (entity.Finders.Count>0) {
 		    TreeNode f = new TreeNode("finders");
-		    foreach (Finder finder in entity.Finders) {
+		    foreach (FinderElement finder in entity.Finders) {
 			f.Nodes.Add(finder.Name);
 		    }
 		    n.Nodes.Add(f);
@@ -492,11 +492,11 @@ namespace Spring2.DataTierGenerator.DTGEditor {
 		    list = databases;
 		} else if (level==1) {
 		    list = new ArrayList();
-		    list.Add(Database.FindByName((ArrayList)databases, nodeText));
+		    list.Add(DatabaseElement.FindByName((ArrayList)databases, nodeText));
 		} else {
 		    list = new ArrayList();
-		    Database database = Database.FindByName((ArrayList)databases,treeView1.SelectedNode.Parent.Text);
-		    SqlEntity sqlentity = database.FindSqlEntityByName(nodeText);
+		    DatabaseElement database = DatabaseElement.FindByName((ArrayList)databases,treeView1.SelectedNode.Parent.Text);
+		    SqlEntityElement sqlentity = database.FindSqlEntityByName(nodeText);
 		    list.Add(sqlentity);
 		}
 
@@ -523,7 +523,7 @@ namespace Spring2.DataTierGenerator.DTGEditor {
 		listView1.Columns.Add("Base Entity", -1, HorizontalAlignment.Left);		
 		listView1.Columns.Add("Abstract", -1, HorizontalAlignment.Left);		
 
-		foreach (Entity entity in entities) {
+		foreach (EntityElement entity in entities) {
 		    ListViewItem lvi = new ListViewItem(entity.Name);
 		    lvi.SubItems.Add(entity.BaseEntity.Name);
 		    lvi.SubItems.Add(entity.IsAbstract.ToString());
@@ -533,7 +533,7 @@ namespace Spring2.DataTierGenerator.DTGEditor {
 
 	    if (level==1) {
 		listView1.Items.Clear();
-		Entity entity = Entity.FindEntityByName((ArrayList)entities, nodeText);
+		EntityElement entity = EntityElement.FindEntityByName((ArrayList)entities, nodeText);
 		listView1.Columns.Clear();
 		listView1.Columns.Add("Name", -1, HorizontalAlignment.Left);
 		listView1.Columns.Add("Type", -1, HorizontalAlignment.Left);
@@ -545,7 +545,7 @@ namespace Spring2.DataTierGenerator.DTGEditor {
 		listView1.Columns.Add("Description", -1, HorizontalAlignment.Left);
 		listView1.Columns.Add("Readable", -1, HorizontalAlignment.Left);
 		listView1.Columns.Add("Writable", -1, HorizontalAlignment.Left);
-		foreach(Field field in entity.Fields) {
+		foreach(PropertyElement field in entity.Fields) {
 		    ListViewItem lvi = new ListViewItem(field.Name);
 		    lvi.SubItems.Add(field.Type.Name);
 		    lvi.SubItems.Add(field.Type.ConcreteType);
@@ -561,12 +561,12 @@ namespace Spring2.DataTierGenerator.DTGEditor {
 	    }
 	    if (level==3) {
 		listView1.Items.Clear();
-		Entity entity = Entity.FindEntityByName((ArrayList)entities, treeView1.SelectedNode.Parent.Parent.Text);
+		EntityElement entity = EntityElement.FindEntityByName((ArrayList)entities, treeView1.SelectedNode.Parent.Parent.Text);
 		listView1.Columns.Clear();
 		listView1.Columns.Add("Finder Property Name", -1, HorizontalAlignment.Left);
-		Finder finder = entity.FindFinderByName(nodeText);
+		FinderElement finder = entity.FindFinderByName(nodeText);
 
-		foreach (Field field in finder.Fields) {
+		foreach (PropertyElement field in finder.Fields) {
 		    listView1.Items.Add(field.Name);
 		}
 	    }
@@ -587,9 +587,9 @@ namespace Spring2.DataTierGenerator.DTGEditor {
 		    list = enums;
 		} else {
 		    list = new ArrayList();
-		    list.Add(EnumType.FindByName((ArrayList)enums, nodeText));
+		    list.Add(EnumElement.FindByName((ArrayList)enums, nodeText));
 		}
-		foreach(EnumType e in list) {
+		foreach(EnumElement e in list) {
 		    ListViewItem lvi = new ListViewItem(e.Name);
 		    lvi.SubItems.Add(e.Description);
 		    lvi.SubItems.Add(e.IntegerBased.ToString());
@@ -603,8 +603,8 @@ namespace Spring2.DataTierGenerator.DTGEditor {
 		listView1.Columns.Add("Code", -1, HorizontalAlignment.Left);
 		listView1.Columns.Add("Description", -1, HorizontalAlignment.Left);
 
-		EnumType e = EnumType.FindByName((ArrayList)enums, parentNodeText);
-		foreach(EnumValue v in e.Values) {
+		EnumElement e = EnumElement.FindByName((ArrayList)enums, parentNodeText);
+		foreach(EnumValueElement v in e.Values) {
 		    ListViewItem lvi = new ListViewItem(v.Name);
 		    lvi.SubItems.Add(v.Code);
 		    lvi.SubItems.Add(v.Description);
@@ -630,9 +630,9 @@ namespace Spring2.DataTierGenerator.DTGEditor {
 		    list = collections;
 		} else {
 		    list = new ArrayList();
-		    list.Add(Collection.FindByName((ArrayList)collections, nodeText));
+		    list.Add(CollectionElement.FindByName((ArrayList)collections, nodeText));
 		}
-		foreach(Collection e in list) {
+		foreach(CollectionElement e in list) {
 		    ListViewItem lvi = new ListViewItem(e.Name);
 		    lvi.SubItems.Add(e.Description);
 		    lvi.SubItems.Add(e.Type);

@@ -55,28 +55,28 @@ namespace Spring2.DataTierGenerator.Parser {
 		options.RootDirectory += "\\";
 	    }
 
-	    parser = Element.Parser.ParseFromXml(options, doc, vd);
-	    generator = Element.Generator.ParseFromXml(options, doc, vd);
-	    sqltypes = SqlType.ParseFromXml(doc, vd);
-	    types = Spring2.DataTierGenerator.Element.Type.ParseFromXml(options, doc, vd);
+	    parser = ParserElement.ParseFromXml(options, doc, vd);
+	    generator = GeneratorElement.ParseFromXml(options, doc, vd);
+	    sqltypes = SqlTypeElement.ParseFromXml(doc, vd);
+	    types = TypeElement.ParseFromXml(options, doc, vd);
 
-	    enumtypes = EnumType.ParseFromXml(options,doc,sqltypes,types, vd);
-	    collections = Collection.ParseFromXml(options,doc,sqltypes,types, vd);
-	    databases = Database.ParseFromXml(options, doc, sqltypes, types, vd);
-	    entities = Entity.ParseFromXml(options, doc, sqltypes, types, Database.GetAllSqlEntities(databases), vd);
+	    enumtypes = EnumElement.ParseFromXml(options,doc,sqltypes,types, vd);
+	    collections = CollectionElement.ParseFromXml(options,doc,sqltypes,types, vd);
+	    databases = DatabaseElement.ParseFromXml(options, doc, sqltypes, types, vd);
+	    entities = EntityElement.ParseFromXml(options, doc, sqltypes, types, DatabaseElement.GetAllSqlEntities(databases), vd);
 
 	    Validate(vd);
 	}
 
-	public XmlParser(Element.Parser parser, Configuration options, XmlDocument doc, Hashtable sqltypes, Hashtable types, ParserValidationDelegate vd) {
+	public XmlParser(ParserElement parser, Configuration options, XmlDocument doc, Hashtable sqltypes, Hashtable types, ParserValidationDelegate vd) {
 	    this.options = options;
 	    this.doc = doc;
 	    this.sqltypes = sqltypes;
 	    this.types = types;
-	    enumtypes = EnumType.ParseFromXml(options,doc,sqltypes,types, vd);
-	    collections = Collection.ParseFromXml(options,doc,sqltypes,types, vd);
-	    databases = Database.ParseFromXml(options, doc, sqltypes, types, vd);
-	    entities = Entity.ParseFromXml(options, doc, sqltypes, types, Database.GetAllSqlEntities(databases), vd);
+	    enumtypes = EnumElement.ParseFromXml(options,doc,sqltypes,types, vd);
+	    collections = CollectionElement.ParseFromXml(options,doc,sqltypes,types, vd);
+	    databases = DatabaseElement.ParseFromXml(options, doc, sqltypes, types, vd);
+	    entities = EntityElement.ParseFromXml(options, doc, sqltypes, types, DatabaseElement.GetAllSqlEntities(databases), vd);
 
 	    Validate(vd);
 	}

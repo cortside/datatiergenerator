@@ -26,8 +26,8 @@ namespace Spring2.DataTierGenerator.Parser {
 	protected IList databases = new ArrayList();
 	protected Hashtable types = new Hashtable();
 	protected Hashtable sqltypes = new Hashtable();
-	protected Element.Generator generator = new Element.Generator();
-	protected Element.Parser parser = new Element.Parser();
+	protected GeneratorElement generator = new GeneratorElement();
+	protected ParserElement parser = new ParserElement();
 
 	protected Boolean isValid = false;
 	protected IList errors = new ArrayList();
@@ -82,11 +82,11 @@ namespace Spring2.DataTierGenerator.Parser {
 	    get { return sqltypes.Values; }
 	}
 
-	public Element.Generator Generator {
+	public GeneratorElement Generator {
 	    get { return generator; }
 	}
 
-	public Element.Parser Parser {
+	public ParserElement Parser {
 	    get { return parser; }
 	}
 
@@ -109,8 +109,8 @@ namespace Spring2.DataTierGenerator.Parser {
 	protected void Validate(ParserValidationDelegate vd) {
 	    //TODO: walk through collection to make sure that cross relations are correct.
 
-	    foreach (Database database in databases) {
-		foreach(SqlEntity sqlentity in database.SqlEntities) {
+	    foreach (DatabaseElement database in databases) {
+		foreach(SqlEntityElement sqlentity in database.SqlEntities) {
 		    if (sqlentity.GetPrimaryKeyColumns().Count==0 && (sqlentity.GenerateDeleteStoredProcScript || sqlentity.GenerateUpdateStoredProcScript || sqlentity.GenerateInsertStoredProcScript)) {
 			vd(ParserValidationArgs.NewWarning("SqlEntity " + sqlentity.Name + " does not have any primary key columns defined."));
 		    }
@@ -123,9 +123,9 @@ namespace Spring2.DataTierGenerator.Parser {
 	    }
 
 	    // make sure that all columns are represented in entities
-	    foreach(Entity entity in entities) {
+	    foreach(EntityElement entity in entities) {
 		if (entity.SqlEntity.Name.Length>0) {
-		    foreach(Column column in entity.SqlEntity.Columns) {
+		    foreach(ColumnElement column in entity.SqlEntity.Columns) {
 			if (entity.FindFieldByColumnName(column.Name)==null) {
 			    vd(ParserValidationArgs.NewWarning("could not find field representing column " + column.Name + " in entity " + entity.Name + "."));
 			}

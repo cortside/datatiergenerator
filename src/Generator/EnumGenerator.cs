@@ -10,9 +10,9 @@ using Spring2.DataTierGenerator.Util;
 namespace Spring2.DataTierGenerator.Generator {
 
     internal class EnumGenerator : GeneratorSkeleton, IGenerator {
-	private EnumType type;
+	private EnumElement type;
 
-	public EnumGenerator(Configuration options, EnumType type) : base(options) {
+	public EnumGenerator(Configuration options, EnumElement type) : base(options) {
 	    this.type = type;
 	}
 
@@ -35,7 +35,7 @@ namespace Spring2.DataTierGenerator.Generator {
 	    writer.WriteLine(2, "public static readonly new " + type.Name + " UNSET = new " + type.Name + "();");
 	    writer.WriteLine();
 
-	    foreach (EnumValue value in type.Values) {
+	    foreach (EnumValueElement value in type.Values) {
 		if (!value.Description.Equals(String.Empty)) {
 		    writer.WriteLine(2, "/// <summary>");
 		    writer.WriteLine(2, "/// " + value.Description);

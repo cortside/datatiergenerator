@@ -10,9 +10,9 @@ using Spring2.DataTierGenerator.Util;
 namespace Spring2.DataTierGenerator.Generator {
 
     internal class CollectionGenerator : GeneratorSkeleton, IGenerator {
-	private Collection collection;
+	private CollectionElement collection;
 
-	public CollectionGenerator(Configuration options, Collection collection) : base(options) {
+	public CollectionGenerator(Configuration options, CollectionElement collection) : base(options) {
 	    this.collection = collection;
 	}
 

@@ -11,8 +11,6 @@ using Spring2.DataTierGenerator.Element;
 using Spring2.DataTierGenerator.Parser;
 using Spring2.DataTierGenerator.Util;
 
-using Type = Spring2.DataTierGenerator.Element.Type;
-
 namespace Spring2.DataTierGenerator.Generator {
 
     public class CodeGenerator : GeneratorSkeleton, IGenerator {
@@ -35,26 +33,26 @@ namespace Spring2.DataTierGenerator.Generator {
 
 	    if (parser.IsValid) {
 		// Process each table
-		foreach (Database database in parser.Databases) {
-		    foreach (SqlEntity sqlentity in database.SqlEntities) {
+		foreach (DatabaseElement database in parser.Databases) {
+		    foreach (SqlEntityElement sqlentity in database.SqlEntities) {
 			IGenerator g = new SqlGenerator(options, sqlentity);
 			g.Generate();
 		    }
 		}
 
-		foreach (Entity entity in parser.Entities) {
+		foreach (EntityElement entity in parser.Entities) {
 		    IGenerator dogen = new DataObjectGenerator(options, entity, (ArrayList)parser.Entities);
 		    dogen.Generate();
 		    IGenerator daogen = new DaoGenerator(options, entity);
 		    daogen.Generate();
 		}
 
-		foreach (EnumType type in parser.Enums) {
+		foreach (EnumElement type in parser.Enums) {
 		    IGenerator g = new EnumGenerator(options, type);
 		    g.Generate();
 		}
 
-		foreach (Collection collection in parser.Collections) {
+		foreach (CollectionElement collection in parser.Collections) {
 		    IGenerator g = new CollectionGenerator(options, collection);
 		    g.Generate();
 		}

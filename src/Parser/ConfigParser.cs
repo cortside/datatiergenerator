@@ -47,7 +47,7 @@ namespace Spring2.DataTierGenerator.Parser {
 		this.options = new Configuration();
 	    }
 
-	    // if the root directory is not specified, make it the directory the config file is loaded from
+	    // If the root directory is not specified, make it the directory the config file is loaded from.
 	    if (options.RootDirectory.Equals(String.Empty)) {
 		options.RootDirectory = file.DirectoryName + "\\";
 	    }
@@ -55,16 +55,16 @@ namespace Spring2.DataTierGenerator.Parser {
 		options.RootDirectory += "\\";
 	    }
 
-	    parser = Element.Parser.ParseFromXml(options, doc, vd);
-	    generator = Element.Generator.ParseFromXml(options, doc, vd);
-	    sqltypes = SqlType.ParseFromXml(doc, vd);
-	    types = Spring2.DataTierGenerator.Element.Type.ParseFromXml(options, doc, vd);
+	    parser = ParserElement.ParseFromXml(options, doc, vd);
+	    generator = GeneratorElement.ParseFromXml(options, doc, vd);
+	    sqltypes = SqlTypeElement.ParseFromXml(doc, vd);
+	    types = TypeElement.ParseFromXml(options, doc, vd);
 
 	    if (parser.Class.Equals(String.Empty)) {
-		enumtypes = EnumType.ParseFromXml(options,doc,sqltypes,types, vd);
-		collections = Collection.ParseFromXml(options,doc,sqltypes,types, vd);
-		databases = Database.ParseFromXml(options, doc, sqltypes, types, vd);
-		entities = Entity.ParseFromXml(options, doc, sqltypes, types, Database.GetAllSqlEntities(databases), vd);
+		enumtypes = EnumElement.ParseFromXml(options,doc,sqltypes,types, vd);
+		collections = CollectionElement.ParseFromXml(options,doc,sqltypes,types, vd);
+		databases = DatabaseElement.ParseFromXml(options, doc, sqltypes, types, vd);
+		entities = EntityElement.ParseFromXml(options, doc, sqltypes, types, DatabaseElement.GetAllSqlEntities(databases), vd);
 	    } else {
 		Object o = null;
 		try {

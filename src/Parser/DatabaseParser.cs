@@ -17,19 +17,19 @@ namespace Spring2.DataTierGenerator.Parser {
     /// </summary>
     public class DatabaseParser : ParserSkeleton, IParser {
 	
-	public DatabaseParser(Element.Parser parser, Configuration options, XmlDocument doc, Hashtable sqltypes, Hashtable types, ParserValidationDelegate vd) {
+	public DatabaseParser(ParserElement parser, Configuration options, XmlDocument doc, Hashtable sqltypes, Hashtable types, ParserValidationDelegate vd) {
 	    this.options = options;
 	    this.sqltypes = sqltypes;
 	    this.types = types;
-	    enumtypes = EnumType.ParseFromXml(options,doc,sqltypes,types, vd);
-	    collections = Collection.ParseFromXml(options,doc,sqltypes,types, vd);
+	    enumtypes = EnumElement.ParseFromXml(options,doc,sqltypes,types, vd);
+	    collections = CollectionElement.ParseFromXml(options,doc,sqltypes,types, vd);
 
 	    if (parser.FindArgumentByName("server") == null || parser.FindArgumentByName("database") == null || parser.FindArgumentByName("user") == null || parser.FindArgumentByName("password") == null) {
 		vd(ParserValidationArgs.NewError("expected to find the following arguments, but didn't: server, database, user, password."));
 	    } else {
 		String connectionString = "server=" + parser.FindArgumentByName("server").Value + ";databse=" + parser.FindArgumentByName("database").Value + ";user=" + parser.FindArgumentByName("user").Value + ";password=" + parser.FindArgumentByName("password").Value + ";";
 		
-		Database db = new Database();
+		DatabaseElement db = new DatabaseElement();
 		db.Name = "db";
 		db.Server = parser.FindArgumentByName("server").Value;
 		db.Database = parser.FindArgumentByName("database").Value;
@@ -55,7 +55,7 @@ namespace Spring2.DataTierGenerator.Parser {
 	    objDataAdapter.Fill(objDataTable);
 	    foreach (DataRow row in objDataTable.Rows) {
 	    	if (row["TABLE_TYPE"].ToString() == "BASE TABLE" && row["TABLE_NAME"].ToString() != "dtproperties") {
-	    	    Entity entity = new Entity();
+	    	    EntityElement entity = new EntityElement();
 	    	    entity.Name = row["TABLE_NAME"].ToString();
 	    	    entity.SqlEntity.Name = row["TABLE_NAME"].ToString();
 	    	    entity.SqlEntity.View = "vw" + entity.SqlEntity.Name;
@@ -68,7 +68,7 @@ namespace Spring2.DataTierGenerator.Parser {
 	}
 
 
-	private ArrayList GetFields(Entity entity, SqlConnection connection, XmlDocument doc, Hashtable sqltypes, Hashtable types) {
+	private ArrayList GetFields(EntityElement entity, SqlConnection connection, XmlDocument doc, Hashtable sqltypes, Hashtable types) {
 	    ArrayList fields = entity.Fields;
 
 	    if (entity.SqlEntity.AutoDiscoverProperties) {
@@ -76,16 +76,16 @@ namespace Spring2.DataTierGenerator.Parser {
 		foreach (DataRow objDataRow in columns.Rows) {
 		    if (objDataRow["COLUMN_COMPUTED"].ToString() == "0") {
 			if (entity.SqlEntity.FindColumnByName(objDataRow["COLUMN_NAME"].ToString()) == null) {
-			    Field field = new Field();
+			    PropertyElement field = new PropertyElement();
 			    field.Name = objDataRow["COLUMN_NAME"].ToString();
 			    field.Column.Name = field.Name;
 
 			    field.Column.SqlType.Name = objDataRow["DATA_TYPE"].ToString();
 			    // if the sql type is defined, default to all values defined in it
 			    if (sqltypes.ContainsKey(field.Column.SqlType.Name)) {
-				field.Column.SqlType = (SqlType)((SqlType)sqltypes[field.Column.SqlType.Name]).Clone();
+				field.Column.SqlType = (SqlTypeElement)((SqlTypeElement)sqltypes[field.Column.SqlType.Name]).Clone();
 				if (types.Contains(field.Column.SqlType.Type)) {
-				    field.Type = (Spring2.DataTierGenerator.Element.Type)((Spring2.DataTierGenerator.Element.Type)types[field.Column.SqlType.Type]).Clone();
+				    field.Type = (TypeElement)((TypeElement)types[field.Column.SqlType.Type]).Clone();
 				} else {
 				    Console.Out.WriteLine("Type " + field.Column.SqlType.Type + " was not defined");
 				}
@@ -122,7 +122,7 @@ namespace Spring2.DataTierGenerator.Parser {
 	}
 
 
-	private DataTable GetTableColumns(SqlEntity sqlentity, SqlConnection connection) {
+	private DataTable GetTableColumns(SqlEntityElement sqlentity, SqlConnection connection) {
 	    String sql = "	SELECT	INFORMATION_SCHEMA.COLUMNS.COLUMN_NAME, \n";
 	    sql = sql + " 		INFORMATION_SCHEMA.COLUMNS.DATA_TYPE, \n";
 	    sql = sql + " 		INFORMATION_SCHEMA.COLUMNS.CHARACTER_MAXIMUM_LENGTH, \n";
@@ -182,7 +182,7 @@ namespace Spring2.DataTierGenerator.Parser {
 
 	    foreach (DataRow row in table.Rows) {
 		if (row["TABLE_TYPE"].ToString() == "BASE TABLE" && row["TABLE_NAME"].ToString() != "dtproperties") {
-		    SqlEntity sqlentity = new SqlEntity();
+		    SqlEntityElement sqlentity = new SqlEntityElement();
 		    sqlentity.Name = row["TABLE_NAME"].ToString();
 		    sqlentity.View = "vw" + sqlentity.Name;
 		    sqlentity.Columns = DiscoverColumns(sqlentity, connection);
@@ -195,7 +195,7 @@ namespace Spring2.DataTierGenerator.Parser {
 	    return list;
 	}
 
-	private ArrayList DiscoverConstraints(SqlEntity sqlentity, SqlConnection connection) {
+	private ArrayList DiscoverConstraints(SqlEntityElement sqlentity, SqlConnection connection) {
 	    ArrayList list = new ArrayList();
 
 	    DataTable table = new DataTable();
@@ -211,7 +211,7 @@ namespace Spring2.DataTierGenerator.Parser {
 	    adapter.Fill(table);
 	    
 	    foreach (DataRow row in table.Rows) {
-		Spring2.DataTierGenerator.Element.Constraint constraint = new Spring2.DataTierGenerator.Element.Constraint();
+		ConstraintElement constraint = new ConstraintElement();
 		constraint.Name = row["CONSTRAINT_NAME"].ToString();
 		constraint.Type = row["CONSTRAINT_TYPE"].ToString();
 		constraint.Clustered = Int32.Parse(row["ClusteredIndex"].ToString())!=0;
@@ -230,7 +230,7 @@ namespace Spring2.DataTierGenerator.Parser {
 	    return list;
 	}
 
-	private ArrayList DiscoverPrimaryKeyColumns(SqlEntity sqlentity, Spring2.DataTierGenerator.Element.Constraint constraint, SqlConnection connection) {
+	private ArrayList DiscoverPrimaryKeyColumns(SqlEntityElement sqlentity, ConstraintElement constraint, SqlConnection connection) {
 	    ArrayList list = new ArrayList();
 
 	    DataTable table = new DataTable();
@@ -242,7 +242,7 @@ namespace Spring2.DataTierGenerator.Parser {
 	    adapter.Fill(table);
 	    
 	    foreach (DataRow row in table.Rows) {
-		Column column = new Column();
+		ColumnElement column = new ColumnElement();
 		column.Name = row["COLUMN_NAME"].ToString();
 		list.Add(column);
 	    }
@@ -250,7 +250,7 @@ namespace Spring2.DataTierGenerator.Parser {
 	    return list;
 	}
 
-	private ArrayList DiscoverForeignKeyColumns(SqlEntity sqlentity, Spring2.DataTierGenerator.Element.Constraint constraint, SqlConnection connection) {
+	private ArrayList DiscoverForeignKeyColumns(SqlEntityElement sqlentity, ConstraintElement constraint, SqlConnection connection) {
 	    ArrayList list = new ArrayList();
 
 	    String s = "select 1 ORDINAL_POSITION, c.name COLUMN_NAME, rc.name FOREIGN_COLUMN ";
@@ -269,7 +269,7 @@ namespace Spring2.DataTierGenerator.Parser {
 	    adapter.Fill(table);
 
 	    foreach (DataRow row in table.Rows) {
-		Column column = new Column();
+		ColumnElement column = new ColumnElement();
 		column.Name = row["COLUMN_NAME"].ToString();
 		column.ForeignColumn = row["FOREIGN_COLUMN"].ToString();
 		list.Add(column);
@@ -278,7 +278,7 @@ namespace Spring2.DataTierGenerator.Parser {
 	    return list;
 	}
 
-	private ArrayList DiscoverIndexes(SqlEntity sqlentity, SqlConnection connection) {
+	private ArrayList DiscoverIndexes(SqlEntityElement sqlentity, SqlConnection connection) {
 	    ArrayList list = new ArrayList();
 
 	    DataTable table = new DataTable();
@@ -294,7 +294,7 @@ namespace Spring2.DataTierGenerator.Parser {
 	    adapter.Fill(table);
 
 	    foreach (DataRow row in table.Rows) {
-		Index index = new Index();
+		IndexElement index = new IndexElement();
 		index.Name = row["NAME"].ToString();
 		index.Clustered = !row["IsClustered"].ToString().Equals("0");
 		index.Unique = !row["IsUnique"].ToString().Equals("0");
@@ -305,7 +305,7 @@ namespace Spring2.DataTierGenerator.Parser {
 	    return list;
 	}
 
-	private ArrayList DiscoverIndexColumns(SqlEntity sqlentity, Index index, SqlConnection connection) {
+	private ArrayList DiscoverIndexColumns(SqlEntityElement sqlentity, IndexElement index, SqlConnection connection) {
 	    ArrayList list = new ArrayList();
 
 	    DataTable table = new DataTable();
@@ -348,7 +348,7 @@ namespace Spring2.DataTierGenerator.Parser {
 	    adapter.Fill(table);
 
 	    foreach (DataRow row in table.Rows) {
-		Column column = new Column();
+		ColumnElement column = new ColumnElement();
 		column.Name = row["COLUMN_NAME"].ToString();
 		column.SortDirection = row["SORT_DIRECTION"].ToString();
 		list.Add(column);
@@ -357,19 +357,19 @@ namespace Spring2.DataTierGenerator.Parser {
 	    return list;
 	}
 
-	private ArrayList DiscoverColumns(SqlEntity sqlentity, SqlConnection connection) {
+	private ArrayList DiscoverColumns(SqlEntityElement sqlentity, SqlConnection connection) {
 	    ArrayList list = new ArrayList();
 
 	    DataTable columns = GetTableColumns(sqlentity, connection);
 	    foreach (DataRow row in columns.Rows) {
 		if (row["COLUMN_COMPUTED"].ToString() == "0") {
-		    Column column = new Column();
+		    ColumnElement column = new ColumnElement();
 		    column.Name = row["COLUMN_NAME"].ToString();
 
 		    column.SqlType.Name = row["DATA_TYPE"].ToString();
 		    // if the sql type is defined, default to all values defined in it
 		    if (sqltypes.ContainsKey(column.SqlType.Name)) {
-			column.SqlType = (SqlType)((SqlType)sqltypes[column.SqlType.Name]).Clone();
+			column.SqlType = (SqlTypeElement)((SqlTypeElement)sqltypes[column.SqlType.Name]).Clone();
 		    } else {
 			Console.Out.WriteLine("SqlType " + column.SqlType.Name + " was not defined");
 		    }

@@ -122,7 +122,7 @@ namespace Spring2.DataTierGenerator.Generator {
 		namespaces.Add(options.GetDONameSpace(null));
 	    }
 
-	    foreach (Field field in fields) {
+	    foreach (PropertyElement field in fields) {
 		if (!field.Type.Package.Equals(String.Empty) && !namespaces.Contains(field.Type.Package)) {
 		    namespaces.Add(field.Type.Package);
 		}

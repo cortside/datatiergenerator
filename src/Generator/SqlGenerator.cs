@@ -8,8 +8,6 @@ using Spring2.DataTierGenerator;
 using Spring2.DataTierGenerator.Element;
 using Spring2.DataTierGenerator.Util;
 
-using Constraint = Spring2.DataTierGenerator.Element.Constraint;
-
 namespace Spring2.DataTierGenerator.Generator {
     /// <summary>
     /// Generates stored procedures and associated data access code for the specified database.
@@ -33,13 +31,13 @@ namespace Spring2.DataTierGenerator.Generator {
 		"|distributed|opendatasource|values|double|openquery|varying|drop|openrowset|view|dummy" +
 		"|openxml|waitfor|dump|option|when|else|or|where|end|order|while|errlvl|outer|with|escape|over|writetext|";
 
-	private SqlEntity sqlentity;
+	private SqlEntityElement sqlentity;
 
 	/// <summary>
 	/// Contructor for the Generator class.
 	/// </summary>
 	/// <param name="strConnectionString">Connecion string to a SQL Server database.</param>
-	public SqlGenerator(Configuration options, SqlEntity sqlentity) : base(options) {
+	public SqlGenerator(Configuration options, SqlEntityElement sqlentity) : base(options) {
 	    this.sqlentity = sqlentity;
 //	    if (options.SingleFile) {
 //		String fileName = options.SqlScriptDirectory + "\\" + options.Database + ".sql";
@@ -76,7 +74,7 @@ namespace Spring2.DataTierGenerator.Generator {
 	
 	    // Create the parameter list
 	    Boolean first = true;
-	    foreach (Column column in sqlentity.Columns) {
+	    foreach (ColumnElement column in sqlentity.Columns) {
 		if (!column.ViewColumn) {
 		    if (!column.Identity) {
 			if (!first) {
@@ -90,7 +88,7 @@ namespace Spring2.DataTierGenerator.Generator {
 	    }
 	    sb.Append("\n\nAS\n\n");
 
-	    foreach (Column column in sqlentity.Columns) {
+	    foreach (ColumnElement column in sqlentity.Columns) {
 		if (column.RowGuidCol) {
 		    sb.Append("SET @" + column.Name + " = @@NEWID()\n\n");
 		    break;
@@ -101,7 +99,7 @@ namespace Spring2.DataTierGenerator.Generator {
 				
 	    // Create the parameter list
 	    first = true;
-	    foreach (Column column in sqlentity.Columns) {
+	    foreach (ColumnElement column in sqlentity.Columns) {
 		// Is the current field an identity column?
 		if (!column.ViewColumn) {
 		    if (!column.Identity) {
@@ -118,7 +116,7 @@ namespace Spring2.DataTierGenerator.Generator {
 	
 	    // Create the parameter list
 	    first=true;
-	    foreach (Column column in sqlentity.Columns) {
+	    foreach (ColumnElement column in sqlentity.Columns) {
 		if (!column.ViewColumn) {
 		    if (!column.Identity) {
 			if (!first) {
@@ -171,7 +169,7 @@ namespace Spring2.DataTierGenerator.Generator {
 	
 	    // Create the parameter list
 	    Boolean first = true;
-	    foreach (Column column in sqlentity.Columns) {
+	    foreach (ColumnElement column in sqlentity.Columns) {
 		if (!column.ViewColumn) {
 		    if (!first) {
 			sb.Append(",\n");
@@ -188,7 +186,7 @@ namespace Spring2.DataTierGenerator.Generator {
 
 	    // Create the set statement
 	    first = true;
-	    foreach (Column column in sqlentity.Columns) {
+	    foreach (ColumnElement column in sqlentity.Columns) {
 		if (!column.ViewColumn) {
 		    if (!column.Identity && !column.RowGuidCol) {
 			if (!sqlentity.IsPrimaryKeyColumn(column.Name)) {
@@ -207,7 +205,7 @@ namespace Spring2.DataTierGenerator.Generator {
 				
 	    // Create the where clause
 	    first = true;
-	    foreach (Column column in sqlentity.Columns) {
+	    foreach (ColumnElement column in sqlentity.Columns) {
 		if (!column.ViewColumn) {
 		    if (column.Identity || column.RowGuidCol || sqlentity.IsPrimaryKeyColumn(column.Name)) {
 			if (!first) {
@@ -254,7 +252,7 @@ namespace Spring2.DataTierGenerator.Generator {
 					
 	    // Create the parameter list
 	    Boolean first = true;
-	    foreach (Column column in sqlentity.GetPrimaryKeyColumns()) {
+	    foreach (ColumnElement column in sqlentity.GetPrimaryKeyColumns()) {
 		if (!first) {
 		    sb.Append(",\n");
 		} else {
@@ -268,7 +266,7 @@ namespace Spring2.DataTierGenerator.Generator {
 	    // Create the where clause
 	    StringBuilder where = new StringBuilder();
 	    first = true;
-	    foreach (Column column in sqlentity.GetPrimaryKeyColumns()) {
+	    foreach (ColumnElement column in sqlentity.GetPrimaryKeyColumns()) {
 		if (!first) {
 		    where.Append(" and\n");
 		} else {
@@ -461,7 +459,7 @@ namespace Spring2.DataTierGenerator.Generator {
 				
 	    // Create the parameter list
 	    Boolean first = true;
-	    foreach (Column column in sqlentity.Columns) {
+	    foreach (ColumnElement column in sqlentity.Columns) {
 		if (!first) {
 		    sb.Append(",\n");
 		} else {
@@ -521,7 +519,7 @@ namespace Spring2.DataTierGenerator.Generator {
 	    sb.Append("CREATE TABLE ").Append(EscapeSqlName(sqlentity.Name)).Append(" (\n");
 
 	    Boolean first = true;
-	    foreach (Column column in sqlentity.Columns) {
+	    foreach (ColumnElement column in sqlentity.Columns) {
 		if (!column.ViewColumn) {
 		    if (!first) {
 			sb.Append(",\n");
@@ -548,7 +546,7 @@ namespace Spring2.DataTierGenerator.Generator {
 	    sb.Append("GO\n\n");
 
 	    // create alter table scripts for each column - don't know when they got added
-	    foreach (Column column in sqlentity.Columns) {
+	    foreach (ColumnElement column in sqlentity.Columns) {
 		if (!column.ViewColumn) {
 		    if (column.Required && column.Default.Length==0) {
 			sb.Append("/* -- commented out because column does not have default value and is required\n");
@@ -580,7 +578,7 @@ namespace Spring2.DataTierGenerator.Generator {
 	    }
 
 	    // create constraints, checking for existance
-	    foreach (Constraint constraint in sqlentity.Constraints) {
+	    foreach (ConstraintElement constraint in sqlentity.Constraints) {
 		if (!constraint.Type.ToUpper().Equals("CHECK")) {
 		    sb.Append("if not exists (select * from dbo.sysobjects where id = object_id(N'").Append(EscapeSqlName(constraint.Name)).Append("') and OBJECTPROPERTY(id, N'");
 		    if (constraint.Type.ToUpper().Equals("PRIMARY KEY")) {
@@ -609,7 +607,7 @@ namespace Spring2.DataTierGenerator.Generator {
 		    sb.Append("	(\n");
 
 		    first = true;
-		    foreach (Column column in constraint.Columns) {
+		    foreach (ColumnElement column in constraint.Columns) {
 			if (!first) {
 			    sb.Append(",\n");
 			} else {
@@ -621,7 +619,7 @@ namespace Spring2.DataTierGenerator.Generator {
 		    if (constraint.Type.ToUpper().Equals("FOREIGN KEY")) {
 			sb.Append(" REFERENCES ").Append(EscapeSqlName(constraint.ForeignEntity)).Append(" (\n");
 			first=true;
-			foreach (Column column in constraint.Columns) {
+			foreach (ColumnElement column in constraint.Columns) {
 			    if (!first) {
 				sb.Append(",\n");
 			    } else {
@@ -636,7 +634,7 @@ namespace Spring2.DataTierGenerator.Generator {
 	    }
 
 	    // create indexes, checking for existance
-	    foreach (Index index in sqlentity.Indexes) {
+	    foreach (IndexElement index in sqlentity.Indexes) {
 		sb.Append("if not exists (select * from sysindexes where name='").Append(index.Name).Append("' and id=object_id(N'[").Append(sqlentity.Name).Append("]'))\n");
 
 		sb.Append("CREATE");
@@ -646,7 +644,7 @@ namespace Spring2.DataTierGenerator.Generator {
 		sb.Append(" INDEX ").Append(EscapeSqlName(index.Name)).Append(" ON ").Append(EscapeSqlName(sqlentity.Name)).Append("\n");
 		sb.Append("    (\n");
 		first = true;
-		foreach (Column column in index.Columns) {
+		foreach (ColumnElement column in index.Columns) {
 		    if (!first) {
 			sb.Append(",\n");
 		    } else {

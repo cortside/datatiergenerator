@@ -72,14 +72,14 @@ namespace Spring2.DataTierGenerator.Generator {
 	/// <summary>
 	/// Entity being generated.
 	/// </summary>
-	private Entity entity;
+	private EntityElement entity;
 
 	/// <summary>
 	/// List of all entities defined.
 	/// </summary>
 	private ArrayList entities;
 
-	public DataObjectGenerator(Configuration options, Entity entity, ArrayList entities) : base(options) {
+	public DataObjectGenerator(Configuration options, EntityElement entity, ArrayList entities) : base(options) {
 	    this.entity = entity;
 	    this.entities = entities;
 	}
@@ -104,7 +104,7 @@ namespace Spring2.DataTierGenerator.Generator {
 	    writer.WriteLine();
 
 	    // Declaration of private member variables.
-	    foreach (Field field in entity.Fields) {
+	    foreach (PropertyElement field in entity.Fields) {
 		if (field.Name.IndexOf('.')<0) {
 		    writer.Write(2, field.AccessModifier + " ");
 		    writer.Write(field.Type.Name);
@@ -122,7 +122,7 @@ namespace Spring2.DataTierGenerator.Generator {
 	    }
 				    
 	    // Properties.
-	    foreach (Field field in entity.Fields) {
+	    foreach (PropertyElement field in entity.Fields) {
 		writer.WriteLine();
 		if (field.Name.IndexOf('.')<0) {
 		    if (field.Description.Length>0) {
@@ -162,7 +162,7 @@ namespace Spring2.DataTierGenerator.Generator {
 
 	    // avoid loops
 	    bool matchedParent = false;
-	    foreach (Entity searchEntity in parentEntities) {
+	    foreach (EntityElement searchEntity in parentEntities) {
 		if (searchEntity.Equals(entity)) {
 		    matchedParent = true;
 		    break;
@@ -173,13 +173,13 @@ namespace Spring2.DataTierGenerator.Generator {
 	    parentEntities.Push(entity);
 
 	    if (!matchedParent) {
-		foreach (Field field in entity.Fields) {
+		foreach (PropertyElement field in entity.Fields) {
 		    if (field.Name.IndexOf(".") < 0) {
 			PropertyName propertyName = new PropertyName(prefix, field.Name);
 			propertyNames.Add(propertyName);
 
 			// Determine if this is a data object and if so append it's members.
-			foreach (Entity subEntity in entities) {
+			foreach (EntityElement subEntity in entities) {
 			    if (field.Type.Name.Equals(options.GetDOClassName(subEntity.Name))) {
 				DataObjectGenerator propertyGenerator = new DataObjectGenerator(options, subEntity, entities);
 				ArrayList subProperties = 

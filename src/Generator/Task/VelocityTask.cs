@@ -16,13 +16,13 @@ namespace Spring2.DataTierGenerator.Generator.Task {
     internal class VelocityTask : GeneratorSkeleton, IGenerator {
 	private IList elements;
 	private Object element;
-	private Element.Task task;
+	private TaskElement task;
 	private String name;
 
 	// NOTES:  instead of a single object, a velocity context could be passed or a hashtable.
 	// Might want to support an ITask interface that has an execute and uses a writer
 
-	public VelocityTask(Configuration options, IList elements, Object element, Element.Task task, String name) : base(options) {
+	public VelocityTask(Configuration options, IList elements, Object element, TaskElement task, String name) : base(options) {
 	    this.element = element;
 	    this.task = task;
 	    this.name = name;

@@ -12,9 +12,6 @@ using Spring2.DataTierGenerator.Parser;
 using Spring2.DataTierGenerator.Util;
 using Spring2.DataTierGenerator.Generator.Task;
 
-using Type = Spring2.DataTierGenerator.Element.Type;
-
-
 namespace Spring2.DataTierGenerator.Generator {
 
     public class GeneratorTaskManager : GeneratorSkeleton, IGenerator {
@@ -37,9 +34,9 @@ namespace Spring2.DataTierGenerator.Generator {
 
 		IList tasks = parser.Generator.FindTasksByElement("sqlentity");
 		if (tasks.Count > 0) {
-		    foreach (Database database in parser.Databases) {
-			foreach (SqlEntity sqlentity in database.SqlEntities) {
-			    foreach(Element.Task task in tasks) {
+		    foreach (DatabaseElement database in parser.Databases) {
+			foreach (SqlEntityElement sqlentity in database.SqlEntities) {
+			    foreach(TaskElement task in tasks) {
 				IGenerator g = new VelocityTask(options, database.SqlEntities, sqlentity, task, sqlentity.Name);
 				g.Generate();
 			    }
@@ -53,8 +50,8 @@ namespace Spring2.DataTierGenerator.Generator {
 
 		tasks = parser.Generator.FindTasksByElement("entity");
 		if (tasks.Count > 0) {
-		    foreach (Entity entity in parser.Entities) {
-			foreach(Element.Task task in tasks) {
+		    foreach (EntityElement entity in parser.Entities) {
+			foreach(TaskElement task in tasks) {
 			    IGenerator g = new VelocityTask(options, parser.Entities, entity, task, entity.Name);
 			    g.Generate();
 			}
@@ -65,8 +62,8 @@ namespace Spring2.DataTierGenerator.Generator {
 
 		tasks = parser.Generator.FindTasksByElement("enum");
 		if (tasks.Count > 0) {
-		    foreach (EnumType type in parser.Enums) {
-			foreach(Element.Task task in tasks) {
+		    foreach (EnumElement type in parser.Enums) {
+			foreach(TaskElement task in tasks) {
 			    IGenerator g = new VelocityTask(options, parser.Enums, type, task, type.Name);
 			    g.Generate();
 			}
@@ -75,8 +72,8 @@ namespace Spring2.DataTierGenerator.Generator {
 
 		tasks = parser.Generator.FindTasksByElement("collection");
 		if (tasks.Count > 0) {
-		    foreach (Collection collection in parser.Collections) {
-			foreach(Element.Task task in tasks) {
+		    foreach (CollectionElement collection in parser.Collections) {
+			foreach(TaskElement task in tasks) {
 			    IGenerator g = new VelocityTask(options, parser.Collections, collection, task, collection.Name);
 			    g.Generate();
 			}
@@ -84,13 +81,13 @@ namespace Spring2.DataTierGenerator.Generator {
 		}
 
 		tasks = parser.Generator.FindTasksByElement("sqlentities");
-		foreach(Element.Task task in tasks) {
-		    IGenerator g = new VelocityTask(options, Database.GetAllSqlEntities(parser.Databases), null, task, "sqlentities");
+		foreach(TaskElement task in tasks) {
+		    IGenerator g = new VelocityTask(options, DatabaseElement.GetAllSqlEntities(parser.Databases), null, task, "sqlentities");
 		    g.Generate();
 		}
 
 		tasks = parser.Generator.FindTasksByElement("entities");
-		foreach(Element.Task task in tasks) {
+		foreach(TaskElement task in tasks) {
 		    IGenerator g = new VelocityTask(options, parser.Entities, null, task, "entities");
 		    g.Generate();
 		}
