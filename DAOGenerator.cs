@@ -54,6 +54,11 @@ namespace Spring2.DataTierGenerator {
 		sb.Append("\n\n");
 		CreateSelectMethods(sb);
 	    }
+
+	    if (entity.Finders.Count>0) {
+		sb.Append("\n\n");
+		sb.Append(CreateFinderMethods());
+	    }
 		
 	    // Close out the class and namespace.
 	    sb.Append("    }\n");
@@ -240,16 +245,10 @@ namespace Spring2.DataTierGenerator {
 		    sb.Append("        /// Deletes a record from the " + entity.SqlObject + " table by " + field.Name + ".\n");
 		    sb.Append("        /// </summary>\n");
 		    sb.Append("        /// <param name=\"\"></param>\n");
-		    //sb.Append("        public void DeleteBy" + strColumnName.Replace(" ", "_") + "(" + field.CreateMethodParameter() + ", SqlConnection connection) {\n");
 		    sb.Append("        public static void " + methodName + "(" + field.CreateMethodParameter() + ") {\n");
 					
-		    // Append the variable declarations
-		    //                    sb.Append("            SqlConnection	objConnection;\n");
 		    sb.Append("            SqlCommand cmd;\n");
 		    sb.Append("\n");
-
-		    // Append the try block
-		    //                    sb.Append("            try {\n");
 
 		    sb.Append(GetCreateCommandSection(options.GetProcName(entity.SqlObject, methodName)));
 
@@ -261,11 +260,6 @@ namespace Spring2.DataTierGenerator {
 		    // Append the execute statement
 		    sb.Append("                // Execute the query and return the result\n");
 		    sb.Append("                cmd.ExecuteNonQuery();\n");
-					
-		    // Append the catch block
-		    //                    sb.Append("            } catch (Exception objException) {\n");
-		    //                    sb.Append("                throw (new Exception(\"" + table.Replace(" ", "_") + "." + methodName + "\\n\\n\" + objException.Message));\n");
-		    //                    sb.Append("            }\n");
 					
 		    // Append the method footer
 		    if (keyList.Count > 0) {
@@ -293,19 +287,18 @@ namespace Spring2.DataTierGenerator {
 		}
 				
 		sb.Append("        public static void " + methodName + "(");
-		for (int i = 0; i < keyList.Count; i++) {
-		    Field field = (Field)keyList[i];
-		    sb.Append(field.CreateMethodParameter() + ", ");
+
+		String parms = String.Empty;
+		foreach (Field field in keyList) {
+		    if (parms.Length>0) {
+			parms += ", ";
+		    }
+		    parms += field.CreateMethodParameter();
 		}
-		sb.Append("SqlConnection connection) {\n");
+		sb.Append(parms).Append(") {\n");
 				
-		// Append the variable declarations
-		//                sb.Append("            SqlConnection	objConnection;\n");
 		sb.Append("            SqlCommand cmd;\n");
 		sb.Append("\n");
-
-		// Append the try block
-		//                sb.Append("            try {\n");
 
 		sb.Append(GetCreateCommandSection(options.GetProcName(entity.SqlObject, methodName)));
 
@@ -320,11 +313,6 @@ namespace Spring2.DataTierGenerator {
 		// Append the execute statement
 		sb.Append("                // Execute the query and return the result\n");
 		sb.Append("                cmd.ExecuteNonQuery();\n");
-				
-		// Append the catch block
-		//                sb.Append("            } catch (Exception objException) {\n");
-		//                sb.Append("                throw (new Exception(\"" + entity.Name.Replace(" ", "_") + "." + methodName + "\\n\\n\" + objException.Message));\n");
-		//                sb.Append("            }\n");
 				
 		// Append the method footer
 		sb.Append("        }\n\n\n");
@@ -495,17 +483,25 @@ namespace Spring2.DataTierGenerator {
 		
 	private void CreateDAOListMethods(StringBuilder sb) {
 			
-	    // GetList methods.
+	    // GetList - no parms
 	    sb.Append("        public static IList GetList() { \n");
 	    sb.Append("            return GetList(null, null);\n");
 	    sb.Append("        }\n");
 	    sb.Append("\n");
 
+	    // GetList - where
 	    sb.Append("        public static IList GetList(IWhere whereClause) { \n");
 	    sb.Append("            return GetList(whereClause, null);\n");
 	    sb.Append("        }\n");
 	    sb.Append("\n");
 
+	    // GetList - order by
+	    sb.Append("        public static IList GetList(IOrderBy orderByClause) { \n");
+	    sb.Append("            return GetList(null, orderByClause);\n");
+	    sb.Append("        }\n");
+	    sb.Append("\n");
+
+	    // GetList - both
 	    sb.Append("        public static IList GetList(IWhere whereClause, IOrderBy orderByClause) { \n");
 	    sb.Append("        	SqlDataReader dataReader = GetListReader(VIEW, whereClause, orderByClause); \n");
 	    sb.Append("        	 \n");
@@ -535,7 +531,9 @@ namespace Spring2.DataTierGenerator {
 	    sb.Append("        	SqlDataReader dataReader = GetListReader(VIEW, w, null);\n");
 	    sb.Append("            \n");
 	    sb.Append("        	dataReader.Read();\n");
-	    sb.Append("        	return GetDataObjectFromReader(dataReader);\n");
+	    sb.Append("                ").Append(options.GetDOClassName(entity.Name)).Append(" data = GetDataObjectFromReader(dataReader);\n");
+	    sb.Append("                dataReader.Close();\n");
+	    sb.Append("        	return data;\n");
 	    sb.Append("        }\n");
 	    sb.Append("\n");			
 
@@ -570,22 +568,56 @@ namespace Spring2.DataTierGenerator {
 
 	private String GetCreateCommandSection(String procName) {
 	    StringBuilder sb = new StringBuilder();
-	    // Append the connection object creation
-	    //                    sb.Append("                // Create and open the database connection\n");
-	    //                    sb.Append("                objConnection = new SqlConnection(ConfigurationSettings.AppSettings[\"ConnectionString\"]);\n");
-	    //                    sb.Append("                objConnection.Open();\n");
-	    //                    sb.Append("\n");
-					
-	    // Append the command object creation
-	    sb.Append("                // Create and execute the command\n");
-	    //                    sb.Append("                cmd = new SqlCommand();\n");
-	    //					sb.Append("                cmd.Connection = objConnection;\n");
-	    sb.Append("                cmd = GetSqlCommand(\"" + procName + "\", CommandType.StoredProcedure);\n");
 
-	    //sb.Append("                cmd.CommandText = \"" + options.GetProcName(entity.Name, "DeleteBy" + strColumnName.Replace(" ", "_")) + "\";\n");
-	    //sb.Append("                cmd.CommandText = \"" + procName + "\";\n");
-	    //sb.Append("                cmd.CommandType = CommandType.StoredProcedure;\n");
+	    sb.Append("                // Create and execute the command\n");
+	    sb.Append("                cmd = GetSqlCommand(\"" + procName + "\", CommandType.StoredProcedure);\n");
 	    sb.Append("\n");
+	    return sb.ToString();
+	}
+
+
+	private String CreateFinderMethods() {
+	    StringBuilder sb = new StringBuilder();
+
+	    foreach (Finder finder in entity.Finders) {
+
+		String parms = "";
+		foreach (Field field in finder.Fields) {
+		    if (!parms.Equals(String.Empty)) {
+			parms += ", ";
+		    }
+		    parms += field.CreateMethodParameter();
+		}
+		sb.Append("        public static ");
+		if (finder.Unique) {
+		    sb.Append(options.GetDOClassName(entity.Name));
+		} else {
+		    sb.Append("IList");
+		}
+		sb.Append(" ").Append(finder.Name).Append("(").Append(parms).Append(") {\n");
+		sb.Append("        	WhereClause filter = new WhereClause();\n");
+		sb.Append("        	OrderByClause sort = new OrderByClause(\"").Append(finder.Sort).Append("\");\n");
+		foreach (Field field in finder.Fields) {
+		    sb.Append("        	filter.And(\"").Append(field.SqlName).Append("\", ").Append(String.Format(field.Type.ConvertToSqlTypeFormat, "", field.GetFieldFormat(), "", "", field.GetFieldFormat())).Append(");\n");
+		}
+
+		if (!finder.Unique) {
+		    sb.Append("            \n");
+		    sb.Append("                return GetList(filter, sort);\n");
+    		} else {
+		    sb.Append("        	SqlDataReader dataReader = GetListReader(VIEW, filter, sort);\n");
+		    sb.Append("            \n");
+		    sb.Append("        	dataReader.Read();\n");
+		    sb.Append("                ").Append(options.GetDOClassName(entity.Name)).Append(" data = GetDataObjectFromReader(dataReader);\n");
+		    sb.Append("                dataReader.Close();\n");
+		    sb.Append("        	return data;\n");
+		}
+		sb.Append("        }\n");
+		sb.Append("\n");			
+
+	    }
+
+
 	    return sb.ToString();
 	}
     }
