@@ -32,6 +32,9 @@ namespace Spring2.DataTierGenerator {
 			case "rootdirectory":
 			    this.rootDirectory = node.Attributes["value"].Value;
 			    break;
+			case "typesclassdirectory":
+			    this.typesClassDirectory = node.Attributes["value"].Value;
+			    break;
 			case "sqlscriptdirectory":
 			    this.sqlScriptDirectory = node.Attributes["value"].Value;
 			    break;
@@ -160,6 +163,18 @@ namespace Spring2.DataTierGenerator {
 	    s = "cls" + table.Replace(" ", "_");
 	    s = table.Replace(" ", "_") + "Data";
 
+	    return s;
+	}
+
+	public String GetTypeClassName(String name) {
+	    return name;
+	}
+
+	public String GetTypeNameSpace(String name) {
+	    String s = this.rootNameSpace;
+	    if (typesClassDirectory.Length>0) {
+		s += "." + typesClassDirectory;
+	    }
 	    return s;
 	}
 

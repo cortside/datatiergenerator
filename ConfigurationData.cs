@@ -11,6 +11,7 @@ namespace Spring2.DataTierGenerator {
 	protected String sqlScriptDirectory = "Sql";
 	protected String daoClassDirectory = "Dao";
 	protected String doClassDirectory = "DataObject";
+	protected String typesClassDirectory = "Types";
 	protected String storedProcNameFormat = String.Empty;
 	protected String rootNameSpace = String.Empty;
 	protected String xmlConfigFilename = String.Empty;
@@ -56,6 +57,11 @@ namespace Spring2.DataTierGenerator {
 	public String RootDirectory {
 	    get { return this.rootDirectory; }
 	    set { this.rootDirectory = value; }
+	}
+
+	public String TypesClassDirectory {
+	    get { return this.typesClassDirectory; }
+	    set { this.typesClassDirectory = value; }
 	}
 
 	public String SqlScriptDirectory {
