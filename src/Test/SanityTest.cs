@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+
 using NUnit.Framework;
 
 using Spring2.Core.Util;
@@ -12,24 +13,18 @@ namespace Spring2.DataTierGenerator.Test {
     /// <summary>
     /// Tests that should provide confidence that the DTG is generating source as expected
     /// </summary>
-    public class SanityTest : TestCase {
+    [TestFixture]
+    public class SanityTest {
 
-	public SanityTest(String name) : base(name) {
-	}
-
-
-	protected override void SetUp() {
-	}
-
-
-	public void Test_Sanity() {
-	    IParser parser = new XmlParser("..\\test\\sanity\\sanity.xml");
+	[Test]
+	public void TestSanity() {
+	    IParser parser = new XmlParser("..\\..\\src\\Test\\Sanity\\sanity.xml");
 
 	    IGenerator gen = new GeneratorTaskManager(parser);
 	    //TODO: clean output directory
 	    gen.Generate();
 
-	    CompareResults("..\\test\\sanity", true);
+	    CompareResults("..\\..\\src\\Test\\Sanity", true);
 	}
 
 
@@ -131,7 +126,7 @@ namespace Spring2.DataTierGenerator.Test {
 	    pass = pass && CompareFile(compareRoot, "Types", "USStateEnum.cs");
 
 	    if (!pass) {
-		Fail("more than 1 output file did not match it's compare file.  Sanity is just an illusion.");
+		Assertion.Fail("more than 1 output file did not match it's compare file.  Sanity is just an illusion.");
 	    }
 	}
 

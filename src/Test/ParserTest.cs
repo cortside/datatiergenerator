@@ -1,17 +1,15 @@
 using System;
+
 using NUnit.Framework;
 
 
 namespace Spring2.DataTierGenerator.Test {
 
-    public class ParserTest : TestCase {
+    [TestFixture]
+    public class ParserTest {
 
-	public ParserTest(String name) : base(name) { }
-
-	protected override void SetUp() {
-	}
-
-	public void Test_XmlParser() {
+	[Test]
+	public void TestXmlParser() {
 	    // add test here....
 	}
 
