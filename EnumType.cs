@@ -19,14 +19,6 @@ namespace Spring2.DataTierGenerator {
 	    set { this.values = value; }
 	}
 
-//	public String ToXml() {
-//	    StringBuilder sb = new StringBuilder();
-//	    sb.Append("<enum name=\"").Append(name).Append("\"");
-//	    sb.Append(" />");
-//
-//	    return sb.ToString();
-//	}
-
 	public static ArrayList ParseFromXml(Configuration options, XmlDocument doc, Hashtable sqltypes, Hashtable types) {
 	    ArrayList enums = new ArrayList();
 	    XmlNodeList elements = doc.DocumentElement.GetElementsByTagName("enum");

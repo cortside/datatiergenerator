@@ -29,24 +29,24 @@ namespace Spring2.DataTierGenerator {
 	    String directory = filename.Substring(0,filename.LastIndexOf('\\'));
 	    if (!Directory.Exists(directory))
 		Directory.CreateDirectory(directory);
-		text.Trim();
+	    text.Trim();
 
-		Boolean write = true;
-		if (File.Exists(filename)) {
-			StreamReader r = File.OpenText(filename);
-			String s = r.ReadToEnd();
-			r.Close();
-			s.Trim();
-			if (s.Equals(text)) {
-				write=false;
-			}
+	    Boolean write = true;
+	    if (File.Exists(filename)) {
+		StreamReader r = File.OpenText(filename);
+		String s = r.ReadToEnd();
+		r.Close();
+		s.Trim();
+		if (s.Equals(text)) {
+		    write=false;
 		}
+	    }
 
-		if (write) {
-			StreamWriter writer = new StreamWriter(filename, append);
-			writer.Write(text);
-			writer.Close();
-		}
+	    if (write) {
+		StreamWriter writer = new StreamWriter(filename, append);
+		writer.Write(text);
+		writer.Close();
+	    }
 	}
 
 

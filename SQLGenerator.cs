@@ -584,8 +584,8 @@ namespace Spring2.DataTierGenerator {
 		Boolean first = true;
 		if (!field.IsViewColumn && !field.SqlName.Equals(String.Empty)) {
 		    if (first) {
-				sb.Append(",\n");
-				first=false;
+			sb.Append(",\n");
+			first=false;
 		    }
 		    sb.Append("\t[" + field.SqlName + "]");
 		}
