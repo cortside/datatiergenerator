@@ -42,11 +42,6 @@ namespace Spring2.DataTierGenerator.NAnt {
 	    Velocity.SetProperty(RuntimeConstants_Fields.FILE_RESOURCE_LOADER_PATH, Project.BaseDirectory);
 
 	    try {
-		//FileStream fs = new FileStream(Project.BaseDirectory + @"\DataTierGenerator.log", FileMode.Create);
-		//StreamWriter sw = new StreamWriter(fs);
-		//TextWriter consoleOut = Console.Out;
-		//Console.SetOut(sw);
-
 		LogToNAnt(String.Empty.PadLeft(20,'='));
 		LogToNAnt("Start :: " + DateTime.Now.ToString());
 		LogToNAnt(String.Empty.PadLeft(20,'='));
@@ -74,20 +69,15 @@ namespace Spring2.DataTierGenerator.NAnt {
 			LogToNAnt(g.Log);
 		    }
 		} else {
-		    LogToNAnt("ERROR: Parser found errors:\n" + p.ErrorDescription);
+		    LogToNAnt("ERROR: Parser found errors:");
+		    LogToNAnt(p.Log);
 		}
 
 		LogToNAnt(String.Empty.PadLeft(20,'='));
 		LogToNAnt("Done :: " + DateTime.Now.ToString());
 		LogToNAnt(String.Empty.PadLeft(20,'='));
-
-		//Console.SetOut(consoleOut);
-		//sw.Close();
 	    } catch (Exception ex) {
 		LogToNAnt("An error occcurred while generating.\n\n" + ex.ToString());
-		//LogToNAnt("An error occcurred while generating.\n\n" + ex.ToString());
-	    } finally {
-		//sw.Close();
 	    }
 	}
 
