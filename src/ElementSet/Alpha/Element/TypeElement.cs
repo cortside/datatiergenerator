@@ -9,6 +9,7 @@ namespace Spring2.DataTierGenerator.Element {
 
     public class TypeElement : ElementSkeleton {
 
+	private static readonly String CONCRETE_TYPE = "concretetype";
 	private static readonly String NEW_INSTANCE_FORMAT = "newinstanceformat";
 	private static readonly String NAMESPACE = "namespace";
 	private static readonly String CONVERT_TO_SQLTYPE_FORMAT = "converttosqltypeformat";
@@ -73,6 +74,7 @@ namespace Spring2.DataTierGenerator.Element {
 			TypeElement typeElement = new TypeElement();
 
 			typeElement.Name = GetAttributeValue(typeNode, NAME, typeElement.Name);
+			typeElement.ConcreteType = GetAttributeValue(typeNode, CONCRETE_TYPE, typeElement.ConcreteType);
 			typeElement.NewInstanceFormat = GetAttributeValue(typeNode, NEW_INSTANCE_FORMAT, typeElement.NewInstanceFormat);
 			typeElement.Package = GetAttributeValue(typeNode, NAMESPACE, typeElement.Package);
 			typeElement.ConvertToSqlTypeFormat = GetAttributeValue(typeNode, CONVERT_TO_SQLTYPE_FORMAT, typeElement.ConvertToSqlTypeFormat);
