@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<xs:schema id="DataTierGenerator" xmlns="" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+<xs:schema id="DataTierGenerator" xmlns="" xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.0">
     <xs:element name="DataTierGenerator">
         <xs:complexType>
-            <xs:choice maxOccurs="unbounded">
+            <xs:all>
                 <xs:element name="config">
                     <xs:complexType>
                         <xs:sequence>
@@ -26,7 +26,7 @@
                                                 <xs:sequence>
                                                     <xs:element name="property" maxOccurs="unbounded">
                                                         <xs:complexType>
-                                                            <xs:simpleContent msdata:ColumnName="property_Text" msdata:Ordinal="4">
+                                                            <xs:simpleContent>
                                                                 <xs:extension base="xs:string">
                                                                     <xs:attribute name="name" type="xs:string" />
                                                                     <xs:attribute name="type" type="xs:string" />
@@ -103,7 +103,7 @@
                                     <xs:sequence>
                                         <xs:element name="value" minOccurs="0" maxOccurs="unbounded">
                                             <xs:complexType>
-                                                <xs:simpleContent msdata:ColumnName="value_Text" msdata:Ordinal="2">
+                                                <xs:simpleContent>
                                                     <xs:extension base="xs:string">
                                                         <xs:attribute name="name" type="xs:string" />
                                                         <xs:attribute name="code" type="xs:string" />
@@ -333,21 +333,82 @@
                 <xs:element name="generator" minOccurs="0" maxOccurs="1">
                     <xs:complexType>
                         <xs:sequence>
-                            <xs:element name="task" minOccurs="0" maxOccurs="unbounded">
+                            <xs:element name="tasks" minOccurs="0" maxOccurs="1">
                                 <xs:complexType>
-                                    <xs:sequence />
-                                    <xs:attribute name="name" type="xs:string" />
-                                    <xs:attribute name="template" type="xs:string" />
-                                    <xs:attribute name="element" type="xs:string" />
-                                    <xs:attribute name="directory" type="xs:string" />
-                                    <xs:attribute name="filenameformat" type="xs:string" />
+                                    <xs:sequence>
+                                        <xs:element name="task" minOccurs="0" maxOccurs="unbounded">
+                                            <xs:complexType>
+                                                <xs:sequence>
+                                                    <xs:element name="includes" minOccurs="0" maxOccurs="1">
+                                                        <xs:complexType>
+                                                            <xs:sequence>
+                                                                <xs:element name="include" minOccurs="0" maxOccurs="unbounded">
+                                                                    <xs:complexType>
+                                                                        <xs:sequence>
+                                                                        </xs:sequence>
+                                                                        <xs:attribute name="name" type="xs:string" />
+                                                                    </xs:complexType>
+                                                                </xs:element>
+                                                            </xs:sequence>
+                                                        </xs:complexType>
+                                                    </xs:element>
+                                                    <xs:element name="excludes" minOccurs="0" maxOccurs="1">
+                                                        <xs:complexType>
+                                                            <xs:sequence>
+                                                                <xs:element name="exclude" minOccurs="0" maxOccurs="unbounded">
+                                                                    <xs:complexType>
+                                                                        <xs:sequence>
+                                                                        </xs:sequence>
+                                                                        <xs:attribute name="name" type="xs:string" />
+                                                                    </xs:complexType>
+                                                                </xs:element>
+                                                            </xs:sequence>
+                                                        </xs:complexType>
+                                                    </xs:element>
+                                                    <xs:element name="parameters" minOccurs="0" maxOccurs="1">
+                                                        <xs:complexType>
+                                                            <xs:sequence>
+                                                                <xs:element name="parameter" minOccurs="0" maxOccurs="unbounded">
+                                                                    <xs:complexType>
+                                                                        <xs:sequence>
+                                                                        </xs:sequence>
+                                                                        <xs:attribute name="name" type="xs:string" />
+                                                                        <xs:attribute name="value" type="xs:string" />
+                                                                    </xs:complexType>
+                                                                </xs:element>
+                                                            </xs:sequence>
+                                                        </xs:complexType>
+                                                    </xs:element>
+                                                </xs:sequence>
+                                                <xs:attribute name="name" type="xs:string" />
+                                                <xs:attribute name="template" type="xs:string" />
+                                                <xs:attribute name="element" type="xs:string" />
+                                                <xs:attribute name="directory" type="xs:string" />
+                                                <xs:attribute name="filenameformat" type="xs:string" />
+                                            </xs:complexType>
+                                        </xs:element>
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:element name="tools" minOccurs="0" maxOccurs="1">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element name="tool" minOccurs="0" maxOccurs="unbounded">
+                                            <xs:complexType>
+                                                <xs:sequence>
+                                                </xs:sequence>
+                                                <xs:attribute name="name" type="xs:string" />
+                                                <xs:attribute name="class" type="xs:string" />
+                                            </xs:complexType>
+                                        </xs:element>
+                                    </xs:sequence>
                                 </xs:complexType>
                             </xs:element>
                         </xs:sequence>
                         <xs:attribute name="class" type="xs:string" />
                     </xs:complexType>
                 </xs:element>
-                <xs:element name="parser">
+                <xs:element name="parser"  minOccurs="0" maxOccurs="1">
                     <xs:complexType>
                         <xs:sequence>
                             <xs:element name="argument" minOccurs="0" maxOccurs="unbounded">
@@ -362,7 +423,7 @@
                         <xs:attribute name="class" type="xs:string" />
                     </xs:complexType>
                 </xs:element>
-            </xs:choice>
+            </xs:all>
         </xs:complexType>
     </xs:element>
     <xs:simpleType name="BooleanEnum">

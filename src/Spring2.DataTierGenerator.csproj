@@ -179,6 +179,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Element\ExcludeElement.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Element\FinderElement.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -189,7 +194,17 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Element\IncludeElement.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Element\IndexElement.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Element\ParameterElement.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -230,6 +245,11 @@
                 />
                 <File
                     RelPath = "Element\TaskElement.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Element\ToolElement.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -351,6 +371,10 @@
                 />
                 <File
                     RelPath = "Template\enum.vm"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Template\enum_sql_data.vm"
                     BuildAction = "EmbeddedResource"
                 />
                 <File
