@@ -1,0 +1,412 @@
+<?xml version="1.0" ?>
+<DataTierGenerator xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="config.xsd">
+    <config>
+	<setting name="Server" value="olympus" />
+	<setting name="Database" value="cort_project" />
+	<setting name="User" value="sa" />
+	<setting name="Password" value="1qaz2wsx" />
+	<setting name="RootDirectory" value="c:\Data\work\spring2\project\src\" />
+	<setting name="SqlScriptDirectory" value="SQL" />
+	<setting name="DaoClassDirectory" value="DAO" />
+	<setting name="DoClassDirectory" value="DataObject" />
+	<setting name="CollectionClassDirectory" value="DataObject" />
+	<setting name="TypesClassDirectory" value="Types" />
+	<setting name="SingleFile" value="False" />
+	<setting name="GenerateSqlViewScripts" value="False" />
+	<setting name="GenerateSqlTableScripts" value="True" />
+	<setting name="UseViews" value="True" />
+	<setting name="GenerateDataObjectClasses" value="True" />
+	<setting name="ScriptDropStatement" value="True" />
+	<setting name="StoredProcNameFormat" value="proc{%TABLE_NAME%}{%PROC_TYPE%}" />
+	<setting name="RootNameSpace" value="Spring2.Project" />
+	<setting name="GenerateProcsForForeignKey" value="False" />
+	<setting name="GenerateSelectStoredProcs" value="False" />
+	<setting name="GenerateOnlyPrimaryDeleteStoredProc" value="True" />
+	<setting name="AllowUpdateOfPrimaryKey" value="False" />
+	<setting name="AutoDiscoverEntities" value="False" />
+	<setting name="AutoDiscoverProperties" value="False" />
+	<setting name="AutoDiscoverAttributes" value="False" />
+	<setting name="DataObjectBaseClass" value="Spring2.Core.DataObject.DataObject" />
+	<setting name="DAOBaseClass" value="Spring2.Core.DAO.EntityDAO" />
+	<setting name="DataObjectNameFormat" value="{0}Data" />
+	<setting name="DaoNameFormat" value="{0}Dao" />
+    </config>
+    
+    <entities>
+	<entity name="Calendar" sqlentity="Calendar">
+	    <properties>
+		<property name="CalendarID" type="IdType" column="*" />
+		<property name="Date" type="DateType" column="*" />
+		<property name="DOW" type="DateType" column="*" />
+		<property name="BOW" type="DateType" column="*" />
+		<property name="EOW" type="DateType" column="*" />
+		<property name="BOM" type="DateType" column="*" />
+		<property name="EOM" type="DateType" column="*" />
+		<property name="BOQ" type="DateType" column="*" />
+		<property name="EOQ" type="DateType" column="*" />
+		<property name="BOY" type="DateType" column="*" />
+		<property name="EOY" type="DateType" column="*" />
+		<property name="Holiday" type="BooleanType" column="*" />
+	    </properties>
+	</entity>
+	<entity name="Client" sqlentity="Client">
+	    <properties>
+		<property name="ClientId" type="IdType" column="*" />
+		<property name="Name" type="StringType" column="*" />
+		<property name="Active" type="BooleanType" column="*" />
+	    </properties>
+	</entity>
+	<entity name="Project" sqlentity="Project">
+	    <properties>
+		<property name="ProjectId" type="IdType" column="*" />
+		<property name="ClientId" type="IdType" column="*" />
+		<property name="Name" type="StringType" column="*" />
+		<property name="Description" type="StringType" column="*" />
+		<property name="Owner" type="StringType" column="*" />
+		<property name="Active" type="BooleanType" column="*" />
+		<property name="Billable" type="BillableTypeEnum" column="*" />
+		<property name="ClientName" type="StringType" column="*" />
+	    </properties>
+	</entity>
+	<entity name="TimeSheet" sqlentity="TimeSheet">
+	    <properties>
+		<property name="TimeSheetId" type="IdType" column="*" />
+		<property name="UserId" type="IdType" column="*" />
+		<property name="ProjectId" type="IdType" column="*" />
+		<property name="Hours" type="DecimalType" column="*" />
+		<property name="Date" type="DateType" column="*" />
+		<property name="Comments" type="StringType" column="*" />
+		<property name="LastUpdateUser" type="StringType" column="*" />
+		<property name="LastUpdate" type="DateType" column="*" />
+		<property name="Billable" type="BillableTypeEnum" column="*" />
+		<property name="Mileage" type="DecimalType" column="*" />
+		<property name="ClientName" type="StringType" column="*" />
+		<property name="ProjectName" type="StringType" column="*" />
+		<property name="UserName" type="StringType" column="*" />
+		<property name="ClientId" type="IdType" column="*" />
+	    </properties>
+	</entity>
+	<entity name="User" sqlentity="User">
+	    <properties>
+		<property name="UserId" type="IdType" column="*" />
+		<property name="UserName" type="StringType" column="*" />
+		<property name="Password" type="StringType" column="*" />
+		<property name="LastName" type="StringType" column="*" />
+		<property name="FirstName" type="StringType" column="*" />
+		<property name="MiddleName" type="StringType" column="*" />
+		<property name="Active" type="BooleanType" column="*" />
+		<property name="Email" type="StringType" column="*" />
+		<property name="LastUpdateUser" type="StringType" column="*" />
+		<property name="LastUpdate" type="DateType" column="*" />
+		<property name="UserType" type="UserTypeEnum" column="*" />
+	    </properties>
+	    <finders>
+		<finder name="FindByUserName" sort="TimesheetId" unique="True">
+		    <properties>
+			<property name="UserName" />
+		    </properties>
+		</finder>
+	    </finders>
+	</entity>
+	<entity name="UserClient" sqlentity="UserClient">
+	    <properties>
+		<property name="UserClientId" type="IdType" column="*" />
+		<property name="UserId" type="IdType" column="*" />
+		<property name="ClientId" type="IdType" column="*" />
+	    </properties>
+	</entity>
+    </entities>
+    <!--
+    
+      Collections (extending CollectionBase)
+      
+      collection attributes:
+	name - 
+	type - type that is being wrapped
+    
+    -->
+    <!--
+    <collections>
+	<collection name="TeamCollection" type="TeamData" />
+	<collection name="ALaCarteItemCollection" type="ALaCarteItemData" />
+	<collection name="ParticipantCollection" type="ParticipantData" />
+    </collections>
+    -->
+    <!-- 
+    
+      Enums
+      
+    -->
+    <enums>
+	<enum name="UserTypeEnum">
+	    <value name="Admin" code="Admin" />
+	    <value name="Guest" code="Guest" />
+	    <value name="Tester" code="Tester" />
+	</enum>
+	<enum name="BillableTypeEnum">
+	    <value name="Yes" code="Y" />
+	    <value name="No" code="N" />
+	    <value name="Project Default" code="P" />
+	</enum>
+    </enums>
+    <!-- 
+    
+      Types
+      
+    -->
+    <types>
+	<!-- .Net primitive types -->
+	<type name="String" newinstanceformat="String.Empty" />
+	<type name="DateTime" newinstanceformat="new DateTime()" />
+	<type name="Int32" newinstanceformat="0" />
+	<type name="Boolean" newinstanceformat="false" />
+	<type name="Double" newinstanceformat="0" />
+	<type name="Decimal" newinstanceformat="0" />
+	<!-- .Net FCL types -->
+	<type name="IList" namespace="System.Collections" />
+	<type name="ArrayList" namespace="System.Collections" newinstanceformat="new ArrayList()" />
+	<type name="Hashtable" namespace="System.Collections" newinstanceformat="new Hashtable()" />
+	<!-- Spring2.Core.Types -->
+	<type name="BooleanType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="BooleanType.GetInstance({2})" newinstanceformat="BooleanType.DEFAULT" nullinstanceformat="BooleanType.UNSET" />
+	<type name="StringType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="StringType.NewInstance({2})" newinstanceformat="StringType.DEFAULT" nullinstanceformat="StringType.UNSET" />
+	<type name="IdType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="IdType.NewInstance({2})" newinstanceformat="IdType.DEFAULT" nullinstanceformat="IdType.UNSET" />
+	<type name="DateType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="DateType.NewInstance({2})" newinstanceformat="DateType.DEFAULT" nullinstanceformat="DateType.UNSET" />
+	<type name="NumberType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="NumberType.NewInstance({2})" newinstanceformat="NumberType.DEFAULT" nullinstanceformat="NumberType.UNSET" />
+	<type name="DecimalType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="DecimalType.NewInstance({2})" newinstanceformat="DecimalType.DEFAULT" nullinstanceformat="DecimalType.UNSET" />
+	<type name="CurrencyType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="CurrencyType.NewInstance({2})" newinstanceformat="CurrencyType.DEFAULT" nullinstanceformat="CurrencyType.UNSET" />
+	<type name="QuantityType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="QuantityType.NewInstance({2})" newinstanceformat="QuantityType.DEFAULT" nullinstanceformat="QuantityType.UNSET" />
+	<type name="GenderType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="GenderType.GetInstance({2})" newinstanceformat="GenderType.DEFAULT" nullinstanceformat="GenderType.UNSET" />
+	<type name="USStateCodeEnum" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="USStateCodeEnum.GetInstance({2})" newinstanceformat="USStateCodeEnum.DEFAULT" nullinstanceformat="USStateCodeEnum.UNSET" />
+    </types>
+    <sqltypes>
+	<sqltype name="float" type="DecimalType" readermethodformat='{0}.GetDouble({0}.GetOrdinal("{1}"))' declarationformat="{0}({2})" />
+	<sqltype name="datetime" sqldbtype="DateTime" type="DateType" readermethodformat='{0}.GetDateTime({0}.GetOrdinal("{1}"))' />
+	<sqltype name="bit" type="NumberType" readermethodformat='{0}.GetInt32({0}.GetOrdinal("{1}"))' />
+	<sqltype name="smallint" sqldbtype="SmallInt" type="NumberType" readermethodformat='{0}.GetInt32({0}.GetOrdinal("{1}"))' />
+	<sqltype name="tinyint" sqldbtype="TinyInt" type="NumberType" readermethodformat='{0}.GetInt32({0}.GetOrdinal("{1}"))' />
+	<sqltype name="smallmoney" sqldbtype="SmallMoney" type="CurrencyType" readermethodformat='{0}.GetDecimal({0}.GetOrdinal("{1}"))' />
+	<sqltype name="money" type="CurrencyType" readermethodformat='{0}.GetDecimal({0}.GetOrdinal("{1}"))' />
+	<sqltype name="image" length="50" type="StringType" readermethodformat='{0}.GetString({0}.GetOrdinal("{1}"))' />
+	<sqltype name="text" length="50" type="StringType" readermethodformat='{0}.GetString({0}.GetOrdinal("{1}"))' />
+	<sqltype name="smalldatetime" sqldbtype="SmallDateTime" type="DateType" readermethodformat='{0}.GetDateTime({0}.GetOrdinal("{1}"))' />
+	<sqltype name="char" length="1" type="StringType" readermethodformat='{0}.GetString({0}.GetOrdinal("{1}"))' declarationformat="{0}({1})" />
+	<sqltype name="varchar" sqldbtype="VarChar" length="50" type="StringType" readermethodformat='{0}.GetString({0}.GetOrdinal("{1}"))' declarationformat="{0}({1})" />
+	<sqltype name="int" scale="0" precision="10" type="NumberType" readermethodformat='{0}.GetInt32({0}.GetOrdinal("{1}"))' />
+	<sqltype name="numeric" sqldbtype="Decimal" type="DecimalType" readermethodformat='{0}.GetDecimal({0}.GetOrdinal("{1}"))' declarationformat="{0}({2}, {3})" />
+	<sqltype name="binary" type="byte[]" declarationformat="{0}({1})" />
+	<sqltype name="bigint" sqldbtype="BigInt" type="Int64" readermethodformat='{0}.GetInt64({0}.GetOrdinal("{1}"))' />
+	<sqltype name="decimal" type="Decimal" readermethodformat='{0}.GetDecimal({0}.GetOrdinal("{1}"))' declarationformat="{0}({2}, {3})" />
+	<sqltype name="nchar" sqldbtype="NChar" type="String" readermethodformat='{0}.GetString({0}.GetOrdinal("{1}"))' declarationformat="{0}({1})" />
+	<sqltype name="ntext" sqldbtype="NText" type="String" readermethodformat='{0}.GetString({0}.GetOrdinal("{1}"))' declarationformat="{0}({1})" />
+	<sqltype name="nvarchar" sqldbtype="NVarChar" type="String" readermethodformat='{0}.GetString({0}.GetOrdinal("{1}"))' declarationformat="{0}({1})" />
+	<sqltype name="real" type="Single" readermethodformat='{0}.GetString({0}.GetOrdinal("{1}"))' />
+	<sqltype name="varbinary" sqldbtype="VarBinary" type="byte[]" declarationformat="{0}({1})" />
+	<sqltype name="uniqueidentifier" sqldbtype="UniqueIdentifier" type="Guid" />
+	<sqltype name="timestamp" type="DateTime" readermethodformat='{0}.GetDateTime({0}.GetOrdinal("{1}"))' />
+    </sqltypes>
+    <!--
+	sqlentity attributes:
+	    name -
+	    view -
+	  
+	column attributes:
+	    name -
+	    sqltype -
+	    length -
+	    scale -
+	    precision -
+	    identity -
+	    increment -
+	    seed -
+	    rowguidcol -
+	    formula -
+	    default -
+	    foreigncolumn - needed for when used in a foreign key constraint
+	    sortdirection - needed for index columns (ASC/DESC/String.Empty)
+	    
+	constraint attributes:
+	    name - 
+	    contrainttype -
+	    clusterd -
+	    foreignentity -
+	    
+	index attributes:
+	    name -
+	    unique -
+	    clustered -
+	    
+    -->
+    <sqlentities>
+	<sqlentity name="Bug" view="vwBug">
+	    <columns>
+		<column name="bug_id" sqltype="int" length="4" precision="10" identity="True" />
+		<column name="bug_tcase_id" sqltype="char" length="50" />
+		<column name="bug_reporter" sqltype="char" length="100" />
+		<column name="bug_dateIdentified" sqltype="char" length="50" />
+		<column name="bug_assignedTo" sqltype="char" length="100" />
+		<column name="bug_severity" sqltype="char" length="50" />
+		<column name="bug_status" sqltype="char" length="50" />
+		<column name="bug_dateComplete" sqltype="char" length="50" />
+		<column name="bug_desc" sqltype="varchar" length="2048" />
+		<column name="bug_tcase_refNum" sqltype="char" length="50" />
+		<column name="bug_reg_tester" sqltype="char" length="100" />
+		<column name="bug_active" sqltype="char" length="10" />
+		<column name="bug_dateIdent" sqltype="datetime" length="8" scale="3" precision="23" />
+		<column name="bug_dateComp" sqltype="datetime" length="8" scale="3" precision="23" />
+		<column name="ResolutionNotes" sqltype="varchar" length="2048" />
+		<column name="DeveloperNotes" sqltype="varchar" length="2048" />
+		<column name="ScreenCaptureFileName" sqltype="varchar" length="100" />
+		<column name="bug_assocDoc" sqltype="varchar" length="100" />
+		<column name="bug_config_id" sqltype="varchar" length="100" />
+		<column name="bug_buildNum" sqltype="char" length="50" />
+		<column name="bug_ProjectID" sqltype="int" length="4" precision="10" />
+		<column name="bug_reporter_email" sqltype="char" length="100" />
+		<column name="bug_reporterID" sqltype="int" length="4" precision="10" />
+		<column name="bug_targetDate" sqltype="datetime" length="8" scale="3" precision="23" />
+		<column name="bug_priority" sqltype="int" length="4" precision="10" />
+		<column name="bug_type" sqltype="char" length="100" />
+		<column name="bug_interface" sqltype="char" length="50" />
+		<column name="bug_name" sqltype="char" length="100" />
+		<column name="bug_module" sqltype="char" length="50" />
+	    </columns>
+	</sqlentity>
+	<sqlentity name="Calendar" view="vwCalendar">
+	    <columns>
+		<column name="CalendarID" sqltype="int" length="4" precision="10" identity="True" />
+		<column name="Date" sqltype="smalldatetime" length="4" precision="16" />
+		<column name="DOW" sqltype="int" length="4" precision="10" />
+		<column name="BOW" sqltype="smalldatetime" length="4" precision="16" />
+		<column name="EOW" sqltype="smalldatetime" length="4" precision="16" />
+		<column name="BOM" sqltype="smalldatetime" length="4" precision="16" />
+		<column name="EOM" sqltype="smalldatetime" length="4" precision="16" />
+		<column name="BOQ" sqltype="smalldatetime" length="4" precision="16" />
+		<column name="EOQ" sqltype="smalldatetime" length="4" precision="16" />
+		<column name="BOY" sqltype="smalldatetime" length="4" precision="16" />
+		<column name="EOY" sqltype="smalldatetime" length="4" precision="16" />
+		<column name="Holiday" sqltype="char" length="1" />
+	    </columns>
+	</sqlentity>
+	<sqlentity name="Client" view="vwClient">
+	    <columns>
+		<column name="ClientId" sqltype="int" length="4" precision="10" identity="True" />
+		<column name="Name" sqltype="varchar" length="100" />
+		<column name="Active" sqltype="char" length="1" />
+	    </columns>
+	</sqlentity>
+	<sqlentity name="Project" view="vwProject">
+	    <columns>
+		<column name="ProjectId" sqltype="int" length="4" precision="10" identity="True" />
+		<column name="ClientId" sqltype="int" length="4" precision="10" />
+		<column name="Name" sqltype="varchar" length="50" />
+		<column name="Description" sqltype="varchar" length="2048" />
+		<column name="Owner" sqltype="varchar" length="50" />
+		<column name="Active" sqltype="char" length="1" />
+		<column name="Billable" sqltype="char" length="1" />
+		<column name="ClientName" sqltype="varchar" length="100" viewcolumn="True" />
+	    </columns>
+	</sqlentity>
+	<sqlentity name="Task" view="vwTask">
+	    <columns>
+		<column name="TaskId" sqltype="int" length="4" precision="10" identity="True" />
+		<column name="ProjectId" sqltype="int" length="4" precision="10" />
+		<column name="ClientDescription" sqltype="varchar" length="2048" />
+		<column name="Description" sqltype="varchar" length="2048" />
+		<column name="Owner" sqltype="varchar" length="50" />
+		<column name="Priority" sqltype="int" length="4" precision="10" />
+		<column name="DueDate" sqltype="smalldatetime" length="4" precision="16" />
+		<column name="EstHours" sqltype="decimal" length="17" precision="2" />
+		<column name="CompletedDate" sqltype="smalldatetime" length="4" precision="16" />
+		<column name="ActualHours" sqltype="decimal" length="17" precision="2" />
+		<column name="LastUpdateUser" sqltype="varchar" length="50" />
+		<column name="LastUpdated" sqltype="smalldatetime" length="4" precision="16" />
+		<column name="ProjectName" sqltype="varchar" length="50" viewcolumn="True" />
+		<column name="ClientName" sqltype="varchar" length="100" viewcolumn="True" />
+	    </columns>
+	    <constraints>
+		<constraint name="PK_Task" type="PRIMARY KEY">
+		    <column name="TaskId" />
+		</constraint>
+	    </constraints>
+	</sqlentity>
+	<sqlentity name="TaskComment" view="vwTaskComment">
+	    <columns>
+		<column name="TaskCommentId" sqltype="int" length="4" precision="10" identity="True" />
+		<column name="TaskId" sqltype="int" length="4" precision="10" />
+		<column name="Comment" sqltype="varchar" length="8000" />
+		<column name="Owner" sqltype="varchar" length="50" />
+		<column name="LastUpdate" sqltype="smalldatetime" length="4" precision="16" />
+	    </columns>
+	    <constraints>
+		<constraint name="PK_Comment" type="PRIMARY KEY">
+		    <column name="TaskCommentId" />
+		</constraint>
+	    </constraints>
+	</sqlentity>
+	<sqlentity name="TimeSheet" view="vwTimeSheet">
+	    <columns>
+		<column name="TimeSheetId" sqltype="int" length="4" precision="10" identity="True" />
+		<column name="UserId" sqltype="int" length="4" precision="10" />
+		<column name="ProjectId" sqltype="int" length="4" precision="10" />
+		<column name="Hours" sqltype="decimal" length="17" scale="2" precision="5" />
+		<column name="Date" sqltype="smalldatetime" length="4" precision="16" />
+		<column name="Comments" sqltype="varchar" length="4096" />
+		<column name="LastUpdateUser" sqltype="varchar" length="50" />
+		<column name="LastUpdate" sqltype="smalldatetime" length="4" precision="16" />
+		<column name="Billable" sqltype="char" length="1" />
+		<column name="Mileage" sqltype="decimal" length="17" scale="2" precision="5" />
+		<column name="ClientName" sqltype="varchar" length="100" viewcolumn="True" />
+		<column name="ProjectName" sqltype="varchar" length="50" viewcolumn="True" />
+		<column name="UserName" sqltype="varchar" length="100" viewcolumn="True" />
+		<column name="ClientId" sqltype="int" viewcolumn="True" />
+	    </columns>
+	    <constraints>
+		<constraint name="PK_TimeSheet" type="PRIMARY KEY">
+		    <column name="TimeSheetId" />
+		</constraint>
+	    </constraints>
+	</sqlentity>
+	<sqlentity name="User" view="vwUser">
+	    <columns>
+		<column name="UserId" sqltype="int" length="4" precision="10" identity="True" />
+		<column name="UserName" sqltype="varchar" length="100" />
+		<column name="Password" sqltype="varchar" length="50" />
+		<column name="LastName" sqltype="varchar" length="50" />
+		<column name="FirstName" sqltype="varchar" length="50" />
+		<column name="MiddleName" sqltype="varchar" length="50" />
+		<column name="Active" sqltype="char" length="1" />
+		<column name="Email" sqltype="varchar" length="100" />
+		<column name="LastUpdateUser" sqltype="varchar" length="50" />
+		<column name="LastUpdate" sqltype="smalldatetime" length="4" precision="16" />
+		<column name="UserType" sqltype="varchar" length="10" />
+	    </columns>
+	    <constraints>
+		<constraint name="PK_User" type="PRIMARY KEY">
+		    <column name="UserId" />
+		</constraint>
+	    </constraints>
+	</sqlentity>
+	<sqlentity name="UserClient" view="vwUserClient">
+	    <columns>
+		<column name="UserClientId" sqltype="int" length="4" precision="10" identity="True" />
+		<column name="UserId" sqltype="int" length="4" precision="10" />
+		<column name="ClientId" sqltype="int" length="4" precision="10" />
+	    </columns>
+	</sqlentity>
+	<sqlentity name="UserProject" view="vwUserProject">
+	    <columns>
+		<column name="UserProjectId" sqltype="int" length="4" precision="10" identity="True" />
+		<column name="UserId" sqltype="int" length="4" precision="10" />
+		<column name="ProjectId" sqltype="int" length="4" precision="10" />
+	    </columns>
+	</sqlentity>
+	<sqlentity name="UserProjectAllocation" view="vwUserProjectAllocation">
+	    <columns>
+		<column name="UserProjectAllocationId" sqltype="int" length="4" precision="10" identity="True" />
+		<column name="UserId" sqltype="int" length="4" precision="10" />
+		<column name="ProjectId" sqltype="int" length="4" precision="10" />
+		<column name="BOW" sqltype="datetime" length="8" scale="3" precision="23" />
+		<column name="Hours" sqltype="decimal" length="17" scale="2" precision="5" />
+	    </columns>
+	</sqlentity>
+    </sqlentities>
+</DataTierGenerator>
