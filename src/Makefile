@@ -11,7 +11,7 @@ PS ?= \;
 default: build
 
 MODULES := $(shell /usr/bin/find -name module.mk)
-include $(MODULES)
+#include $(MODULES)
 
 .DELETE_ON_ERROR:
 
