@@ -279,10 +279,18 @@ namespace Spring2.DataTierGenerator.Element {
 		    continue;
 		}
 		PropertyElement field = BuildElement(node, types, sqltypes, entity, isReference, vd);
+		fields.Add(field);
 
 		// Add in any subfields...
-		if (node.Attributes["entity"]!=null) {
-		    EntityElement subentity = EntityElement.FindEntityByName((ArrayList)entities, node.Attributes["entity"].Value);
+		if (node.Attributes["entity"] != null) {
+		    String subEntityName = node.Attributes["entity"].Value;
+		    EntityElement subentity = EntityElement.FindEntityByName((ArrayList)entities, subEntityName);
+
+		    // check to see if subentity is self
+		    if (subentity == null && entity.Name == subEntityName) {
+			subentity = (EntityElement)entity;
+		    }
+
 		    if (subentity != null) {
 			// Only entity elements have entity atttribute
 			SqlEntityElement sqlEntity = ((EntityElement)entity).SqlEntity;
@@ -301,21 +309,16 @@ namespace Spring2.DataTierGenerator.Element {
 				ColumnElement column = sqlEntity.FindColumnByName(prefix + subfield.Column.Name);
 				if (column != null) {
 				    subfield.Column = (ColumnElement)column.Clone();
-				} 
-				else {
+				} else {
 				    vd(ParserValidationArgs.NewError("column (" + prefix + subfield.Column.Name + ") specified for property (" + subfield.Name + ") on entity (" + entity.Name + ") was not found in sql entity (" + sqlEntity.Name + ")"));
 				}
 			    }
 			    fields.Add(subfield);
 			}
-		    } 
-		    else {
+		    } else {
 			vd(ParserValidationArgs.NewError("Entity " + entity.Name + " referenced another entity that was not defined (or defined below this one): " + node.Attributes["entity"].Value));
 		    }
 		} 
-
-		fields.Add(field);
-			    
 	    }
 	    return fields;
 	}
@@ -325,17 +328,16 @@ namespace Spring2.DataTierGenerator.Element {
 
 	    if (node.Attributes["name"] != null) {
 		field.Name = node.Attributes["name"].Value;
-	    }
-	    else {
+	    } else {
 		vd(ParserValidationArgs.NewError("Property in " + entity.Name + " has no name."));
 	    }
 
 	    if (isReference && field.Name != "*") {
 		PropertyElement refProperty = entity.FindFieldByName(field.Name);
+
 		if (refProperty == null) {
 		    vd(ParserValidationArgs.NewError("Property " + field.Name + " in " + entity.Name + " refers to a property that does not exist."));
-		}
-		else {
+		} else {
 		    field = (PropertyElement)(refProperty.Clone());
 		}
 	    }
@@ -481,7 +483,7 @@ namespace Spring2.DataTierGenerator.Element {
 	/// <returns>String containing SqlParameter information of the specified field for a method call.</returns>
 	public String CreateSqlParameter(Boolean blnOutput, Boolean useDataObject) {
 	    StringBuilder sb = new StringBuilder();
-	    sb.Append("cmd.Parameters.Add(new SqlParameter(\"@" + GetSqlAlias() + "\", SqlDbType." + GetSqlType().SqlDbType + ", " + GetSqlType().Length + ", ParameterDirection.");
+	    sb.Append("cmd.Parameters.Add(new SqlParameter(\"@" + GetCodeSafeSqlAlias() + "\", SqlDbType." + GetSqlType().SqlDbType + ", " + GetSqlType().Length + ", ParameterDirection.");
 	    if (blnOutput) {
 		sb.Append("Output"); 
 	    } else {
@@ -540,8 +542,19 @@ namespace Spring2.DataTierGenerator.Element {
 	public virtual string GetSqlAlias() {
 	    if (this.Alias == String.Empty) {
 		return this.Column.Name;
+	    } else {
+		return this.Alias;
 	    }
-	    else {
+	}
+
+	/// <summary>
+	/// Returns the code safe sql name for the property that can be used to reference the property in the data reader, ADO.Net parameter, etc.
+	/// </summary>
+	/// <returns>Sql alias string</returns>
+	public virtual string GetCodeSafeSqlAlias() {
+	    if (this.Alias == String.Empty) {
+		return this.Column.CodeSafeName;
+	    } else {
 		return this.Alias;
 	    }
 	}
