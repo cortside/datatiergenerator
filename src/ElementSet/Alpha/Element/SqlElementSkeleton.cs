@@ -6,43 +6,22 @@ namespace Spring2.DataTierGenerator.Element {
     /// </summary>
     public class SqlElementSkeleton : ElementSkeleton {
 
-	public String EscapedName {
-	    get { return EscapeSqlName(Name); }
+	/// <summary>
+	/// Name that is safe to use in code (i.e. characters that are allowed as valid name characters in
+	/// some databases that are not allowed in class or field names).
+	/// </summary>
+	public String CodeSafeName {
+	    get { return RemoveInvalidCharacters(this.name); }
 	}
 
-	// sql keywords that need escaping.  all values need to be enclosed in a pair of | characters.  values should be lower case.
-	private static readonly String KEYWORDS = 
-	    "|add|except|percent|all|exec|plan|alter|execute|precision|and|exists|primary|any|exit|print|as|fetch" +
-	    "|proc|asc|file|procedure|authorization|fillfactor|public|backup|for|raiserror|begin|foreign" +
-	    "|read|between|freetext|readtext|break|freetexttable|reconfigure|browse|from|references|bulk" +
-	    "|full|replication|by|function|restore|cascade|goto|restrict|case|grant|return|check|group" +
-	    "|revoke|checkpoint|having|right|close|holdlock|rollback|clustered|identity|rowcount|coalesce" +
-	    "|identity_insert|rowguidcol|collate|identitycol|rule|column|if|save|commit|in|schema|compute" +
-	    "|index|select|constraint|inner|session_user|contains|insert|set|containstable|intersect" +
-	    "|setuser|continue|into|shutdown|convert|is|some|create|join|statistics|cross|key|system_user" +
-	    "|current|kill|table|current_date|left|textsize|current_time|like|then|current_timestamp" +
-	    "|lineno|to|current_user|load|top|cursor|national||tran|database|nocheck|transaction|dbcc" +
-	    "|nonclustered|trigger|deallocate|not|truncate|declare|null|tsequal|default|nullif|union" +
-	    "|delete|of|unique|deny|off|update|desc|offsets|updatetext|disk|on|use|distinct|open|user" +
-	    "|distributed|opendatasource|values|double|openquery|varying|drop|openrowset|view|dummy" +
-	    "|openxml|waitfor|dump|option|when|else|or|where|end|order|while|errlvl|outer|with|escape|over|writetext|min|max|collate|";
-
-
-	protected String EscapeSqlName(String s) {
-	    Boolean needsEscaping = false;
-
-	    if (s.IndexOf(" ")>=0 || s.IndexOf("/")>=0 || s.IndexOf("-")>=0) {
-		needsEscaping = true;
-	    }
-	    if (KEYWORDS.IndexOf("|"+s.ToLower()+"|")>=0) {
-		needsEscaping = true;
-	    }
-	    
-	    if (needsEscaping) {
-		return "[" + s + "]";
-	    } else {
-		return s;
-	    }
+	/// <summary>
+	/// Removes characters that are not valid in code (i.e. spaces and numeric operators)
+	/// </summary>
+	/// <param name="s"></param>
+	/// <returns></returns>
+	private String RemoveInvalidCharacters(String s) {
+	    return s.Replace(" ", String.Empty).Replace("/", String.Empty).Replace("-", String.Empty);
 	}
+
     }
 }
