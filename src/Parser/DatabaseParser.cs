@@ -17,14 +17,6 @@ namespace Spring2.DataTierGenerator.Parser {
     /// </summary>
     public class DatabaseParser : ParserSkeleton, IParser {
 	
-	private String connectionString;
-
-	public DatabaseParser(Configuration options, String connectionString) {
-	    this.connectionString = connectionString;
-
-	    // parse everything as if this is the top - because it would be
-	}
-
 	public DatabaseParser(Element.Parser parser, Configuration options, XmlDocument doc, Hashtable sqltypes, Hashtable types, ParserValidationDelegate vd) {
 	    this.options = options;
 	    this.sqltypes = sqltypes;
@@ -35,7 +27,7 @@ namespace Spring2.DataTierGenerator.Parser {
 	    if (parser.FindArgumentByName("server") == null || parser.FindArgumentByName("database") == null || parser.FindArgumentByName("user") == null || parser.FindArgumentByName("password") == null) {
 		vd(ParserValidationArgs.NewError("expected to find the following arguments, but didn't: server, database, user, password."));
 	    } else {
-		this.connectionString = "server=" + parser.FindArgumentByName("server").Value + ";databse=" + parser.FindArgumentByName("database").Value + ";user=" + parser.FindArgumentByName("user").Value + ";password=" + parser.FindArgumentByName("password").Value + ";";
+		String connectionString = "server=" + parser.FindArgumentByName("server").Value + ";databse=" + parser.FindArgumentByName("database").Value + ";user=" + parser.FindArgumentByName("user").Value + ";password=" + parser.FindArgumentByName("password").Value + ";";
 		
 		Database db = new Database();
 		db.Name = "db";
@@ -43,9 +35,9 @@ namespace Spring2.DataTierGenerator.Parser {
 		db.Database = parser.FindArgumentByName("database").Value;
 		db.User = parser.FindArgumentByName("user").Value;
 		db.Password = parser.FindArgumentByName("password").Value;
-		this.connectionString = db.ConnectionString;
+		connectionString = db.ConnectionString;
 
-		SqlConnection conn = new SqlConnection(this.connectionString);
+		SqlConnection conn = new SqlConnection(connectionString);
 		db.SqlEntities = DiscoverSqlEntities(conn, vd);
 		databases.Add(db);
 		entities = GetEntities(doc, conn, new ArrayList(), vd);
@@ -63,16 +55,12 @@ namespace Spring2.DataTierGenerator.Parser {
 	    objDataAdapter.Fill(objDataTable);
 	    foreach (DataRow row in objDataTable.Rows) {
 	    	if (row["TABLE_TYPE"].ToString() == "BASE TABLE" && row["TABLE_NAME"].ToString() != "dtproperties") {
-	    	    if (Entity.FindEntityBySqlEntity(entities, row["TABLE_NAME"].ToString()) == null) {
-	    		Entity entity = new Entity();
-	    		entity.Name = row["TABLE_NAME"].ToString();
-	    		entity.SqlEntity.Name = row["TABLE_NAME"].ToString();
-	    		//if (options.UseViews) {
-	    		    entity.SqlEntity.View = "vw" + entity.SqlEntity.Name;
-	    		//}
-	    		entity.Fields = GetFields(entity, connection, doc, sqltypes, types);
-	    		entities.Add(entity);
-	    	    }
+	    	    Entity entity = new Entity();
+	    	    entity.Name = row["TABLE_NAME"].ToString();
+	    	    entity.SqlEntity.Name = row["TABLE_NAME"].ToString();
+	    	    entity.SqlEntity.View = "vw" + entity.SqlEntity.Name;
+	    	    entity.Fields = GetFields(entity, connection, doc, sqltypes, types);
+	    	    entities.Add(entity);
 	    	}
 	    }	    
 
@@ -80,36 +68,9 @@ namespace Spring2.DataTierGenerator.Parser {
 	}
 
 
-	private ArrayList GetDatabases(XmlDocument doc, ParserValidationDelegate vd) {
-	    ArrayList list = new ArrayList();
-
-	    if (doc != null) {
-		list.AddRange(Database.ParseFromXml(options, doc, sqltypes, types, vd));
-	    }
-	    return list;
-	}
-
-
-
-	//	private ArrayList GetSqlEntities(XmlDocument doc, SqlConnection connection) {
-	//	    ArrayList entities = new ArrayList();
-	//
-	//	    if (doc != null) {
-	//		entities.AddRange(SqlEntity.ParseFromXml(options, doc, sqltypes, types));
-	//
-	////		if (options.AutoDiscoverProperties) {
-	////		    foreach (Entity entity in entities) {
-	////			entity.Fields = GetFields(entity, connection, doc, sqltypes, types);
-	////		    }
-	////		}
-	//	    }
-	//	    return entities;
-	//	}
-
 	private ArrayList GetFields(Entity entity, SqlConnection connection, XmlDocument doc, Hashtable sqltypes, Hashtable types) {
 	    ArrayList fields = entity.Fields;
 
-	    Boolean foundNewProperties=false;
 	    if (entity.SqlEntity.AutoDiscoverProperties) {
 		DataTable columns = GetTableColumns(entity.SqlEntity, connection);
 		foreach (DataRow objDataRow in columns.Rows) {
@@ -136,10 +97,7 @@ namespace Spring2.DataTierGenerator.Parser {
 			    if (!System.DBNull.Value.Equals(objDataRow["NUMERIC_PRECISION"])) field.Column.SqlType.Precision = (Int32)(Byte)objDataRow["NUMERIC_PRECISION"];
 			    if (!System.DBNull.Value.Equals(objDataRow["NUMERIC_SCALE"])) field.Column.SqlType.Scale = (Int32)objDataRow["NUMERIC_SCALE"];
 			    field.Column.Identity = objDataRow["IsIdentity"].ToString() == "1";
-			    //			    field.IsPrimaryKey = objDataRow["IsPrimaryKey"].ToString() == "1";
 			    field.Column.RowGuidCol = objDataRow["IsRowGuidCol"].ToString() == "1";
-			    //			    field.IsForeignKey = objDataRow["IsForeignKey"].ToString() == "1";
-			    //			    field.IsViewColumn = objDataRow["IsViewColumn"].ToString() == "1";
 
 			    // Check for unicode columns
 			    if (field.Column.SqlType.Name.ToLower() == "nchar" || field.Column.SqlType.Name.ToLower() == "nvarchar" || field.Column.SqlType.Name.ToLower() == "ntext") {
@@ -155,23 +113,14 @@ namespace Spring2.DataTierGenerator.Parser {
 					
 			    // Append the array to the array list
 			    fields.Add(field);
-
-			    if (!foundNewProperties) {
-				Console.Out.WriteLine(entity.ToXml());
-				foundNewProperties=true;
-			    }
-			    Console.Out.WriteLine("\t" + field.ToXml(true));
-
 			}
 		    }
 		}
 	    }
-	    if (foundNewProperties) {
-		Console.Out.WriteLine("</entity>\n");
-	    }
 
 	    return fields;
 	}
+
 
 	private DataTable GetTableColumns(SqlEntity sqlentity, SqlConnection connection) {
 	    String sql = "	SELECT	INFORMATION_SCHEMA.COLUMNS.COLUMN_NAME, \n";
@@ -186,8 +135,6 @@ namespace Spring2.DataTierGenerator.Parser {
 	    sql = sql + "		ColumnProperty(OBJECT_ID(INFORMATION_SCHEMA.COLUMNS.TABLE_NAME), INFORMATION_SCHEMA.COLUMNS.COLUMN_NAME, 'IsIdentity') AS IsIdentity, \n";
 	    sql = sql + "		ColumnProperty(OBJECT_ID(INFORMATION_SCHEMA.COLUMNS.TABLE_NAME), INFORMATION_SCHEMA.COLUMNS.COLUMN_NAME, 'IsRowGuidCol') AS IsRowGuidCol, \n";
 	    sql = sql + " 		INFORMATION_SCHEMA.COLUMNS.IS_NULLABLE \n";
-	    //	    sql = sql + "		case when INFORMATION_SCHEMA.COLUMNS.COLUMN_NAME in (SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE INNER JOIN INFORMATION_SCHEMA.TABLE_CONSTRAINTS ON INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE.CONSTRAINT_NAME = INFORMATION_SCHEMA.TABLE_CONSTRAINTS.CONSTRAINT_NAME WHERE INFORMATIoN_SCHEMA.TABLE_CONSTRAINTS.TABLE_NAME = INFORMATION_SCHEMA.COLUMNS.TABLE_NAME AND CONSTRAINT_TYPE = 'FOREIGN KEY') then 1 else 0 end IsForeignKey, \n";
-	    //	    sql = sql + "		case when INFORMATION_SCHEMA.COLUMNS.COLUMN_NAME in (SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE INNER JOIN INFORMATION_SCHEMA.TABLE_CONSTRAINTS ON INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE.CONSTRAINT_NAME = INFORMATION_SCHEMA.TABLE_CONSTRAINTS.CONSTRAINT_NAME WHERE INFORMATIoN_SCHEMA.TABLE_CONSTRAINTS.TABLE_NAME = INFORMATION_SCHEMA.COLUMNS.TABLE_NAME AND CONSTRAINT_TYPE = 'PRIMARY KEY') then 1 else 0 end IsPrimaryKey \n";
 	    sql = sql + " 	FROM INFORMATION_SCHEMA.COLUMNS \n";
 	    sql = sql + "  	INNER JOIN systypes ON INFORMATION_SCHEMA.COLUMNS.DATA_TYPE = systypes.name \n";
 	    sql = sql + "  	INNER JOIN syscolumns ON INFORMATION_SCHEMA.COLUMNS.COLUMN_NAME = syscolumns.name  AND syscolumns.id = OBJECT_ID('" + sqlentity.Name + "') \n";
@@ -209,8 +156,6 @@ namespace Spring2.DataTierGenerator.Parser {
 		sql = sql + "		ColumnProperty(OBJECT_ID(INFORMATION_SCHEMA.COLUMNS.TABLE_NAME), INFORMATION_SCHEMA.COLUMNS.COLUMN_NAME, 'IsIdentity') AS IsIdentity, \n";
 		sql = sql + "		ColumnProperty(OBJECT_ID(INFORMATION_SCHEMA.COLUMNS.TABLE_NAME), INFORMATION_SCHEMA.COLUMNS.COLUMN_NAME, 'IsRowGuidCol') AS IsRowGuidCol, \n";
 		sql = sql + " 		INFORMATION_SCHEMA.COLUMNS.IS_NULLABLE \n";
-		//		sql = sql + "		case when INFORMATION_SCHEMA.COLUMNS.COLUMN_NAME in (SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE INNER JOIN INFORMATION_SCHEMA.TABLE_CONSTRAINTS ON INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE.CONSTRAINT_NAME = INFORMATION_SCHEMA.TABLE_CONSTRAINTS.CONSTRAINT_NAME WHERE INFORMATIoN_SCHEMA.TABLE_CONSTRAINTS.TABLE_NAME = INFORMATION_SCHEMA.COLUMNS.TABLE_NAME AND CONSTRAINT_TYPE = 'FOREIGN KEY') then 1 else 0 end IsForeignKey, \n";
-		//		sql = sql + "		case when INFORMATION_SCHEMA.COLUMNS.COLUMN_NAME in (SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE INNER JOIN INFORMATION_SCHEMA.TABLE_CONSTRAINTS ON INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE.CONSTRAINT_NAME = INFORMATION_SCHEMA.TABLE_CONSTRAINTS.CONSTRAINT_NAME WHERE INFORMATIoN_SCHEMA.TABLE_CONSTRAINTS.TABLE_NAME = INFORMATION_SCHEMA.COLUMNS.TABLE_NAME AND CONSTRAINT_TYPE = 'PRIMARY KEY') then 1 else 0 end IsPrimaryKey \n";
 		sql = sql + " 	FROM INFORMATION_SCHEMA.COLUMNS \n";
 		sql = sql + " 	INNER JOIN systypes ON INFORMATION_SCHEMA.COLUMNS.DATA_TYPE = systypes.name \n";
 		sql = sql + " 	INNER JOIN syscolumns ON INFORMATION_SCHEMA.COLUMNS.COLUMN_NAME = syscolumns.name \n";
@@ -226,16 +171,13 @@ namespace Spring2.DataTierGenerator.Parser {
 	    return table;
 	}
 
+
 	private ArrayList DiscoverSqlEntities(SqlConnection connection, ParserValidationDelegate vd) {
 	    ArrayList list = new ArrayList();
 
 	    // Get a list of the entities in the database
 	    DataTable table = new DataTable();
-	    //SqlDataAdapter adapter = new SqlDataAdapter("SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_CATALOG = '" + connection.Database + "'", connection);
-	    SqlDataAdapter adapter = new SqlDataAdapter("SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_CATALOG = '" + connection.Database + "' and TABLE_NAME in ('Address','ErrorLog','Firm','Function' ,'GroupOrderDetail' ,'GroupOrders','GroupOrderVendors' ,'OrderAllocation' ,'OrderDelivery' ,'OrderDetail' ,'OrderDetailOption' ,'Orders' ,'OrderVendor' ,'OrdPmt' ,'pmt_type' ,'SecurityGroup' ,'SecurityGroupFunction' ,'ServiceArea','Users' ,'FirmLocation' ,'FirmLocRule' ,'FirmRule')", connection);
-	    //'Address','ErrorLog','Firm','Function' ,'GroupOrderDetail' ,'GroupOrders','GroupOrderVendors' ,'OrderAllocation' ,'OrderDelivery' ,'OrderDetail' ,'OrderDetailOption' ,'Orders' ,'OrderVendor' ,'OrdPmt' ,'pmt_type' ,'SecurityGroup' ,'SecurityGroupFunction' ,'ServiceArea','Users' ,'FirmLocation' ,'FirmLocRule' ,'FirmRule'
-	    //SqlDataAdapter adapter = new SqlDataAdapter("SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_CATALOG = '" + connection.Database + "' and TABLE_NAME in ('Users')", connection);
-
+	    SqlDataAdapter adapter = new SqlDataAdapter("SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_CATALOG = '" + connection.Database + "'", connection);
 	    adapter.Fill(table);
 
 	    foreach (DataRow row in table.Rows) {
@@ -243,17 +185,10 @@ namespace Spring2.DataTierGenerator.Parser {
 		    SqlEntity sqlentity = new SqlEntity();
 		    sqlentity.Name = row["TABLE_NAME"].ToString();
 		    sqlentity.View = "vw" + sqlentity.Name;
-		    if (sqlentity.Name.Equals("Users")) {
-			sqlentity.View = "vwUser";
-		    }
-		    if (sqlentity.Name.Equals("Orders")) {
-			sqlentity.View = "vwOrder";
-		    }
 		    sqlentity.Columns = DiscoverColumns(sqlentity, connection);
 		    sqlentity.Constraints = DiscoverConstraints(sqlentity, connection);
 		    sqlentity.Indexes = DiscoverIndexes(sqlentity, connection);
 		    list.Add(sqlentity);
-		    //form.Step();
 		}
 	    }	    
 
@@ -425,7 +360,6 @@ namespace Spring2.DataTierGenerator.Parser {
 	private ArrayList DiscoverColumns(SqlEntity sqlentity, SqlConnection connection) {
 	    ArrayList list = new ArrayList();
 
-	    //	    Boolean foundNewProperties=false;
 	    DataTable columns = GetTableColumns(sqlentity, connection);
 	    foreach (DataRow row in columns.Rows) {
 		if (row["COLUMN_COMPUTED"].ToString() == "0") {
@@ -462,18 +396,8 @@ namespace Spring2.DataTierGenerator.Parser {
 
 		    // Append the array to the array list
 		    list.Add(column);
-
-		    //		    if (!foundNewProperties) {
-		    //			Console.Out.WriteLine(sqlentity.ToXml());
-		    //			foundNewProperties=true;
-		    //		    }
-		    //		    Console.Out.WriteLine("\t" + column.ToXml(true));
-		    //Application.DoEvents();
 		}
 	    }
-	    //	    if (foundNewProperties) {
-	    //		Console.Out.WriteLine("</entity>\n");
-	    //	    }
 
 	    return list;
 	}
