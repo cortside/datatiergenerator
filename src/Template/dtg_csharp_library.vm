@@ -20,6 +20,10 @@
 #set($separator="")#foreach($field in $fieldList)#if($includeIf)${separator}${field.CreateMethodParameter()}#set($separator=", ")#end#end
 #end
 
+#macro(argumentList $includeIf $fieldList)
+#set($separator="")#foreach($field in $fieldList)#if($includeIf)${separator}${field.GetFieldFormat()}#set($separator=", ")#end#end
+#end
+
 #macro(nameSpaces $options $element $isDAO)
 #set($found="no")
 #foreach($nameSpace in $options.GetUsingNamespaces($element, $isDAO))
