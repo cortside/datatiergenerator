@@ -3,6 +3,7 @@
         sql_view.vm - default sql view template (replaces SqlGenerator.CreateView)
 
 *###
+#if($element.GenerateSqlViewScripts)
 if exists (select * from sysobjects where id = object_id(N'[vw$element.Name]') and OBJECTPROPERTY(id, N'IsView') = 1)
 drop view [vw$element.Name]
 GO
@@ -19,4 +20,4 @@ FROM
 	$element.EscapedName
 
 GO
-
+#end
