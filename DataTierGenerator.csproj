@@ -123,6 +123,21 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "EnumGenerator.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "EnumType.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "EnumValue.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Field.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

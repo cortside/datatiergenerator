@@ -420,6 +420,8 @@ namespace Spring2.DataTierGenerator {
 		Console.WriteLine(s);
 	    }
 	    Console.Out.WriteLine(String.Empty.PadLeft(20,'='));
+
+	    // decide whether to parse XML file and go or bring up form
 	    if (args.Length==1) {
 		XmlDocument doc = new XmlDocument();
 			
@@ -549,7 +551,7 @@ namespace Spring2.DataTierGenerator {
 	private void frmMain_Load(object sender, System.EventArgs e) {
 	    config = new Configuration();
 	    //config.XmlConfigFilename = "..\\..\\dtg-config.xml";
-	    config.XmlConfigFilename = "C:\\Data\\work\\seamlessweb\\manhattan\\src\\DataTierGenerator.config.xml";
+	    //config.XmlConfigFilename = "C:\\Data\\work\\seamlessweb\\manhattan\\src\\DataTierGenerator.config.xml";
 	    PopulateForm();
 
 	    if (config.XmlConfigFilename.Length>0) {
