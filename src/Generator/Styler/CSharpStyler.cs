@@ -637,7 +637,7 @@ namespace Spring2.DataTierGenerator.Generator.Styler {
 	}
 
 	public static bool IsType(String str) {
-	    if (	!IsComment(str) && (
+	    if (!IsComment(str) && (
 		IsNameSpace(str) ||
 		IsClass(str) ||
 		IsStruct(str) ||
@@ -649,7 +649,7 @@ namespace Spring2.DataTierGenerator.Generator.Styler {
 	}
 
 	public static bool IsFlow(String str) {
-	    if (	!IsComment(str) && (
+	    if (!IsComment(str) && (
 		IsIf(str) ||
 		IsElse(str) ||
 		IsElseIf(str) ||
@@ -668,7 +668,7 @@ namespace Spring2.DataTierGenerator.Generator.Styler {
 	}
 
 	public static bool IsFunction(String str) {
-	    if (	Regex.IsMatch(str, @"^\s*(\w+)\s+(\w+).*\(+") &&
+	    if (Regex.IsMatch(str, @"^\s*(\w+)\s+(\w+).*\(+") &&
 		!IsDeclaration(str) &&
 		!IsComment(str) &&
 		!IsType(str) &&
@@ -682,7 +682,7 @@ namespace Spring2.DataTierGenerator.Generator.Styler {
 
 	public bool IsProperty(String str) {
 	    Int32 index = filebuffer.IndexOf(str);
-	    if (	Regex.IsMatch(str, @"^\s*(\w+)\s+(\w+).*") &&
+	    if (Regex.IsMatch(str, @"^\s*(\w+)\s+(\w+).*") &&
 		!IsDeclaration(str) &&
 		!IsComment(str) &&
 		!IsType(str) &&
@@ -695,134 +695,164 @@ namespace Spring2.DataTierGenerator.Generator.Styler {
 	    }
 	}
 
+	private static Regex removeEndBrace = new Regex(@"\{\s*$");
 	public static string RemoveEndBrace(String str) {
-	    Regex rg = new Regex(@"\{\s*$");
-	    return rg.Replace(str, "");
+	    return removeEndBrace.Replace(str, "");
 	}
 
+	private static Regex addHangingBrace = new Regex(@"\S+\s*");
 	public static string AddHangingBrace(String str) {
-	    Regex rg = new Regex(@"\S+\s*");
-	    string blank = rg.Replace(str,"");
+	    string blank = addHangingBrace.Replace(str,"");
 	    return blank + "{";
 	}
 
+	private static Regex isDeclaration = new Regex(@"\;\s*(\/+|$)");
 	public static bool IsDeclaration(String str) {
-	    return Regex.IsMatch(str, @"\;\s*(\/+|$)");
+	    return isDeclaration.IsMatch(str);
 	}
 
+	private static Regex isComment = new Regex(@"^(\s*\/+|\s*\*+|\s*\#+)");
 	public static bool IsComment(String str) {
-	    return Regex.IsMatch(str, @"^(\s*\/+|\s*\*+|\s*\#+)");
+	    return isComment.IsMatch(str);
 	}
 
+	private static Regex endWithBrace = new Regex(@"\{\s*$");
 	public static bool EndWithBrace(String str) {
-	    return Regex.IsMatch(str, @"\{\s*$");
+	    return endWithBrace.IsMatch(str);
 	}
 
+	private static Regex isHangingBrace = new Regex(@"^\s*\{");
 	public static bool IsHangingBrace(String str) {
-	    return Regex.IsMatch(str, @"^\s*\{");
+	    return isHangingBrace.IsMatch(str);
 	}
 
+	private static Regex isBlankLine = new Regex(@"^\s*$");
 	public static bool IsBlankLine(String str) {
-	    return Regex.IsMatch(str, @"^\s*$");
+	    return isBlankLine.IsMatch(str);
 	}
 
+	private static Regex isNameSpace = new Regex(@"(^|\s+)namespace\s+");
 	public static bool IsNameSpace(String str) {
-	    return Regex.IsMatch(str, @"(^|\s+)namespace\s+");
+	    return isNameSpace.IsMatch(str);
 	}
 
+	private static Regex isClass = new Regex(@"(public|internal|abstract|private|^)(\s+|^)class\s+\w+");
 	public static bool IsClass(String str) {
-	    return Regex.IsMatch(str, @"(public|internal|abstract|private|^)(\s+|^)class\s+\w+");
+	    return isClass.IsMatch(str);
 	}
 
+	private static Regex isStruct = new Regex(@"\s+struct\s+");
 	public static bool IsStruct(String str) {
-	    return Regex.IsMatch(str, @"\s+struct\s+");
+	    return isStruct.IsMatch(str);
 	}
 
+	private static Regex isEnum = new Regex(@"\s+enum\s+");
 	public static bool IsEnum(String str) {
-	    return Regex.IsMatch(str, @"\s+enum\s+");
+	    return isEnum.IsMatch(str);
 	}
 
+	private static Regex isIf = new Regex(@"(^|\s+|\}+)if(\s+|\(+|$)");
 	public static bool IsIf(String str) {
-	    return Regex.IsMatch(str, @"(^|\s+|\}+)if(\s+|\(+|$)");
+	    return isIf.IsMatch(str);
 	}
 
+	private static Regex isElse = new Regex(@"(^|\s*|\}+)else(\s*|\{+|$|/s*\/\/.*$)");
 	public static bool IsElse(String str) {
-	    return Regex.IsMatch(str, @"(^|\s*|\}+)else(\s*|\{+|$|/s*\/\/.*$)");
+	    return isElse.IsMatch(str);
 	}
 
+	private static Regex isElseIf = new Regex(@"(^|\s+|\}+)else if(\s+|\(+|$)");
 	public static bool IsElseIf(String str) {
-	    return Regex.IsMatch(str, @"(^|\s+|\}+)else if(\s+|\(+|$)");
+	    return isElseIf.IsMatch(str);
 	}
 
+	private static Regex isTry = new Regex(@"^\s*try(\s*|\(+|$)");
 	public static bool IsTry(String str) {
-	    return Regex.IsMatch(str, @"^\s*try(\s*|\(+|$)");
+	    return isTry.IsMatch(str);
 	}
 
+	private static Regex isCatch = new Regex(@"(^|\s+|\}+)catch(\s+|\(+|$)");
 	public static bool IsCatch(String str) {
-	    return Regex.IsMatch(str, @"(^|\s+|\}+)catch(\s+|\(+|$)");
+	    return isCatch.IsMatch(str);
 	}
 
+	private static Regex isFinally = new Regex(@"(^|\s+|\}+)finally(\s+|\{+|$)");
 	public static bool IsFinally(String str) {
-	    return Regex.IsMatch(str, @"(^|\s+|\}+)finally(\s+|\{+|$)");
+	    return isFinally.IsMatch(str);
 	}
 
+	private static Regex isFor = new Regex(@"(^|\s+|\}+)for(\s*\(+|$)");
 	public static bool IsFor(String str) {
 	    //return Regex.IsMatch(str, @"(^|\s+|\}+)for(\s+|\(+|$)");
-	    return Regex.IsMatch(str, @"(^|\s+|\}+)for(\s*\(+|$)");
+	    return isFor.IsMatch(str);
 	}
 
+	private static Regex isForEach = new Regex(@"^\s*foreach(\s+|\(+|$)");
 	public static bool IsForEach(String str) {
-	    return Regex.IsMatch(str, @"^\s*foreach(\s+|\(+|$)");
+	    return isForEach.IsMatch(str);
 	}
 
+	private static Regex isWhile = new Regex(@"(^\s*|\}+)while(\s+|\(+|$)");
 	public static bool IsWhile(String str) {
-	    return Regex.IsMatch(str, @"(^\s*|\}+)while(\s+|\(+|$)");
+	    return isWhile.IsMatch(str);
 	}
 
+	private static Regex isSwitch = new Regex(@"(^|\s+|\}+)switch(\s+|\(+|$)");
 	public static bool IsSwitch(String str) {
-	    return Regex.IsMatch(str, @"(^|\s+|\}+)switch(\s+|\(+|$)");
+	    return isSwitch.IsMatch(str);
 	}
 
+	private static Regex isCase = new Regex(@"(^\s*|\}+)case(\s+|\(+|$)");
 	public static bool IsCase(String str) {
-	    return Regex.IsMatch(str, @"(^\s*|\}+)case(\s+|\(+|$)");
+	    return isCase.IsMatch(str);
 	}
 
+	private static Regex isGet = new Regex(@"(^\s*|\}+)get\s*({|$)");
 	public static bool IsGet(String str) {
-	    return Regex.IsMatch(str, @"(^\s*|\}+)get\s*({|$)");
+	    return isGet.IsMatch(str);
 	}
 
+	private static Regex isSet = new Regex(@"(^\s*|\}+)set\s*({|$)");
 	public static bool IsSet(String str) {
-	    return Regex.IsMatch(str, @"(^\s*|\}+)set\s*({|$)");
+	    return isSet.IsMatch(str);
 	}
 
+	private static Regex endWithCloseBrace = new Regex(@"\}\s*$");
 	public static bool EndWithCloseBrace(String str) {
-	    return Regex.IsMatch(str, @"\}\s*$");
+	    return endWithCloseBrace.IsMatch(str);
 	}
 
+	private static Regex endWithCloseBraceAndComment = new Regex(@"\}\s*(\/\/|$)");
 	public static bool EndWithCloseBraceAndComment(String str) {
-	    return Regex.IsMatch(str, @"\}\s*(\/\/|$)");
+	    return endWithCloseBraceAndComment.IsMatch(str);
 	}
 
+	private static Regex startWithOpenBrace = new Regex(@"^\s*\}");
 	public static bool StartWithOpenBrace(String str) {
-	    return Regex.IsMatch(str, @"^\s*\}");
+	    return startWithOpenBrace.IsMatch(str);
 	}
 
+	private static Regex isReturn = new Regex(@"^\s*return\s+");
 	public static bool IsReturn(String str) {
-	    return Regex.IsMatch(str, @"^\s*return\s+");
+	    return isReturn.IsMatch(str);
 	}
 
+	private static Regex isLock = new Regex(@"(^\s*|\}+)lock\s*\(");
 	public static bool IsLock(String str) {
-	    return Regex.IsMatch(str, @"(^\s*|\}+)lock\s*\(");
+	    return isLock.IsMatch(str);
 	}
 
+	private static Regex endWithBraceAndComment = new Regex(@"\{\s*(\/\/|$)");
 	public static bool EndWithBraceAndComment(String str) {
-	    return Regex.IsMatch(str, @"\{\s*(\/\/|$)");
+	    return endWithBraceAndComment.IsMatch(str);
 	}
 
+	private static Regex endWithSemicolon = new Regex(@"\;\s*(\/+|$)");
 	public static bool EndWithSemicolon(String str) {
-	    return Regex.IsMatch(str, @"\;\s*(\/+|$)");
+	    return endWithSemicolon.IsMatch(str);
 	}
 
+	private static Regex isClosingBrace = new Regex(@"^\s*\}\s*(\;|\/\/|$)");
 	/// <summary>
 	/// Check to see if the line is:
 	///   }
@@ -830,53 +860,62 @@ namespace Spring2.DataTierGenerator.Generator.Styler {
 	///   };
 	/// </summary>
 	public static bool IsClosingBrace(String str) {
-	    return Regex.IsMatch(str, @"^\s*\}\s*(\;|\/\/|$)");
+	    return isClosingBrace.IsMatch(str);
 	}
 
+	private static Regex isSwitchClosingBrace = new Regex(@"^\s*\}\s*\;(\/\/|$)");
 	public static bool IsSwitchClosingBrace(String str) {
-	    return Regex.IsMatch(str, @"^\s*\}\s*\;(\/\/|$)");
+	    return isSwitchClosingBrace.IsMatch(str);
 	}
 
+	private static Regex isBreak = new Regex(@"^\s*break\s*\;");
 	public static bool IsBreak(String str) {
-	    return Regex.IsMatch(str, @"^\s*break\s*\;");
+	    return isBreak.IsMatch(str);
 	}
 
+	private static Regex isSwitchDefault = new Regex(@"^\s*default\s*:\s*$");
 	public static bool IsSwitchDefault(String str) {
-	    return Regex.IsMatch(str, @"^\s*default\s*:\s*$");
+	    return isSwitchDefault.IsMatch(str);
 	}
 
+	private static Regex endWithContinuationOperator = new Regex(@"(\+\s*$|,\s*$|&&\s*$|\|\|\s*$|\(\s*$|\*\s*$)");
 	/// <summary>
 	/// Ends with something that would mean the next line is a continuation (+/,/&&/||/()
 	/// </summary>
 	/// <param name="str"></param>
 	/// <returns></returns>
 	public static bool EndWithContinuationOperator(String str) {
-	    return Regex.IsMatch(str, @"(\+\s*$|,\s*$|&&\s*$|\|\|\s*$|\(\s*$|\*\s*$)");
+	    return endWithContinuationOperator.IsMatch(str);
 	}
 
+	private static Regex startWithContinuationOperator = new Regex(@"(^\s*\*|^\s*\+|^\s*,|^\s*&&|^\s*\|\|)");
 	/// <summary>
 	/// Ends with something that would mean the next line is a continuation (+/,/&&/||)
 	/// </summary>
 	/// <param name="str"></param>
 	/// <returns></returns>
 	public static bool StartWithContinuationOperator(String str) {
-	    return Regex.IsMatch(str, @"(^\s*\*|^\s*\+|^\s*,|^\s*&&|^\s*\|\|)");
+	    return startWithContinuationOperator.IsMatch(str);
 	}
 
+	private static Regex isSingleLineGet = new Regex(@"(^\s*)get\s*{*\s*\w+");
 	public static bool IsSingleLineGet(String str) {
-	    return Regex.IsMatch(str, @"(^\s*)get\s*{*\s*\w+") && EndWithCloseBrace(str);
+	    return isSingleLineGet.IsMatch(str) && EndWithCloseBrace(str);
 	}
 
+	private static Regex isSingleLineSet = new Regex(@"(^\s*)set\s*{*\s*\w+");
 	public static bool IsSingleLineSet(String str) {
-	    return Regex.IsMatch(str, @"(^\s*)set\s*{*\s*\w+") && EndWithCloseBrace(str);
+	    return isSingleLineSet.IsMatch(str) && EndWithCloseBrace(str);
 	}
 
+	private static Regex isSingleLineGetWithComment = new Regex(@"(^\s*)get\s*{*\s*\w+");
 	public static bool IsSingleLineGetWithComment(String str) {
-	    return Regex.IsMatch(str, @"(^\s*)get\s*{*\s*\w+") && EndWithCloseBraceAndComment(str);
+	    return isSingleLineGetWithComment.IsMatch(str) && EndWithCloseBraceAndComment(str);
 	}
 
+	private static Regex isSingleLineSetWithComment = new Regex(@"(^\s*)set\s*{*\s*\w+");
 	public static bool IsSingleLineSetWithComment(String str) {
-	    return Regex.IsMatch(str, @"(^\s*)set\s*{*\s*\w+") && EndWithCloseBraceAndComment(str);
+	    return isSingleLineSetWithComment.IsMatch(str) && EndWithCloseBraceAndComment(str);
 	}
 
 
