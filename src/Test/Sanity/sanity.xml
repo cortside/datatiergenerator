@@ -2,11 +2,12 @@
 <DataTierGenerator>
 
     <generator class="Spring2.DataTierGenerator.Generator.GeneratorTaskManager,Spring2.DataTierGenerator">
-	<task name="dataobject" element="--entity--" template="Template\DataObject.vm" directory="DataObject" filenameformat="{0}Data.cs" />
+	<task name="dataobject" element="entity" template="Template\DataObject.vm" directory="DataObject" filenameformat="{0}Data.cs" />
 	<task name="dao" element="entity" template="Template\DAO.vm" directory="DAO" filenameformat="{0}DAO.cs" />
 	<task name="enum" element="enum" template="Template\enum.vm" directory="Types" filenameformat="{0}.cs" />
 	<task name="enum" element="enum" template="Template\EnumTest.vm" directory="Test" filenameformat="{0}Test.cs" />
 	<task name="collection" element="collection" template="Template\collection.vm" directory="DataObject" filenameformat="{0}Data.cs" />
+	<task name="view" element="sqlentity" template="Template\sql_view.vm" directory="sql\view" filenameformat="vw{0}.view.sql" />
     </generator>
 
   <config>
