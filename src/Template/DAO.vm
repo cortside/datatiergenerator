@@ -5,48 +5,6 @@
 ##      DaoGenerator class.
 ##
 #if(!$element.SqlEntity.Name.Equals(""))
-#macro(parameterComments $includeIf $fieldList $comment)
-#foreach($field in $fieldList)
-#if($includeIf)
-	/// <param name="$field.Column.Name">$comment</param>
-#end
-#end
-#end
-#macro(parameterList $includeIf $fieldList)
-#set($separator="")#foreach($field in $fieldList)#if($includeIf)${separator}${field.CreateMethodParameter()}#set($separator=", ")#end#end
-#end
-#macro(nameSpaces $options $element $isDAO)
-#set($found="no")
-#foreach($nameSpace in $options.GetUsingNamespaces($element, $isDAO))
-#if($nameSpace.StartsWith("System"))
-using $nameSpace;
-#set($found="yes")
-#end
-#end
-#if($found=="yes")
-
-#end
-#set($found="no")
-#foreach($nameSpace in $options.GetUsingNamespaces($element, $isDAO))
-#if($nameSpace.StartsWith("Spring2"))
-using $nameSpace;
-#set($found="yes")
-#end
-#end
-#if($found=="yes")
-
-#end
-#set($found="no")
-#foreach($nameSpace in $options.GetUsingNamespaces($element, $isDAO))
-#if(!$nameSpace.StartsWith("Spring2") && !$nameSpace.StartsWith("System"))
-using $nameSpace;
-#set($found="yes")
-#end
-#end
-#if($found=="yes")
-
-#end
-#end
 #nameSpaces($options $element true)
 
 namespace $options.GetDAONameSpace($element.Name) {
