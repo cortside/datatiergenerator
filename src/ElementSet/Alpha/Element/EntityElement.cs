@@ -160,6 +160,42 @@ namespace Spring2.DataTierGenerator.Element {
 	    get { return this.fields; }
 	}
 
+	public ArrayList WritableFields {
+	    get {
+		ArrayList writableFields = new ArrayList();
+		foreach (PropertyElement field in Fields) {
+		    if (field.Writable && !field.Column.Name.Equals(String.Empty)) {
+			writableFields.Add(field);
+		    }
+		}
+		return writableFields;
+	    }
+	}
+
+	public ArrayList WritableProperties {
+	    get {
+		ArrayList writableProperties = new ArrayList();
+		foreach (PropertyElement property in Fields) {
+		    if (property.Writable && property.Name.IndexOf('.') < 0) {
+			writableProperties.Add(property);
+		    }
+		}
+		return writableProperties;
+	    }
+	}
+
+	public ArrayList ReadableProperties {
+	    get {
+		ArrayList readableProperties = new ArrayList();
+		foreach (PropertyElement property in PrivateFields) {
+		    if (property.Readable && property.Name.IndexOf('.') < 0) {
+			readableProperties.Add(property);
+		    }
+		}
+		return readableProperties;
+	    }
+	}
+
 	public ArrayList Finders {
 	    get { return this.finders; }
 	    set { this.finders = value; }

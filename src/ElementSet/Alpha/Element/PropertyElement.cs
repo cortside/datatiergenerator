@@ -48,6 +48,7 @@ namespace Spring2.DataTierGenerator.Element {
 	protected TypeElement type = new TypeElement();
 	protected ColumnElement column = new ColumnElement();
 	protected TypeElement concreteType = new TypeElement();
+	protected TypeElement dataObjectType = new TypeElement();
 	protected String convertFromSqlTypeFormat = String.Empty;
 	protected String convertToSqlTypeFormat = String.Empty;
 	protected TypeElement entity = new TypeElement();
@@ -83,6 +84,11 @@ namespace Spring2.DataTierGenerator.Element {
 	    set { this.concreteType = value; }
 	}
 
+	public TypeElement DataObjectType {
+	    get { return this.dataObjectType; }
+	    set { this.dataObjectType = value; }
+	}
+
 	public String ConvertFromSqlTypeFormat {
 	    get { return this.convertFromSqlTypeFormat; }
 	    set { this.convertFromSqlTypeFormat = value; }
@@ -109,7 +115,7 @@ namespace Spring2.DataTierGenerator.Element {
 	}
 
 	public Boolean Writable {
-	    get { return this.writable; }
+	    get { return this.writable  && !this.Derived; }
 	    set { this.writable = value; }
 	}
 
@@ -380,6 +386,13 @@ namespace Spring2.DataTierGenerator.Element {
 		} 
 		else {
 		    vd(ParserValidationArgs.NewError("Type " + concreteType + " was not defined for property " + field.Name + " in " + entity.Name + "."));
+		}
+
+		String dataObjectTypeName = concreteType + "Data";
+		if (types.Contains(dataObjectTypeName)) {
+		    field.DataObjectType = (TypeElement)((TypeElement)types[dataObjectTypeName]).Clone();
+		} else {
+		    field.DataObjectType = field.Type;
 		}
 	    }
 
