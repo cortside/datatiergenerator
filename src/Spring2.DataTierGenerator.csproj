@@ -9,14 +9,14 @@
             <Settings
                 ApplicationIcon = ""
                 AssemblyKeyContainerName = ""
-                AssemblyName = "Spring2.DataTierGenerator.Core"
+                AssemblyName = "Spring2.DataTierGenerator"
                 AssemblyOriginatorKeyFile = ""
                 DefaultClientScript = "JScript"
                 DefaultHTMLPageLayout = "Grid"
                 DefaultTargetSchema = "IE50"
                 DelaySign = "false"
                 OutputType = "Library"
-                RootNamespace = "Spring2.DataTierGenerator.Core"
+                RootNamespace = "Spring2.DataTierGenerator"
                 StartupObject = ""
             >
                 <Config
@@ -31,7 +31,7 @@
                     FileAlignment = "4096"
                     IncrementalBuild = "true"
                     Optimize = "false"
-                    OutputPath = "bin\Debug\"
+                    OutputPath = "bin\Core\"
                     RegisterForComInterop = "false"
                     RemoveIntegerChecks = "false"
                     TreatWarningsAsErrors = "false"
@@ -74,8 +74,8 @@
                 />
                 <Reference
                     Name = "Spring2.Core"
-                    AssemblyName = "Spring2.Core"
-                    HintPath = "..\..\lib\Spring2.Core.dll"
+                    Project = "{80B94045-4DE6-4BB0-BE22-C5CC0E772695}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
             </References>
         </Build>
@@ -87,19 +87,13 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Collection.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
+                    RelPath = "config.xsd"
+                    BuildAction = "Content"
                 />
                 <File
-                    RelPath = "CollectionGenerator.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Column.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
+                    RelPath = "config.xsx"
+                    DependentUpon = "config.xsd"
+                    BuildAction = "None"
                 />
                 <File
                     RelPath = "Configuration.cs"
@@ -112,97 +106,162 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Constraint.cs"
+                    RelPath = "Element\Collection.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "DAOGenerator.cs"
+                    RelPath = "Element\Column.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Database.cs"
+                    RelPath = "Element\Constraint.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "DOGenerator.cs"
+                    RelPath = "Element\Database.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Entity.cs"
+                    RelPath = "Element\Entity.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "EnumGenerator.cs"
+                    RelPath = "Element\EnumType.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "EnumType.cs"
+                    RelPath = "Element\EnumValue.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "EnumValue.cs"
+                    RelPath = "Element\Field.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Field.cs"
+                    RelPath = "Element\Finder.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Finder.cs"
+                    RelPath = "Element\Index.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Generator.cs"
+                    RelPath = "Element\SqlEntity.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "GeneratorBase.cs"
+                    RelPath = "Element\SqlEntityData.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "IndentableStringWriter.cs"
+                    RelPath = "Element\SqlType.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Index.cs"
+                    RelPath = "Element\Type.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "SqlEntity.cs"
+                    RelPath = "Generator\CodeGenerator.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "SqlEntityData.cs"
+                    RelPath = "Generator\CollectionGenerator.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "SQLGenerator.cs"
+                    RelPath = "Generator\DaoGenerator.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "SqlType.cs"
+                    RelPath = "Generator\DataObjectGenerator.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Type.cs"
+                    RelPath = "Generator\EnumGenerator.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Generator\GeneratorSkeleton.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Generator\IGenerator.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Generator\SqlGenerator.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Generator\XmlGenerator.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Parser\DatabaseCompareParser.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Parser\DatabaseParser.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Parser\IParser.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Parser\ParserSkeleton.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Parser\ParserValidationArgs.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Parser\ParserValidationDelegate.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Parser\ParserValidationSeverity.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Parser\XmlParser.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Util\IndentableStringWriter.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
