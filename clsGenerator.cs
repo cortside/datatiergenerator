@@ -25,12 +25,13 @@ namespace DataTierGenerator {
 		private Boolean			m_blnCreateDataObjects;
 		private Boolean			m_blnScriptDropStatement;
 		private String			m_strStoredProcNameFormat;
+		private String			m_strProjectNameSpace;
 
 		/// <summary>
 		/// Contructor for the Generator class.
 		/// </summary>
 		/// <param name="strConnectionString">Connecion string to a SQL Server database.</param>
-		public clsGenerator(string strConnectionString, String strStoredProcNameFormat, Boolean blnSingleFile, Boolean blnCreateViews, Boolean blnUseViews, Boolean blnCreateDataObjects, Boolean blnScriptDropStatement) {
+		public clsGenerator(string strConnectionString, String strStoredProcNameFormat, Boolean blnSingleFile, Boolean blnCreateViews, Boolean blnUseViews, Boolean blnCreateDataObjects, Boolean blnScriptDropStatement, String strProjectNamespace) {
 			m_objConnection = new SqlConnection(strConnectionString);
 			m_objConnection.Open();
 			m_blnSingleFile = blnSingleFile;
@@ -39,6 +40,7 @@ namespace DataTierGenerator {
 			m_blnCreateDataObjects = blnCreateDataObjects;
 			m_blnScriptDropStatement = blnScriptDropStatement;
 			m_strStoredProcNameFormat = strStoredProcNameFormat;
+			m_strProjectNameSpace = strProjectNamespace;
 		}
 		
 		/// <summary>
@@ -678,8 +680,8 @@ namespace DataTierGenerator {
 			objStringBuilder.Append("using System.Data;\n");
 			objStringBuilder.Append("using System.Data.SqlClient;\n");
 			objStringBuilder.Append("\n");
-			objStringBuilder.Append("namespace " + m_objConnection.Database + ".DataAccess." + strTableName.Replace(" ", "_") + " {\n");
-			objStringBuilder.Append("\tpublic class cls" + strTableName.Replace(" ", "_") + " {\n");
+			objStringBuilder.Append("namespace " + getNameSpace(m_objConnection.Database.ToString(), strTableName) + " {\n");
+			objStringBuilder.Append("\tpublic class " + getClassName(strTableName) + " {\n");
 
 			// Append the access methods
 			CreateInsertMethod(strTableName, arrFieldList, objStringBuilder);
@@ -695,7 +697,7 @@ namespace DataTierGenerator {
 			objStringBuilder.Append("}\n");
 
 			// Create the output stream
-			strFileName = "Data Access Classes\\cls" + strTableName.Replace(" ", "_") + ".cs";
+			strFileName = "Data Access Classes\\" + getClassName(strTableName) + ".cs";
 			if (File.Exists(strFileName))
 				File.Delete(strFileName);
 			objStreamWriter = new StreamWriter(strFileName);
@@ -777,7 +779,7 @@ namespace DataTierGenerator {
 			objStringBuilder.Append("\t\t\t\t// Create and execute the command\n");
 			objStringBuilder.Append("\t\t\t\tobjCommand = new SqlCommand();\n");
 			objStringBuilder.Append("\t\t\t\tobjCommand.Connection = objConnection;\n");
-			objStringBuilder.Append("\t\t\t\tobjCommand.CommandText = \"proc" + strTableName.Replace(" ", "_") + "Insert\";\n");
+			objStringBuilder.Append("\t\t\t\tobjCommand.CommandText = \"" + getProcName(strTableName, "Insert") + "\";\n");
 			objStringBuilder.Append("\t\t\t\tobjCommand.CommandType = CommandType.StoredProcedure;\n");
 			objStringBuilder.Append("\n");
 			
@@ -887,7 +889,7 @@ namespace DataTierGenerator {
 			objStringBuilder.Append("\t\t\t\t// Create and execute the command\n");
 			objStringBuilder.Append("\t\t\t\tobjCommand = new SqlCommand();\n");
 			objStringBuilder.Append("\t\t\t\tobjCommand.Connection = objConnection;\n");
-			objStringBuilder.Append("\t\t\t\tobjCommand.CommandText = \"proc" + strTableName.Replace(" ", "_") + "Update\";\n");
+			objStringBuilder.Append("\t\t\t\tobjCommand.CommandText = \"" + getProcName(strTableName, "Update") + "\";\n");
 			objStringBuilder.Append("\t\t\t\tobjCommand.CommandType = CommandType.StoredProcedure;\n");
 			objStringBuilder.Append("\n");
 			
@@ -986,7 +988,7 @@ namespace DataTierGenerator {
 					objStringBuilder.Append("\t\t\t\t// Create and execute the command\n");
 					objStringBuilder.Append("\t\t\t\tobjCommand = new SqlCommand();\n");
 					objStringBuilder.Append("\t\t\t\tobjCommand.Connection = objConnection;\n");
-					objStringBuilder.Append("\t\t\t\tobjCommand.CommandText = \"proc" + strTableName.Replace(" ", "_") + "DeleteBy" + strColumnName.Replace(" ", "_") + "\";\n");
+					objStringBuilder.Append("\t\t\t\tobjCommand.CommandText = \"" + getProcName(strTableName, "DeleteBy" + strColumnName.Replace(" ", "_")) + "\";\n");
 					objStringBuilder.Append("\t\t\t\tobjCommand.CommandType = CommandType.StoredProcedure;\n");
 					objStringBuilder.Append("\n");
 
@@ -1048,7 +1050,7 @@ namespace DataTierGenerator {
 				objStringBuilder.Append("\t\t\t\t// Create and execute the command\n");
 				objStringBuilder.Append("\t\t\t\tobjCommand = new SqlCommand();\n");
 				objStringBuilder.Append("\t\t\t\tobjCommand.Connection = objConnection;\n");
-				objStringBuilder.Append("\t\t\t\tobjCommand.CommandText = \"proc" + strTableName.Replace(" ", "_") + "DeleteBy" + strPrimaryKeyList + "\";\n");
+				objStringBuilder.Append("\t\t\t\tobjCommand.CommandText = \"" + getProcName(strTableName, "DeleteBy" + strPrimaryKeyList) + "\";\n");
 				objStringBuilder.Append("\t\t\t\tobjCommand.CommandType = CommandType.StoredProcedure;\n");
 				objStringBuilder.Append("\n");
 
@@ -1135,7 +1137,7 @@ namespace DataTierGenerator {
 			objStringBuilder.Append("\t\t\t\t// Create and execute the command\n");
 			objStringBuilder.Append("\t\t\t\tobjCommand = new SqlCommand();\n");
 			objStringBuilder.Append("\t\t\t\tobjCommand.Connection = objConnection;\n");
-			objStringBuilder.Append("\t\t\t\tobjCommand.CommandText = \"proc" + strTableName.Replace(" ", "_") + "Select\";\n");
+			objStringBuilder.Append("\t\t\t\tobjCommand.CommandText = \"" + getProcName(strTableName, "Select") + "\";\n");
 			objStringBuilder.Append("\t\t\t\tobjCommand.CommandType = CommandType.StoredProcedure;\n");
 			objStringBuilder.Append("\n");
 
@@ -1184,7 +1186,7 @@ namespace DataTierGenerator {
 					objStringBuilder.Append("\t\t\t\t// Create and execute the command\n");
 					objStringBuilder.Append("\t\t\t\tobjCommand = new SqlCommand();\n");
 					objStringBuilder.Append("\t\t\t\tobjCommand.Connection = objConnection;\n");
-					objStringBuilder.Append("\t\t\t\tobjCommand.CommandText = \"proc" + strTableName.Replace(" ", "_") + "SelectBy" + strColumnName.Replace(" ", "_") + "\";\n");
+					objStringBuilder.Append("\t\t\t\tobjCommand.CommandText = \"" + getProcName(strTableName, "SelectBy" + strColumnName.Replace(" ", "_")) +  "\";\n");
 					objStringBuilder.Append("\t\t\t\tobjCommand.CommandType = CommandType.StoredProcedure;\n");
 					objStringBuilder.Append("\n");
 
@@ -1246,7 +1248,7 @@ namespace DataTierGenerator {
 				objStringBuilder.Append("\t\t\t\t// Create and execute the command\n");
 				objStringBuilder.Append("\t\t\t\tobjCommand = new SqlCommand();\n");
 				objStringBuilder.Append("\t\t\t\tobjCommand.Connection = objConnection;\n");
-				objStringBuilder.Append("\t\t\t\tobjCommand.CommandText = \"proc" + strTableName.Replace(" ", "_") + "SelectBy" + strPrimaryKeyList + "\";\n");
+				objStringBuilder.Append("\t\t\t\tobjCommand.CommandText = \"" + getProcName(strTableName, "SelectBy" + strPrimaryKeyList) +  "\";\n");
 				objStringBuilder.Append("\t\t\t\tobjCommand.CommandType = CommandType.StoredProcedure;\n");
 				objStringBuilder.Append("\n");
 
@@ -1576,7 +1578,7 @@ namespace DataTierGenerator {
 
 			// Is the parameter used for input or output
 			if (blnOutput)
-				return "objCommand.Parameters.Add(new SqlParameter(\"@" + objField.ColumnName + "\", SqlDbType." + GetSqlDbType(objField.Type) + ", " + objField.Length + ", ParameterDirection.Output, false, " + bytePrecision + ", " + byteScale + ", \"" + objField.ColumnName + "\", DataRowVersion.Proposed, " + strMethodParameter[1] + "));\n";
+				return "Int32 " +  strMethodParameter[1] +"=0; // dummy value so that parameter can be declared output - should use return value\n" +"objCommand.Parameters.Add(new SqlParameter(\"@" + objField.ColumnName + "\", SqlDbType." + GetSqlDbType(objField.Type) + ", " + objField.Length + ", ParameterDirection.Output, false, " + bytePrecision + ", " + byteScale + ", \"" + objField.ColumnName + "\", DataRowVersion.Proposed, " + strMethodParameter[1] + "));\n";
 			else
 				return "objCommand.Parameters.Add(new SqlParameter(\"@" + objField.ColumnName + "\", SqlDbType." + GetSqlDbType(objField.Type) + ", " + objField.Length + ", ParameterDirection.Input, false, " + bytePrecision + ", " + byteScale + ", \"" + objField.ColumnName + "\", DataRowVersion.Proposed, " + strMethodParameter[1] + "));\n";
 		}
@@ -1620,12 +1622,30 @@ namespace DataTierGenerator {
 		}
 
 		private String getProcName(String table, String type) {
-			String		strProcName;
+			String s;
 
-			strProcName = "proc" + table.Replace(" ", "_") + type;
-			strProcName = "sp" + table.Replace(" ", "_") + "_" + type;
+			s = "proc" + table.Replace(" ", "_") + type;
+			s = "sp" + table.Replace(" ", "_") + "_" + type;
 
-			return strProcName;
+			return s;
+		}
+
+		private String getNameSpace(String db, String table) {
+			String s;
+
+			s = db + ".DataAccess." + table.Replace(" ", "_");
+			s = m_strProjectNameSpace  + ".DataAccessObjects";
+
+			return s;
+		}
+
+		private String getClassName(String table) {
+			String s;
+
+			s = "cls" + table.Replace(" ", "_");
+			s = table.Replace(" ", "_") + "DAO";
+
+			return s;
 		}
 
 	}
