@@ -16,9 +16,9 @@ namespace Spring2.DataTierGenerator.Parser {
 	    this.task = task;
 	}
 
-	public IList Elements {
+	public ElementList Elements {
 	    get { 
-		ArrayList list = new ArrayList();
+		ElementList list = new ElementList();
 
 		if (task.Element.Equals("sqlentity")) {
 		    foreach (DatabaseElement database in parser.Databases) {
@@ -54,26 +54,42 @@ namespace Spring2.DataTierGenerator.Parser {
 		    }
 		}
 
-		//		tasks = parser.Generator.FindTasksByElement("sqlentities");
-		//		foreach(TaskElement task in tasks) {
-		//		    Hashtable parameters = new Hashtable();
-		//		    foreach(ParameterElement parameter in task.Parameters) {
-		//			parameters.Add(parameter.Name, parameter.Value);
-		//		    }
-		//
-		//		    GenerateFile(DatabaseElement.GetAllSqlEntities(parser.Databases), null, task, parameters);;
-		//		}
-		//
-		//		tasks = parser.Generator.FindTasksByElement("entities");
-		//		foreach(TaskElement task in tasks) {
-		//		    Hashtable parameters = new Hashtable();
-		//		    foreach(ParameterElement parameter in task.Parameters) {
-		//			parameters.Add(parameter.Name, parameter.Value);
-		//		    }
-		//
-		//		    GenerateFile(parser.Entities, null, task, parameters);
-		//		}
-		//
+		// the entire list of entities as a list
+		if (task.Element.Equals("entities")) {
+		    ListElement element = new ListElement();
+		    element.Name = "entities";
+		    element.List = parser.Entities;
+		    list.Add(element);
+		}
+
+		// the entire list of sql entities as a list
+		if (task.Element.Equals("sqlentities")) {
+		    ArrayList sqlentities = new ArrayList();
+
+		    foreach (DatabaseElement database in parser.Databases) {
+			sqlentities.AddRange(database.SqlEntities);
+		    }
+		    ListElement element = new ListElement();
+		    element.Name = "sqlentities";
+		    element.List = sqlentities;
+		    list.Add(element);
+		}
+
+		// the entire list of collections as a list
+		if (task.Element.Equals("collections")) {
+		    ListElement element = new ListElement();
+		    element.Name = "collections";
+		    element.List = parser.Collections;
+		    list.Add(element);
+		}
+
+		// the entire list of enums as a list
+		if (task.Element.Equals("enums")) {
+		    ListElement element = new ListElement();
+		    element.Name = "enums";
+		    element.List = parser.Enums;
+		    list.Add(element);
+		}
 
 		return list;
 	    }
