@@ -353,7 +353,7 @@ namespace Spring2.DataTierGenerator.DTGEditor {
 		generate.Visible = p.IsValid;
 		resultErrors.Text=String.Empty;
 		foreach(String s in p.Log) {
-		    resultErrors.Text += s;
+		    resultErrors.Text += s + Environment.NewLine;
 		}
 		LoadTree(treeView1, p);
 	    } catch (Exception ex) {
