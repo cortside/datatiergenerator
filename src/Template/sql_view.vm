@@ -1,0 +1,22 @@
+#*
+
+        sql_view.vm - default sql view template (replaces SqlGenerator.CreateView)
+
+*###
+if exists (select * from sysobjects where id = object_id(N'[vw$element.Name]') and OBJECTPROPERTY(id, N'IsView') = 1)
+drop view [vw$element.Name]
+GO
+
+CREATE VIEW vw$element.Name
+
+AS
+
+SELECT	#foreach ($column in $element.Columns)$column.EscapedName#if($velocityCount!=$element.Columns.Count),
+	#end
+#end
+			
+FROM
+	$element.EscapedName
+
+GO
+
