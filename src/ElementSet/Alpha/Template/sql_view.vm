@@ -27,7 +27,7 @@ SELECT
     (${column.Expression}) $sql.Escape($column.Name)#if($velocityCount!=$element.Columns.Count),
 #end	
 #else
-    $sql.Escape($table).#if($column.Prefix.Length==0)$sql.Escape($column.Name)#else$column.Name.Substring($column.Prefix.Length) $column.Name#end#if($velocityCount!=$element.Columns.Count),
+    $sql.Escape($table).#if($column.Prefix.Length==0)$sql.Escape($column.Name)#else$sql.Escape($column.Name.Substring($column.Prefix.Length)) $sql.Escape($column.Name)#end#if($velocityCount!=$element.Columns.Count),
 #end
 #end
 #end
@@ -37,7 +37,7 @@ FROM
 #if ($element.Views.Count==1)
 #foreach($constraint in $element.Views.get_Item(0).Constraints)
 #set($length = $constraint.Prefix.Length - 1)
-LEFT JOIN $sql.Escape($constraint.ForeignEntity.View) $sql.Escape($constraint.Prefix.Substring(0,$length)) on #foreach($column in $constraint.Columns)#if ($velocityCount >1) and #end${sql.Escape($element.Name)}.$sql.Escape($column.Name) = $sql.Escape($constraint.Prefix.Substring(0,$length)).$column.ForeignColumn#end
+LEFT JOIN $sql.Escape($constraint.ForeignEntity.View) $sql.Escape($constraint.Prefix.Substring(0,$length)) on #foreach($column in $constraint.Columns)#if ($velocityCount >1) and #end${sql.Escape($element.Name)}.$sql.Escape($column.Name) = $sql.Escape($constraint.Prefix.Substring(0,$length)).$sql.Escape($column.ForeignColumn)#end
 
 #end
 #end
