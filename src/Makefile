@@ -20,6 +20,8 @@ build:
 	@-devenv DataTierGenerator.sln /rebuild Debug /out build.log /nologo
 	@cat build.log
 
+regress:
+	../bin/nunit-console.exe /assembly:../build/Test/Spring2.DataTierGenerator.Test.dll
 
 #
 # Rule for displaying debug information.
