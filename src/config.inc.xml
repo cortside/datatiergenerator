@@ -1,5 +1,5 @@
 <config>
-	<setting name="RootDirectory" value="c:\data\work\spring2\DataTierGenerator\" />
+	<setting name="RootDirectory" value="c:\data\work\spring2\DataTierGenerator\src\bin\" />
 	<setting name="DaoClassDirectory" value="Dao" />
 	<setting name="DoClassDirectory" value="DataObject" />
 	<setting name="TypesClassDirectory" value="Types" />
