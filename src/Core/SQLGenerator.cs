@@ -5,7 +5,7 @@ using System.Collections;
 using System.Text;
 //using System.Windows.Forms;
 
-namespace Spring2.DataTierGenerator {
+namespace Spring2.DataTierGenerator.Core {
     /// <summary>
     /// Generates stored procedures and associated data access code for the specified database.
     /// </summary>
@@ -18,11 +18,11 @@ namespace Spring2.DataTierGenerator {
 	/// <param name="strConnectionString">Connecion string to a SQL Server database.</param>
 	public SQLGenerator(Configuration options, SqlEntity sqlentity) : base(options) {
 	    this.sqlentity = sqlentity;
-	    if (options.SingleFile) {
-		String fileName = options.SqlScriptDirectory + "\\" + options.Database + ".sql";
-		if (File.Exists(fileName))
-		    File.Delete(fileName);
-	    }
+//	    if (options.SingleFile) {
+//		String fileName = options.SqlScriptDirectory + "\\" + options.Database + ".sql";
+//		if (File.Exists(fileName))
+//		    File.Delete(fileName);
+//	    }
 	}
 		
 	/// <summary>
@@ -367,12 +367,12 @@ namespace Spring2.DataTierGenerator {
 	public void CreateView() {
 	    StringBuilder sb = new StringBuilder();
 	
-	    if (options.SingleFile) {
-		sb.Append("/*\n");
-		sb.Append("******************************************************************************\n");
-		sb.Append("******************************************************************************\n");
-		sb.Append("*/\n\n");
-	    }
+//	    if (options.SingleFile) {
+//		sb.Append("/*\n");
+//		sb.Append("******************************************************************************\n");
+//		sb.Append("******************************************************************************\n");
+//		sb.Append("*/\n\n");
+//	    }
 	            
 	    String strProcName = "vw" + sqlentity.Name;
 	
@@ -402,8 +402,8 @@ namespace Spring2.DataTierGenerator {
 	    sb.Append("]\n");
 	
 	    // Write out the stored procedure
-	    FileInfo file = new FileInfo(options.RootDirectory + options.SqlScriptDirectory + "\\view\\" + strProcName + ".view.sql");
-	    WriteToFile(file, sb.ToString() + "\nGO\n\n", options.SingleFile);
+	    FileInfo file = new FileInfo(options.RootDirectory + sqlentity.SqlScriptDirectory + "\\view\\" + strProcName + ".view.sql");
+	    WriteToFile(file, sb.ToString() + "\nGO\n\n", sqlentity.SingleFile);
 	    sb = null;
 	}
 	
@@ -415,14 +415,14 @@ namespace Spring2.DataTierGenerator {
 	private void WriteProcToFile(String strStoredProcName, String strStoredProcText) {
 	    StringBuilder sb = new StringBuilder();
 	
-	    if (options.SingleFile) {
+	    if (sqlentity.SingleFile) {
 		sb.Append("/*\n");
 		sb.Append("******************************************************************************\n");
 		sb.Append("******************************************************************************\n");
 		sb.Append("*/\n\n");
 	    }
 	
-	    if (options.ScriptDropStatement) {
+	    if (sqlentity.ScriptDropStatement) {
 		sb.Append("if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[" + strStoredProcName + "]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)\n");
 		sb.Append("drop procedure [dbo].[" + strStoredProcName + "]\n");
 		sb.Append("GO\n\n");
@@ -430,8 +430,8 @@ namespace Spring2.DataTierGenerator {
 	
 	    sb.Append(strStoredProcText);
 	
-	    FileInfo file = new FileInfo(options.RootDirectory + options.SqlScriptDirectory + "\\proc\\" + strStoredProcName + ".proc.sql");
-	    WriteToFile(file, sb.ToString(), options.SingleFile);
+	    FileInfo file = new FileInfo(options.RootDirectory + sqlentity.SqlScriptDirectory + "\\proc\\" + strStoredProcName + ".proc.sql");
+	    WriteToFile(file, sb.ToString(), sqlentity.SingleFile);
 	}
 
 	public void CreateTable() {
@@ -585,8 +585,8 @@ namespace Spring2.DataTierGenerator {
 		sb.Append("GO\n");
 	    }
 
-	    FileInfo file = new FileInfo(options.RootDirectory + options.SqlScriptDirectory + "\\table\\" + sqlentity.Name + ".table.sql");
-	    WriteToFile(file, sb.ToString(), options.SingleFile);
+	    FileInfo file = new FileInfo(options.RootDirectory + sqlentity.SqlScriptDirectory + "\\table\\" + sqlentity.Name + ".table.sql");
+	    WriteToFile(file, sb.ToString(), sqlentity.SingleFile);
 	    sb = null;
 	}
 
