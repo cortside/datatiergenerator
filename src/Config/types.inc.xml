@@ -9,11 +9,16 @@ conversion format replacement parameters:
 -->
 <types>
 	<!-- .Net primitive types -->
+	<type name="Guid" newinstanceformat="new Guid()" />
+	<type name="Byte" newinstanceformat="0" />
+	<type name="Byte[]" newinstanceformat="null" />
 	<type name="String" newinstanceformat="String.Empty" />
 	<type name="DateTime" newinstanceformat="new DateTime()" />
 	<type name="Int32" newinstanceformat="0" />
+	<type name="Int64" newinstanceformat="0" />
 	<type name="Boolean" newinstanceformat="false" />
 	<type name="Double" newinstanceformat="0" />
+	<type name="Single" newinstanceformat="0" />
 	<type name="Decimal" newinstanceformat="0" />
 
 	<!-- .Net FCL types -->
