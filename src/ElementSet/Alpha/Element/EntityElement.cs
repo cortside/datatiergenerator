@@ -76,6 +76,11 @@ namespace Spring2.DataTierGenerator.Element {
 
 	public static readonly EntityElement EMPTY = new EntityElement();
 
+	static EntityElement() {
+	    EMPTY = new EntityElement();
+	    EMPTY.BaseEntity = EMPTY;
+	}
+
 	private SqlEntityElement sqlEntity = new SqlEntityElement();
 	private ArrayList fields = new ArrayList();
 	private ArrayList finders = new ArrayList();
@@ -371,5 +376,9 @@ namespace Spring2.DataTierGenerator.Element {
 	    parentEntities.Pop();
 	    return propertyNames;
 	} // end of GetPropertyNames
+
+	public override Boolean IsEmpty() {
+	    return this == EMPTY;
+	}
     }
 }

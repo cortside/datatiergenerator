@@ -108,14 +108,14 @@ namespace Spring2.DataTierGenerator.Element {
 		// TODO: this is a hack - need to specify entity as an attribute so that "Data" does not have to be assumed
 		// and so that an error can be reported if it does not exist
 		foreach(ICollectable collectableClass in collectableClasses) {
-		    if (collection.Type.Equals(collectableClass.Name + "Data")) {
+		    if (collection.Type.Name.Equals(collectableClass.Name + "Data")) {
 			collection.CollectedClass = collectableClass;
 		    }
 		}
 
 		// TODO: how can this be modified for "reportexcations"
 		foreach(EntityElement entity in entities) {
-		    if (collection.Type.Equals(entity.Name + "Data")) {
+		    if (collection.Type.Name.Equals(entity.Name + "Data")) {
 			collection.Entity = entity;
 		    }
 		}
