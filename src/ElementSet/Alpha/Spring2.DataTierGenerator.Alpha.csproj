@@ -16,7 +16,7 @@
                 DefaultTargetSchema = "IE50"
                 DelaySign = "false"
                 OutputType = "Library"
-                RootNamespace = "Spring2.DataTierGenerator"
+                RootNamespace = ""
                 StartupObject = ""
             >
                 <Config
@@ -98,7 +98,7 @@
                 />
                 <File
                     RelPath = "config.xsd"
-                    BuildAction = "Content"
+                    BuildAction = "EmbeddedResource"
                 />
                 <File
                     RelPath = "Configuration.cs"
@@ -186,11 +186,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Element\ParserElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "Element\PropertyElement.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -241,7 +236,7 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Parser\ConfigParser.cs"
+                    RelPath = "Parser\AbstractParser.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -252,11 +247,6 @@
                 />
                 <File
                     RelPath = "Parser\DatabaseParser.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Parser\ParserSkeleton.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -276,81 +266,86 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Parser\Task.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Parser\XmlParser.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Template\collection.vm"
-                    BuildAction = "None"
+                    BuildAction = "EmbeddedResource"
                 />
                 <File
                     RelPath = "Template\config_entities.vm"
-                    BuildAction = "None"
+                    BuildAction = "EmbeddedResource"
                 />
                 <File
                     RelPath = "Template\config_entity.vm"
-                    BuildAction = "None"
+                    BuildAction = "EmbeddedResource"
                 />
                 <File
                     RelPath = "Template\config_sqlentities.vm"
-                    BuildAction = "None"
+                    BuildAction = "EmbeddedResource"
                 />
                 <File
                     RelPath = "Template\config_sqlentity.vm"
-                    BuildAction = "None"
+                    BuildAction = "EmbeddedResource"
                 />
                 <File
                     RelPath = "Template\DAO.vm"
-                    BuildAction = "None"
+                    BuildAction = "EmbeddedResource"
                 />
                 <File
                     RelPath = "Template\dataobject.vm"
-                    BuildAction = "None"
+                    BuildAction = "EmbeddedResource"
                 />
                 <File
                     RelPath = "Template\dtg_csharp_library.vm"
-                    BuildAction = "None"
+                    BuildAction = "EmbeddedResource"
                 />
                 <File
                     RelPath = "Template\dtg_java_library.vm"
-                    BuildAction = "None"
+                    BuildAction = "EmbeddedResource"
                 />
                 <File
                     RelPath = "Template\enum.vm"
-                    BuildAction = "None"
+                    BuildAction = "EmbeddedResource"
                 />
                 <File
                     RelPath = "Template\enum_sql_data.vm"
-                    BuildAction = "None"
+                    BuildAction = "EmbeddedResource"
                 />
                 <File
                     RelPath = "Template\EnumTest.vm"
-                    BuildAction = "None"
+                    BuildAction = "EmbeddedResource"
                 />
                 <File
                     RelPath = "Template\header.vm"
-                    BuildAction = "None"
+                    BuildAction = "EmbeddedResource"
                 />
                 <File
                     RelPath = "Template\sql_delete.vm"
-                    BuildAction = "None"
+                    BuildAction = "EmbeddedResource"
                 />
                 <File
                     RelPath = "Template\sql_insert.vm"
-                    BuildAction = "None"
+                    BuildAction = "EmbeddedResource"
                 />
                 <File
                     RelPath = "Template\sql_table.vm"
-                    BuildAction = "None"
+                    BuildAction = "EmbeddedResource"
                 />
                 <File
                     RelPath = "Template\sql_update.vm"
-                    BuildAction = "None"
+                    BuildAction = "EmbeddedResource"
                 />
                 <File
                     RelPath = "Template\sql_view.vm"
-                    BuildAction = "None"
+                    BuildAction = "EmbeddedResource"
                 />
                 <File
                     RelPath = "Test\SanityTest.cs"
