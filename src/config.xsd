@@ -140,80 +140,148 @@
 			</xs:sequence>
 		    </xs:complexType>
 		</xs:element>
-		<xs:element name="sqlentities">
+		<xs:element name="databases">
 		    <xs:complexType>
 			<xs:sequence>
-			    <xs:element name="sqlentity" minOccurs="0" maxOccurs="unbounded">
+			    <xs:element name="database" maxOccurs="unbounded">
 				<xs:complexType>
 				    <xs:sequence>
-					<xs:element name="columns" minOccurs="0" maxOccurs="unbounded">
+					<xs:element name="sqlentities">
 					    <xs:complexType>
 						<xs:sequence>
-						    <xs:element name="column" minOccurs="0" maxOccurs="unbounded">
-							<xs:complexType>
-							    <xs:attribute name="name" type="xs:string" />
-							    <xs:attribute name="sqltype" type="xs:string" />
-							    <xs:attribute name="identity" type="BooleanEnum" />
-							    <xs:attribute name="length" type="xs:positiveInteger" />
-							    <xs:attribute name="required" type="BooleanEnum" />
-							    <xs:attribute name="viewcolumn" type="BooleanEnum" />
-							    <xs:attribute name="precision" type="xs:nonNegativeInteger" />
-							    <xs:attribute name="scale" type="xs:nonNegativeInteger" />
-							</xs:complexType>
-						    </xs:element>
-						</xs:sequence>
-					    </xs:complexType>
-					</xs:element>
-					<xs:element name="constraints" minOccurs="0" maxOccurs="unbounded">
-					    <xs:complexType>
-						<xs:sequence>
-						    <xs:element name="constraint" minOccurs="0" maxOccurs="unbounded">
+						    <xs:element name="sqlentity" minOccurs="0" maxOccurs="unbounded">
 							<xs:complexType>
 							    <xs:sequence>
-								<xs:element name="column" minOccurs="0" maxOccurs="unbounded">
+								<xs:element name="columns" minOccurs="0" maxOccurs="unbounded">
 								    <xs:complexType>
-									<xs:attribute name="name" type="xs:string" />
-									<xs:attribute name="foreigncolumn" type="xs:string" />
+									<xs:sequence>
+									    <xs:element name="column" minOccurs="0" maxOccurs="unbounded">
+										<xs:complexType>
+										    <xs:attribute name="name" type="xs:string" />
+										    <xs:attribute name="sqltype" type="xs:string" />
+										    <xs:attribute name="identity" type="BooleanEnum" />
+										    <xs:attribute name="length" type="xs:positiveInteger" />
+										    <xs:attribute name="required" type="BooleanEnum" />
+										    <xs:attribute name="viewcolumn" type="BooleanEnum" />
+										    <xs:attribute name="precision" type="xs:nonNegativeInteger" />
+										    <xs:attribute name="scale" type="xs:nonNegativeInteger" />
+										</xs:complexType>
+									    </xs:element>
+									</xs:sequence>
+								    </xs:complexType>
+								</xs:element>
+								<xs:element name="constraints" minOccurs="0" maxOccurs="unbounded">
+								    <xs:complexType>
+									<xs:sequence>
+									    <xs:element name="constraint" minOccurs="0" maxOccurs="unbounded">
+										<xs:complexType>
+										    <xs:sequence>
+											<xs:element name="column" minOccurs="0" maxOccurs="unbounded">
+											    <xs:complexType>
+												<xs:attribute name="name" type="xs:string" />
+												<xs:attribute name="foreigncolumn" type="xs:string" />
+											    </xs:complexType>
+											</xs:element>
+										    </xs:sequence>
+										    <xs:attribute name="name" type="xs:string" />
+										    <xs:attribute name="type" type="ConstraintTypeEnum" />
+										    <xs:attribute name="clustered" type="BooleanEnum" />
+										    <xs:attribute name="foreignentity" type="xs:string" />
+										    <xs:attribute name="checkclause" type="xs:string" />
+										</xs:complexType>
+									    </xs:element>
+									</xs:sequence>
+								    </xs:complexType>
+								</xs:element>
+								<xs:element name="indexes" minOccurs="0" maxOccurs="unbounded">
+								    <xs:complexType>
+									<xs:sequence>
+									    <xs:element name="index" maxOccurs="unbounded">
+										<xs:complexType>
+										    <xs:sequence>
+											<xs:element name="column" maxOccurs="unbounded">
+											    <xs:complexType>
+												<xs:sequence />
+												<xs:attribute name="name" type="xs:string" />
+											    </xs:complexType>
+											</xs:element>
+										    </xs:sequence>
+										    <xs:attribute name="name" type="xs:string" />
+										    <xs:attribute name="unique" type="BooleanEnum" />
+										    <xs:attribute name="clustered" type="BooleanEnum" />
+										</xs:complexType>
+									    </xs:element>
+									</xs:sequence>
 								    </xs:complexType>
 								</xs:element>
 							    </xs:sequence>
 							    <xs:attribute name="name" type="xs:string" />
-							    <xs:attribute name="type" type="ConstraintTypeEnum" />
-							    <xs:attribute name="clustered" type="BooleanEnum" />
-							    <xs:attribute name="foreignentity" type="xs:string" />
-							    <xs:attribute name="checkclause" type="xs:string" />
-							</xs:complexType>
-						    </xs:element>
-						</xs:sequence>
-					    </xs:complexType>
-					</xs:element>
-					<xs:element name="indexes" minOccurs="0" maxOccurs="unbounded">
-					    <xs:complexType>
-						<xs:sequence>
-						    <xs:element name="index" maxOccurs="unbounded">
-							<xs:complexType>
-							    <xs:sequence>
-								<xs:element name="column" maxOccurs="unbounded">
-								    <xs:complexType>
-									<xs:sequence />
-									<xs:attribute name="name" type="xs:string" />
-								    </xs:complexType>
-								</xs:element>
-							    </xs:sequence>
-							    <xs:attribute name="name" type="xs:string" />
-							    <xs:attribute name="unique" type="BooleanEnum" />
-							    <xs:attribute name="clustered" type="BooleanEnum" />
+							    <xs:attribute name="view" type="xs:string" />
+							    <xs:attribute name="scriptsinglefile" type="BooleanEnum" />
+							    <xs:attribute name="server" type="xs:string" />
+							    <xs:attribute name="database" type="xs:string" use="optional" />
+							    <xs:attribute name="user" type="xs:string" />
+							    <xs:attribute name="password" type="xs:string" />
+							    <xs:attribute name="scriptdirectory" type="xs:string" />
+							    <xs:attribute name="storedprocnameformat" type="xs:string" />
+							    <xs:attribute name="generateviewscript" type="BooleanEnum" />
+							    <xs:attribute name="generatetablescript" type="BooleanEnum" />
+							    <xs:attribute name="generateinsertstoredprocscript" type="BooleanEnum" />
+							    <xs:attribute name="generateupdatestoredprocscript" type="BooleanEnum" />
+							    <xs:attribute name="generatedeletestoredprocscript" type="BooleanEnum" />
+							    <xs:attribute name="generateselectstoredprocscript" type="BooleanEnum" />
+							    <xs:attribute name="scriptdropstatement" type="BooleanEnum" />
+							    <xs:attribute name="useview" type="BooleanEnum" />
+							    <xs:attribute name="generateprocsforforeignkeys" type="BooleanEnum" />
+							    <xs:attribute name="generateonlyprimarydeletestoredproc" type="BooleanEnum" />
+							    <xs:attribute name="allowupdateofprimarykey" type="BooleanEnum" />
 							</xs:complexType>
 						    </xs:element>
 						</xs:sequence>
 					    </xs:complexType>
 					</xs:element>
 				    </xs:sequence>
-				    <xs:attribute name="name" type="xs:string" />
-				    <xs:attribute name="view" type="xs:string" />
+				    <xs:attribute name="key" type="xs:string" use="required" />
+				    <xs:attribute name="name" type="xs:string" use="required" />
+				    <xs:attribute name="scriptsinglefile" type="BooleanEnum" />
+				    <xs:attribute name="server" type="xs:string" />
+				    <xs:attribute name="database" type="xs:string" use="optional" />
+				    <xs:attribute name="user" type="xs:string" />
+				    <xs:attribute name="password" type="xs:string" />
+				    <xs:attribute name="scriptdirectory" type="xs:string" />
+				    <xs:attribute name="storedprocnameformat" type="xs:string" />
+				    <xs:attribute name="generateviewscript" type="BooleanEnum" />
+				    <xs:attribute name="generatetablescript" type="BooleanEnum" />
+				    <xs:attribute name="generateinsertstoredprocscript" type="BooleanEnum" />
+				    <xs:attribute name="generateupdatestoredprocscript" type="BooleanEnum" />
+				    <xs:attribute name="generatedeletestoredprocscript" type="BooleanEnum" />
+				    <xs:attribute name="generateselectstoredprocscript" type="BooleanEnum" />
+				    <xs:attribute name="scriptdropstatement" type="BooleanEnum" />
+				    <xs:attribute name="useview" type="BooleanEnum" />
+				    <xs:attribute name="generateprocsforforeignkeys" type="BooleanEnum" />
+				    <xs:attribute name="generateonlyprimarydeletestoredproc" type="BooleanEnum" />
+				    <xs:attribute name="allowupdateofprimarykey" type="BooleanEnum" />
 				</xs:complexType>
 			    </xs:element>
 			</xs:sequence>
+			<xs:attribute name="scriptsinglefile" type="BooleanEnum" />
+			<xs:attribute name="server" type="xs:string" />
+			<xs:attribute name="database" type="xs:string" use="optional" />
+			<xs:attribute name="user" type="xs:string" />
+			<xs:attribute name="password" type="xs:string" />
+			<xs:attribute name="scriptdirectory" type="xs:string" />
+			<xs:attribute name="storedprocnameformat" type="xs:string" />
+			<xs:attribute name="generateviewscript" type="BooleanEnum" />
+			<xs:attribute name="generatetablescript" type="BooleanEnum" />
+			<xs:attribute name="generateinsertstoredprocscript" type="BooleanEnum" />
+			<xs:attribute name="generateupdatestoredprocscript" type="BooleanEnum" />
+			<xs:attribute name="generatedeletestoredprocscript" type="BooleanEnum" />
+			<xs:attribute name="generateselectstoredprocscript" type="BooleanEnum" />
+			<xs:attribute name="scriptdropstatement" type="BooleanEnum" />
+			<xs:attribute name="useview" type="BooleanEnum" />
+			<xs:attribute name="generateprocsforforeignkeys" type="BooleanEnum" />
+			<xs:attribute name="generateonlyprimarydeletestoredproc" type="BooleanEnum" />
+			<xs:attribute name="allowupdateofprimarykey" type="BooleanEnum" />
 		    </xs:complexType>
 		</xs:element>
 	    </xs:choice>
