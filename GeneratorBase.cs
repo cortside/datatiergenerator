@@ -25,14 +25,28 @@ namespace Spring2.DataTierGenerator {
 	/// <param name="fileName">name of file, including full path</param>
 	/// <param name="text">what to write to the file</param>
 	/// <param name="append">whether or not or overwrite the file or to append to file</param>
-	protected void WriteToFile(String fileName, String text, Boolean append) {
-	    String directory = fileName.Substring(0,fileName.LastIndexOf('\\'));
+	protected void WriteToFile(String filename, String text, Boolean append) {
+	    String directory = filename.Substring(0,filename.LastIndexOf('\\'));
 	    if (!Directory.Exists(directory))
 		Directory.CreateDirectory(directory);
+		text.Trim();
 
-	    StreamWriter writer = new StreamWriter(fileName, append);
-	    writer.Write(text);
-	    writer.Close();
+		Boolean write = true;
+		if (File.Exists(filename)) {
+			StreamReader r = File.OpenText(filename);
+			String s = r.ReadToEnd();
+			r.Close();
+			s.Trim();
+			if (s.Equals(text)) {
+				write=false;
+			}
+		}
+
+		if (write) {
+			StreamWriter writer = new StreamWriter(filename, append);
+			writer.Write(text);
+			writer.Close();
+		}
 	}
 
 
