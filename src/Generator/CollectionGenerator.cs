@@ -3,16 +3,20 @@ using System.Data;
 using System.IO;
 using System.Collections;
 
-namespace Spring2.DataTierGenerator.Core {
+using Spring2.DataTierGenerator;
+using Spring2.DataTierGenerator.Element;
+using Spring2.DataTierGenerator.Util;
 
-    public class CollectionGenerator : GeneratorBase {
+namespace Spring2.DataTierGenerator.Generator {
+
+    internal class CollectionGenerator : GeneratorSkeleton, IGenerator {
 	private Collection collection;
 
 	public CollectionGenerator(Configuration options, Collection collection) : base(options) {
 	    this.collection = collection;
 	}
 
-	public void Generate() {
+	public override void Generate() {
 	    IndentableStringWriter writer = new IndentableStringWriter();
 
 	    writer.WriteLine("using System;");
