@@ -96,12 +96,17 @@
                                     <xs:sequence>
                                         <xs:element name="value" minOccurs="0" maxOccurs="unbounded">
                                             <xs:complexType>
-                                                <xs:attribute name="name" type="xs:string" />
-                                                <xs:attribute name="code" type="xs:string" />
+                                                <xs:simpleContent msdata:ColumnName="value_Text" msdata:Ordinal="2">
+                                                    <xs:extension base="xs:string">
+                                                        <xs:attribute name="name" type="xs:string" />
+                                                        <xs:attribute name="code" type="xs:string" />
+                                                    </xs:extension>
+                                                </xs:simpleContent>
                                             </xs:complexType>
                                         </xs:element>
                                     </xs:sequence>
                                     <xs:attribute name="name" type="xs:string" />
+                                    <xs:attribute name="integerbased" type="BooleanEnum" />
                                 </xs:complexType>
                             </xs:element>
                         </xs:sequence>
@@ -236,6 +241,7 @@
                                                             <xs:attribute name="generateprocsforforeignkeys" type="BooleanEnum" />
                                                             <xs:attribute name="generateonlyprimarydeletestoredproc" type="BooleanEnum" />
                                                             <xs:attribute name="allowupdateofprimarykey" type="BooleanEnum" />
+                                                            <xs:attribute name="commandtimeout" type="xs:positiveInteger" />
                                                         </xs:complexType>
                                                     </xs:element>
                                                 </xs:sequence>
@@ -262,6 +268,7 @@
                                     <xs:attribute name="generateprocsforforeignkeys" type="BooleanEnum" />
                                     <xs:attribute name="generateonlyprimarydeletestoredproc" type="BooleanEnum" />
                                     <xs:attribute name="allowupdateofprimarykey" type="BooleanEnum" />
+                                    <xs:attribute name="commandtimeout" type="xs:positiveInteger" />
                                 </xs:complexType>
                             </xs:element>
                         </xs:sequence>
@@ -283,6 +290,7 @@
                         <xs:attribute name="generateprocsforforeignkeys" type="BooleanEnum" />
                         <xs:attribute name="generateonlyprimarydeletestoredproc" type="BooleanEnum" />
                         <xs:attribute name="allowupdateofprimarykey" type="BooleanEnum" />
+                        <xs:attribute name="commandtimeout" type="xs:positiveInteger" />
                     </xs:complexType>
                 </xs:element>
             </xs:choice>
