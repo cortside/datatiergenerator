@@ -207,7 +207,7 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 	    ArrayList members1 = GetMembers(unit);
 
 	    foreach(Member member in members1) {
-		log.Add("found " + (member.Generate ? "[generate] " : "") + member.Element.GetType().FullName + ": " + member.Element.Name + " starting at line " + member.FirstLine.ToString() + " and ending on line " + member.LastLine.ToString());
+		//log.Add("found " + (member.Generate ? "[generate] " : "") + member.Element.GetType().FullName + ": " + member.Element.Name + " starting at line " + member.FirstLine.ToString() + " and ending on line " + member.LastLine.ToString());
 		if (member.Element is CodeMemberMethod) {
 		    String s = GetSource(member);
 		    Int32 index = member.Type.Members.IndexOf(member.Element);
