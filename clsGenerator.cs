@@ -105,10 +105,40 @@ namespace DataTierGenerator {
 			DataTable		objDataTable;
 			DataTable		objDataTableConstraint;
 			int				intLength;
-			
+			String			sql;
+
+
+			sql = "	SELECT	INFORMATION_SCHEMA.COLUMNS.*, ";
+ 			sql = sql + " 		systypes.length AS COLUMN_LENGTH, ";
+ 			sql = sql + " 		syscolumns.iscomputed AS COLUMN_COMPUTED, ";
+ 			sql = sql + "		'0' VIEW_COLUMN, ";
+ 			sql = sql + "		coalesce(VC.colid, 1000+ORDINAL_POSITION) COLUMN_ID ";
+ 			sql = sql + " 	FROM INFORMATION_SCHEMA.COLUMNS ";
+ 			sql = sql + "  	INNER JOIN systypes ON INFORMATION_SCHEMA.COLUMNS.DATA_TYPE = systypes.name ";
+ 			sql = sql + "  	INNER JOIN syscolumns ON INFORMATION_SCHEMA.COLUMNS.COLUMN_NAME = syscolumns.name  AND syscolumns.id = OBJECT_ID('" + strTableName + "') ";
+ 			sql = sql + "	left join syscolumns vc on INFORMATION_SCHEMA.COLUMNS.COLUMN_NAME = vc.name AND vc.id = OBJECT_ID('" + strTableName + "') ";
+ 			sql = sql + "  	WHERE INFORMATION_SCHEMA.COLUMNS.TABLE_NAME = '" + strTableName + "' ";
+
+			// if basing data objects on views, get additional fields found in the corresponding view (by naming convention of vw + tablename) -- should be configuration option
+			if (m_blnUseViews) {
+ 				sql = sql + "union ";
+ 				sql = sql + " 	SELECT	INFORMATION_SCHEMA.COLUMNS.*, ";
+ 				sql = sql + "  		systypes.length AS COLUMN_LENGTH, ";
+ 				sql = sql + "  		syscolumns.iscomputed AS COLUMN_COMPUTED, ";
+ 				sql = sql + " 		'1' VIEW_COLUMN, ";
+ 				sql = sql + "		ORDINAL_POSITION COLUMN_ID ";
+ 				sql = sql + " 	FROM INFORMATION_SCHEMA.COLUMNS ";
+ 				sql = sql + " 	INNER JOIN systypes ON INFORMATION_SCHEMA.COLUMNS.DATA_TYPE = systypes.name ";
+ 				sql = sql + " 	INNER JOIN syscolumns ON INFORMATION_SCHEMA.COLUMNS.COLUMN_NAME = syscolumns.name ";
+ 				sql = sql + " 	WHERE INFORMATION_SCHEMA.COLUMNS.TABLE_NAME = 'vw" + strTableName + "' AND syscolumns.id = OBJECT_ID('vw" + strTableName + "') ";
+ 				sql = sql + " 	and INFORMATION_SCHEMA.COLUMNS.COLUMN_NAME not in (select INFORMATION_SCHEMA.COLUMNS.COLUMN_NAME from INFORMATION_SCHEMA.COLUMNS where INFORMATION_SCHEMA.COLUMNS.TABLE_NAME = '" + strTableName + "') ";
+			}
+
+ 			sql = sql + "order by column_id ";
+
 			// Fill the dataset with the information for the current table
 			objDataTable = new DataTable();
-			objDataAdapter = new SqlDataAdapter("SELECT	*, systypes.length AS COLUMN_LENGTH, syscolumns.iscomputed AS COLUMN_COMPUTED FROM INFORMATION_SCHEMA.COLUMNS INNER JOIN systypes ON INFORMATION_SCHEMA.COLUMNS.DATA_TYPE = systypes.name INNER JOIN syscolumns ON INFORMATION_SCHEMA.COLUMNS.COLUMN_NAME = syscolumns.name WHERE INFORMATION_SCHEMA.COLUMNS.TABLE_NAME = '" + strTableName + "' AND syscolumns.id = OBJECT_ID('" + strTableName + "')", m_objConnection);
+			objDataAdapter = new SqlDataAdapter(sql, m_objConnection);
 			objDataAdapter.Fill(objDataTable);
 
 			// Store each field's information in the field list
@@ -118,7 +148,7 @@ namespace DataTierGenerator {
 					// Create the array
 					objField = new clsField();
 					objField.ColumnName = objDataRow["COLUMN_NAME"].ToString();
-					objField.Type = objDataRow["DATA_TYPE"].ToString();
+					objField.DBType = objDataRow["DATA_TYPE"].ToString();
 					if (objDataRow["CHARACTER_MAXIMUM_LENGTH"].ToString().Length > 0)
 						objField.Length = objDataRow["CHARACTER_MAXIMUM_LENGTH"].ToString();
 					else
@@ -126,18 +156,19 @@ namespace DataTierGenerator {
 					objField.Precision = objDataRow["NUMERIC_PRECISION"].ToString();
 					objField.Scale = objDataRow["NUMERIC_SCALE"].ToString();
 					objField.IsPrimaryKey = false;
+					objField.IsViewColumn = objDataRow["VIEW_COLUMN"].ToString() == "1";
 
 					// Check for unicode columns
-					if (objField.Type.ToLower() == "nchar" || objField.Type.ToLower() == "nvarchar" || objField.Type.ToLower() == "ntext") {
+					if (objField.DBType.ToLower() == "nchar" || objField.DBType.ToLower() == "nvarchar" || objField.DBType.ToLower() == "ntext") {
 						intLength = Int32.Parse(objField.Length);
 						intLength /= 2;
 						objField.Length = intLength.ToString();
 					}
 					
 					// Check for text or ntext columns, which require a different length from what SQL Server reports
-					if (objField.Type.ToLower() == "text")
+					if (objField.DBType.ToLower() == "text")
 						objField.Length = "2147483647";
-					else if (objField.Type.ToLower() == "ntext")
+					else if (objField.DBType.ToLower() == "ntext")
 						objField.Length = "1073741823";
 
 					// Check to see if the current field is a primary key
@@ -209,15 +240,18 @@ namespace DataTierGenerator {
 				objDataAdapter = null;
 			}
 
+			// create views
+			CreateView(strTableName, arrFieldList);
+
 			// Create the stored procedures
 			CreateInsertStoredProcedure(strTableName, arrFieldList);
 			CreateUpdateStoredProcedure(strTableName, arrFieldList);
 			CreateDeleteStoredProcedures(strTableName, arrFieldList);
 			CreateSelectStoredProcedures(strTableName, arrFieldList);
-			CreateDataAccessClass(strTableName, arrFieldList);
 
-			//CreateView(strTableName, arrFieldList);
-			//CreateDataObject(strTableName, arrFieldList);
+			// create classes
+			CreateDataObjectClass(strTableName, arrFieldList);
+			CreateDataAccessClass(strTableName, arrFieldList);
 		}
 
 
@@ -242,23 +276,25 @@ namespace DataTierGenerator {
 			// Create the parameter list
 			for (intIndex = 0; intIndex < arrFieldList.Count; intIndex++) {
 				objField = (clsField)arrFieldList[intIndex];
-				objStringBuilder.Append(CreateParameterString(objField, true));
-				
-				if (intIndex == (arrFieldList.Count  - 1))
-					objStringBuilder.Append("\n");
-				else
-					objStringBuilder.Append(",\n");
-				
+				if (!objField.IsViewColumn) {
+					if (intIndex>0) {
+						objStringBuilder.Append(",\n");
+					}
+					objStringBuilder.Append(CreateParameterString(objField, true));
+				}
 				objField = null;
 			}
+			objStringBuilder.Append("\n");
 
 			objStringBuilder.Append("\nAS\n\n");
 			
 			for (intIndex = 0; intIndex < arrFieldList.Count; intIndex++) {
 				objField = (clsField)arrFieldList[intIndex];
-				if (objField.IsRowGuidCol) {
-					objStringBuilder.Append("SET @" + objField.ColumnName.Replace(" ", "_") + " = @@NEWID()\n\n");
-					break;
+				if (!objField.IsViewColumn) {
+					if (objField.IsRowGuidCol) {
+						objStringBuilder.Append("SET @" + objField.ColumnName.Replace(" ", "_") + " = @@NEWID()\n\n");
+						break;
+					}
 				}
 			}
 			
@@ -267,51 +303,46 @@ namespace DataTierGenerator {
 			// Create the parameter list
 			for (intIndex = 0; intIndex < arrFieldList.Count; intIndex++) {
 				objField = (clsField)arrFieldList[intIndex];
-				
-				// Is the current field an identity column?
-				if (objField.IsIdentity == false) {
-					objStringBuilder.Append("\t[" + objField.ColumnName + "]");
-
-					// Append the necessary line breaks and commas
-					if (intIndex == (arrFieldList.Count - 1))
-						objStringBuilder.Append("\n");
-					else
-						objStringBuilder.Append(",\n");
+				if (!objField.IsViewColumn) {
+					// Is the current field an identity column?
+					if (objField.IsIdentity == false) {
+						if (intIndex>0) {
+							objStringBuilder.Append(",\n");
+						}
+						objStringBuilder.Append("\t[" + objField.ColumnName + "]");
+					}
 				}
-				
 				objField = null;
 			}
-			
+			objStringBuilder.Append("\n");			
+
 			objStringBuilder.Append(")\nVALUES\n(\n");
 
 			// Create the parameter list
 			for (intIndex = 0; intIndex < arrFieldList.Count; intIndex++) {
 				objField = (clsField)arrFieldList[intIndex];
-				
-				// Is the current field an identity column?
-				if (objField.IsIdentity == false) {
-					objStringBuilder.Append("\t@" + objField.ColumnName.Replace(" ", "_"));
-
-					// Append the necessary line breaks and commas
-					if (intIndex == (arrFieldList.Count - 1))
-						objStringBuilder.Append("\n");
-					else
-						objStringBuilder.Append(",\n");
+				if (!objField.IsViewColumn) {
+					// Is the current field an identity column?
+					if (objField.IsIdentity == false) {
+						if (intIndex>0) {
+							objStringBuilder.Append(",\n");
+						}
+						objStringBuilder.Append("\t@" + objField.ColumnName.Replace(" ", "_"));
+					}
 				}
-				
 				objField = null;
 			}
-
+			objStringBuilder.Append("\n");
 			objStringBuilder.Append(")\n");
 
 			// Should we include a line for returning the identity?
 			for (intIndex = 0; intIndex < arrFieldList.Count; intIndex++) {
 				objField = (clsField)arrFieldList[intIndex];
-				
-				// Is the current field an identity column?
-				if (objField.IsIdentity)
-					objStringBuilder.Append("\nSET @" + objField.ColumnName.Replace(" ", "_") + " = @@IDENTITY\n");
-				
+				if (!objField.IsViewColumn) {
+					// Is the current field an identity column?
+					if (objField.IsIdentity)
+						objStringBuilder.Append("\nSET @" + objField.ColumnName.Replace(" ", "_") + " = @@IDENTITY\n");
+				}
 				objField = null;
 			}
 			
@@ -346,27 +377,27 @@ namespace DataTierGenerator {
 			// Create the parameter list
 			for (intIndex = 0; intIndex < arrFieldList.Count; intIndex++) {
 				objField = (clsField)arrFieldList[intIndex];
-				if (objField.IsPrimaryKey && objField.IsIdentity == false && objField.IsRowGuidCol == false) {
-					objOldField = objField.Copy();
-					objOldField.ColumnName = "Old" + objOldField.ColumnName;
+				if (!objField.IsViewColumn) {
+					if (intIndex>0) {
+						objStringBuilder.Append(",\n");
+					}
+					if (objField.IsPrimaryKey && objField.IsIdentity == false && objField.IsRowGuidCol == false) {
+						objOldField = objField.Copy();
+						objOldField.ColumnName = "Old" + objOldField.ColumnName;
 					
-					objNewField = objField.Copy();
-					objNewField.ColumnName = "New" + objNewField.ColumnName;
+						objNewField = objField.Copy();
+						objNewField.ColumnName = "New" + objNewField.ColumnName;
 					
-					objStringBuilder.Append(CreateParameterString(objOldField, false));
-					objStringBuilder.Append(",\n");
-					objStringBuilder.Append(CreateParameterString(objNewField, false));
-				} else {
-					objStringBuilder.Append(CreateParameterString(objField, false));
+						objStringBuilder.Append(CreateParameterString(objOldField, false));
+						objStringBuilder.Append(",\n");
+						objStringBuilder.Append(CreateParameterString(objNewField, false));
+					} else {
+						objStringBuilder.Append(CreateParameterString(objField, false));
+					}
 				}
-				
-				if (intIndex == (arrFieldList.Count  - 1))
-					objStringBuilder.Append("\n");
-				else
-					objStringBuilder.Append(",\n");
-				
 				objField = null;
 			}
+			objStringBuilder.Append("\n");
 
 			objStringBuilder.Append("\nAS\n");
 			objStringBuilder.Append("\nUPDATE\n\t[" + strTableName + "]\n");
@@ -375,46 +406,44 @@ namespace DataTierGenerator {
 			// Create the set statement
 			for (intIndex = 0; intIndex < arrFieldList.Count; intIndex++) {
 				objField = (clsField)arrFieldList[intIndex];
-				
-				if (objField.IsIdentity == false && objField.IsRowGuidCol == false) {
-					if (objField.IsPrimaryKey) {
-						objStringBuilder.Append("\t[" + objField.ColumnName + "] = @New" + objField.ColumnName.Replace(" ", "_"));
-					} else {
-						objStringBuilder.Append("\t[" + objField.ColumnName + "] = @" + objField.ColumnName.Replace(" ", "_"));
+				if (!objField.IsViewColumn) {
+					if (objField.IsIdentity == false && objField.IsRowGuidCol == false) {
+						if (intIndex>0) {
+							objStringBuilder.Append(",\n");
+						}
+						if (objField.IsPrimaryKey) {
+							objStringBuilder.Append("\t[" + objField.ColumnName + "] = @New" + objField.ColumnName.Replace(" ", "_"));
+						} else {
+							objStringBuilder.Append("\t[" + objField.ColumnName + "] = @" + objField.ColumnName.Replace(" ", "_"));
+						}
 					}
-				
-					if (intIndex == (arrFieldList.Count  - 1))
-						objStringBuilder.Append("\n");
-					else
-						objStringBuilder.Append(",\n");
 				}
-				
 				objField = null;
 			}
-
+			objStringBuilder.Append("\n");
 			objStringBuilder.Append("WHERE\n");
 			
 			// Create the where clause
 			intWhereClauseCount = 0;
 			for (intIndex = 0; intIndex < arrFieldList.Count; intIndex++) {
 				objField = (clsField)arrFieldList[intIndex];
+				if (!objField.IsViewColumn) {
+					if (objField.IsIdentity || objField.IsRowGuidCol || objField.IsPrimaryKey) {
+						intWhereClauseCount++;
 				
-				if (objField.IsIdentity || objField.IsRowGuidCol || objField.IsPrimaryKey) {
-					intWhereClauseCount++;
-				
-					if (intIndex == (arrFieldList.Count  - 1))
-						objStringBuilder.Append("\t");
-					else if (intIndex < (arrFieldList.Count - 1) && intIndex > 0 && intWhereClauseCount > 1)
-						objStringBuilder.Append("\tAND ");
-					else
-						objStringBuilder.Append("\t");
+						if (intIndex == (arrFieldList.Count  - 1))
+							objStringBuilder.Append("\t");
+						else if (intIndex < (arrFieldList.Count - 1) && intIndex > 0 && intWhereClauseCount > 1)
+							objStringBuilder.Append("\tAND ");
+						else
+							objStringBuilder.Append("\t");
 					
-					if (objField.IsPrimaryKey && objField.IsIdentity == false && objField.IsRowGuidCol == false)
-						objStringBuilder.Append("[" + objField.ColumnName + "] = @Old" + objField.ColumnName.Replace(" ", "_") + "\n");
-					else
-						objStringBuilder.Append("[" + objField.ColumnName + "] = @" + objField.ColumnName.Replace(" ", "_") + "\n");
+						if (objField.IsPrimaryKey && objField.IsIdentity == false && objField.IsRowGuidCol == false)
+							objStringBuilder.Append("[" + objField.ColumnName + "] = @Old" + objField.ColumnName.Replace(" ", "_") + "\n");
+						else
+							objStringBuilder.Append("[" + objField.ColumnName + "] = @" + objField.ColumnName.Replace(" ", "_") + "\n");
+					}
 				}
-				
 				objField = null;
 			}
 
@@ -474,7 +503,7 @@ namespace DataTierGenerator {
 
 					objStringBuilder.Append("CREATE PROCEDURE " + strProcName + "\n\n");
 
-					objStringBuilder.Append("@" + objField.ColumnName.Replace(" ", "_") + "\t" + objField.Type);
+					objStringBuilder.Append("@" + objField.ColumnName.Replace(" ", "_") + "\t" + objField.DBType);
 					objStringBuilder.Append("\n\nAS\n\n");
 					objStringBuilder.Append("DELETE\n");
 					objStringBuilder.Append("FROM\n\t[" + strTableName + "]\n");
@@ -506,7 +535,7 @@ namespace DataTierGenerator {
 				// Create the parameter list
 				for (intIndex = 0; intIndex < arrKeyList.Count; intIndex++) {
 					objField = (clsField)arrKeyList[intIndex];
-					objStringBuilder.Append("@" + objField.ColumnName.Replace(" ", "_") + "\t" + objField.Type);
+					objStringBuilder.Append("@" + objField.ColumnName.Replace(" ", "_") + "\t" + objField.DBType);
 					objField = null;
 					
 					if (intIndex == arrKeyList.Count)
@@ -564,7 +593,11 @@ namespace DataTierGenerator {
 			objStringBuilder.Append("CREATE PROCEDURE " + strProcName + "\n\n");
 			objStringBuilder.Append("\n\nAS\n\n");
 			objStringBuilder.Append("SELECT\n\t*\n");
-			objStringBuilder.Append("FROM\n\t[" + strTableName + "]\n");
+			objStringBuilder.Append("FROM\n\t[");
+			if (m_blnUseViews)
+				objStringBuilder.Append("vw");
+			objStringBuilder.Append(strTableName);
+			objStringBuilder.Append("]\n");
 			
 			// Write out the stored procedure
 			WriteToFile(strProcName, objStringBuilder.ToString() + "\nGO\n\n");
@@ -603,10 +636,15 @@ namespace DataTierGenerator {
 					strProcName = getProcName(strTableName, "SelectBy" + strColumnName.Replace(" ", "_"));
 					objStringBuilder.Append("CREATE PROCEDURE " + strProcName + "\n\n");
 
-					objStringBuilder.Append("@" + objField.ColumnName.Replace(" ", "_") + "\t" + objField.Type);
+					objStringBuilder.Append("@" + objField.ColumnName.Replace(" ", "_") + "\t" + objField.DBType);
 					objStringBuilder.Append("\n\nAS\n\n");
 					objStringBuilder.Append("SELECT\n\t*\n");
-					objStringBuilder.Append("FROM\n\t[" + strTableName + "]\n");
+					objStringBuilder.Append("FROM\n\t[");
+					if (m_blnUseViews)
+						objStringBuilder.Append("vw");
+					objStringBuilder.Append(strTableName);
+					objStringBuilder.Append("]\n");
+
 					objStringBuilder.Append("WHERE \n");
 					objStringBuilder.Append("\t[" + objField.ColumnName + "] = @" + objField.ColumnName.Replace(" ", "_") + "\n");
 					
@@ -631,7 +669,7 @@ namespace DataTierGenerator {
 				// Create the parameter list
 				for (intIndex = 0; intIndex < arrKeyList.Count; intIndex++) {
 					objField = (clsField)arrKeyList[intIndex];
-					objStringBuilder.Append("@" + objField.ColumnName.Replace(" ", "_") + "\t" + objField.Type);
+					objStringBuilder.Append("@" + objField.ColumnName.Replace(" ", "_") + "\t" + objField.DBType);
 					objField = null;
 					
 					if (intIndex == arrKeyList.Count)
@@ -679,9 +717,18 @@ namespace DataTierGenerator {
 			objStringBuilder.Append("using System;\n");
 			objStringBuilder.Append("using System.Data;\n");
 			objStringBuilder.Append("using System.Data.SqlClient;\n");
+			objStringBuilder.Append("using System.Configuration;\n");
+			objStringBuilder.Append("using System.Collections;\n");
+			objStringBuilder.Append("using ").Append(getDONameSpace(null, null)).Append(";\n");
+
 			objStringBuilder.Append("\n");
-			objStringBuilder.Append("namespace " + getNameSpace(m_objConnection.Database.ToString(), strTableName) + " {\n");
-			objStringBuilder.Append("\tpublic class " + getClassName(strTableName) + " {\n");
+			objStringBuilder.Append("namespace " + getDAONameSpace(m_objConnection.Database.ToString(), strTableName) + " {\n");
+			objStringBuilder.Append("\tpublic class " + getDAOClassName(strTableName) + " {\n");
+
+			objStringBuilder.Append("\n\t\tprivate readonly String TABLE=\"").Append(strTableName).Append("\";\n\n");
+			objStringBuilder.Append("\n\t\tprivate readonly String VIEW=\"vw").Append(strTableName).Append("\";\n\n");
+
+			CreateDAOListMethods(strTableName, arrFieldList, objStringBuilder);
 
 			// Append the access methods
 			CreateInsertMethod(strTableName, arrFieldList, objStringBuilder);
@@ -697,7 +744,7 @@ namespace DataTierGenerator {
 			objStringBuilder.Append("}\n");
 
 			// Create the output stream
-			strFileName = "Data Access Classes\\" + getClassName(strTableName) + ".cs";
+			strFileName = "Data Access Classes\\" + getDAOClassName(strTableName) + ".cs";
 			if (File.Exists(strFileName))
 				File.Delete(strFileName);
 			objStreamWriter = new StreamWriter(strFileName);
@@ -716,7 +763,6 @@ namespace DataTierGenerator {
 		/// <param name="objStringBuilder">StreamBuilder object that the resulting string should be appended to.</param>
 		private void CreateInsertMethod(string strTableName, ArrayList arrFieldList, StringBuilder objStringBuilder) {
 			clsField	objField;
-			string		strMethodParameter;
 			int			intIndex;
 			bool		blnReturnVoid;
 			
@@ -745,7 +791,7 @@ namespace DataTierGenerator {
 				objStringBuilder.Append("\t\tpublic void Insert(");
 			
 			// Append the method call parameters
-			for (intIndex = 0; intIndex < arrFieldList.Count; intIndex++) {
+/*			for (intIndex = 0; intIndex < arrFieldList.Count; intIndex++) {
 				objField = (clsField)arrFieldList[intIndex];
 				if (objField.IsIdentity == false && objField.IsRowGuidCol == false) {
 					strMethodParameter = CreateMethodParameter(objField);
@@ -754,9 +800,13 @@ namespace DataTierGenerator {
 				}
 				objField = null;
 			}
-			
+*/			
+
+			// Append the method call parameters - data object
+			objStringBuilder.Append(strTableName).Append("Data data, ");
+
 			// Append the connection string parameter
-			objStringBuilder.Append("string strConnectionString");
+			objStringBuilder.Append("SqlConnection connection");
 			
 			// Append the method header
 			objStringBuilder.Append(") {\n");
@@ -771,7 +821,7 @@ namespace DataTierGenerator {
 
 			// Append the connection object creation
 			objStringBuilder.Append("\t\t\t\t// Create and open the database connection\n");
-			objStringBuilder.Append("\t\t\t\tobjConnection = new SqlConnection(strConnectionString);\n");
+			objStringBuilder.Append("\t\t\t\tobjConnection = new SqlConnection(ConfigurationSettings.AppSettings[\"ConnectionString\"]);\n");
 			objStringBuilder.Append("\t\t\t\tobjConnection.Open();\n");
 			objStringBuilder.Append("\n");
 			
@@ -787,10 +837,12 @@ namespace DataTierGenerator {
 			objStringBuilder.Append("\t\t\t\t//Create the parameters and append them to the command object\n");
 			for (intIndex = 0; intIndex < arrFieldList.Count; intIndex++) {
 				objField = (clsField)arrFieldList[intIndex];
-				if (objField.IsIdentity || objField.IsRowGuidCol)
-					objStringBuilder.Append("\t\t\t\t" + CreateSqlParameter(objField, true));
-				else
-					objStringBuilder.Append("\t\t\t\t" + CreateSqlParameter(objField, false));
+				if (!objField.IsViewColumn) {
+					if (objField.IsIdentity || objField.IsRowGuidCol)
+						objStringBuilder.Append("\t\t\t\t" + CreateSqlParameter(objField, true, true));
+					else
+						objStringBuilder.Append("\t\t\t\t" + CreateSqlParameter(objField, false, true));
+				}
 				objField = null;
 			}
 			objStringBuilder.Append("\n");
@@ -832,7 +884,7 @@ namespace DataTierGenerator {
 			clsField	objField;
 			clsField	objNewField;
 			clsField	objOldField;
-			string		strMethodParameter;
+			//string		strMethodParameter;
 			int			intIndex;
 			
 			// Append the method header
@@ -843,7 +895,7 @@ namespace DataTierGenerator {
 			objStringBuilder.Append("\t\tpublic void Update(");
 			
 			// Append the method call parameters
-			for (intIndex = 0; intIndex < arrFieldList.Count; intIndex++) {
+/*			for (intIndex = 0; intIndex < arrFieldList.Count; intIndex++) {
 				objField = (clsField)arrFieldList[intIndex];
 				if (objField.IsPrimaryKey && objField.IsIdentity == false && objField.IsRowGuidCol == false) {
 					objOldField = objField.Copy();
@@ -864,6 +916,10 @@ namespace DataTierGenerator {
 				}
 				objField = null;
 			}
+*/
+			// Append the method call parameters - data object
+			objStringBuilder.Append(strTableName).Append("Data data, ");
+
 			
 			// Append the connection string parameter
 			objStringBuilder.Append("string strConnectionString");
@@ -881,7 +937,8 @@ namespace DataTierGenerator {
 
 			// Append the connection object creation
 			objStringBuilder.Append("\t\t\t\t// Create and open the database connection\n");
-			objStringBuilder.Append("\t\t\t\tobjConnection = new SqlConnection(strConnectionString);\n");
+			//objStringBuilder.Append("\t\t\t\tobjConnection = new SqlConnection(strConnectionString);\n");
+			objStringBuilder.Append("\t\t\t\tobjConnection = new SqlConnection(ConfigurationSettings.AppSettings[\"ConnectionString\"]);\n");
 			objStringBuilder.Append("\t\t\t\tobjConnection.Open();\n");
 			objStringBuilder.Append("\n");
 			
@@ -897,16 +954,18 @@ namespace DataTierGenerator {
 			objStringBuilder.Append("\t\t\t\t//Create the parameters and append them to the command object\n");
 			for (intIndex = 0; intIndex < arrFieldList.Count; intIndex++) {
 				objField = (clsField)arrFieldList[intIndex];
-				if (objField.IsPrimaryKey && objField.IsIdentity == false && objField.IsRowGuidCol == false) {
-					objOldField = objField.Copy();
-					objOldField.ColumnName = "Old" + objOldField.ColumnName;
-					objStringBuilder.Append("\t\t\t\t" + CreateSqlParameter(objOldField, false));
+				if (!objField.IsViewColumn) {
+					if (objField.IsPrimaryKey && objField.IsIdentity == false && objField.IsRowGuidCol == false) {
+						objOldField = objField.Copy();
+						objOldField.ColumnName = "Old" + objOldField.ColumnName;
+						objStringBuilder.Append("\t\t\t\t" + CreateSqlParameter(objOldField, false, true));
 					
-					objNewField = objField.Copy();
-					objNewField.ColumnName = "New" + objNewField.ColumnName;
-					objStringBuilder.Append("\t\t\t\t" + CreateSqlParameter(objNewField, false));
-				} else {
-					objStringBuilder.Append("\t\t\t\t" + CreateSqlParameter(objField, false));
+						objNewField = objField.Copy();
+						objNewField.ColumnName = "New" + objNewField.ColumnName;
+						objStringBuilder.Append("\t\t\t\t" + CreateSqlParameter(objNewField, false, true));
+					} else {
+						objStringBuilder.Append("\t\t\t\t" + CreateSqlParameter(objField, false, true));
+					}
 				}
 				objField = null;
 			}
@@ -980,7 +1039,7 @@ namespace DataTierGenerator {
 
 					// Append the connection object creation
 					objStringBuilder.Append("\t\t\t\t// Create and open the database connection\n");
-					objStringBuilder.Append("\t\t\t\tobjConnection = new SqlConnection(strConnectionString);\n");
+					objStringBuilder.Append("\t\t\t\tobjConnection = new SqlConnection(ConfigurationSettings.AppSettings[\"ConnectionString\"]);\n");
 					objStringBuilder.Append("\t\t\t\tobjConnection.Open();\n");
 					objStringBuilder.Append("\n");
 					
@@ -994,7 +1053,7 @@ namespace DataTierGenerator {
 
 					// Append the parameters
 					objStringBuilder.Append("\t\t\t\t// Create and append the parameters\n");
-					objStringBuilder.Append("\t\t\t\t" + CreateSqlParameter(objField, false));
+					objStringBuilder.Append("\t\t\t\t" + CreateSqlParameter(objField, false, false));
 					objStringBuilder.Append("\n");
 
 					// Append the execute statement
@@ -1042,7 +1101,7 @@ namespace DataTierGenerator {
 
 				// Append the connection object creation
 				objStringBuilder.Append("\t\t\t\t// Create and open the database connection\n");
-				objStringBuilder.Append("\t\t\t\tobjConnection = new SqlConnection(strConnectionString);\n");
+				objStringBuilder.Append("\t\t\t\tobjConnection = new SqlConnection(ConfigurationSettings.AppSettings[\"ConnectionString\"]);\n");
 				objStringBuilder.Append("\t\t\t\tobjConnection.Open();\n");
 				objStringBuilder.Append("\n");
 				
@@ -1058,7 +1117,7 @@ namespace DataTierGenerator {
 				objStringBuilder.Append("\t\t\t\t// Create and append the parameters\n");
 				for (intIndex = 0; intIndex < arrKeyList.Count; intIndex++) {
 					objField = (clsField)arrKeyList[intIndex];
-					objStringBuilder.Append("\t\t\t\t" + CreateSqlParameter(objField, false));
+					objStringBuilder.Append("\t\t\t\t" + CreateSqlParameter(objField, false, false));
 					objField = null;
 				}
 				objStringBuilder.Append("\n");
@@ -1129,7 +1188,7 @@ namespace DataTierGenerator {
 
 			// Append the connection object creation
 			objStringBuilder.Append("\t\t\t\t// Create and open the database connection\n");
-			objStringBuilder.Append("\t\t\t\tobjConnection = new SqlConnection(strConnectionString);\n");
+			objStringBuilder.Append("\t\t\t\tobjConnection = new SqlConnection(ConfigurationSettings.AppSettings[\"ConnectionString\"]);\n");
 			objStringBuilder.Append("\t\t\t\tobjConnection.Open();\n");
 			objStringBuilder.Append("\n");
 			
@@ -1178,7 +1237,8 @@ namespace DataTierGenerator {
 
 					// Append the connection object creation
 					objStringBuilder.Append("\t\t\t\t// Create and open the database connection\n");
-					objStringBuilder.Append("\t\t\t\tobjConnection = new SqlConnection(strConnectionString);\n");
+					//objStringBuilder.Append("\t\t\t\tobjConnection = new SqlConnection(strConnectionString);\n");
+					objStringBuilder.Append("\t\t\t\tobjConnection = new SqlConnection(ConfigurationSettings.AppSettings[\"ConnectionString\"]);\n");
 					objStringBuilder.Append("\t\t\t\tobjConnection.Open();\n");
 					objStringBuilder.Append("\n");
 					
@@ -1192,7 +1252,7 @@ namespace DataTierGenerator {
 
 					// Append the parameters
 					objStringBuilder.Append("\t\t\t\t// Create and append the parameters\n");
-					objStringBuilder.Append("\t\t\t\t" + CreateSqlParameter(objField, false));
+					objStringBuilder.Append("\t\t\t\t" + CreateSqlParameter(objField, false, false));
 					objStringBuilder.Append("\n");
 
 					// Append the execute statement
@@ -1240,7 +1300,7 @@ namespace DataTierGenerator {
 
 				// Append the connection object creation
 				objStringBuilder.Append("\t\t\t\t// Create and open the database connection\n");
-				objStringBuilder.Append("\t\t\t\tobjConnection = new SqlConnection(strConnectionString);\n");
+				objStringBuilder.Append("\t\t\t\tobjConnection = new SqlConnection(ConfigurationSettings.AppSettings[\"ConnectionString\"]);\n");
 				objStringBuilder.Append("\t\t\t\tobjConnection.Open();\n");
 				objStringBuilder.Append("\n");
 				
@@ -1256,7 +1316,7 @@ namespace DataTierGenerator {
 				objStringBuilder.Append("\t\t\t\t// Create and append the parameters\n");
 				for (intIndex = 0; intIndex < arrKeyList.Count; intIndex++) {
 					objField = (clsField)arrKeyList[intIndex];
-					objStringBuilder.Append("\t\t\t\t" + CreateSqlParameter(objField, false));
+					objStringBuilder.Append("\t\t\t\t" + CreateSqlParameter(objField, false, false));
 					objField = null;
 				}
 				objStringBuilder.Append("\n");
@@ -1286,93 +1346,93 @@ namespace DataTierGenerator {
 		private string CreateParameterString(clsField objField, bool blnCheckForOutput) {
 			string	strParameter;
 		
-			switch (objField.Type.ToLower()) {
+			switch (objField.DBType.ToLower()) {
 				case "binary":
-					strParameter = "@" + objField.ColumnName.Replace(" ", "_") + "\t" + objField.Type + "(" + objField.Length + ")";
+					strParameter = "@" + objField.ColumnName.Replace(" ", "_") + "\t" + objField.DBType + "(" + objField.Length + ")";
 					break;
 				case "bigint":
-					strParameter = "@" + objField.ColumnName.Replace(" ", "_") + "\t" + objField.Type;
+					strParameter = "@" + objField.ColumnName.Replace(" ", "_") + "\t" + objField.DBType;
 					break;
 				case "bit":
-					strParameter = "@" + objField.ColumnName.Replace(" ", "_") + "\t" + objField.Type;
+					strParameter = "@" + objField.ColumnName.Replace(" ", "_") + "\t" + objField.DBType;
 					break;
 				case "char":
-					strParameter = "@" + objField.ColumnName.Replace(" ", "_") + "\t" + objField.Type + "(" + objField.Length + ")";
+					strParameter = "@" + objField.ColumnName.Replace(" ", "_") + "\t" + objField.DBType + "(" + objField.Length + ")";
 					break;
 				case "datetime":
-					strParameter = "@" + objField.ColumnName.Replace(" ", "_") + "\t" + objField.Type;
+					strParameter = "@" + objField.ColumnName.Replace(" ", "_") + "\t" + objField.DBType;
 					break;
 				case "decimal":
 					if (objField.Scale.Length == 0)
-						strParameter = "@" + objField.ColumnName.Replace(" ", "_") + "\t" + objField.Type + "(" + objField.Precision + ")";
+						strParameter = "@" + objField.ColumnName.Replace(" ", "_") + "\t" + objField.DBType + "(" + objField.Precision + ")";
 					else
-						strParameter = "@" + objField.ColumnName.Replace(" ", "_") + "\t" + objField.Type + "(" + objField.Precision + ", "+ objField.Scale + ")";
+						strParameter = "@" + objField.ColumnName.Replace(" ", "_") + "\t" + objField.DBType + "(" + objField.Precision + ", "+ objField.Scale + ")";
 					break;
 				case "float":
-					strParameter = "@" + objField.ColumnName.Replace(" ", "_") + "\t" + objField.Type + "(" + objField.Precision + ")";
+					strParameter = "@" + objField.ColumnName.Replace(" ", "_") + "\t" + objField.DBType + "(" + objField.Precision + ")";
 					break;
 				case "image":
-					strParameter = "@" + objField.ColumnName.Replace(" ", "_") + "\t" + objField.Type;
+					strParameter = "@" + objField.ColumnName.Replace(" ", "_") + "\t" + objField.DBType;
 					break;
 				case "int":
-					strParameter = "@" + objField.ColumnName.Replace(" ", "_") + "\t" + objField.Type;
+					strParameter = "@" + objField.ColumnName.Replace(" ", "_") + "\t" + objField.DBType;
 					break;
 				case "money":
-					strParameter = "@" + objField.ColumnName.Replace(" ", "_") + "\t" + objField.Type;
+					strParameter = "@" + objField.ColumnName.Replace(" ", "_") + "\t" + objField.DBType;
 					break;
 				case "nchar":
-					strParameter = "@" + objField.ColumnName.Replace(" ", "_") + "\t" + objField.Type + "(" + objField.Length + ")";
+					strParameter = "@" + objField.ColumnName.Replace(" ", "_") + "\t" + objField.DBType + "(" + objField.Length + ")";
 					break;
 				case "ntext":
-					strParameter = "@" + objField.ColumnName.Replace(" ", "_") + "\t" + objField.Type;
+					strParameter = "@" + objField.ColumnName.Replace(" ", "_") + "\t" + objField.DBType;
 					break;
 				case "nvarchar":
-					strParameter = "@" + objField.ColumnName.Replace(" ", "_") + "\t" + objField.Type + "(" + objField.Length + ")";
+					strParameter = "@" + objField.ColumnName.Replace(" ", "_") + "\t" + objField.DBType + "(" + objField.Length + ")";
 					break;
 				case "numeric":
 					if (objField.Scale.Length == 0)
-						strParameter = "@" + objField.ColumnName.Replace(" ", "_") + "\t" + objField.Type + "(" + objField.Precision + ")";
+						strParameter = "@" + objField.ColumnName.Replace(" ", "_") + "\t" + objField.DBType + "(" + objField.Precision + ")";
 					else
-						strParameter = "@" + objField.ColumnName.Replace(" ", "_") + "\t" + objField.Type + "(" + objField.Precision + ", "+ objField.Scale + ")";
+						strParameter = "@" + objField.ColumnName.Replace(" ", "_") + "\t" + objField.DBType + "(" + objField.Precision + ", "+ objField.Scale + ")";
 					break;
 				case "real":
-					strParameter = "@" + objField.ColumnName.Replace(" ", "_") + "\t" + objField.Type;
+					strParameter = "@" + objField.ColumnName.Replace(" ", "_") + "\t" + objField.DBType;
 					break;
 				case "smalldatetime":
-					strParameter = "@" + objField.ColumnName.Replace(" ", "_") + "\t" + objField.Type;
+					strParameter = "@" + objField.ColumnName.Replace(" ", "_") + "\t" + objField.DBType;
 					break;
 				case "smallint":
-					strParameter = "@" + objField.ColumnName.Replace(" ", "_") + "\t" + objField.Type;
+					strParameter = "@" + objField.ColumnName.Replace(" ", "_") + "\t" + objField.DBType;
 					break;
 				case "smallmoney":
-					strParameter = "@" + objField.ColumnName.Replace(" ", "_") + "\t" + objField.Type;
+					strParameter = "@" + objField.ColumnName.Replace(" ", "_") + "\t" + objField.DBType;
 					break;
 				case "sql_variant":
-					strParameter = "@" + objField.ColumnName.Replace(" ", "_") + "\t" + objField.Type;
+					strParameter = "@" + objField.ColumnName.Replace(" ", "_") + "\t" + objField.DBType;
 					break;
 				case "sysname":
-					strParameter = "@" + objField.ColumnName.Replace(" ", "_") + "\t" + objField.Type;
+					strParameter = "@" + objField.ColumnName.Replace(" ", "_") + "\t" + objField.DBType;
 					break;
 				case "text":
-					strParameter = "@" + objField.ColumnName.Replace(" ", "_") + "\t" + objField.Type;
+					strParameter = "@" + objField.ColumnName.Replace(" ", "_") + "\t" + objField.DBType;
 					break;
 				case "timestamp":
-					strParameter = "@" + objField.ColumnName.Replace(" ", "_") + "\t" + objField.Type;
+					strParameter = "@" + objField.ColumnName.Replace(" ", "_") + "\t" + objField.DBType;
 					break;
 				case "tinyint":
-					strParameter = "@" + objField.ColumnName.Replace(" ", "_") + "\t" + objField.Type;
+					strParameter = "@" + objField.ColumnName.Replace(" ", "_") + "\t" + objField.DBType;
 					break;
 				case "varbinary":
-					strParameter = "@" + objField.ColumnName.Replace(" ", "_") + "\t" + objField.Type + "(" + objField.Length + ")";
+					strParameter = "@" + objField.ColumnName.Replace(" ", "_") + "\t" + objField.DBType + "(" + objField.Length + ")";
 					break;
 				case "varchar":
-					strParameter = "@" + objField.ColumnName.Replace(" ", "_") + "\t" + objField.Type + "(" + objField.Length + ")";
+					strParameter = "@" + objField.ColumnName.Replace(" ", "_") + "\t" + objField.DBType + "(" + objField.Length + ")";
 					break;
 				case "uniqueidentifier":
-					strParameter = "@" + objField.ColumnName.Replace(" ", "_") + "\t" + objField.Type;
+					strParameter = "@" + objField.ColumnName.Replace(" ", "_") + "\t" + objField.DBType;
 					break;
 				default:  // Unknow data type
-					throw(new Exception("Invalid SQL Server data type specified: " + objField.Type));
+					throw(new Exception("Invalid SQL Server data type specified: " + objField.DBType));
 			}
 			
 			// Is the parameter an output parameter?
@@ -1398,7 +1458,7 @@ namespace DataTierGenerator {
 			strColumnName = objField.ColumnName;
 			strColumnName = strColumnName.Substring(0, 1).ToUpper() + strColumnName.Substring(1); 
 		
-			switch (objField.Type.ToLower()) {
+			switch (objField.DBType.ToLower()) {
 				case "binary":
 					strParameter = "byte[] byte" + strColumnName.Replace(" ", "_");
 					break;
@@ -1478,7 +1538,7 @@ namespace DataTierGenerator {
 					strParameter = "Guid guid" + strColumnName.Replace(" ", "_");
 					break;
 				default:  // Unknow data type
-					throw(new Exception("Invalid SQL Server data type specified: " + objField.Type));
+					throw(new Exception("Invalid SQL Server data type specified: " + objField.DBType));
 			}
 			
 			// Return the new parameter string
@@ -1556,7 +1616,7 @@ namespace DataTierGenerator {
 		/// </summary>
 		/// <param name="objField">Object that stores the information for the field the parameter represents.</param>
 		/// <returns>String containing SqlParameter information of the specified field for a method call.</returns>
-		public string CreateSqlParameter(clsField objField, bool blnOutput) {
+		public string CreateSqlParameter(clsField objField, bool blnOutput, bool useDataObject) {
 			byte		bytePrecision;
 			byte		byteScale;
 			string[]	strMethodParameter;
@@ -1576,11 +1636,20 @@ namespace DataTierGenerator {
 			else
 				byteScale = 0;
 
+// this needs to be cleaned up!!!!			
 			// Is the parameter used for input or output
 			if (blnOutput)
-				return "Int32 " +  strMethodParameter[1] +"=0; // dummy value so that parameter can be declared output - should use return value\n" +"objCommand.Parameters.Add(new SqlParameter(\"@" + objField.ColumnName + "\", SqlDbType." + GetSqlDbType(objField.Type) + ", " + objField.Length + ", ParameterDirection.Output, false, " + bytePrecision + ", " + byteScale + ", \"" + objField.ColumnName + "\", DataRowVersion.Proposed, " + strMethodParameter[1] + "));\n";
+				//return "Int32 " +  strMethodParameter[1] +"=0; // dummy value so that parameter can be declared output - should use return value\n" +"objCommand.Parameters.Add(new SqlParameter(\"@" + objField.ColumnName + "\", SqlDbType." + GetSqlDbType(objField.DBType) + ", " + objField.Length + ", ParameterDirection.Output, false, " + bytePrecision + ", " + byteScale + ", \"" + objField.ColumnName + "\", DataRowVersion.Proposed, " + strMethodParameter[1] + "));\n";
+				if (useDataObject)
+					return "objCommand.Parameters.Add(new SqlParameter(\"@" + objField.ColumnName + "\", SqlDbType." + GetSqlDbType(objField.DBType) + ", " + objField.Length + ", ParameterDirection.Output, false, " + bytePrecision + ", " + byteScale + ", \"" + objField.ColumnName + "\", DataRowVersion.Proposed, data." + objField.ColumnName + "));\n";
+				else
+					return "objCommand.Parameters.Add(new SqlParameter(\"@" + objField.ColumnName + "\", SqlDbType." + GetSqlDbType(objField.DBType) + ", " + objField.Length + ", ParameterDirection.Output, false, " + bytePrecision + ", " + byteScale + ", \"" + objField.ColumnName + "\", DataRowVersion.Proposed, " + strMethodParameter[1] + "));\n";
 			else
-				return "objCommand.Parameters.Add(new SqlParameter(\"@" + objField.ColumnName + "\", SqlDbType." + GetSqlDbType(objField.Type) + ", " + objField.Length + ", ParameterDirection.Input, false, " + bytePrecision + ", " + byteScale + ", \"" + objField.ColumnName + "\", DataRowVersion.Proposed, " + strMethodParameter[1] + "));\n";
+				//return "objCommand.Parameters.Add(new SqlParameter(\"@" + objField.ColumnName + "\", SqlDbType." + GetSqlDbType(objField.DBType) + ", " + objField.Length + ", ParameterDirection.Input, false, " + bytePrecision + ", " + byteScale + ", \"" + objField.ColumnName + "\", DataRowVersion.Proposed, " + strMethodParameter[1] + "));\n";
+				if (useDataObject)
+					return "objCommand.Parameters.Add(new SqlParameter(\"@" + objField.ColumnName + "\", SqlDbType." + GetSqlDbType(objField.DBType) + ", " + objField.Length + ", ParameterDirection.Input, false, " + bytePrecision + ", " + byteScale + ", \"" + objField.ColumnName + "\", DataRowVersion.Proposed, data." + objField.ColumnName + "));\n";
+				else
+					return "objCommand.Parameters.Add(new SqlParameter(\"@" + objField.ColumnName + "\", SqlDbType." + GetSqlDbType(objField.DBType) + ", " + objField.Length + ", ParameterDirection.Input, false, " + bytePrecision + ", " + byteScale + ", \"" + objField.ColumnName + "\", DataRowVersion.Proposed, " + strMethodParameter[1] + "));\n";
 		}
 
 		/// <summary>
@@ -1630,7 +1699,7 @@ namespace DataTierGenerator {
 			return s;
 		}
 
-		private String getNameSpace(String db, String table) {
+		private String getDAONameSpace(String db, String table) {
 			String s;
 
 			s = db + ".DataAccess." + table.Replace(" ", "_");
@@ -1639,13 +1708,229 @@ namespace DataTierGenerator {
 			return s;
 		}
 
-		private String getClassName(String table) {
+		private String getDONameSpace(String db, String table) {
+			String s;
+
+			if (db != null && table != null)
+				s = db + ".DataAccess." + table.Replace(" ", "_");
+			s = m_strProjectNameSpace  + ".DataObjects";
+
+			return s;
+		}
+
+		private String getDAOClassName(String table) {
 			String s;
 
 			s = "cls" + table.Replace(" ", "_");
 			s = table.Replace(" ", "_") + "DAO";
 
 			return s;
+		}
+
+		private String getDOClassName(String table) {
+			String s;
+
+			s = "cls" + table.Replace(" ", "_");
+			s = table.Replace(" ", "_") + "Data";
+
+			return s;
+		}
+
+
+		private void CreateDataObjectClass(string strTableName, ArrayList arrFieldList) {
+			StreamWriter	objStreamWriter;
+			StringBuilder	objStringBuilder;
+			string			strFileName;
+			
+			objStringBuilder = new StringBuilder(4096);
+
+			// Create the header for the class
+			objStringBuilder.Append("using System;\n");
+			objStringBuilder.Append("\n");
+			objStringBuilder.Append("namespace " + getDONameSpace(m_objConnection.Database.ToString(), strTableName) + " {\n");
+			objStringBuilder.Append("\tpublic class " + getDOClassName(strTableName) + " {\n\n");
+
+			Int32 intIndex;
+			clsField objField;
+			
+			// declaration of private member variables
+			for (intIndex = 0; intIndex < arrFieldList.Count; intIndex++) {
+				objField = (clsField)arrFieldList[intIndex];
+				//if (objField.IsIdentity == false && objField.IsRowGuidCol == false) {
+					objStringBuilder.Append("\t\tprivate ").Append(objField.ParameterType).Append(" m_").Append(objField.ColumnName).Append(";\n");
+				//}
+				objField = null;
+			}
+			objStringBuilder.Append("\n");
+
+			// accessor methods
+			for (intIndex = 0; intIndex < arrFieldList.Count; intIndex++) {
+				objField = (clsField)arrFieldList[intIndex];
+				//if (objField.IsIdentity == false && objField.IsRowGuidCol == false) {
+					objStringBuilder.Append("\t\tpublic ").Append(objField.ParameterType).Append(" ").Append(objField.ColumnName).Append(" {\n");
+					objStringBuilder.Append("\t\t\tget { return m_").Append(objField.ColumnName).Append("; }\n");
+					objStringBuilder.Append("\t\t\tset { m_").Append(objField.ColumnName).Append(" = value; }\n");
+					objStringBuilder.Append("\t\t}\n\n");
+				//}
+				objField = null;
+			}
+
+		
+			// Close out the class and namespace
+			objStringBuilder.Append("\t}\n");
+			objStringBuilder.Append("}\n");
+
+			// Create the output stream
+			strFileName = "Data Object Classes\\" + getDOClassName(strTableName) + ".cs";
+			if (File.Exists(strFileName))
+				File.Delete(strFileName);
+			objStreamWriter = new StreamWriter(strFileName);
+			objStreamWriter.Write(objStringBuilder.ToString());
+			objStreamWriter.Close();
+			objStreamWriter = null;
+			objStringBuilder = null;
+		}
+
+		private void CreateView(string strTableName, ArrayList arrFieldList) {
+			clsField		objField;
+			int				intIndex;
+			StringBuilder	objStringBuilder;
+			String			strProcName;
+			
+			// Create the SQL for the stored procedure
+			objStringBuilder = new StringBuilder(1024);
+
+			strProcName = "vw" + strTableName;
+
+			objStringBuilder.Append("if exists (select * from sysobjects where id = object_id(N'[" + strProcName + "]') and OBJECTPROPERTY(id, N'IsView') = 1)\n");
+			objStringBuilder.Append("drop view [" + strProcName + "]\n");
+			objStringBuilder.Append("GO\n");
+			objStringBuilder.Append("\n");
+			objStringBuilder.Append("create view " + strProcName + "\n");
+			objStringBuilder.Append("\n");
+			objStringBuilder.Append("AS\n");
+			objStringBuilder.Append("\n");
+			objStringBuilder.Append("SELECT ");
+			
+			// Create the parameter list
+			for (intIndex = 0; intIndex < arrFieldList.Count; intIndex++) {
+				objField = (clsField)arrFieldList[intIndex];
+				if (!objField.IsViewColumn) {
+					if (intIndex>0) {
+						objStringBuilder.Append(",\n");
+					}
+					objStringBuilder.Append("\t[" + objField.ColumnName + "]");
+				}
+				objField = null;
+			}
+			objStringBuilder.Append("\n");			
+			objStringBuilder.Append("FROM\n\t[");
+			objStringBuilder.Append(strTableName);
+			objStringBuilder.Append("]\n");
+
+			// Write out the stored procedure
+			WriteToFile(strProcName, objStringBuilder.ToString() + "\nGO\n\n");
+			objStringBuilder = null;
+		}
+
+		private void CreateDAOListMethods(string strTableName, ArrayList arrFieldList, StringBuilder objStringBuilder) {
+			clsField	objField;
+			int			intIndex;
+			
+			// Append the method header
+			objStringBuilder.Append("\t\t/// <summary>\n");
+			objStringBuilder.Append("\t\t/// Inserts a record into the " + strTableName + " table.\n");
+			objStringBuilder.Append("\t\t/// </summary>\n");
+			objStringBuilder.Append("\t\t/// <param name=\"\"></param>\n");
+
+			objStringBuilder.Append("\t\tprivate SqlDataReader GetListReader() { \n");
+			objStringBuilder.Append("\t\treturn GetListReader(\"\", \"\"); \n");
+			objStringBuilder.Append("\t\t} \n");
+			objStringBuilder.Append("\t\t \n");
+			objStringBuilder.Append("\t\tprivate SqlDataReader GetListReader(String whereClause, String orderByClause) { \n");
+			objStringBuilder.Append("\t\tSqlDataReader dataReader = null; \n");
+			objStringBuilder.Append("\t\t \n");
+			objStringBuilder.Append("\t\ttry { \n");
+			objStringBuilder.Append("\t\t	Database data = new Database(); \n");
+			objStringBuilder.Append("\t\t \n");
+			objStringBuilder.Append("\t\t	String sql = \"select * from \" + VIEW;\n");
+			objStringBuilder.Append("\t\t	if (whereClause.Trim().Length >0) { \n");
+			objStringBuilder.Append("\t\t		sql = sql + \" where \" + whereClause; \n");
+			objStringBuilder.Append("\t\t	} \n");
+			objStringBuilder.Append("\t\t	if (orderByClause.Trim().Length >0) { \n");
+			objStringBuilder.Append("\t\t		sql = sql + \" order by \" + orderByClause; \n");
+			objStringBuilder.Append("\t\t	} \n");
+			objStringBuilder.Append("\t\t \n");
+			objStringBuilder.Append("\t\t	data.ExecuteSQLSelect (sql, out dataReader); \n");
+			objStringBuilder.Append("\t\t} catch (Exception ex) { \n");
+			objStringBuilder.Append("\t\t	Error.Log(ex.ToString()); \n");
+			objStringBuilder.Append("\t\t} \n");
+			objStringBuilder.Append("\t\t \n");
+			objStringBuilder.Append("\t\treturn dataReader; \n");
+			objStringBuilder.Append("\t\t}\n");
+			objStringBuilder.Append("\n");
+
+			objStringBuilder.Append("\t\t	public ICollection GetList() {\n");
+			objStringBuilder.Append("\t\t		return GetList(\"\", \"\");\n");
+			objStringBuilder.Append("\t\t	}\n");
+			objStringBuilder.Append("\n");
+			objStringBuilder.Append("\t\tpublic ICollection GetList(String whereClause) {\n");
+			objStringBuilder.Append("\t\t	return GetList(whereClause, \"\");\n");
+			objStringBuilder.Append("\t\t}\n");
+			objStringBuilder.Append("\n");
+			objStringBuilder.Append("\t\tpublic ICollection GetList(String whereClause, String orderByClause) {\n");
+			objStringBuilder.Append("\t\t	SqlDataReader dataReader = GetListReader();\n");
+			objStringBuilder.Append("\t\t    \n");
+			objStringBuilder.Append("\t\t	ArrayList list = new ArrayList();\n");
+			objStringBuilder.Append("\t\t	while (dataReader.Read()) {\n");
+			objStringBuilder.Append("\t\t		list.Add(getDataObjectFromReader(dataReader));\n");
+			objStringBuilder.Append("\t\t	}\n");
+			objStringBuilder.Append("\t\t	dataReader.Close();\n");
+			objStringBuilder.Append("\t\t	return list;\n");
+			objStringBuilder.Append("\t\t}\n");
+			objStringBuilder.Append("\n");			
+
+objStringBuilder.Append("\t\tpublic ").Append(getDOClassName(strTableName)).Append(" load(Int32 id) {\n");
+objStringBuilder.Append("\t\t	SqlDataReader dataReader = GetListReader(\"").Append(getIdentityColumn(arrFieldList)).Append("=\" + id.ToString(), \"\");\n");
+objStringBuilder.Append("\t\t    \n");
+objStringBuilder.Append("\t\t	dataReader.Read();\n");
+objStringBuilder.Append("\t\t	return getDataObjectFromReader(dataReader);\n");
+objStringBuilder.Append("\t\t}\n");
+objStringBuilder.Append("\n");			
+
+			objStringBuilder.Append("\t\tprivate ").Append(getDOClassName(strTableName)).Append(" getDataObjectFromReader(SqlDataReader dataReader) {\n");
+			objStringBuilder.Append("\t\t	").Append(getDOClassName(strTableName)).Append(" data = new ").Append(getDOClassName(strTableName)).Append("();\n");
+
+			for (intIndex = 0; intIndex < arrFieldList.Count; intIndex++) {
+				objField = (clsField)arrFieldList[intIndex];
+				objStringBuilder.Append("\t\t\tdata.").Append(objField.ColumnName).Append(" = ").Append("dataReader.Get").Append(objField.ParameterType).Append("(").Append(intIndex).Append(");\n");
+				objField = null;
+			}
+			/*
+			objStringBuilder.Append("\t\t	if (dataReader.IsDBNull(7)) { \n");
+			objStringBuilder.Append("\t\t		data.LastUpdateUser = \"\";\n");
+			objStringBuilder.Append("\t\t	} else {\n");
+			objStringBuilder.Append("\t\t		data.LastUpdateUser = dataReader.GetString(7);\n");
+			objStringBuilder.Append("\t\t	}\n");
+			*/
+			objStringBuilder.Append("\t\t\n");
+			objStringBuilder.Append("\t\t	return data;\n");
+			objStringBuilder.Append("\t\t}\n");
+			objStringBuilder.Append("\n");			
+		}
+
+		private clsField getIdentityColumn(ArrayList arrFieldList) {
+			Int32 intIndex;
+			clsField objField;
+
+			for (intIndex = 0; intIndex < arrFieldList.Count; intIndex++) {
+				objField = (clsField)arrFieldList[intIndex];
+				if (objField.IsIdentity) {
+					return objField;
+				}
+			}
+
+			return new clsField();
 		}
 
 	}

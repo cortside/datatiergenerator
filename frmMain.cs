@@ -387,7 +387,10 @@ namespace DataTierGenerator {
 			StringBuilder	objStringBuilder;
 			clsGenerator	objGenerator;
 
-//			try {
+
+
+
+			try {
 				// Build the database connection string
 				objStringBuilder = new StringBuilder(255);
 				objStringBuilder.Append("Data Source = " + txtServerName.Text + ";");
@@ -402,9 +405,9 @@ namespace DataTierGenerator {
 
 				// Alert the user everything went ok
 				MessageBox.Show("Data tier generated successfully.");
-//			} catch (Exception objException) {
-//				MessageBox.Show("An error occcurred while generating the data tier.\n\n" + objException.Message);
-//			}
+			} catch (Exception objException) {
+				MessageBox.Show("An error occcurred while generating the data tier.\n\n" + objException.Message);
+			}
 		}
 
 		private void btnClose_Click(object sender, System.EventArgs e) {
