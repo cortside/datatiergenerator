@@ -1,0 +1,2090 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<?dtg parser="Spring2.DataTierGenerator.Parser.XmlParser,Spring2.DataTierGenerator.Alpha" ?>
+<DataTierGenerator xmlns:xinc="http://www.w3.org/1999/XML/xinclude">
+    <generator class="Spring2.DataTierGenerator.Generator.GeneratorTaskManager,Spring2.DataTierGenerator">
+	<writer name="region" class="Spring2.DataTierGenerator.Generator.Writer.RegionMergeWriter,Spring2.DataTierGenerator">
+	    <option name="BeginMarker" value="#region" />
+	    <option name="EndMarker" value="#endregion" />
+	</writer>
+	<writer name="c#" class="Spring2.DataTierGenerator.Generator.Writer.CSharpCodeWriter,Spring2.DataTierGenerator">
+	    <option name="BraceStyle" value="c" />
+	</writer>
+	<styler name="c#" class="Spring2.DataTierGenerator.Generator.Styler.CSharpStyler,Spring2.DataTierGenerator">
+	    <option name="BraceStyle" value="c" />
+	</styler>
+	<tasks>
+	    <task name="dataobject" element="entity" template="Template\dataobject.vm" directory="DataObject"
+		filenameformat="{0}Data.cs" writer="region" styler="c#" />
+	    <task name="reportextractiondataobject" element="reportextraction" template="Template\dataobject.vm"
+		directory="DataObject" filenameformat="{0}Data.cs" writer="region" styler="c#" />
+	    <task name="dao" element="entity" template="Template\SUDAO.vm" directory="DAO" filenameformat="{0}DAO.cs"
+		writer="c#" styler="c#" />
+	    <task name="reportextractiondao" element="reportextraction" template="Template\SUReportExtractionDao.vm"
+		directory="DAO" filenameformat="{0}DAO.cs" writer="c#" styler="c#" />
+	    <task name="enum" element="enum" template="Template\enum.vm" directory="Types" filenameformat="{0}.cs" writer="region" styler="c#" />
+	    <task name="collection" element="collection" template="Template\collection.vm" directory="DataObject"
+		filenameformat="{0}.cs" writer="region" styler="c#" />
+	    <task name="table" element="sqlentity" template="Template\sql_table.vm" directory="sql\table"
+		filenameformat="{0}.table.sql" writer="region" />
+	    <task name="view" element="sqlentity" template="Template\sql_view.vm" directory="sql\view"
+		filenameformat="vw{0}.view.sql" writer="region" />
+	    <task name="delete procs" element="sqlentity" template="Template\sql_delete.vm" directory="sql\proc"
+		filenameformat="sp{0}_Delete.proc.sql" writer="region" />
+	    <task name="insert procs" element="sqlentity" template="Template\sql_insert.vm" directory="sql\proc"
+		filenameformat="sp{0}_Insert.proc.sql" writer="region" />
+	    <task name="update procs" element="sqlentity" template="Template\sql_update.vm" directory="sql\proc"
+		filenameformat="sp{0}_Update.proc.sql" writer="region" />
+	</tasks>
+	<tools>
+	    <tool name="sql" class="Spring2.DataTierGenerator.Tool.MSSqlServerTool,Spring2.DataTierGenerator.Tool" />
+	</tools>
+    </generator>
+    <config>
+	<setting name="RootDirectory" value=".\SU\" />
+	<setting name="RootNameSpace" value="StampinUp" />
+	<setting name="DAOBaseClass" value="StampinUp.Core.DAO.DAOBase" />
+    </config>
+    <sqltypes>
+	<sqltype name="float" type="DecimalType" readermethodformat="{0}.GetDouble({0}.GetOrdinal(&quot;{1}&quot;))"
+	    declarationformat="{0}({2})" />
+	<sqltype name="datetime" sqldbtype="DateTime" type="DateType" readermethodformat="{0}.GetDateTime({0}.GetOrdinal(&quot;{1}&quot;))" />
+	<sqltype name="bit" type="BooleanType" readermethodformat="{0}.GetBoolean({0}.GetOrdinal(&quot;{1}&quot;))" />
+	<sqltype name="smallint" sqldbtype="SmallInt" type="NumberType" readermethodformat="{0}.GetInt32({0}.GetOrdinal(&quot;{1}&quot;))" />
+	<sqltype name="tinyint" sqldbtype="TinyInt" type="NumberType" readermethodformat="{0}.GetInt32({0}.GetOrdinal(&quot;{1}&quot;))" />
+	<sqltype name="smallmoney" sqldbtype="SmallMoney" type="CurrencyType" readermethodformat="{0}.GetDecimal({0}.GetOrdinal(&quot;{1}&quot;))" />
+	<sqltype name="money" type="CurrencyType" readermethodformat="{0}.GetDecimal({0}.GetOrdinal(&quot;{1}&quot;))" />
+	<sqltype name="image" type="StringType" readermethodformat="{0}.GetString({0}.GetOrdinal(&quot;{1}&quot;))" />
+	<sqltype name="text" type="StringType" readermethodformat="{0}.GetString({0}.GetOrdinal(&quot;{1}&quot;))" />
+	<sqltype name="smalldatetime" sqldbtype="SmallDateTime" type="DateType" readermethodformat="{0}.GetDateTime({0}.GetOrdinal(&quot;{1}&quot;))" />
+	<sqltype name="char" length="1" type="StringType" readermethodformat="{0}.GetString({0}.GetOrdinal(&quot;{1}&quot;))"
+	    declarationformat="{0}({1})" />
+	<sqltype name="varchar" sqldbtype="VarChar" length="50" type="StringType" readermethodformat="{0}.GetString({0}.GetOrdinal(&quot;{1}&quot;))"
+	    declarationformat="{0}({1})" />
+	<sqltype name="int" scale="0" precision="10" type="NumberType" readermethodformat="{0}.GetInt32({0}.GetOrdinal(&quot;{1}&quot;))" />
+	<sqltype name="numeric" sqldbtype="Decimal" type="DecimalType" readermethodformat="{0}.GetDecimal({0}.GetOrdinal(&quot;{1}&quot;))"
+	    declarationformat="{0}({2}, {3})" />
+	<sqltype name="binary" type="byte[]" declarationformat="{0}({1})" />
+	<sqltype name="bigint" sqldbtype="BigInt" type="Int64" readermethodformat="{0}.GetInt64({0}.GetOrdinal(&quot;{1}&quot;))" />
+	<sqltype name="decimal" type="Decimal" readermethodformat="{0}.GetDecimal({0}.GetOrdinal(&quot;{1}&quot;))"
+	    declarationformat="{0}({2}, {3})" />
+	<sqltype name="nchar" sqldbtype="NChar" type="String" readermethodformat="{0}.GetString({0}.GetOrdinal(&quot;{1}&quot;))"
+	    declarationformat="{0}({1})" />
+	<sqltype name="ntext" sqldbtype="NText" type="String" readermethodformat="{0}.GetString({0}.GetOrdinal(&quot;{1}&quot;))"
+	    declarationformat="{0}({1})" />
+	<sqltype name="nvarchar" sqldbtype="NVarChar" type="String" readermethodformat="{0}.GetString({0}.GetOrdinal(&quot;{1}&quot;))"
+	    declarationformat="{0}({1})" />
+	<sqltype name="real" type="Single" readermethodformat="{0}.GetString({0}.GetOrdinal(&quot;{1}&quot;))" />
+	<sqltype name="varbinary" sqldbtype="VarBinary" type="byte[]" declarationformat="{0}({1})" />
+	<sqltype name="uniqueidentifier" sqldbtype="UniqueIdentifier" type="Guid" />
+	<sqltype name="timestamp" type="DateTime" readermethodformat="{0}.GetDateTime({0}.GetOrdinal(&quot;{1}&quot;))" />
+    </sqltypes>
+    <types>
+	<!-- .Net primitive types -->
+	<type name="String" newinstanceformat="String.Empty" />
+	<type name="DateTime" newinstanceformat="new DateTime()" />
+	<type name="Int32" newinstanceformat="0" />
+	<type name="Boolean" newinstanceformat="false" />
+	<type name="Double" newinstanceformat="0" />
+	<type name="Decimal" newinstanceformat="0" />
+	<!-- .Net FCL types -->
+	<type name="IList" namespace="System.Collections" />
+	<type name="ArrayList" namespace="System.Collections" newinstanceformat="new ArrayList()" />
+	<type name="Hashtable" namespace="System.Collections" newinstanceformat="new Hashtable()" />
+	<!-- Spring2.Core.Types -->
+	<type name="BooleanType" namespace="Spring2.Core.Types" converttosqltypeformat="!{1}.IsValid ? {1}.DBValue : {1}.DBValue.Equals (&quot;Y&quot;) ? 1 : 0"
+	    convertfromsqltypeformat="BooleanType.GetInstance({2})" newinstanceformat="BooleanType.DEFAULT"
+	    nullinstanceformat="BooleanType.UNSET" convertforcompare="{0}.ToString().CompareTo({1}.ToString())" />
+	<type name="StringType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue"
+	    convertfromsqltypeformat="StringType.Parse ({2})" newinstanceformat="StringType.DEFAULT"
+	    nullinstanceformat="StringType.UNSET" convertforcompare="{0}.ToString().CompareTo({1}.ToString())" />
+	<type name="IdType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue"
+	    convertfromsqltypeformat="new IdType ({2})" newinstanceformat="IdType.DEFAULT" nullinstanceformat="IdType.UNSET"
+	    convertforcompare="{0}.CompareTo({1})" />
+	<type name="DateType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue"
+	    convertfromsqltypeformat="new DateType ({2})" newinstanceformat="DateType.DEFAULT"
+	    nullinstanceformat="DateType.UNSET" convertforcompare="{0}.ToDateTime().CompareTo({1}.ToDateTime())" />
+	<type name="NumberType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue"
+	    convertfromsqltypeformat="NumberType.NewInstance ({2})" newinstanceformat="NumberType.DEFAULT"
+	    nullinstanceformat="NumberType.UNSET" convertforcompare="{0}.CompareTo({1})" />
+	<type name="IntegerType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue"
+	    convertfromsqltypeformat="new IntegerType ({2})" newinstanceformat="IntegerType.DEFAULT"
+	    nullinstanceformat="IntegerType.UNSET" convertforcompare="{0}.CompareTo({1})" />
+	<type name="DecimalType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue"
+	    convertfromsqltypeformat="new DecimalType ({2})" newinstanceformat="DecimalType.DEFAULT"
+	    nullinstanceformat="DecimalType.UNSET" convertforcompare="{0}.CompareTo({1})" />
+	<type name="CurrencyType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue"
+	    convertfromsqltypeformat="CurrencyType.NewInstance ({2})" newinstanceformat="CurrencyType.DEFAULT"
+	    nullinstanceformat="CurrencyType.UNSET" convertforcompare="{0}.CompareTo({1})" />
+	<type name="QuantityType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue"
+	    convertfromsqltypeformat="QuantityType.NewInstance ({2})" newinstanceformat="QuantityType.DEFAULT"
+	    nullinstanceformat="QuantityType.UNSET" convertforcompare="{0}.CompareTo({1})" />
+	<type name="GenderType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue"
+	    convertfromsqltypeformat="GenderType.GetInstance ({2})" newinstanceformat="GenderType.DEFAULT"
+	    nullinstanceformat="GenderType.UNSET" convertforcompare="{0}.ToString().CompareTo({1}.ToString())" />
+	<!-- Project specific types -->
+	<type name="DemoIdType" namespace="StampinUp.Core.Types" converttosqltypeformat="{1}.DBValue"
+	    convertfromsqltypeformat="DemoIdType.Parse ({2})" newinstanceformat="DemoIdType.DEFAULT"
+	    nullinstanceformat="DemoIdType.UNSET" convertforcompare="{0}.CompareTo({1})" />
+	<type name="DatabaseEnum" namespace="StampinUp.Core.Types" converttosqltypeformat="{1}.DBValue"
+	    convertfromsqltypeformat="DatabaseEnum.GetInstance({2});" newinstanceformat="DatabaseEnum.DEFAULT"
+	    nullinstanceformat="DatabaseEnum.UNSET" convertforcompare="{0}.CompareTo({1})" />
+    </types>
+    <reportextractions></reportextractions>
+    <entities>
+	<entity name="Locale" sqlentity="Locale">
+	    <properties>
+		<property name="LocaleCode" type="IdType" column="*">Integer code identifying the locale</property>
+		<property name="LocaleDescription" type="StringType" column="*">String identifying the locale.</property>
+	    </properties>
+	</entity>
+	<entity name="User" sqlentity="User">
+	    <properties>
+		<property name="UserId" type="IdType" column="*">Unique id for the entity</property>
+		<property name="UserLogin" type="StringType" column="*">Login name for the user.</property>
+		<property name="UserLocale" type="LocaleEnum" column="*">Id of locale the user is in.</property>
+	    </properties>
+	    <finders>
+		<finder name="FindByLogin" unique="false">
+		    <properties>
+			<property name="UserLogin" />
+		    </properties>
+		</finder>
+	    </finders>
+	</entity>
+	<entity name="Group" sqlentity="Group">
+	    <properties>
+		<property name="GroupId" type="IdType" column="*">Unique id for the group.</property>
+		<property name="GroupName" type="StringType" column="*">Name of the group.</property>
+	    </properties>
+	</entity>
+	<entity name="Role" sqlentity="Role">
+	    <properties>
+		<property name="RoleId" type="RoleEnum" column="*">Unique id for the role.</property>
+		<property name="RoleName" type="StringType" column="*">Name of the role.</property>
+	    </properties>
+	</entity>
+	<entity name="UserRole" sqlentity="UserRole">
+	    <properties>
+		<property name="UserRoleId" type="IdType" column="*" />
+		<property name="UserId" type="IdType" column="*" />
+		<property name="RoleId" type="RoleEnum" column="*" />
+		<property name="PermitDeny" type="PermitDenyEnum" column="*" />
+	    </properties>
+	    <finders>
+		<finder name="FindByUserId" unique="false">
+		    <properties>
+			<property name="UserId" />
+		    </properties>
+		</finder>
+	    </finders>
+	    <comparers>
+		<comparer name="CompareByRoleId">
+		    <properties>
+			<property name="RoleId" />
+		    </properties>
+		</comparer>
+	    </comparers>
+	</entity>
+	<entity name="GroupRole" sqlentity="GroupRole">
+	    <properties>
+		<property name="GroupRoleId" type="IdType" column="*">Unique id for the group/role association.</property>
+		<property name="GroupId" type="IdType" column="*">Id of the group.</property>
+		<property name="RoleId" type="RoleEnum" column="*">Id of the role</property>
+		<property name="PermitDeny" type="PermitDenyEnum" column="*">Indicate if role is given or removed.</property>
+	    </properties>
+	    <finders>
+		<finder name="FindByGroupId" unique="false">
+		    <properties>
+			<property name="GroupId" />
+		    </properties>
+		</finder>
+	    </finders>
+	    <comparers>
+		<comparer name="CompareByRoleId">
+		    <properties>
+			<property name="RoleId" />
+		    </properties>
+		</comparer>
+	    </comparers>
+	</entity>
+	<entity name="UserGroup" sqlentity="UserGroup">
+	    <properties>
+		<property name="UserGroupId" type="IdType" column="*">Unique id for the user/group combination</property>
+		<property name="GroupId" type="IdType" column="*">Group user belongs to.</property>
+		<property name="UserId" type="IdType" column="*">User belonging to the group.</property>
+	    </properties>
+	    <finders>
+		<finder name="FindByUserId" unique="false">
+		    <properties>
+			<property name="UserId" />
+		    </properties>
+		</finder>
+	    </finders>
+	</entity>
+	<entity name="OrderMst" sqlentity="OrderMst">
+	    <properties>
+		<property name="OrderNo" type="StringType" column="*" />
+		<property name="OrdStart" type="DateType" column="*" />
+		<property name="OrdDate" type="DateType" column="*" />
+		<property name="TimeSpend" type="IntegerType" column="*" />
+		<property name="OrdType" type="StringType" column="*" />
+		<property name="OrdStatus" type="StringType" column="*" />
+		<property name="OrdSource" type="StringType" column="*" />
+		<property name="DemoId" type="DemoIdType" column="Demo_Id" />
+		<property name="HostessId" type="StringType" column="Hostess_Id" />
+		<property name="ShipToFname" type="StringType" column="Ship_To_Fname" />
+		<property name="ShipToLname" type="StringType" column="Ship_To_Lname" />
+		<property name="ShipToAddress1" type="StringType" column="Ship_To_Address1" />
+		<property name="ShipToAddress2" type="StringType" column="Ship_To_Address2" />
+		<property name="ShipToCity" type="StringType" column="Ship_To_City" />
+		<property name="ShipToState" type="StringType" column="Ship_To_State" />
+		<property name="ShipToZip" type="StringType" column="Ship_To_Zip" />
+		<property name="ShipDate" type="DateType" column="*" />
+		<property name="OrderNote" type="StringType" column="Order_Note" />
+		<property name="OperatorId" type="StringType" column="Operator_Id" />
+		<property name="OrderSubtotal" type="DecimalType" column="Order_Subtotal" />
+		<property name="TaxRate" type="DecimalType" column="Tax_Rate" />
+		<property name="TaxTotal" type="DecimalType" column="Tax_Total" />
+		<property name="OrderTotal" type="DecimalType" column="Order_Total" />
+		<property name="ShippingHandling" type="DecimalType" column="Shipping_Handling" />
+		<property name="DiscAmount" type="DecimalType" column="Disc_Amount" />
+		<property name="AmountPaid" type="DecimalType" column="Amount_Paid" />
+		<property name="Balance" type="DecimalType" column="*" />
+		<property name="Continious" type="IntegerType" column="*" />
+		<property name="WorkshopDate" type="DateType" column="Workshop_Date" />
+		<property name="AllowHostFree" type="DecimalType" column="Allow_Host_Free" />
+		<property name="AllowHostDisc" type="DecimalType" column="Allow_Host_Disc" />
+		<property name="TotalHostFree" type="DecimalType" column="Total_Host_Free" />
+		<property name="TotalHostDisc" type="DecimalType" column="Total_Host_Disc" />
+		<property name="Difference" type="DecimalType" column="*" />
+		<property name="HostShipHandl" type="DecimalType" column="Host_Ship_Handl" />
+		<property name="HostTax" type="DecimalType" column="Host_Tax" />
+		<property name="HostTotalDue" type="DecimalType" column="Host_Total_Due" />
+		<property name="GuestsNo" type="IntegerType" column="Guests_No" />
+		<property name="CommDate" type="DateType" column="Comm_Date" />
+		<property name="LastShipDate" type="DateType" column="Last_Ship_Date" />
+		<property name="LastShippingNo" type="DecimalType" column="Last_Shipping_No" />
+		<property name="DateCanceled" type="DateType" column="Date_Canceled" />
+		<property name="BackOrderCount" type="IntegerType" column="Back_Order_Count" />
+		<property name="NetUnshippedAmt" type="DecimalType" column="Net_Unshipped_Amt" />
+		<property name="FefundAmt" type="DecimalType" column="Refund_Amt" />
+		<property name="CommAmt" type="DecimalType" column="Comm_Amt" />
+		<property name="BatchId" type="IntegerType" column="Batch_Id" />
+		<property name="DPCTaxDate" type="DateType" column="*" />
+		<property name="GeoCode" type="StringType" column="*" />
+		<property name="InOut" type="StringType" column="*" />
+		<property name="LocalCode1" type="StringType" column="*" />
+		<property name="LocalCode2" type="StringType" column="*" />
+		<property name="LocalCode3" type="StringType" column="*" />
+		<property name="LocalCode4" type="StringType" column="*" />
+		<property name="LocalCode5" type="StringType" column="*" />
+		<property name="HostessTaxableAmount" type="DecimalType" column="*" />
+		<property name="TaxableAmount" type="DecimalType" column="*" />
+		<property name="SendToDemo" type="StringType" column="*" />
+		<property name="FirstSaveDate" type="DateType" column="*" />
+		<property name="LastSaveDate" type="DateType" column="*" />
+		<property name="ShipToEmail" type="StringType" column="Ship_To_Email" />
+		<property name="PromoKit" type="StringType" column="Promo_Kit" />
+		<property name="ExpShipping" type="DecimalType" column="Exp_Shipping" />
+		<property name="ShipMeth" type="IntegerType" column="*" />
+		<property name="ApoOrder" type="StringType" column="*" />
+		<property name="PstQst" type="DecimalType" column="PST_QST" />
+		<property name="GstHst" type="DecimalType" column="GST_HST" />
+		<property name="PstQstRate" type="DecimalType" column="PST_QST_Rate" />
+		<property name="GstHstRate" type="DecimalType" column="GST_HST_Rate" />
+		<property name="PstQstTaxableAmount" type="DecimalType" column="PST_QST_TaxableAmount" />
+		<property name="GstHstTaxableAmount" type="DecimalType" column="GST_HST_TaxableAmount" />
+		<property name="PstQstHostessTaxableAmount" type="DecimalType" column="PST_QST_HostessTaxableAmount" />
+		<property name="GstHstHostessTaxableAmount" type="DecimalType" column="GST_HST_HostessTaxableAmount" />
+		<property name="PstQstHostess" type="DecimalType" column="PST_QST_Hostess" />
+		<property name="GstHstHostess" type="DecimalType" column="GST_HST_Hostess" />
+		<property name="CountryOfSale" type="CountryEnum" column="*" />
+		<property name="GLPostedDate" type="DateType" column="*" />
+		<property name="OriginalOrderNo" type="StringType" column="*" />
+		<property name="RestockFee" type="DecimalType" column="*" />
+		<property name="PickAfter" type="DateType" column="*" />
+		<property name="AllWaitReturn" type="StringType" column="*" />
+		<property name="FreeShipping" type="StringType" column="*" />
+		<property name="IsSupplyLineOrder" type="BooleanType" column="*" />
+		<property name="IsPreOrder" type="StringType" column="*" />
+	    </properties>
+	</entity>
+	<entity name="Event" sqlentity="Event">
+	    <properties>
+		<property name="EventId" type="IdType" column="Event_Id" />
+		<property name="Description" type="StringType" column="*" />
+		<property name="InternalAccess" type="IntegerType" column="Internal" />
+		<property name="ExternalAccess" type="IntegerType" column="External" />
+		<property name="CloseDate" type="DateType" column="*" />
+		<property name="StartDate" type="DateType" column="*" />
+		<property name="DemoItemId" type="StringType" column="*" />
+		<property name="GuestItemId" type="StringType" column="*" />
+		<property name="MaxRegistrations" type="IntegerType" column="*" />
+		<property name="Warning" type="StringType" column="*" />
+		<property name="MinDemoLevel" type="IntegerType" column="*" />
+		<property name="SpouseOnly" type="IntegerType" column="*" />
+		<property name="MaxGuests" type="IntegerType" column="*" />
+		<property name="AskTerms" type="StringType" column="*" />
+		<property name="AskColor" type="StringType" column="*" />
+		<property name="DemoFirstNameOnly" type="StringType" column="*" />
+		<property name="AskDemoMobility" type="StringType" column="*" />
+		<property name="AskDemoHearing" type="StringType" column="*" />
+		<property name="JointDemoOnly" type="StringType" column="*" />
+		<property name="ShowFinalSplash" type="StringType" column="*" />
+		<property name="NoGuestMeal" type="StringType" column="*" />
+		<property name="DependentEvent" type="IdType" column="*" />
+		<property name="AllowCheckPayment" type="StringType" column="*" />
+		<property name="NoGuestPeriod" type="IntegerType" column="*" />
+		<property name="CountryCode" type="CountryEnum" column="*" />
+		<property name="EventType" type="StringType" column="*" />
+		<property name="EventDate" type="DateType" column="*" />
+		<property name="GLPostedDate" type="DateType" column="*" />
+		<property name="CancelFeeItemId" type="StringType" column="*" />
+		<property name="GuestCancelFeeItemId" type="StringType" column="*" />
+	    </properties>
+	</entity>
+	<entity name="Demonstrator" sqlentity="DemoMast" log="true">
+	    <properties>
+		<property name="DemoId" type="DemoIdType" column="Demo_Id" returnasidentity="true" />
+		<property name="SponsorId" type="DemoIdType" column="Sponsor_Id" log="true" />
+		<property name="BusEntityName" type="StringType" column="*" log="true" />
+		<property name="Tin" type="StringType" column="*" log="true" />
+		<property name="BusEntityTypeID" type="IdType" column="*" log="true" />
+		<property name="CountryOfOrigin" type="CountryEnum" column="*" log="true" />
+		<property name="StateOfOrigin" type="StringType" column="*" log="true" />
+		<property name="BusEntityEffectDate" type="DateType" column="*" log="true" />
+		<property name="AppToOpDate" type="DateType" column="*" log="true" />
+		<property name="NoticeOfIntentDate" type="DateType" column="*" log="true" />
+		<property name="DuePerformDate" type="DateType" column="*" log="true" />
+		<property name="AuthorizationDate" type="DateType" column="*" log="true" />
+		<property name="FormationDate" type="DateType" column="*" log="true" />
+		<property name="ShipToAddress1" type="StringType" column="Ship_To_Address1" log="true" />
+		<property name="ShipToAddress2" type="StringType" column="Ship_To_Address2" log="true" />
+		<property name="ShipToCity" type="StringType" column="Ship_To_City" log="true" />
+		<property name="ShipToState" type="StringType" column="Ship_To_State" log="true" />
+		<property name="ShipToCounty" type="StringType" column="Ship_To_County" log="true" />
+		<property name="ShipToZip" type="StringType" column="Ship_To_Zip" log="true" />
+		<property name="ShipToZip4" type="StringType" column="Ship_To_Zip4" log="true" />
+		<property name="DemoLvl" type="StringType" column="Demo_Lvl" log="true" />
+		<property name="Status" type="StringType" column="*" log="true" />
+		<property name="StatusDate" type="DateType" column="Status_Date" log="true" />
+		<property name="LastEmpName" type="StringType" column="Last_Emp_Name" log="true" />
+		<property name="LastChangeDate" type="DateType" column="Last_Change_Date" log="true" />
+		<property name="Fax" type="StringType" column="*" log="true" />
+		<property name="StarterKitOrdered" type="BooleanType" column="Starter_Kit_Ordered" log="true" />
+		<property name="StarterKit" type="IntegerType" column="Starter_Kit" log="true" />
+		<property name="Startdate" type="DateType" column="*" log="true" />
+		<property name="PromoFlag" type="StringType" column="Promo_Flag" log="true" />
+		<property name="IsOrderingDisabled" type="BooleanType" column="Nsf_Warning" log="true" converttosqltypeformat="!data.IsOrderingDisabled.IsValid ? data.IsOrderingDisabled.DBValue : data.IsOrderingDisabled.DBValue.Equals (&quot;N&quot;) ? &quot; &quot; : &quot;N&quot;"
+		    convertfromsqltypeformat="BooleanType.GetInstance({2}.Equals(&quot;N&quot;) ? &quot;Y&quot; : &quot;N&quot;)" />
+		<property name="Password" type="StringType" column="Password1" log="true" />
+		<property name="Geocode" type="StringType" column="*" log="true" />
+		<property name="Inout" type="StringType" column="*" log="true" />
+		<property name="Localcode1" type="StringType" column="*" log="true" />
+		<property name="Localcode2" type="StringType" column="*" log="true" />
+		<property name="Localcode3" type="StringType" column="*" log="true" />
+		<property name="Localcode4" type="StringType" column="*" log="true" />
+		<property name="Localcode5" type="StringType" column="*" log="true" />
+		<property name="SponsorUp2" type="DemoIdType" column="Sponsor_Up2" log="true" />
+		<property name="SponsorUp3" type="DemoIdType" column="Sponsor_Up3" log="true" />
+		<property name="Email" type="StringType" column="*" log="true" />
+		<property name="SponsorUp4" type="DemoIdType" column="Sponsor_Up4" log="true" />
+		<property name="SponsorUp5" type="DemoIdType" column="Sponsor_Up5" log="true" />
+		<property name="OrigStartDate" type="DateType" column="*" log="true" />
+		<property name="OrigDemoId" type="DemoIdType" column="*" log="true" />
+		<property name="Referral" type="BooleanType" column="*" log="true" />
+		<property name="LastReferralDate" type="DateType" column="*" log="true" />
+		<property name="Latitude" type="DecimalType" column="*" log="true" />
+		<property name="Longitude" type="DecimalType" column="*" log="true" />
+		<property name="AccountVerified" type="StringType" column="*" log="true" />
+		<property name="AllElectronic" type="StringType" column="*" log="true" />
+		<property name="AccountVerifiedDate" type="DateType" column="*" log="true" />
+		<property name="APOStatusDate" type="DateType" column="*" log="true" />
+		<property name="IsPasswordDisabled" type="BooleanType" column="Pass_Lock" log="true" />
+		<property name="IsPasswordTemporary" type="BooleanType" column="GeneratedPassword" log="true" />
+		<property name="APOFlag" type="BooleanType" column="*" log="true" />
+		<property name="IsSmallSupplier" type="BooleanType" column="SmallSupplierFlag" log="true" />
+		<property name="ReceivedFreeShip" type="BooleanType" column="*" log="true" />
+		<property name="WantPrintedReports" type="BooleanType" column="*" log="true" />
+		<property name="QuestionId" type="PasswordQuestionEnum" column="*" log="true" />
+		<property name="Answer" type="StringType" column="*" log="true" />
+	    </properties>
+	</entity>
+	<entity name="OrderDtl" sqlentity="OrderDtl">
+	    <properties>
+		<property name="OrderDetailId" type="StringType" column="Order_Detail_Id" />
+		<property name="OrderNo" type="StringType" column="*" />
+		<property name="TypeOrd" type="StringType" column="Type_Ord" />
+		<property name="ItemId" type="StringType" column="Item_Id" />
+		<property name="ItemDescrip" type="StringType" column="Item_Descrip" />
+		<property name="BinNo" type="StringType" column="Bin_No" />
+		<property name="QtyOrdered" type="IntegerType" column="Qty_Ordered" />
+		<property name="QtyPicked" type="IntegerType" column="Qty_Picked" />
+		<property name="QtyShipped" type="IntegerType" column="Qty_Shipped" />
+		<property name="ShippingNo" type="DecimalType" column="Shipping_No" />
+		<property name="ItemPrice" type="DecimalType" column="Item_Price" />
+		<property name="Subtotal" type="DecimalType" column="*" />
+		<property name="Personal" type="BooleanType" column="*" />
+		<property name="TaxExempt" type="BooleanType" column="Tax_Exempt" />
+		<property name="TaxExemptNo" type="StringType" column="Tax_Exempt_No" />
+		<property name="ShipDate" type="DateType" column="Ship_Date" />
+		<property name="Kit" type="IntegerType" column="*" />
+		<property name="GuestIdOld" type="IntegerType" column="Guest_Id_Old" />
+		<property name="ComponentId" type="StringType" column="Component_Id" />
+		<property name="GuestId" type="StringType" column="Guest_Id" />
+		<property name="Xxxsave" type="IntegerType" column="*" />
+		<property name="StartkitCategory" type="IntegerType" column="Startkit_Category" />
+		<property name="GLPostedDate" type="DateType" column="*" />
+		<property name="Revenue" type="DecimalType" column="*" />
+		<property name="DiscountAmount" type="DecimalType" column="*" />
+		<property name="QtyCanceled" type="IntegerType" column="*" />
+		<property name="CanceledDate" type="DateType" column="*" />
+		<property name="ChargeForItem" type="BooleanType" column="*" />
+		<property name="ErrorCode" type="StringType" column="*" />
+		<property name="ErrorDepartment" type="StringType" column="*" />
+		<property name="WaitReturnBeginDate" type="DateType" column="*" />
+		<property name="WaitReturnDueDate" type="DateType" column="*" />
+		<property name="WaitReturnReceivedDate" type="DateType" column="*" />
+		<property name="ItemNotes" type="StringType" column="*" />
+		<property name="SaveAsShipped" type="BooleanType" column="*" />
+		<property name="PurchasedDate" type="DateType" column="*" />
+	    </properties>
+	    <finders>
+		<finder name="FindByOrderNo" unique="False">
+		    <properties>
+			<property name="OrderNo" />
+		    </properties>
+		</finder>
+	    </finders>
+	</entity>
+	<entity name="SessionInformation" sqlentity="SessionInformation" prepareforinsert="True">
+	    <properties>
+		<property name="SessionId" type="IdType" returnasidentity="True" column="*" />
+		<property name="DemoId" type="DemoIdType" column="*" />
+		<property name="UserId" type="StringType" column="*" />
+		<property name="DateCreated" type="DateType" column="*" />
+	    </properties>
+	</entity>
+	<entity name="WebConfig" sqlentity="WebConfig">
+	    <properties>
+		<property name="WebConfigID" type="IdType" column="*" />
+		<property name="CreateDate" type="DateType" column="*" />
+		<property name="LeftNavBGColor" type="StringType" column="*" />
+		<property name="HeaderTextColor" type="StringType" column="*" />
+		<property name="MainPic" type="StringType" column="*" />
+		<property name="LeftNavPic" type="StringType" column="*" />
+		<property name="Active" type="BooleanType" column="*" />
+	    </properties>
+	    <finders>
+		<finder name="FindActiveEntry" unique="True">
+		    <properties>
+			<property name="CreateDate" />
+			<property name="Active" />
+		    </properties>
+		</finder>
+	    </finders>
+	</entity>
+	<entity name="OrgEmployees" sqlentity="OrgEmployees">
+	    <properties>
+		<property name="OrgEmployeesID" type="IdType" column="*" />
+		<property name="OrgDepartmentsID" type="IntegerType" column="*" />
+		<property name="OrgLocationsID" type="IntegerType" column="*" />
+		<property name="OrgWorkspacesID" type="IntegerType" column="*" />
+		<property name="FirstName" type="StringType" column="*" />
+		<property name="LastName" type="StringType" column="*" />
+		<property name="NTUserAccount" type="StringType" column="*" />
+		<property name="IsActive" type="BooleanType" column="*" />
+		<property name="Email" type="StringType" column="*" />
+		<property name="EmployeeTitle" type="StringType" column="*" />
+		<property name="DateHired" type="DateType" column="*" />
+		<property name="DateTerminated" type="DateType" column="*" />
+		<property name="Manager" type="IntegerType" column="*" />
+		<property name="EmployeeNumber" type="StringType" column="*" />
+		<property name="Style" type="StringType" column="*" />
+		<property name="Map" type="StringType" column="*" />
+		<property name="MapX" type="DecimalType" column="*" />
+		<property name="MapY" type="DecimalType" column="*" />
+	    </properties>
+	    <finders>
+		<finder name="FindByUsername" unique="false">
+		    <properties>
+			<property name="NTUserAccount" />
+		    </properties>
+		</finder>
+	    </finders>
+	</entity>
+	<entity name="NewsView" sqlentity="NewsView">
+	    <properties>
+		<property name="Title" type="StringType" column="*" />
+		<property name="Summary" type="StringType" column="*" />
+		<property name="DateStart" type="DateType" column="*" />
+		<property name="DateEnd" type="DateType" column="*" />
+		<property name="IsPublic" type="BooleanType" column="*" />
+		<property name="DateModified" type="DateType" column="*" />
+		<property name="LastModifiedFirstName" type="StringType" column="*" />
+		<property name="LastModifiedLastName" type="StringType" column="*" />
+		<property name="CreateFirstName" type="StringType" column="*" />
+		<property name="CreateLastName" type="StringType" column="*" />
+		<property name="OrgGroupsID" type="IntegerType" column="*" />
+		<property name="NewsImage" type="StringType" column="*" />
+		<property name="TemplateType" type="IntegerType" column="*" />
+		<property name="NewsArticlesID" type="IntegerType" column="*" />
+		<property name="Text" type="StringType" column="*" />
+		<property name="LastModifiedID" type="IntegerType" column="*" />
+	    </properties>
+	</entity>
+	<entity name="NewsArticlesLocations" sqlentity="NewsArticlesLocations">
+	    <properties>
+		<property name="NewsArticlesLocationsID" type="IdType" column="*" />
+		<property name="NewsArticlesID" type="IntegerType" column="*" />
+		<property name="OrgLocationsID" type="IntegerType" column="*" />
+	    </properties>
+	    <finders>
+		<finder name="FindByNewsArticlesID" unique="false">
+		    <properties>
+			<property name="NewsArticlesID" />
+		    </properties>
+		</finder>
+	    </finders>
+	</entity>
+	<entity name="OrgLocations" sqlentity="OrgLocations">
+	    <properties>
+		<property name="OrgLocationsID" type="IdType" column="*" />
+		<property name="Description" type="StringType" column="*" />
+		<property name="Address1" type="StringType" column="*" />
+		<property name="Address2" type="StringType" column="*" />
+		<property name="City" type="StringType" column="*" />
+		<property name="State" type="StringType" column="*" />
+		<property name="Country" type="StringType" column="*" />
+		<property name="PostCode" type="StringType" column="*" />
+		<property name="Prefix" type="StringType" column="*" />
+		<property name="Image" type="StringType" column="*" />
+	    </properties>
+	</entity>
+	<entity name="NewsArticlesLocationsName" sqlentity="NewsArticlesLocationsName">
+	    <properties>
+		<property name="Description" type="StringType" column="*" />
+		<property name="NewsArticlesLocationsID" type="IntegerType" column="*" />
+		<property name="NewsArticlesID" type="IntegerType" column="*" />
+		<property name="OrgLocationsID" type="IntegerType" column="*" />
+	    </properties>
+	</entity>
+	<entity name="NewsArticles" sqlentity="NewsArticles">
+	    <properties>
+		<property name="NewsArticlesID" type="IdType" column="*" />
+		<property name="OrgGroupsID" type="IntegerType" column="*" />
+		<property name="Title" type="StringType" column="*" />
+		<property name="Summary" type="StringType" column="*" />
+		<property name="Text" type="StringType" column="*" />
+		<property name="DateCreated" type="DateType" column="*" />
+		<property name="DateModified" type="DateType" column="*" />
+		<property name="DateStart" type="DateType" column="*" />
+		<property name="DateEnd" type="DateType" column="*" />
+		<property name="OrgEmployeesID" type="IntegerType" column="*" />
+		<property name="IsArchived" type="BooleanType" column="*" />
+		<property name="AllowDiscussion" type="BooleanType" column="*" />
+		<property name="IsNew" type="BooleanType" column="*" />
+		<property name="IsPublic" type="BooleanType" column="*" />
+		<property name="LastModifiedOrgEmployeesID" type="IntegerType" column="*" />
+		<property name="NewsImage" type="StringType" column="*" />
+		<property name="TemplateType" type="IntegerType" column="*" />
+	    </properties>
+	</entity>
+	<entity name="Knowledgebases" sqlentity="Knowledgebases">
+	    <properties>
+		<property name="KnowledgebasesID" type="IdType" column="*" />
+		<property name="Description" type="StringType" column="*" />
+		<property name="DateStart" type="DateType" column="*" />
+		<property name="DateEnd" type="DateType" column="*" />
+		<property name="IsPublic" type="BooleanType" column="*" />
+		<property name="OrgGroupsID" type="IntegerType" column="*" />
+	    </properties>
+	</entity>
+	<entity name="ImageLibrary" sqlentity="ImageLibrary">
+	    <properties>
+		<property name="Id" type="IdType" column="*" />
+		<property name="FileName" type="StringType" column="*" />
+		<property name="OrgGroupID" type="IntegerType" column="*" />
+	    </properties>
+	    <finders>
+		<finder name="GetByGroupID" unique="false">
+		    <properties>
+			<property name="OrgGroupID" />
+		    </properties>
+		</finder>
+	    </finders>
+	</entity>
+	<entity name="ControlEdit" sqlentity="ControlEdit">
+	    <properties>
+		<property name="IsBasic" type="BooleanType" column="*" />
+		<property name="Summary" type="StringType" column="*" />
+		<property name="Description" type="StringType" column="*" />
+		<property name="Src" type="StringType" column="*" />
+		<property name="IconImage" type="StringType" column="*" />
+		<property name="DisplayOnHomePage" type="BooleanType" column="*" />
+		<property name="SortOrder" type="IntegerType" column="*" />
+		<property name="ControlsID" type="IntegerType" column="*" />
+		<property name="ControlsGroupsID" type="IntegerType" column="*" />
+		<property name="OrgGroupID" type="IntegerType" column="*" />
+		<property name="ManagePage" type="StringType" column="*" />
+		<property name="EntireCompany" type="BooleanType" column="*" />
+		<property name="MustShow" type="BooleanType" column="*" />
+	    </properties>
+	    <finders>
+		<finder name="GetByBasicAndGroupID" unique="false">
+		    <properties>
+			<property name="IsBasic" />
+			<property name="OrgGroupID" />
+		    </properties>
+		</finder>
+	    </finders>
+	</entity>
+	<entity name="ControlsGroups" sqlentity="ControlsGroups">
+	    <properties>
+		<property name="ControlsGroupsID" type="IdType" column="*" />
+		<property name="ControlsID" type="IntegerType" column="*" />
+		<property name="OrgGroupsID" type="IntegerType" column="*" />
+		<property name="SortOrder" type="IntegerType" column="*" />
+		<property name="DisplayOnHomePage" type="BooleanType" column="*" />
+	    </properties>
+	</entity>
+	<entity name="KnowledgebasesArticlesCountView" sqlentity="KnowledgebasesArticlesCountView">
+	    <properties>
+		<property name="KnowledgebasesID" type="IntegerType" column="*" />
+		<property name="Description" type="StringType" column="*" />
+		<property name="ArticlesCount" type="IntegerType" column="*" />
+		<property name="OrgGroupsID" type="IntegerType" column="*" />
+		<property name="IsPublic" type="BooleanType" column="*" />
+	    </properties>
+	</entity>
+	<entity name="OtherGroupsKnowledgebases" sqlentity="OtherGroupsKnowledgebases">
+	    <properties>
+		<property name="KnowledgebasesID" type="IntegerType" column="*" />
+		<property name="SubscriptionID" type="IntegerType" column="*" />
+		<property name="Description" type="StringType" column="*" />
+		<property name="IsPublic" type="BooleanType" column="*" />
+		<property name="GroupDescription" type="StringType" column="*" />
+		<property name="ArticlesCount" type="IntegerType" column="*" />
+		<property name="OrgGroupID" type="IntegerType" column="*" />
+	    </properties>
+	</entity>
+	<entity name="GroupKnowledgebasesSubscriptions" sqlentity="GroupKnowledgebasesSubscriptions">
+	    <properties>
+		<property name="Id" type="IdType" column="*" />
+		<property name="OrgGroupID" type="IntegerType" column="*" />
+		<property name="KnowledgebasesID" type="IntegerType" column="*" />
+	    </properties>
+	</entity>
+	<entity name="KnowledgebasesSectionsArticles" sqlentity="KnowledgebasesSectionsArticles">
+	    <properties>
+		<property name="KnowledgebasesSectionsArticlesID" type="IdType" column="*" />
+		<property name="Title" type="StringType" column="*" />
+		<property name="DateStart" type="DateType" column="*" />
+		<property name="DateEnd" type="DateType" column="*" />
+		<property name="ParentID" type="IntegerType" column="*" />
+		<property name="KnowledgebasesID" type="IntegerType" column="*" />
+		<property name="HasChild" type="BooleanType" column="*" />
+		<property name="PrevKnowledgebasesSectionsID" type="IntegerType" column="*" />
+		<property name="NextKnowledgebasesSectionsID" type="IntegerType" column="*" />
+		<property name="ListInParentArticle" type="BooleanType" column="*" />
+		<property name="IncludeSummaryinParent" type="BooleanType" column="*" />
+		<property name="Sort" type="IntegerType" column="*" />
+		<property name="IsSection" type="BooleanType" column="*" />
+		<property name="IsTemp" type="BooleanType" column="*" />
+	    </properties>
+	</entity>
+	<entity name="KnowledgebasesArticleText" sqlentity="KnowledgebasesArticleText">
+	    <properties>
+		<property name="KnowledgebasesArticlesTextID" type="IdType" column="*" />
+		<property name="KnowledgebasesSectionsArticlesID" type="IntegerType" column="*" />
+		<property name="KnowledgebasesID" type="IntegerType" column="*" />
+		<property name="Text" type="StringType" column="*" />
+		<property name="StartDate" type="DateType" column="*" />
+		<property name="EndDate" type="DateType" column="*" />
+		<property name="Keywords" type="StringType" column="*" />
+	    </properties>
+	</entity>
+	<entity name="SeeAlsoKnowledgebasesSectionsArtcles" sqlentity="SeeAlsoKnowledgebasesSectionsArtcles">
+	    <properties>
+		<property name="KnowledgebasesSectionsArticlesID" type="IntegerType" column="*" />
+		<property name="Title" type="StringType" column="*" />
+		<property name="Id" type="IntegerType" column="*" />
+		<property name="SeeAlsoID" type="IntegerType" column="*" />
+	    </properties>
+	</entity>
+	<entity name="KnowledgebasesSectionsArticlesSeeAlso" sqlentity="KnowledgebasesSectionsArticlesSeeAlso">
+	    <properties>
+		<property name="Id" type="IdType" column="*" />
+		<property name="KnowledgebasesSectionsArticlesID" type="IntegerType" column="*" />
+		<property name="SeeAlsoID" type="IntegerType" column="*" />
+	    </properties>
+	</entity>
+	<entity name="OrgGroupsEmployees" sqlentity="OrgGroupsEmployees">
+	    <properties>
+		<property name="OrgGroupsEmployeesID" type="IdType" column="*" />
+		<property name="OrgGroupsID" type="IntegerType" column="*" />
+		<property name="OrgEmployeesID" type="IntegerType" column="*" />
+		<property name="IsContentManager" type="BooleanType" column="*" />
+	    </properties>
+	</entity>
+	<entity name="Calendars" sqlentity="Calendars">
+	    <properties>
+		<property name="CalendarsID" type="IdType" column="*" />
+		<property name="Description" type="StringType" column="*" />
+		<property name="OrgGroupsID" type="IntegerType" column="*" />
+	    </properties>
+	</entity>
+	<entity name="CalendarsItems" sqlentity="CalendarsItems">
+	    <properties>
+		<property name="CalendarsItemsID" type="IdType" column="*" />
+		<property name="Description" type="StringType" column="*" />
+		<property name="Summary" type="StringType" column="*" />
+		<property name="EventDateStart" type="DateType" column="*" />
+		<property name="EventDateEnd" type="DateType" column="*" />
+		<property name="IsActive" type="BooleanType" column="*" />
+		<property name="CalendarsID" type="IntegerType" column="*" />
+		<property name="IsPublic" type="BooleanType" column="*" />
+	    </properties>
+	</entity>
+	<entity name="CalendarsItemsLocations" sqlentity="CalendarsItemsLocations">
+	    <properties>
+		<property name="CalendarsItemsLocationsID" type="IdType" column="*" />
+		<property name="CalendarsItemsID" type="IntegerType" column="*" />
+		<property name="OrgLocationsID" type="IntegerType" column="*" />
+	    </properties>
+	</entity>
+	<entity name="Directories" sqlentity="Directories">
+	    <properties>
+		<property name="Id" type="IdType" column="*" />
+		<property name="Name" type="StringType" column="*" />
+		<property name="Path" type="StringType" column="*" />
+		<property name="IsPublic" type="BooleanType" column="*" />
+		<property name="OrgGroupID" type="IntegerType" column="*" />
+	    </properties>
+	</entity>
+	<entity name="OrgGroups" sqlentity="OrgGroups">
+	    <properties>
+		<property name="OrgGroupsID" type="IdType" column="*" />
+		<property name="Description" type="StringType" column="*" />
+		<property name="IsActive" type="BooleanType" column="*" />
+	    </properties>
+	</entity>
+	<entity name="GroupEmployeeView" sqlentity="GroupEmployeeView">
+	    <properties>
+		<property name="FirstName" type="StringType" column="*" />
+		<property name="LastName" type="StringType" column="*" />
+		<property name="DepartmentName" type="StringType" column="*" />
+		<property name="GroupIsActive" type="BooleanType" column="*" />
+		<property name="OrgGroupsID" type="IntegerType" column="*" />
+		<property name="LocationName" type="StringType" column="*" />
+		<property name="EmployeeTitle" type="StringType" column="*" />
+		<property name="EmployeeIsActive" type="BooleanType" column="*" />
+		<property name="OrgGroupsEmployeesID" type="IntegerType" column="*" />
+		<property name="OrgEmployeesID" type="IntegerType" column="*" />
+		<property name="Email" type="StringType" column="*" />
+	    </properties>
+	</entity>
+	<entity name="AllEmployeeWithGroupInfoView" sqlentity="AllEmployeeWithGroupInfoView">
+	    <properties>
+		<property name="OrgEmployeesID" type="IntegerType" column="*" />
+		<property name="FirstName" type="StringType" column="*" />
+		<property name="LastName" type="StringType" column="*" />
+		<property name="EmployeeTitle" type="StringType" column="*" />
+		<property name="DepartmentName" type="StringType" column="*" />
+		<property name="LocationName" type="StringType" column="*" />
+		<property name="PhoneNumber" type="StringType" column="*" />
+		<property name="PhoneDescription" type="StringType" column="*" />
+		<property name="Email" type="StringType" column="*" />
+		<property name="DateHired" type="DateType" column="*" />
+		<property name="DateTerminated" type="DateType" column="*" />
+		<property name="Manager" type="IntegerType" column="*" />
+		<property name="EmployeeNumber" type="StringType" column="*" />
+		<property name="Style" type="StringType" column="*" />
+		<property name="IsActive" type="BooleanType" column="*" />
+		<property name="NTUserAccount" type="StringType" column="*" />
+	    </properties>
+	</entity>
+	<entity name="OrgDepartments" sqlentity="OrgDepartments">
+	    <properties>
+		<property name="OrgDepartmentsID" type="IdType" column="*" />
+		<property name="Description" type="StringType" column="*" />
+		<property name="Active" type="BooleanType" column="*" />
+		<property name="OrgDivisionsID" type="IntegerType" column="*" />
+		<property name="GLAccount" type="StringType" column="*" />
+	    </properties>
+	</entity>
+	<entity name="EmployeeControlSubscriptionsView" sqlentity="EmployeeControlSubscriptionsView">
+	    <properties>
+		<property name="Src" type="StringType" column="*" />
+		<property name="Description" type="StringType" column="*" />
+		<property name="ClassSrc" type="StringType" column="*" />
+		<property name="ClassDescription" type="StringType" column="*" />
+		<property name="AllowUnsubscribe" type="BooleanType" column="*" />
+		<property name="SortOrder" type="IntegerType" column="*" />
+		<property name="OrgEmployeesID" type="IntegerType" column="*" />
+		<property name="OrgGroupsID" type="IntegerType" column="*" />
+		<property name="ControlsID" type="IntegerType" column="*" />
+		<property name="ControlSubscriptionsID" type="IntegerType" column="*" />
+		<property name="ItemID" type="IntegerType" column="*" />
+		<property name="ControlsClassesID" type="IntegerType" column="*" />
+	    </properties>
+	</entity>
+	<entity name="EmployeeControlsView" sqlentity="EmployeeControlsView">
+	    <properties>
+		<property name="GroupDescription" type="StringType" column="*" />
+		<property name="ControlDescription" type="StringType" column="*" />
+		<property name="OrgGroupsID" type="IntegerType" column="*" />
+		<property name="ControlsID" type="IntegerType" column="*" />
+	    </properties>
+	</entity>
+	<entity name="GroupNewsArticlesInfo" sqlentity="GroupNewsArticlesInfo">
+	    <properties>
+		<property name="OrgGroupsID" type="IntegerType" column="*" />
+		<property name="ArticleCount" type="IntegerType" column="*" />
+		<property name="LastModified" type="DateType" column="*" />
+	    </properties>
+	</entity>
+	<entity name="ControlsClassesMapView" sqlentity="ControlsClassesMapView">
+	    <properties>
+		<property name="ControlsID" type="IntegerType" column="*" />
+		<property name="Description" type="StringType" column="*" />
+		<property name="ControlsClassesID" type="IntegerType" column="*" />
+	    </properties>
+	</entity>
+	<entity name="ControlSubscriptions" sqlentity="ControlSubscriptions">
+	    <properties>
+		<property name="ControlSubscriptionsID" type="IdType" column="*" />
+		<property name="OrgEmployeesID" type="IntegerType" column="*" />
+		<property name="OrgGroupsID" type="IntegerType" column="*" />
+		<property name="ControlsID" type="IntegerType" column="*" />
+		<property name="SortOrder" type="IntegerType" column="*" />
+		<property name="AllowUnsubscribe" type="BooleanType" column="*" />
+		<property name="DateSubscribed" type="DateType" column="*" />
+		<property name="ControlsClassesID" type="IntegerType" column="*" />
+		<property name="ItemID" type="IntegerType" column="*" />
+	    </properties>
+	</entity>
+	<entity name="EmployeeControlPermissionView" sqlentity="EmployeeControlPermissionView">
+	    <properties>
+		<property name="OrgEmployeeID" type="IntegerType" column="*" />
+		<property name="ControlsID" type="IntegerType" column="*" />
+		<property name="Description" type="StringType" column="*" />
+		<property name="DateStart" type="DateType" column="*" />
+		<property name="DateEnd" type="DateType" column="*" />
+		<property name="EntireCompany" type="BooleanType" column="*" />
+		<property name="Summary" type="StringType" column="*" />
+		<property name="MustShow" type="BooleanType" column="*" />
+	    </properties>
+	</entity>
+	<entity name="EmployeeOtherControlsSubscriptionsView" sqlentity="EmployeeOtherControlsSubscriptionsView">
+	    <properties>
+		<property name="Src" type="StringType" column="*" />
+		<property name="Description" type="StringType" column="*" />
+		<property name="ClassSrc" type="StringType" column="*" />
+		<property name="ClassDescription" type="StringType" column="*" />
+		<property name="AllowUnsubscribe" type="BooleanType" column="*" />
+		<property name="SortOrder" type="IntegerType" column="*" />
+		<property name="OrgEmployeesID" type="IntegerType" column="*" />
+		<property name="ControlsID" type="IntegerType" column="*" />
+		<property name="ControlSubscriptionsID" type="IntegerType" column="*" />
+	    </properties>
+	</entity>
+	<entity name="MenuView" sqlentity="MenuView">
+	    <properties>
+		<property name="ParentMenuItemsID" type="IntegerType" column="*" />
+		<property name="Description" type="StringType" column="*" />
+		<property name="url" type="StringType" column="*" />
+		<property name="SortOrder" type="IntegerType" column="*" />
+		<property name="Target" type="StringType" column="*" />
+		<property name="DateStart" type="DateType" column="*" />
+		<property name="DateEnd" type="DateType" column="*" />
+		<property name="NodeImgSrc" type="StringType" column="*" />
+		<property name="MenuItemsID" type="IntegerType" column="*" />
+	    </properties>
+	</entity>
+	<entity name="OrgPhoneNumbers" sqlentity="OrgPhoneNumbers">
+	    <properties>
+		<property name="OrgPhoneNumbersID" type="IdType" column="*" />
+		<property name="OrgDepartmentsID" type="IntegerType" column="*" />
+		<property name="OrgLocationsID" type="IntegerType" column="*" />
+		<property name="OrgEmployeesID" type="IntegerType" column="*" />
+		<property name="Description" type="StringType" column="*" />
+		<property name="PhoneNumber" type="StringType" column="*" />
+	    </properties>
+	</entity>
+	<entity name="MustShowControlView" sqlentity="MustShowControlView">
+	    <properties>
+		<property name="Src" type="StringType" column="*" />
+		<property name="Description" type="StringType" column="*" />
+		<property name="Summary" type="StringType" column="*" />
+		<property name="ClassSrc" type="StringType" column="*" />
+		<property name="MustShow" type="BooleanType" column="*" />
+		<property name="DateStart" type="DateType" column="*" />
+		<property name="DateEnd" type="DateType" column="*" />
+		<property name="ControlsID" type="IntegerType" column="*" />
+	    </properties>
+	</entity>
+	<entity name="EmployeeManagerNotes" sqlentity="EmployeeManagerNotes">
+	    <properties>
+		<property name="Id" type="IdType" column="*" />
+		<property name="ChangeEmployeeName" type="StringType" column="*" />
+		<property name="IsAutomated" type="BooleanType" column="*" />
+		<property name="NoteDate" type="DateType" column="*" />
+		<property name="Notes" type="StringType" column="*" />
+		<property name="Type" type="IntegerType" column="*" />
+		<property name="EmployeeID" type="IntegerType" column="*" />
+	    </properties>
+	</entity>
+	<entity name="NewEmployeeRequest" sqlentity="NewEmployeeRequest">
+	    <properties>
+		<property name="Id" type="IdType" column="*" />
+		<property name="HireDate" type="DateType" column="*" />
+		<property name="Text" type="StringType" column="*" />
+		<property name="EmployeeID" type="IntegerType" column="*" />
+	    </properties>
+	</entity>
+    </entities>
+    <!--
+    
+    Database/SqlEntity definitions
+    
+-->
+    <databases user="public" generateonlyprimarydeletestoredproc="True" generateviewscript="False"
+	generatetablescript="True" useview="False" generateprocsforforeignkeys="True"
+	generateinsertstoredprocscript="False" generateupdatestoredprocscript="False" generatedeletestoredprocscript="False"
+	generateselectstoredprocscript="False" allowupdateofprimarykey="False" scriptforindexedviews="False"
+	commandtimeout="30" defaultdirtyread="True" allowinsert="True" allowupdate="True" updatechangedonly="True"
+	allowdelete="True">
+	<database name="scorecard" key="DatabaseEnum.ORDERDB">
+	    <sqlentities>
+		<sqlentity name="Locale">
+		    <columns>
+			<column name="LocaleCode" sqltype="int" required="True" />
+			<column name="LocaleDescription" sqltype="varchar" length="100" required="True" />
+		    </columns>
+		    <constraints>
+			<constraint name="PK_Locale" type="PRIMARY KEY">
+			    <column name="LocaleCode" />
+			</constraint>
+		    </constraints>
+		</sqlentity>
+		<sqlentity name="User">
+		    <columns>
+			<column name="UserId" sqltype="int" identity="True" required="True" />
+			<column name="UserLogin" sqltype="varchar" length="100" required="True" />
+			<column name="UserLocale" sqltype="int" required="True" />
+		    </columns>
+		    <constraints>
+			<constraint name="PK_User" type="PRIMARY KEY">
+			    <column name="UserId" />
+			</constraint>
+			<constraint name="FK_User_Locale" type="FOREIGN KEY" foreignentity="Locale">
+			    <column name="UserLocale" foreigncolumn="LocaleCode" />
+			</constraint>
+		    </constraints>
+		</sqlentity>
+		<sqlentity name="Group">
+		    <columns>
+			<column name="GroupId" sqltype="int" identity="True" required="True" />
+			<column name="GroupName" sqltype="varchar" length="100" required="True" />
+		    </columns>
+		    <constraints>
+			<constraint name="PK_Group" type="PRIMARY KEY">
+			    <column name="GroupId" />
+			</constraint>
+		    </constraints>
+		</sqlentity>
+		<sqlentity name="Role">
+		    <columns>
+			<column name="RoleId" sqltype="int" required="True" />
+			<column name="RoleName" sqltype="varchar" length="100" required="True" />
+		    </columns>
+		    <constraints>
+			<constraint name="PK_Role" type="PRIMARY KEY">
+			    <column name="RoleId" />
+			</constraint>
+		    </constraints>
+		</sqlentity>
+		<sqlentity name="UserRole">
+		    <columns>
+			<column name="UserRoleId" sqltype="int" identity="True" required="True" />
+			<column name="UserId" sqltype="int" required="True" />
+			<column name="RoleId" sqltype="int" required="True" />
+			<column name="PermitDeny" sqltype="int" required="True" />
+		    </columns>
+		    <constraints>
+			<constraint name="PK_UserRole" type="PRIMARY KEY">
+			    <column name="UserRoleId" />
+			</constraint>
+			<constraint name="FK_UserRole_Role" type="FOREIGN KEY" foreignentity="Role">
+			    <column name="RoleId" foreigncolumn="RoleId" />
+			</constraint>
+			<constraint name="FK_UserRole_User" type="FOREIGN KEY" foreignentity="User">
+			    <column name="UserId" foreigncolumn="UserId" />
+			</constraint>
+		    </constraints>
+		</sqlentity>
+		<sqlentity name="GroupRole">
+		    <columns>
+			<column name="GroupRoleId" sqltype="int" identity="True" required="True" />
+			<column name="GroupId" sqltype="int" required="True" />
+			<column name="RoleId" sqltype="int" required="True" />
+			<column name="PermitDeny" sqltype="int" required="True" />
+		    </columns>
+		    <constraints>
+			<constraint name="PK_GroupRole" type="PRIMARY KEY">
+			    <column name="GroupRoleId" />
+			</constraint>
+			<constraint name="FK_GroupRole_Role" type="FOREIGN KEY" foreignentity="Role">
+			    <column name="RoleId" foreigncolumn="RoleId" />
+			</constraint>
+			<constraint name="FK_GroupRole_Group" type="FOREIGN KEY" foreignentity="Group">
+			    <column name="GroupId" foreigncolumn="GroupId" />
+			</constraint>
+		    </constraints>
+		</sqlentity>
+		<sqlentity name="UserGroup">
+		    <columns>
+			<column name="UserGroupId" sqltype="int" identity="True" required="True" />
+			<column name="GroupId" sqltype="int" required="True" />
+			<column name="UserId" sqltype="int" required="True" />
+		    </columns>
+		    <constraints>
+			<constraint name="PK_UserGroup" type="PRIMARY KEY">
+			    <column name="UserGroupId" />
+			</constraint>
+			<constraint name="FK_UserGroup_User" type="FOREIGN KEY" foreignentity="User">
+			    <column name="UserId" foreigncolumn="UserId" />
+			</constraint>
+			<constraint name="FK_UserGroup_Group" type="FOREIGN KEY" foreignentity="Group">
+			    <column name="GroupId" foreigncolumn="GroupId" />
+			</constraint>
+		    </constraints>
+		</sqlentity>
+		<sqlentity name="PasswordQuestions">
+		    <columns>
+			<column name="QuestionId" sqltype="int" required="True" />
+			<column name="Question" sqltype="varchar" length="255" required="True" />
+		    </columns>
+		    <constraints>
+			<constraint name="PK_PasswordQuestions" type="PRIMARY KEY">
+			    <column name="QuestionId" />
+			</constraint>
+		    </constraints>
+		</sqlentity>
+		<sqlentity name="OrderMst" view="OrderMst" generatetablescript="False">
+		    <columns>
+			<column name="OrderNo" sqltype="varchar" length="15" />
+			<column name="OrdStart" sqltype="datetime" />
+			<column name="OrdDate" sqltype="datetime" />
+			<column name="TimeSpend" sqltype="int" />
+			<column name="OrdType" sqltype="varchar" length="24" />
+			<column name="OrdStatus" sqltype="varchar" length="15" />
+			<column name="OrdSource" sqltype="varchar" length="15" />
+			<column name="Demo_Id" sqltype="varchar" length="7" />
+			<column name="Hostess_Id" sqltype="varchar" length="10" />
+			<column name="Ship_To_Fname" sqltype="varchar" length="15" />
+			<column name="Ship_To_Lname" sqltype="varchar" length="15" />
+			<column name="Ship_To_Address1" sqltype="varchar" length="30" />
+			<column name="Ship_To_Address2" sqltype="varchar" length="30" />
+			<column name="Ship_To_City" sqltype="varchar" length="25" />
+			<column name="Ship_To_State" sqltype="char" length="2" />
+			<column name="Ship_To_Zip" sqltype="varchar" length="10" />
+			<column name="ShipDate" sqltype="datetime" />
+			<column name="Order_Note" sqltype="text" />
+			<column name="Operator_Id" sqltype="varchar" length="15" />
+			<column name="Order_Subtotal" sqltype="float" />
+			<column name="Tax_Rate" sqltype="float" />
+			<column name="Tax_Total" sqltype="float" />
+			<column name="Order_Total" sqltype="float" />
+			<column name="Shipping_Handling" sqltype="float" />
+			<column name="Disc_Amount" sqltype="float" />
+			<column name="Amount_Paid" sqltype="float" />
+			<column name="Balance" sqltype="float" />
+			<column name="Continious" sqltype="int" />
+			<column name="Workshop_Date" sqltype="datetime" />
+			<column name="Allow_Host_Free" sqltype="float" />
+			<column name="Allow_Host_Disc" sqltype="float" />
+			<column name="Total_Host_Free" sqltype="float" />
+			<column name="Total_Host_Disc" sqltype="float" />
+			<column name="Difference" sqltype="float" />
+			<column name="Host_Ship_Handl" sqltype="float" />
+			<column name="Host_Tax" sqltype="float" />
+			<column name="Host_Total_Due" sqltype="float" />
+			<column name="Guests_No" sqltype="int" />
+			<column name="Comm_Date" sqltype="datetime" />
+			<column name="Last_Ship_Date" sqltype="datetime" />
+			<column name="Last_Shipping_No" sqltype="float" />
+			<column name="Date_Canceled" sqltype="datetime" />
+			<column name="Back_Order_Count" sqltype="int" />
+			<column name="Net_Unshipped_Amt" sqltype="float" />
+			<column name="Refund_Amt" sqltype="float" />
+			<column name="Comm_Amt" sqltype="float" />
+			<column name="Batch_Id" sqltype="int" />
+			<column name="DPCTaxDate" sqltype="datetime" />
+			<column name="GeoCode" sqltype="char" length="10" />
+			<column name="InOut" sqltype="char" length="1" />
+			<column name="LocalCode1" sqltype="char" length="2" />
+			<column name="LocalCode2" sqltype="char" length="2" />
+			<column name="LocalCode3" sqltype="char" length="2" />
+			<column name="LocalCode4" sqltype="char" length="2" />
+			<column name="LocalCode5" sqltype="char" length="2" />
+			<column name="HostessTaxableAmount" sqltype="float" />
+			<column name="TaxableAmount" sqltype="float" />
+			<column name="SendToDemo" sqltype="char" length="1" />
+			<column name="FirstSaveDate" sqltype="datetime" />
+			<column name="LastSaveDate" sqltype="datetime" />
+			<column name="Ship_To_Email" sqltype="varchar" length="100" />
+			<column name="Promo_Kit" sqltype="char" length="1" />
+			<column name="Exp_Shipping" sqltype="float" />
+			<column name="ShipMeth" sqltype="int" />
+			<column name="ApoOrder" sqltype="char" length="1" />
+			<column name="PST_QST" sqltype="money" />
+			<column name="GST_HST" sqltype="money" />
+			<column name="PST_QST_Rate" sqltype="money" />
+			<column name="GST_HST_Rate" sqltype="money" />
+			<column name="PST_QST_TaxableAmount" sqltype="money" />
+			<column name="GST_HST_TaxableAmount" sqltype="money" />
+			<column name="PST_QST_HostessTaxableAmount" sqltype="money" />
+			<column name="GST_HST_HostessTaxableAmount" sqltype="money" />
+			<column name="PST_QST_Hostess" sqltype="money" />
+			<column name="GST_HST_Hostess" sqltype="money" />
+			<column name="CountryOfSale" sqltype="char" length="2" />
+			<column name="GLPostedDate" sqltype="datetime" />
+			<column name="OriginalOrderNo" sqltype="varchar" length="15" />
+			<column name="RestockFee" sqltype="float" />
+			<column name="PickAfter" sqltype="datetime" />
+			<column name="AllWaitReturn" sqltype="char" length="1" />
+			<column name="FreeShipping" sqltype="char" length="1" />
+			<column name="IsSupplyLineOrder" sqltype="bit" />
+			<column name="IsPreOrder" sqltype="char" length="1" />
+		    </columns>
+		    <constraints>
+			<constraint name="PK_OrderNo" type="PRIMARY KEY" clustered="False">
+			    <column name="OrderNo" />
+			</constraint>
+		    </constraints>
+		</sqlentity>
+		<sqlentity name="Event" view="Event" generatetablescript="False">
+		    <columns>
+			<column name="Event_Id" sqltype="int" />
+			<column name="Description" sqltype="char" length="80" />
+			<column name="Internal" sqltype="int" />
+			<column name="External" sqltype="int" />
+			<column name="CloseDate" sqltype="datetime" />
+			<column name="StartDate" sqltype="datetime" />
+			<column name="DemoItemId" sqltype="char" length="20" />
+			<column name="GuestItemId" sqltype="char" length="20" />
+			<column name="MaxRegistrations" sqltype="int" />
+			<column name="Warning" sqltype="varchar" length="5000" />
+			<column name="MinDemoLevel" sqltype="int" />
+			<column name="SpouseOnly" sqltype="int" />
+			<column name="MaxGuests" sqltype="int" />
+			<column name="AskTerms" sqltype="char" length="1" />
+			<column name="AskColor" sqltype="char" length="1" />
+			<column name="DemoFirstNameOnly" sqltype="char" length="1" />
+			<column name="AskDemoMobility" sqltype="char" length="1" />
+			<column name="AskDemoHearing" sqltype="char" length="1" />
+			<column name="JointDemoOnly" sqltype="char" length="1" />
+			<column name="ShowFinalSplash" sqltype="char" length="1" />
+			<column name="NoGuestMeal" sqltype="char" length="1" />
+			<column name="DependentEvent" sqltype="int" />
+			<column name="AllowCheckPayment" sqltype="char" length="1" />
+			<column name="NoGuestPeriod" sqltype="int" />
+			<column name="CountryCode" sqltype="char" length="2" />
+			<column name="EventType" sqltype="char" length="1" />
+			<column name="EventDate" sqltype="datetime" />
+			<column name="GLPostedDate" sqltype="datetime" />
+			<column name="CancelFeeItemId" sqltype="varchar" length="20" />
+			<column name="GuestCancelFeeItemId" sqltype="varchar" length="20" />
+		    </columns>
+		    <constraints>
+			<constraint name="PK_EventId" clustered="False" type="PRIMARY KEY">
+			    <column name="Event_id" />
+			</constraint>
+		    </constraints>
+		</sqlentity>
+		<sqlentity name="DemoMast" generatetablescript="False">
+		    <columns>
+			<column name="Demo_Id" sqltype="varchar" length="7" required="True" />
+			<column name="Sponsor_Id" sqltype="varchar" length="7" required="True" />
+			<column name="BusEntityName" sqltype="varchar" length="150" />
+			<column name="TIN" sqltype="varchar" length="15" />
+			<column name="BusEntityTypeID" sqltype="int" />
+			<column name="CountryOfOrigin" sqltype="char" length="2" />
+			<column name="StateOfOrigin" sqltype="char" length="2" />
+			<column name="BusEntityEffectDate" sqltype="datetime" />
+			<column name="AppToOpDate" sqltype="datetime" />
+			<column name="NoticeOfIntentDate" sqltype="datetime" />
+			<column name="DuePerformDate" sqltype="datetime" />
+			<column name="AuthorizationDate" sqltype="datetime" />
+			<column name="FormationDate" sqltype="datetime" />
+			<!--
+			    Unused fields.  Those marked required will need to have defaults specified for them in the databse.
+			<column name="Ssn" sqltype="varchar" length="11" required="True" />
+			<column name="Fname" sqltype="varchar" length="15" required="True"  />
+			<column name="Minitial" sqltype="char" length="1" required="True"  />
+			<column name="Lname" sqltype="varchar" length="15" required="True"  />
+			<column name="Address1" sqltype="varchar" length="30" />
+			<column name="Address2" sqltype="varchar" length="30" />
+			<column name="City" sqltype="varchar" length="25" />
+			<column name="State" sqltype="char" length="2" required="True"  />
+			<column name="County" sqltype="varchar" length="10" />
+			<column name="Zip" sqltype="varchar" length="10" />
+			<column name="Zip4" sqltype="varchar" length="4" />
+			-->
+			<column name="Ship_To_Address1" sqltype="varchar" length="30" />
+			<column name="Ship_To_Address2" sqltype="varchar" length="30" />
+			<column name="Ship_To_City" sqltype="varchar" length="25" />
+			<column name="Ship_To_State" sqltype="char" length="2" required="True" />
+			<column name="Ship_To_County" sqltype="varchar" length="25" />
+			<column name="Ship_To_Zip" sqltype="varchar" length="10" />
+			<column name="Ship_To_Zip4" sqltype="varchar" length="4" />
+			<!--
+			    Unused fields.  Those marked required will need to have defaults specified for them in the databse.
+			<column name="Phone_Home" sqltype="varchar" length="14" />
+			<column name="Phone_Work" sqltype="varchar" length="21" />
+			-->
+			<column name="Demo_Lvl" sqltype="char" length="2" required="True" />
+			<column name="Status" sqltype="char" length="1" required="True" />
+			<column name="Status_Date" sqltype="datetime" />
+			<!--
+			    Unused fields.  Those marked required will need to have defaults specified for them in the databse.
+			<column name="To_Be_Inactive_Date" sqltype="datetime" />
+			-->
+			<column name="Last_Emp_Name" sqltype="varchar" length="15" />
+			<column name="Last_Change_Date" sqltype="datetime" />
+			<!--
+			    Unused fields.  Those marked required will need to have defaults specified for them in the databse.
+			<column name="Ptd_Sales" sqltype="float" required="True"  />
+			<column name="Mtd_Sales" sqltype="float" required="True"  />
+			<column name="Ytd_Sales" sqltype="float" required="True"  />
+			<column name="Ptd_Comm" sqltype="float" required="True"  />
+			<column name="Mtd_Host_Disc" sqltype="float" required="True"  />
+			<column name="Mtd_Group1" sqltype="float" required="True"  />
+			<column name="Mtd_Group2" sqltype="float" required="True"  />
+			<column name="Mtd_Group3" sqltype="float" required="True"  />
+			-->
+			<column name="Fax" sqltype="varchar" length="14" />
+			<!--
+			    Unused fields.  Those marked required will need to have defaults specified for them in the databse.
+			<column name="Email_Old" sqltype="varchar" length="30" />
+			-->
+			<column name="Starter_Kit_Ordered" sqltype="bit" required="True" />
+			<column name="Starter_Kit" sqltype="int" />
+			<column name="Startdate" sqltype="datetime" />
+			<!--
+			    Unused fields.  Those marked required will need to have defaults specified for them in the databse.
+			<column name="Joint" sqltype="bit" required="True"  />
+			<column name="Jointlname" sqltype="varchar" length="15" />
+			<column name="Jointfname" sqltype="varchar" length="15" />
+			<column name="Jointmiddle" sqltype="char" length="1" required="True"  />
+			<column name="Current_Tax_Rate" sqltype="float" required="True"  />
+			-->
+			<column name="Promo_Flag" sqltype="char" length="1" required="True" />
+			<!--
+			    Unused fields.  Those marked required will need to have defaults specified for them in the databse.
+			<column name="Batch_Id" sqltype="int" required="True"  />
+			<column name="Ytd_Personal_Sales" sqltype="float" required="True"  />
+			<column name="Ytd_Group_Sales" sqltype="float" required="True"  />
+			<column name="Ytd_Host_Disc" sqltype="float" required="True"  />
+			<column name="Ytd_Qualified_Recruits" sqltype="int" required="True"  />
+			<column name="Ytd_Advancements" sqltype="int" required="True"  />
+			<column name="Ytd_Cruise_Points" sqltype="float" required="True"  />
+			-->
+			<column name="Nsf_Warning" sqltype="char" length="1" required="True" />
+			<column name="Password1" sqltype="varchar" length="40" />
+			<!--
+			    Unused fields.  Those marked required will need to have defaults specified for them in the databse.
+			<column name="Password1_End_Date" sqltype="datetime" />
+			<column name="Password2" sqltype="varchar" length="15" />
+			<column name="Password2_End_Date" sqltype="datetime" />
+			<column name="Qualified_Date" sqltype="datetime" />
+			-->
+			<column name="Geocode" sqltype="char" length="10" />
+			<column name="Inout" sqltype="char" length="1" />
+			<column name="Localcode1" sqltype="char" length="2" />
+			<column name="Localcode2" sqltype="char" length="2" />
+			<column name="Localcode3" sqltype="char" length="2" />
+			<column name="Localcode4" sqltype="char" length="2" />
+			<column name="Localcode5" sqltype="char" length="2" />
+			<column name="Sponsor_Up2" sqltype="varchar" length="7" />
+			<column name="Sponsor_Up3" sqltype="varchar" length="7" />
+			<!--
+			    Unused fields.  Those marked required will need to have defaults specified for them in the databse.
+			<column name="Nname" sqltype="varchar" length="15" />
+			-->
+			<column name="Email" sqltype="varchar" length="100" />
+			<column name="Sponsor_Up4" sqltype="varchar" length="7" />
+			<column name="Sponsor_Up5" sqltype="varchar" length="7" />
+			<column name="OrigStartDate" sqltype="datetime" />
+			<column name="OrigDemoId" sqltype="char" length="7" />
+			<column name="Referral" sqltype="bit" required="True" />
+			<column name="LastReferralDate" sqltype="datetime" />
+			<column name="Latitude" sqltype="float" />
+			<column name="Longitude" sqltype="float" />
+			<column name="AccountVerified" sqltype="char" length="1" />
+			<column name="AllElectronic" sqltype="char" length="1" />
+			<column name="AccountVerifiedDate" sqltype="datetime" />
+			<column name="APOStatusDate" sqltype="datetime" />
+			<column name="Pass_Lock" sqltype="bit" />
+			<column name="GeneratedPassword" sqltype="bit" />
+			<column name="APOFlag" sqltype="bit" required="True" />
+			<column name="SmallSupplierFlag" sqltype="bit" required="True" />
+			<column name="ReceivedFreeShip" sqltype="bit" required="True" />
+			<column name="WantPrintedReports" sqltype="bit" required="True" />
+			<column name="QuestionId" sqltype="int" />
+			<column name="Answer" sqltype="varchar" length="1000" />
+		    </columns>
+		    <constraints>
+			<constraint name="PK_Demonstrator" clustered="False" type="PRIMARY KEY">
+			    <column name="Demo_id" />
+			</constraint>
+			<constraint name="FK_Demonstrator_PasswordQuestions" type="FOREIGN KEY" foreignentity="PasswordQuestions">
+			    <column name="QuestionId" foreigncolumn="QuestionId" />
+			</constraint>
+		    </constraints>
+		</sqlentity>
+		<sqlentity name="OrderDtl" view="OrderDtl" generatetablescript="False">
+		    <columns>
+			<column name="Order_Detail_Id" sqltype="varchar" length="11" />
+			<column name="Orderno" sqltype="varchar" length="15" />
+			<column name="Type_Ord" sqltype="varchar" length="4" />
+			<column name="Item_Id" sqltype="varchar" length="20" />
+			<column name="Item_Descrip" sqltype="varchar" length="60" />
+			<column name="Bin_No" sqltype="varchar" length="10" />
+			<column name="Qty_Ordered" sqltype="int" />
+			<column name="Qty_Picked" sqltype="int" />
+			<column name="Qty_Shipped" sqltype="int" />
+			<column name="Shipping_No" sqltype="float" />
+			<column name="Item_Price" sqltype="float" />
+			<column name="Subtotal" sqltype="float" />
+			<column name="Personal" sqltype="bit" />
+			<column name="Tax_Exempt" sqltype="bit" />
+			<column name="Tax_Exempt_No" sqltype="varchar" length="20" />
+			<column name="Ship_Date" sqltype="datetime" />
+			<column name="Kit" sqltype="int" />
+			<column name="Guest_Id_Old" sqltype="int" />
+			<column name="Component_Id" sqltype="char" length="11" />
+			<column name="Guest_Id" sqltype="varchar" length="7" />
+			<column name="Xxxsave" sqltype="int" />
+			<column name="Startkit_Category" sqltype="int" />
+			<column name="GLPostedDate" sqltype="datetime" />
+			<column name="Revenue" sqltype="money" />
+			<column name="DiscountAmount" sqltype="money" />
+			<column name="QtyCanceled" sqltype="int" />
+			<column name="CanceledDate" sqltype="datetime" />
+			<column name="ChargeForItem" sqltype="bit" />
+			<column name="ErrorCode" sqltype="varchar" length="4" />
+			<column name="ErrorDepartment" sqltype="varchar" length="3" />
+			<column name="WaitReturnBeginDate" sqltype="datetime" />
+			<column name="WaitReturnDueDate" sqltype="datetime" />
+			<column name="WaitReturnReceivedDate" sqltype="datetime" />
+			<column name="ItemNotes" sqltype="varchar" length="8000" />
+			<column name="SaveAsShipped" sqltype="bit" />
+			<column name="PurchasedDate" sqltype="datetime" />
+		    </columns>
+		    <constraints>
+			<constraint name="ord_det_id" type="PRIMARY KEY" clustered="False">
+			    <column name="Order_Detail_Id" />
+			</constraint>
+		    </constraints>
+		</sqlentity>
+		<sqlentity name="SessionInformation" generatetablescript="False">
+		    <columns>
+			<column name="SessionId" sqltype="int" required="True" />
+			<column name="DemoId" sqltype="char" length="7" />
+			<column name="UserId" sqltype="char" length="15" />
+			<column name="DateCreated" sqltype="datetime" />
+		    </columns>
+		    <constraints>
+			<constraint name="PK_SessionInformation" type="PRIMARY KEY" clustered="False">
+			    <column name="SessionId" />
+			</constraint>
+		    </constraints>
+		</sqlentity>
+	    </sqlentities>
+	</database>
+	<database name="WebDb" key="DatabaseEnum.INTERNET">
+	    <sqlentities>
+		<sqlentity name="WebConfig" generatetablescript="False">
+		    <columns>
+			<column name="WebConfigID" sqltype="int" identity="True" required="True" />
+			<column name="CreateDate" sqltype="datetime" required="True" />
+			<column name="LeftNavBGColor" sqltype="nvarchar" length="12" required="True" />
+			<column name="HeaderTextColor" sqltype="nvarchar" length="12" required="True" />
+			<column name="MainPic" sqltype="nvarchar" length="100" required="True" />
+			<column name="LeftNavPic" sqltype="nvarchar" length="100" required="True" />
+			<column name="Active" sqltype="bit" required="True" />
+		    </columns>
+		    <constraints>
+			<constraint name="PK_WebDB" type="PRIMARY KEY" clustered="False">
+			    <column name="WebConfigId" />
+			</constraint>
+		    </constraints>
+		</sqlentity>
+	    </sqlentities>
+	</database>
+	<database name="DevIntranet" key="DatabaseEnum.INTRANET">
+	    <sqlentities>
+		<sqlentity name="OrgEmployees" generatetablescript="False">
+		    <columns>
+			<column name="OrgEmployeesID" sqltype="int" identity="true" required="True" />
+			<column name="OrgDepartmentsID" sqltype="int" />
+			<column name="OrgLocationsID" sqltype="int" />
+			<column name="OrgWorkspacesID" sqltype="int" />
+			<column name="FirstName" sqltype="varchar" length="30" required="True" />
+			<column name="LastName" sqltype="varchar" length="30" required="True" />
+			<column name="NTUserAccount" sqltype="varchar" length="20" />
+			<column name="IsActive" sqltype="bit" required="True" />
+			<column name="Email" sqltype="varchar" length="30" />
+			<column name="EmployeeTitle" sqltype="varchar" length="100" />
+			<column name="DateHired" sqltype="datetime" />
+			<column name="DateTerminated" sqltype="datetime" />
+			<column name="Manager" sqltype="int" />
+			<column name="EmployeeNumber" sqltype="varchar" length="30" />
+			<column name="Style" sqltype="varchar" length="50" />
+			<column name="Map" sqltype="varchar" length="50" />
+			<column name="MapX" sqltype="float" />
+			<column name="MapY" sqltype="float" />
+		    </columns>
+		</sqlentity>
+		<sqlentity name="NewsView" generatetablescript="False">
+		    <columns>
+			<column name="Title" sqltype="varchar" length="200" required="True" />
+			<column name="Summary" sqltype="varchar" length="500" required="True" />
+			<column name="DateStart" sqltype="datetime" required="True" />
+			<column name="DateEnd" sqltype="datetime" />
+			<column name="IsPublic" sqltype="bit" required="True" />
+			<column name="DateModified" sqltype="datetime" required="True" />
+			<column name="LastModifiedFirstName" sqltype="varchar" length="30" required="True" />
+			<column name="LastModifiedLastName" sqltype="varchar" length="30" required="True" />
+			<column name="CreateFirstName" sqltype="varchar" length="30" required="True" />
+			<column name="CreateLastName" sqltype="varchar" length="30" required="True" />
+			<column name="OrgGroupsID" sqltype="int" required="True" />
+			<column name="NewsImage" sqltype="varchar" length="50" />
+			<column name="TemplateType" sqltype="int" />
+			<column name="NewsArticlesID" sqltype="int" required="True" />
+			<column name="Text" sqltype="text" required="True" />
+			<column name="LastModifiedID" sqltype="int" required="True" />
+		    </columns>
+		</sqlentity>
+		<sqlentity name="NewsArticlesLocations" generatetablescript="False">
+		    <columns>
+			<column name="NewsArticlesLocationsID" sqltype="int" identity="true" required="True" />
+			<column name="NewsArticlesID" sqltype="int" required="True" />
+			<column name="OrgLocationsID" sqltype="int" required="True" />
+		    </columns>
+		</sqlentity>
+		<sqlentity name="OrgLocations" generatetablescript="False">
+		    <columns>
+			<column name="OrgLocationsID" sqltype="int" identity="true" required="True" />
+			<column name="Description" sqltype="varchar" length="100" required="True" />
+			<column name="Address1" sqltype="varchar" length="200" />
+			<column name="Address2" sqltype="varchar" length="200" />
+			<column name="City" sqltype="varchar" length="50" />
+			<column name="State" sqltype="varchar" length="20" />
+			<column name="Country" sqltype="varchar" length="50" />
+			<column name="PostCode" sqltype="varchar" length="15" />
+			<column name="Prefix" sqltype="varchar" length="10" />
+			<column name="Image" sqltype="varchar" length="50" />
+		    </columns>
+		</sqlentity>
+		<sqlentity name="NewsArticlesLocationsName" generatetablescript="False">
+		    <columns>
+			<column name="Description" sqltype="varchar" length="100" required="True" />
+			<column name="NewsArticlesLocationsID" sqltype="int" required="True" />
+			<column name="NewsArticlesID" sqltype="int" required="True" />
+			<column name="OrgLocationsID" sqltype="int" required="True" />
+		    </columns>
+		</sqlentity>
+		<sqlentity name="NewsArticles" generatetablescript="False">
+		    <columns>
+			<column name="NewsArticlesID" sqltype="int" identity="true" required="True" />
+			<column name="OrgGroupsID" sqltype="int" required="True" />
+			<column name="Title" sqltype="varchar" length="200" required="True" />
+			<column name="Summary" sqltype="varchar" length="500" required="True" />
+			<column name="Text" sqltype="text" required="True" />
+			<column name="DateCreated" sqltype="datetime" required="True" />
+			<column name="DateModified" sqltype="datetime" required="True" />
+			<column name="DateStart" sqltype="datetime" required="True" />
+			<column name="DateEnd" sqltype="datetime" />
+			<column name="OrgEmployeesID" sqltype="int" required="True" />
+			<column name="IsArchived" sqltype="bit" required="True" />
+			<column name="AllowDiscussion" sqltype="bit" required="True" />
+			<column name="IsNew" sqltype="bit" required="True" />
+			<column name="IsPublic" sqltype="bit" required="True" />
+			<column name="LastModifiedOrgEmployeesID" sqltype="int" required="True" />
+			<column name="NewsImage" sqltype="varchar" length="50" />
+			<column name="TemplateType" sqltype="int" />
+		    </columns>
+		</sqlentity>
+		<sqlentity name="Knowledgebases" generatetablescript="False">
+		    <columns>
+			<column name="KnowledgebasesID" sqltype="int" identity="true" required="True" />
+			<column name="Description" sqltype="varchar" length="150" required="True" />
+			<column name="DateStart" sqltype="smalldatetime" required="True" />
+			<column name="DateEnd" sqltype="smalldatetime" required="True" />
+			<column name="IsPublic" sqltype="bit" required="True" />
+			<column name="OrgGroupsID" sqltype="int" required="True" />
+		    </columns>
+		</sqlentity>
+		<sqlentity name="ImageLibrary" generatetablescript="False">
+		    <columns>
+			<column name="Id" sqltype="int" identity="true" required="True" />
+			<column name="FileName" sqltype="varchar" length="50" required="True" />
+			<column name="OrgGroupID" sqltype="int" required="True" />
+		    </columns>
+		</sqlentity>
+		<sqlentity name="ControlEdit" generatetablescript="False">
+		    <columns>
+			<column name="IsBasic" sqltype="bit" />
+			<column name="Summary" sqltype="varchar" length="200" required="True" />
+			<column name="Description" sqltype="varchar" length="50" required="True" />
+			<column name="Src" sqltype="varchar" length="50" required="True" />
+			<column name="IconImage" sqltype="varchar" length="50" />
+			<column name="DisplayOnHomePage" sqltype="bit" />
+			<column name="SortOrder" sqltype="int" />
+			<column name="ControlsID" sqltype="int" required="True" />
+			<column name="ControlsGroupsID" sqltype="int" />
+			<column name="OrgGroupID" sqltype="int" required="True" />
+			<column name="ManagePage" sqltype="varchar" length="50" />
+			<column name="EntireCompany" sqltype="bit" />
+			<column name="MustShow" sqltype="bit" />
+		    </columns>
+		</sqlentity>
+		<sqlentity name="ControlsGroups" generatetablescript="False">
+		    <columns>
+			<column name="ControlsGroupsID" sqltype="int" identity="true" required="True" />
+			<column name="ControlsID" sqltype="int" required="True" />
+			<column name="OrgGroupsID" sqltype="int" required="True" />
+			<column name="SortOrder" sqltype="int" required="True" />
+			<column name="DisplayOnHomePage" sqltype="bit" required="True" />
+		    </columns>
+		</sqlentity>
+		<sqlentity name="KnowledgebasesArticlesCountView" generatetablescript="False">
+		    <columns>
+			<column name="KnowledgebasesID" sqltype="int" required="True" />
+			<column name="Description" sqltype="varchar" length="150" required="True" />
+			<column name="ArticlesCount" sqltype="int" />
+			<column name="OrgGroupsID" sqltype="int" required="True" />
+			<column name="IsPublic" sqltype="bit" required="True" />
+		    </columns>
+		</sqlentity>
+		<sqlentity name="OtherGroupsKnowledgebases" generatetablescript="False">
+		    <columns>
+			<column name="KnowledgebasesID" sqltype="int" required="True" />
+			<column name="SubscriptionID" sqltype="int" required="True" />
+			<column name="Description" sqltype="varchar" length="150" required="True" />
+			<column name="IsPublic" sqltype="bit" required="True" />
+			<column name="GroupDescription" sqltype="varchar" length="50" required="True" />
+			<column name="ArticlesCount" sqltype="int" />
+			<column name="OrgGroupID" sqltype="int" required="True" />
+		    </columns>
+		</sqlentity>
+		<sqlentity name="GroupKnowledgebasesSubscriptions" generatetablescript="False">
+		    <columns>
+			<column name="Id" sqltype="int" identity="true" required="True" />
+			<column name="OrgGroupID" sqltype="int" required="True" />
+			<column name="KnowledgebasesID" sqltype="int" required="True" />
+		    </columns>
+		</sqlentity>
+		<sqlentity name="KnowledgebasesSectionsArticles" generatetablescript="False">
+		    <columns>
+			<column name="KnowledgebasesSectionsArticlesID" sqltype="int" identity="true" required="True" />
+			<column name="Title" sqltype="varchar" length="250" required="True" />
+			<column name="DateStart" sqltype="smalldatetime" />
+			<column name="DateEnd" sqltype="smalldatetime" />
+			<column name="ParentID" sqltype="int" required="True" />
+			<column name="KnowledgebasesID" sqltype="int" required="True" />
+			<column name="HasChild" sqltype="bit" required="True" />
+			<column name="PrevKnowledgebasesSectionsID" sqltype="int" required="True" />
+			<column name="NextKnowledgebasesSectionsID" sqltype="int" required="True" />
+			<column name="ListInParentArticle" sqltype="bit" required="True" />
+			<column name="IncludeSummaryinParent" sqltype="bit" required="True" />
+			<column name="Sort" sqltype="int" required="True" />
+			<column name="IsSection" sqltype="bit" required="True" />
+			<column name="IsTemp" sqltype="bit" required="True" />
+		    </columns>
+		</sqlentity>
+		<sqlentity name="KnowledgebasesArticleText" generatetablescript="False">
+		    <columns>
+			<column name="KnowledgebasesArticlesTextID" sqltype="int" identity="true" required="True" />
+			<column name="KnowledgebasesSectionsArticlesID" sqltype="int" required="True" />
+			<column name="KnowledgebasesID" sqltype="int" required="True" />
+			<column name="Text" sqltype="text" required="True" />
+			<column name="StartDate" sqltype="datetime" />
+			<column name="EndDate" sqltype="datetime" />
+			<column name="Keywords" sqltype="varchar" length="300" required="True" />
+		    </columns>
+		</sqlentity>
+		<sqlentity name="SeeAlsoKnowledgebasesSectionsArtcles" generatetablescript="False">
+		    <columns>
+			<column name="KnowledgebasesSectionsArticlesID" sqltype="int" required="True" />
+			<column name="Title" sqltype="varchar" length="250" required="True" />
+			<column name="Id" sqltype="int" required="True" />
+			<column name="SeeAlsoID" sqltype="int" required="True" />
+		    </columns>
+		</sqlentity>
+		<sqlentity name="KnowledgebasesSectionsArticlesSeeAlso" generatetablescript="False">
+		    <columns>
+			<column name="Id" sqltype="int" identity="true" required="True" />
+			<column name="KnowledgebasesSectionsArticlesID" sqltype="int" required="True" />
+			<column name="SeeAlsoID" sqltype="int" required="True" />
+		    </columns>
+		</sqlentity>
+		<sqlentity name="OrgGroupsEmployees" generatetablescript="False">
+		    <columns>
+			<column name="OrgGroupsEmployeesID" sqltype="int" identity="true" required="True" />
+			<column name="OrgGroupsID" sqltype="int" required="True" />
+			<column name="OrgEmployeesID" sqltype="int" required="True" />
+			<column name="IsContentManager" sqltype="bit" required="True" />
+		    </columns>
+		</sqlentity>
+		<sqlentity name="Calendars" generatetablescript="False">
+		    <columns>
+			<column name="CalendarsID" sqltype="int" identity="true" required="True" />
+			<column name="Description" sqltype="varchar" length="50" required="True" />
+			<column name="OrgGroupsID" sqltype="int" required="True" />
+		    </columns>
+		</sqlentity>
+		<sqlentity name="CalendarsItems" generatetablescript="False">
+		    <columns>
+			<column name="CalendarsItemsID" sqltype="int" identity="true" required="True" />
+			<column name="Description" sqltype="varchar" length="100" required="True" />
+			<column name="Summary" sqltype="varchar" length="200" required="True" />
+			<column name="EventDateStart" sqltype="datetime" required="True" />
+			<column name="EventDateEnd" sqltype="datetime" />
+			<column name="IsActive" sqltype="bit" required="True" />
+			<column name="CalendarsID" sqltype="int" required="True" />
+			<column name="IsPublic" sqltype="bit" required="True" />
+		    </columns>
+		</sqlentity>
+		<sqlentity name="CalendarsItemsLocations" generatetablescript="False">
+		    <columns>
+			<column name="CalendarsItemsLocationsID" sqltype="int" identity="true" required="True" />
+			<column name="CalendarsItemsID" sqltype="int" required="True" />
+			<column name="OrgLocationsID" sqltype="int" required="True" />
+		    </columns>
+		</sqlentity>
+		<sqlentity name="Directories" generatetablescript="False">
+		    <columns>
+			<column name="Id" sqltype="int" identity="true" required="True" />
+			<column name="Name" sqltype="varchar" length="50" required="True" />
+			<column name="Path" sqltype="varchar" length="150" required="True" />
+			<column name="IsPublic" sqltype="bit" required="True" />
+			<column name="OrgGroupID" sqltype="int" required="True" />
+		    </columns>
+		</sqlentity>
+		<sqlentity name="OrgGroups" generatetablescript="False">
+		    <columns>
+			<column name="OrgGroupsID" sqltype="int" identity="true" required="True" />
+			<column name="Description" sqltype="varchar" length="50" required="True" />
+			<column name="IsActive" sqltype="bit" required="True" />
+		    </columns>
+		</sqlentity>
+		<sqlentity name="GroupEmployeeView" generatetablescript="False">
+		    <columns>
+			<column name="FirstName" sqltype="varchar" length="30" required="True" />
+			<column name="LastName" sqltype="varchar" length="30" required="True" />
+			<column name="DepartmentName" sqltype="varchar" length="100" required="True" />
+			<column name="GroupIsActive" sqltype="bit" required="True" />
+			<column name="OrgGroupsID" sqltype="int" required="True" />
+			<column name="LocationName" sqltype="varchar" length="100" required="True" />
+			<column name="EmployeeTitle" sqltype="varchar" length="100" />
+			<column name="EmployeeIsActive" sqltype="bit" required="True" />
+			<column name="OrgGroupsEmployeesID" sqltype="int" required="True" />
+			<column name="OrgEmployeesID" sqltype="int" required="True" />
+			<column name="Email" sqltype="varchar" length="30" />
+		    </columns>
+		</sqlentity>
+		<sqlentity name="AllEmployeeWithGroupInfoView" generatetablescript="False">
+		    <columns>
+			<column name="OrgEmployeesID" sqltype="int" required="True" />
+			<column name="FirstName" sqltype="varchar" length="30" required="True" />
+			<column name="LastName" sqltype="varchar" length="30" required="True" />
+			<column name="EmployeeTitle" sqltype="varchar" length="100" />
+			<column name="DepartmentName" sqltype="varchar" length="100" required="True" />
+			<column name="LocationName" sqltype="varchar" length="100" required="True" />
+			<column name="PhoneNumber" sqltype="varchar" length="15" />
+			<column name="PhoneDescription" sqltype="varchar" length="100" />
+			<column name="Email" sqltype="varchar" length="30" />
+			<column name="DateHired" sqltype="datetime" />
+			<column name="DateTerminated" sqltype="datetime" />
+			<column name="Manager" sqltype="int" />
+			<column name="EmployeeNumber" sqltype="varchar" length="30" />
+			<column name="Style" sqltype="varchar" length="50" />
+			<column name="IsActive" sqltype="bit" required="True" />
+			<column name="NTUserAccount" sqltype="varchar" length="20" />
+		    </columns>
+		</sqlentity>
+		<sqlentity name="OrgDepartments" generatetablescript="False">
+		    <columns>
+			<column name="OrgDepartmentsID" sqltype="int" identity="true" required="True" />
+			<column name="Description" sqltype="varchar" length="100" required="True" />
+			<column name="Active" sqltype="bit" required="True" />
+			<column name="OrgDivisionsID" sqltype="int" required="True" />
+			<column name="GLAccount" sqltype="varchar" length="20" />
+		    </columns>
+		</sqlentity>
+		<sqlentity name="EmployeeControlSubscriptionsView" generatetablescript="False">
+		    <columns>
+			<column name="Src" sqltype="varchar" length="50" required="True" />
+			<column name="Description" sqltype="varchar" length="50" required="True" />
+			<column name="ClassSrc" sqltype="varchar" length="50" required="True" />
+			<column name="ClassDescription" sqltype="varchar" length="30" required="True" />
+			<column name="AllowUnsubscribe" sqltype="bit" required="True" />
+			<column name="SortOrder" sqltype="int" required="True" />
+			<column name="OrgEmployeesID" sqltype="int" required="True" />
+			<column name="OrgGroupsID" sqltype="int" required="True" />
+			<column name="ControlsID" sqltype="int" required="True" />
+			<column name="ControlSubscriptionsID" sqltype="int" required="True" />
+			<column name="ItemID" sqltype="int" />
+			<column name="ControlsClassesID" sqltype="int" required="True" />
+		    </columns>
+		</sqlentity>
+		<sqlentity name="EmployeeControlsView" generatetablescript="False">
+		    <columns>
+			<column name="GroupDescription" sqltype="varchar" length="50" required="True" />
+			<column name="ControlDescription" sqltype="varchar" length="50" required="True" />
+			<column name="OrgGroupsID" sqltype="int" required="True" />
+			<column name="ControlsID" sqltype="int" required="True" />
+		    </columns>
+		</sqlentity>
+		<sqlentity name="GroupNewsArticlesInfo" generatetablescript="False">
+		    <columns>
+			<column name="OrgGroupsID" sqltype="int" required="True" />
+			<column name="ArticleCount" sqltype="int" />
+			<column name="LastModified" sqltype="datetime" />
+		    </columns>
+		</sqlentity>
+		<sqlentity name="ControlsClassesMapView" generatetablescript="False">
+		    <columns>
+			<column name="ControlsID" sqltype="int" required="True" />
+			<column name="Description" sqltype="varchar" length="30" required="True" />
+			<column name="ControlsClassesID" sqltype="int" required="True" />
+		    </columns>
+		</sqlentity>
+		<sqlentity name="ControlSubscriptions" generatetablescript="False">
+		    <columns>
+			<column name="ControlSubscriptionsID" sqltype="int" identity="true" required="True" />
+			<column name="OrgEmployeesID" sqltype="int" required="True" />
+			<column name="OrgGroupsID" sqltype="int" required="True" />
+			<column name="ControlsID" sqltype="int" required="True" />
+			<column name="SortOrder" sqltype="int" required="True" />
+			<column name="AllowUnsubscribe" sqltype="bit" required="True" />
+			<column name="DateSubscribed" sqltype="smalldatetime" required="True" />
+			<column name="ControlsClassesID" sqltype="int" required="True" />
+			<column name="ItemID" sqltype="int" />
+		    </columns>
+		</sqlentity>
+		<sqlentity name="EmployeeControlPermissionView" generatetablescript="False">
+		    <columns>
+			<column name="OrgEmployeeID" sqltype="int" required="True" />
+			<column name="ControlsID" sqltype="int" required="True" />
+			<column name="Description" sqltype="varchar" length="50" required="True" />
+			<column name="DateStart" sqltype="smalldatetime" required="True" />
+			<column name="DateEnd" sqltype="smalldatetime" />
+			<column name="EntireCompany" sqltype="bit" />
+			<column name="Summary" sqltype="varchar" length="200" required="True" />
+			<column name="MustShow" sqltype="bit" />
+		    </columns>
+		</sqlentity>
+		<sqlentity name="EmployeeOtherControlsSubscriptionsView" generatetablescript="False">
+		    <columns>
+			<column name="Src" sqltype="varchar" length="50" required="True" />
+			<column name="Description" sqltype="varchar" length="50" required="True" />
+			<column name="ClassSrc" sqltype="varchar" length="50" required="True" />
+			<column name="ClassDescription" sqltype="varchar" length="30" required="True" />
+			<column name="AllowUnsubscribe" sqltype="bit" required="True" />
+			<column name="SortOrder" sqltype="int" required="True" />
+			<column name="OrgEmployeesID" sqltype="int" required="True" />
+			<column name="ControlsID" sqltype="int" required="True" />
+			<column name="ControlSubscriptionsID" sqltype="int" required="True" />
+		    </columns>
+		</sqlentity>
+		<sqlentity name="MenuView" generatetablescript="False">
+		    <columns>
+			<column name="ParentMenuItemsID" sqltype="int" required="True" />
+			<column name="Description" sqltype="varchar" length="50" required="True" />
+			<column name="url" sqltype="varchar" length="300" required="True" />
+			<column name="SortOrder" sqltype="tinyint" required="True" />
+			<column name="Target" sqltype="varchar" length="20" required="True" />
+			<column name="DateStart" sqltype="smalldatetime" required="True" />
+			<column name="DateEnd" sqltype="smalldatetime" />
+			<column name="NodeImgSrc" sqltype="varchar" length="50" />
+			<column name="MenuItemsID" sqltype="int" required="True" />
+		    </columns>
+		</sqlentity>
+		<sqlentity name="OrgPhoneNumbers" generatetablescript="False">
+		    <columns>
+			<column name="OrgPhoneNumbersID" sqltype="int" identity="true" required="True" />
+			<column name="OrgDepartmentsID" sqltype="int" />
+			<column name="OrgLocationsID" sqltype="int" />
+			<column name="OrgEmployeesID" sqltype="int" />
+			<column name="Description" sqltype="varchar" length="100" required="True" />
+			<column name="PhoneNumber" sqltype="varchar" length="15" required="True" />
+		    </columns>
+		</sqlentity>
+		<sqlentity name="MustShowControlView" generatetablescript="False">
+		    <columns>
+			<column name="Src" sqltype="varchar" length="50" required="True" />
+			<column name="Description" sqltype="varchar" length="50" required="True" />
+			<column name="Summary" sqltype="varchar" length="200" required="True" />
+			<column name="ClassSrc" sqltype="varchar" length="50" required="True" />
+			<column name="MustShow" sqltype="bit" />
+			<column name="DateStart" sqltype="smalldatetime" required="True" />
+			<column name="DateEnd" sqltype="smalldatetime" />
+			<column name="ControlsID" sqltype="int" required="True" />
+		    </columns>
+		</sqlentity>
+		<sqlentity name="EmployeeManagerNotes" generatetablescript="False">
+		    <columns>
+			<column name="Id" sqltype="int" identity="true" required="True" />
+			<column name="ChangeEmployeeName" sqltype="varchar" length="150" required="True" />
+			<column name="IsAutomated" sqltype="bit" required="True" />
+			<column name="NoteDate" sqltype="datetime" required="True" />
+			<column name="Notes" sqltype="varchar" length="300" required="True" />
+			<column name="Type" sqltype="int" required="True" />
+			<column name="EmployeeID" sqltype="int" required="True" />
+		    </columns>
+		</sqlentity>
+		<sqlentity name="NewEmployeeRequest" generatetablescript="False">
+		    <columns>
+			<column name="Id" sqltype="int" identity="true" required="True" />
+			<column name="HireDate" sqltype="datetime" required="True" />
+			<column name="Text" sqltype="text" required="True" />
+			<column name="EmployeeID" sqltype="int" required="True" />
+		    </columns>
+		</sqlentity>
+	    </sqlentities>
+	</database>
+    </databases>
+    <enums>
+	<enum name="RoleEnum" integerbased="True">
+	    <value name="ChangeUserRights" code="1">Grants ability to change roles for users.</value>
+	    <value name="AccountManagement" code="2">Grants ability to see and maintain demo credit card/eft accounts.</value>
+	    <value name="ImpersonateDemonstrator" code="3">Grants ability to log on as a demonstrator on the external web site.</value>
+	    <value name="AllowOrdering" code="4">Grants ability to place orders on the external web site.</value>
+	</enum>
+	<enum name="PermitDenyEnum" integerbased="True">
+	    <value name="Permit" code="1" />
+	    <value name="Deny" code="0" />
+	</enum>
+	<enum name="PasswordQuestionEnum" integerbased="True">
+	    <value code="1" name="PasswordQuestionVacation">What is your favorite vacation spot?</value>
+	    <value code="2" name="PasswordQuestionTeacher">What is/was the last name of your first grade teacher?</value>
+	    <value code="3" name="PasswordQuestionGrandfather">What is/was your grandfathers occupation?</value>
+	    <value code="4" name="PasswordQuestionBirthPlace">What is the name of the place where you were born?</value>
+	    <value code="5" name="PasswordQuestionCar">What was the model of your first car?</value>
+	</enum>
+	<enum name="CountryEnum" integerbased="False">
+	    <value name="US" code="US" />
+	    <value name="CA" code="CA" />
+	</enum>
+	<enum name="LocaleEnum" integerbased="True">
+	    <value name="af" code="1">Afrikaans</value>
+	    <value name="af-ZA" code="2">Afrikaans - South Africa</value>
+	    <value name="sq" code="3">Albanian</value>
+	    <value name="sq-AL" code="4">Albanian - Albania</value>
+	    <value name="ar" code="5">Arabic</value>
+	    <value name="ar-DZ" code="6">Arabic - Algeria</value>
+	    <value name="ar-BH" code="7">Arabic - Bahrain</value>
+	    <value name="ar-EG" code="8">Arabic - Egypt</value>
+	    <value name="ar-IQ" code="9">Arabic - Iraq</value>
+	    <value name="ar-JO" code="10">Arabic - Jordan</value>
+	    <value name="ar-KW" code="11">Arabic - Kuwait</value>
+	    <value name="ar-LB" code="12">Arabic - Lebanon</value>
+	    <value name="ar-LY" code="13">Arabic - Libya</value>
+	    <value name="ar-MA" code="14">Arabic - Morocco</value>
+	    <value name="ar-OM" code="15">Arabic - Oman</value>
+	    <value name="ar-QA" code="16">Arabic - Qatar</value>
+	    <value name="ar-SA" code="17">Arabic - Saudi Arabia</value>
+	    <value name="ar-SY" code="18">Arabic - Syria</value>
+	    <value name="ar-TN" code="19">Arabic - Tunisia</value>
+	    <value name="ar-AE" code="20">Arabic - United Arab Emirates</value>
+	    <value name="ar-YE" code="21">Arabic - Yemen</value>
+	    <value name="hy" code="22">Armenian</value>
+	    <value name="hy-AM" code="23">Armenian - Armenia</value>
+	    <value name="az" code="24">Azeri</value>
+	    <value name="az-AZ-Cyrl" code="25">Azeri (Cyrillic) - Azerbaijan</value>
+	    <value name="az-AZ-Latn" code="26">Azeri (Latin) - Azerbaijan</value>
+	    <value name="eu" code="27">Basque</value>
+	    <value name="eu-ES" code="28">Basque - Basque</value>
+	    <value name="be" code="29">Belarusian</value>
+	    <value name="be-BY" code="30">Belarusian - Belarus</value>
+	    <value name="bg" code="31">Bulgarian</value>
+	    <value name="bg-BG" code="32">Bulgarian - Bulgaria</value>
+	    <value name="ca" code="33">Catalan</value>
+	    <value name="ca-ES" code="34">Catalan - Catalan</value>
+	    <value name="zh-HK" code="35">Chinese - Hong Kong SAR</value>
+	    <value name="zh-MO" code="36">Chinese - Macau SAR</value>
+	    <value name="zh-CN" code="37">Chinese - China</value>
+	    <value name="zh-CHS" code="38">Chinese (Simplified)</value>
+	    <value name="zh-SG" code="39">Chinese - Singapore</value>
+	    <value name="zh-TW" code="40">Chinese - Taiwan</value>
+	    <value name="zh-CHT" code="41">Chinese (Traditional)</value>
+	    <value name="hr" code="42">Croatian</value>
+	    <value name="hr-HR" code="43">Croatian - Croatia</value>
+	    <value name="cs" code="44">Czech</value>
+	    <value name="cs-CZ" code="45">Czech - Czech Republic</value>
+	    <value name="da" code="46">Danish</value>
+	    <value name="da-DK" code="47">Danish - Denmark</value>
+	    <value name="div" code="48">Dhivehi</value>
+	    <value name="div-MV" code="49">Dhivehi - Maldives</value>
+	    <value name="nl" code="50">Dutch</value>
+	    <value name="nl-BE" code="51">Dutch - Belgium</value>
+	    <value name="nl-NL" code="52">Dutch - The Netherlands</value>
+	    <value name="en" code="53">English</value>
+	    <value name="en-AU" code="54">English - Australia</value>
+	    <value name="en-BZ" code="55">English - Belize</value>
+	    <value name="en-CA" code="56">English - Canada</value>
+	    <value name="en-CB" code="57">English - Caribbean</value>
+	    <value name="en-IE" code="58">English - Ireland</value>
+	    <value name="en-JM" code="59">English - Jamaica</value>
+	    <value name="en-NZ" code="60">English - New Zealand</value>
+	    <value name="en-PH" code="61">English - Philippines</value>
+	    <value name="en-ZA" code="62">English - South Africa</value>
+	    <value name="en-TT" code="63">English - Trinidad and Tobago</value>
+	    <value name="en-GB" code="64">English - United Kingdom</value>
+	    <value name="en-US" code="65">English - United States</value>
+	    <value name="en-ZW" code="66">English - Zimbabwe</value>
+	    <value name="et" code="67">Estonian</value>
+	    <value name="et-EE" code="68">Estonian - Estonia</value>
+	    <value name="fo" code="69">Faroese</value>
+	    <value name="fo-FO" code="70">Faroese - Faroe Islands</value>
+	    <value name="fa" code="71">Farsi</value>
+	    <value name="fa-IR" code="72">Farsi - Iran</value>
+	    <value name="fi" code="73">Finnish</value>
+	    <value name="fi-FI" code="74">Finnish - Finland</value>
+	    <value name="fr" code="75">French</value>
+	    <value name="fr-BE" code="76">French - Belgium</value>
+	    <value name="fr-CA" code="77">French - Canada</value>
+	    <value name="fr-FR" code="78">French - France</value>
+	    <value name="fr-LU" code="79">French - Luxembourg</value>
+	    <value name="fr-MC" code="80">French - Monaco</value>
+	    <value name="fr-CH" code="81">French - Switzerland</value>
+	    <value name="gl" code="82">Galician</value>
+	    <value name="gl-ES" code="83">Galician - Galician</value>
+	    <value name="ka" code="84">Georgian</value>
+	    <value name="ka-GE" code="85">Georgian - Georgia</value>
+	    <value name="de" code="86">German</value>
+	    <value name="de-AT" code="87">German - Austria</value>
+	    <value name="de-DE" code="88">German - Germany</value>
+	    <value name="de-LI" code="89">German - Liechtenstein</value>
+	    <value name="de-LU" code="90">German - Luxembourg</value>
+	    <value name="de-CH" code="91">German - Switzerland</value>
+	    <value name="el" code="92">Greek</value>
+	    <value name="el-GR" code="93">Greek - Greece</value>
+	    <value name="gu" code="94">Gujarati</value>
+	    <value name="gu-IN" code="95">Gujarati - India</value>
+	    <value name="he" code="96">Hebrew</value>
+	    <value name="he-IL" code="97">Hebrew - Israel</value>
+	    <value name="hi" code="98">Hindi</value>
+	    <value name="hi-IN" code="99">Hindi - India</value>
+	    <value name="hu" code="100">Hungarian</value>
+	    <value name="hu-HU" code="101">Hungarian - Hungary</value>
+	    <value name="is" code="102">Icelandic</value>
+	    <value name="is-IS" code="103">Icelandic - Iceland</value>
+	    <value name="id" code="104">Indonesian</value>
+	    <value name="id-ID" code="105">Indonesian - Indonesia</value>
+	    <value name="it" code="106">Italian</value>
+	    <value name="it-IT" code="107">Italian - Italy</value>
+	    <value name="it-CH" code="108">Italian - Switzerland</value>
+	    <value name="ja" code="109">Japanese</value>
+	    <value name="ja-JP" code="110">Japanese - Japan</value>
+	    <value name="kn" code="111">Kannada</value>
+	    <value name="kn-IN" code="112">Kannada - India</value>
+	    <value name="kk" code="113">Kazakh</value>
+	    <value name="kk-KZ" code="114">Kazakh - Kazakhstan</value>
+	    <value name="kok" code="115">Konkani</value>
+	    <value name="kok-IN" code="116">Konkani - India</value>
+	    <value name="ko" code="117">Korean</value>
+	    <value name="ko-KR" code="118">Korean - Korea</value>
+	    <value name="ky" code="119">Kyrgyz</value>
+	    <value name="ky-KZ" code="120">Kyrgyz - Kazakhstan</value>
+	    <value name="lv" code="121">Latvian</value>
+	    <value name="lv-LV" code="122">Latvian - Latvia</value>
+	    <value name="lt" code="123">Lithuanian</value>
+	    <value name="lt-LT" code="124">Lithuanian - Lithuania</value>
+	    <value name="mk" code="125">Macedonian</value>
+	    <value name="mk-MK" code="126">Macedonian - FYROM</value>
+	    <value name="ms" code="127">Malay</value>
+	    <value name="ms-BN" code="128">Malay - Brunei</value>
+	    <value name="ms-MY" code="129">Malay - Malaysia</value>
+	    <value name="mr" code="130">Marathi</value>
+	    <value name="mr-IN" code="131">Marathi - India</value>
+	    <value name="mn" code="132">Mongolian</value>
+	    <value name="mn-MN" code="133">Mongolian - Mongolia</value>
+	    <value name="no" code="134">Norwegian</value>
+	    <value name="nb-NO" code="135">Norwegian (Bokmsl) - Norway</value>
+	    <value name="nn-NO" code="136">Norwegian (Nynorsk) - Norway</value>
+	    <value name="pl" code="137">Polish</value>
+	    <value name="pl-PL" code="138">Polish - Poland</value>
+	    <value name="pt" code="139">Portuguese</value>
+	    <value name="pt-BR" code="140">Portuguese - Brazil</value>
+	    <value name="pt-PT" code="141">Portuguese - Portugal</value>
+	    <value name="pa" code="142">Punjabi</value>
+	    <value name="pa-IN" code="143">Punjabi - India</value>
+	    <value name="ro" code="144">Romanian</value>
+	    <value name="ro-RO" code="145">Romanian - Romania</value>
+	    <value name="ru" code="146">Russian</value>
+	    <value name="ru-RU" code="147">Russian - Russia</value>
+	    <value name="sa" code="148">Sanskrit</value>
+	    <value name="sa-IN" code="149">Sanskrit - India</value>
+	    <value name="sr-SP-Cyrl" code="150">Serbian (Cyrillic) - Serbia</value>
+	    <value name="sr-SP-Latn" code="151">Serbian (Latin) - Serbia</value>
+	    <value name="sk" code="152">Slovak</value>
+	    <value name="sk-SK" code="153">Slovak - Slovakia</value>
+	    <value name="sl" code="154">Slovenian</value>
+	    <value name="sl-SI" code="155">Slovenian - Slovenia</value>
+	    <value name="es" code="156">Spanish</value>
+	    <value name="es-AR" code="157">Spanish - Argentina</value>
+	    <value name="es-BO" code="158">Spanish - Bolivia</value>
+	    <value name="es-CL" code="159">Spanish - Chile</value>
+	    <value name="es-CO" code="160">Spanish - Colombia</value>
+	    <value name="es-CR" code="161">Spanish - Costa Rica</value>
+	    <value name="es-DO" code="162">Spanish - Dominican Republic</value>
+	    <value name="es-EC" code="163">Spanish - Ecuador</value>
+	    <value name="es-SV" code="164">Spanish - El Salvador</value>
+	    <value name="es-GT" code="165">Spanish - Guatemala</value>
+	    <value name="es-HN" code="166">Spanish - Honduras</value>
+	    <value name="es-MX" code="167">Spanish - Mexico</value>
+	    <value name="es-NI" code="168">Spanish - Nicaragua</value>
+	    <value name="es-PA" code="169">Spanish - Panama</value>
+	    <value name="es-PY" code="170">Spanish - Paraguay</value>
+	    <value name="es-PE" code="171">Spanish - Peru</value>
+	    <value name="es-PR" code="172">Spanish - Puerto Rico</value>
+	    <value name="es-ES" code="173">Spanish - Spain</value>
+	    <value name="es-UY" code="174">Spanish - Uruguay</value>
+	    <value name="es-VE" code="175">Spanish - Venezuela</value>
+	    <value name="sw" code="176">Swahili</value>
+	    <value name="sw-KE" code="177">Swahili - Kenya</value>
+	    <value name="sv" code="178">Swedish</value>
+	    <value name="sv-FI" code="179">Swedish - Finland</value>
+	    <value name="sv-SE" code="180">Swedish - Sweden</value>
+	    <value name="syr" code="181">Syriac</value>
+	    <value name="syr-SY" code="182">Syriac - Syria</value>
+	    <value name="ta" code="183">Tamil</value>
+	    <value name="ta-IN" code="184">Tamil - India</value>
+	    <value name="tt" code="185">Tatar</value>
+	    <value name="tt-RU" code="186">Tatar - Russia</value>
+	    <value name="te" code="187">Telugu</value>
+	    <value name="te-IN" code="188">Telugu - India</value>
+	    <value name="th" code="189">Thai</value>
+	    <value name="th-TH" code="190">Thai - Thailand</value>
+	    <value name="tr" code="191">Turkish</value>
+	    <value name="tr-TR" code="192">Turkish - Turkey</value>
+	    <value name="uk" code="193">Ukrainian</value>
+	    <value name="uk-UA" code="194">Ukrainian - Ukraine</value>
+	    <value name="ur" code="195">Urdu</value>
+	    <value name="ur-PK" code="196">Urdu - Pakistan</value>
+	    <value name="uz" code="197">Uzbek</value>
+	    <value name="uz-UZ-Cyrl" code="198">Uzbek (Cyrillic) - Uzbekistan</value>
+	    <value name="uz-UZ-Latn" code="199">Uzbek (Latin) - Uzbekistan</value>
+	    <value name="vi" code="200">Vietnamese</value>
+	    <value name="vi-VN" code="201">Vietnamese - Vietnam</value>
+	</enum>
+    </enums>
+    <collections generateall="true"></collections>
+</DataTierGenerator>

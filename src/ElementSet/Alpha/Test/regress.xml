@@ -1,0 +1,308 @@
+<?xml version="1.0" ?>
+<?dtg parser="Spring2.DataTierGenerator.Parser.XmlParser,Spring2.DataTierGenerator.Alpha" ?>
+<DataTierGenerator xmlns:xinc="http://www.w3.org/1999/XML/xinclude">
+    <generator class="Spring2.DataTierGenerator.Generator.GeneratorTaskManager,Spring2.DataTierGenerator">
+	<writer name="region" class="Spring2.DataTierGenerator.Generator.Writer.RegionMergeWriter,Spring2.DataTierGenerator">
+	    <option name="begin marker" value="#region" />
+	    <option name="end marker" value="#endregion" />
+	</writer>
+	<writer name="c#" class="Spring2.DataTierGenerator.Generator.Writer.CSharpCodeWriter,Spring2.DataTierGenerator">
+	    <option name="BraceStyle" value="c" />
+	</writer>
+	<styler name="c#" class="Spring2.DataTierGenerator.Generator.Styler.CSharpStyler,Spring2.DataTierGenerator">
+	    <option name="BraceStyle" value="c" />
+	</styler>
+	<tasks>
+	    <task name="dataobject" element="entity" template="Template\dataobject.vm" directory="DataObject"
+		filenameformat="{0}Data.cs" writer="region" styler="c#"/>
+	    <task name="dao" element="entity" template="Template\DAO.vm" directory="DAO" filenameformat="{0}DAO.cs" writer="region" styler="c#"/>
+	    <task name="enum" element="enum" template="Template\enum.vm" directory="Types" filenameformat="{0}.cs" writer="region" styler="c#"/>
+	    <task name="collection" element="collection" template="Template\collection.vm" directory="DataObject"
+		filenameformat="{0}.cs" writer="region" styler="c#"/>
+	    <task name="table" element="sqlentity" template="Template\sql_table.vm" directory="sql\table"
+		filenameformat="{0}.table.sql" writer="region" />
+	    <task name="view" element="sqlentity" template="Template\sql_view.vm" directory="sql\view"
+		filenameformat="vw{0}.view.sql" writer="region" />
+	    <task name="delete procs" element="sqlentity" template="Template\sql_delete.vm" directory="sql\proc"
+		filenameformat="sp{0}_Delete.proc.sql" writer="region" />
+	    <task name="insert procs" element="sqlentity" template="Template\sql_insert.vm" directory="sql\proc"
+		filenameformat="sp{0}_Insert.proc.sql" writer="region" />
+	    <task name="update procs" element="sqlentity" template="Template\sql_update.vm" directory="sql\proc"
+		filenameformat="sp{0}_Update.proc.sql" writer="region" />
+	</tasks>
+	<tools>
+	    <tool name="sql" class="Spring2.DataTierGenerator.Tool.MSSqlServerTool,Spring2.DataTierGenerator.Tool" />
+	</tools>
+    </generator>
+    <!-- -->
+    <config>
+	<setting name="RootDirectory" value=".\RegressTest\" />
+	<setting name="DaoClassDirectory" value="Dao" />
+	<setting name="DoClassDirectory" value="DataObject" />
+	<setting name="TypesClassDirectory" value="Types" />
+	<setting name="GenerateDataObjectClasses" value="True" />
+	<setting name="RootNameSpace" value="Spring2.DataTierGenerator" />
+	<setting name="DataObjectBaseClass" value="Spring2.Core.DataObject.DataObject" />
+	<setting name="DAOBaseClass" value="Spring2.Core.DAO.EntityDAO" />
+	<setting name="EnumBaseClass" value="Spring2.Core.Types.EnumDataType" />
+    </config>
+    <!-- -->
+    <sqltypes-ref xinc:href="config\sqltypes.inc.xml" />
+    <types-ref xinc:href="config\types.inc.xml" />
+    <!-- -->
+    <reportextractions></reportextractions>
+    <!--
+		Enum definitions
+		Elements:
+			<enum>
+				<value />
+			</enum>
+
+		Possible enum attributes are:
+			name - type name
+			
+		Possible value attributes are:
+			name - constant name/to string value
+			code - database value
+	-->
+    <enums>
+	<enum name="OrderType">
+	    <value name="Personal" code="P" />
+	    <value name="Firm" code="F" />
+	</enum>
+	<enum name="FormatType">
+	    <value name="HTML" code="H">This is the HTML type</value>
+	    <value name="Text" code="T" />
+	    <value name="JavaScript" code="J" />
+	    <value name="RTF" code="R" />
+	    <value name="None Nada" code="N" />
+	</enum>
+	<enum name="IntEnum" integerbased="true">
+	    <value name="One" code="1" />
+	    <value name="Two" code="2" />
+	</enum>
+    </enums>
+    <!--
+
+Collections (extending CollectionBase)
+    
+    collection attributes:
+    name - 
+    type - type that is being wrapped
+
+-->
+    <collections>
+	<collection name="TestSqlEntityList" type="TestSqlEntityData" />
+    </collections>
+    <!-- user is who the application will login as, this user will be granted permissions if specified -->
+    <databases user="public" generateinsertstoredprocscript="True" generateupdatestoredprocscript="True" generatedeletestoredprocscript="True"
+	generateselectstoredprocscript="False" generatetablescript="True" commandtimeout="20">
+	<database name="database1" key="con1" commandtimeout="25">
+	    <sqlentities>
+		<sqlentity name="Testsqlentity" generatedeletestoredprocscript="False">
+		    <columns>
+			<column name="sqlstringcolumn" sqltype="varchar" required="True" />
+			<column name="sqlintcolumn" sqltype="int" required="True" />
+			<column name="EmailFormat" sqltype="char" length="1" />
+			<column name="addr1" sqltype="varchar" length="50" />
+			<column name="addr2" sqltype="varchar" length="50" />
+			<column name="city" sqltype="varchar" length="50" />
+			<column name="state" sqltype="varchar" length="50" />
+			<column name="zip" sqltype="varchar" length="50" />
+		    </columns>
+		    <constraints>
+			<constraint name="PK_Testsqlentity" type="PRIMARY KEY" clustered="False">
+			    <column name="sqlstringcolumn" />
+			    <column name="sqlintcolumn" />
+			</constraint>
+		    </constraints>
+		</sqlentity>
+		<sqlentity name="Testsqlentity2" commandtimeout="33">
+		    <columns>
+			<column name="sqlstringcolumn" sqltype="varchar" required="True" />
+			<column name="sqlintcolumn" sqltype="int" required="True" />
+			<column name="EmailFormat" sqltype="char" length="1" />
+			<column name="addr1" sqltype="varchar" length="50" />
+			<column name="addr2" sqltype="varchar" length="50" />
+			<column name="city" sqltype="varchar" length="50" />
+			<column name="state" sqltype="varchar" length="50" />
+			<column name="zip" sqltype="varchar" length="50" />
+		    </columns>
+		</sqlentity>
+		<sqlentity name="TestNoProc" commandtimeout="33" generateinsertstoredprocscript="False" generateupdatestoredprocscript="False"
+		    generatedeletestoredprocscript="False">
+		    <columns>
+			<column name="sqlstringcolumn" sqltype="varchar" required="True" />
+			<column name="sqlintcolumn" sqltype="int" required="True" />
+			<column name="EmailFormat" sqltype="char" length="1" />
+			<column name="addr1" sqltype="varchar" length="50" />
+			<column name="addr2" sqltype="varchar" length="50" />
+			<column name="city" sqltype="varchar" length="50" />
+			<column name="state" sqltype="varchar" length="50" />
+			<column name="zip" sqltype="varchar" length="50" />
+		    </columns>
+		</sqlentity>
+		<sqlentity name="TestNoUpdate" commandtimeout="33" generateinsertstoredprocscript="False" generateupdatestoredprocscript="False"
+		    generatedeletestoredprocscript="False" allowinsert="False" allowupdate="False" allowdelete="False"
+		    defaultdirtyread="True">
+		    <columns>
+			<column name="sqlstringcolumn" sqltype="varchar" required="True" />
+			<column name="sqlintcolumn" sqltype="int" required="True" />
+			<column name="EmailFormat" sqltype="char" length="1" />
+			<column name="addr1" sqltype="varchar" length="50" />
+			<column name="addr2" sqltype="varchar" length="50" />
+			<column name="city" sqltype="varchar" length="50" />
+			<column name="state" sqltype="varchar" length="50" />
+			<column name="zip" sqltype="varchar" length="50" />
+		    </columns>
+		</sqlentity>
+		<sqlentity name="TestUpdateChangedOnly" commandtimeout="33" generateinsertstoredprocscript="False"
+		    generateupdatestoredprocscript="False" generatedeletestoredprocscript="False" updatechangedonly="True">
+		    <columns>
+			<column name="sqlstringcolumn" sqltype="varchar" required="True" />
+			<column name="sqlintcolumn" sqltype="int" required="True" />
+			<column name="EmailFormat" sqltype="char" length="1" />
+			<column name="addr1" sqltype="varchar" length="50" />
+			<column name="addr2" sqltype="varchar" length="50" />
+			<column name="city" sqltype="varchar" length="50" />
+			<column name="state" sqltype="varchar" length="50" />
+			<column name="zip" sqltype="varchar" length="50" />
+		    </columns>
+		</sqlentity>
+	    </sqlentities>
+	</database>
+    </databases>
+    <!--
+		Application entites (objects)
+
+				Finder attributes:
+					name - name that must match a name defined in the properties collection
+					sort - a comma seperated list of sql column names.  If one is not specified, one is created using the order of the properties specified
+					unique - a boolean that determines is a single row or a collection of rows is returned/expected.  Default is false;
+					
+					support for Or?
+					support for specifying custom sql?
+		
+	-->
+    <entities>
+	<entity name="Address">
+	    <properties>
+		<property name="Address1" type="StringType" />
+		<property name="Address2" type="StringType" />
+		<property name="City" type="StringType" />
+		<property name="State" type="StringType" />
+		<property name="PostalCode" type="StringType" />
+		<property name="Country" type="StringType" />
+	    </properties>
+	</entity>
+	<entity name="Testsqlentity" sqlentity="Testsqlentity">
+	    <properties>
+		<property name="StringColumn" column="sqlstringcolumn" type="StringType" />
+		<property name="Int32Column" column="sqlintcolumn" type="IdType" />
+		<property name="EmailFormat" type="FormatType" column="*" />
+		<property name="Address" type="AddressData" />
+		<property name="Address.Address1" column="addr1" type="StringType" />
+		<property name="Address.Address2" column="addr2" type="StringType" />
+		<property name="Address.City" column="city" type="StringType" />
+		<property name="Address.State" column="state" type="StringType" />
+		<property name="Address.PostalCode" column="zip" type="StringType" />
+	    </properties>
+	    <finders>
+		<finder name="FindByPostalCode" sort="Int32Column, StringColumn">
+		    <properties>
+			<property name="Address.PostalCode" />
+		    </properties>
+		</finder>
+		<finder name="FindByPK" unique="True">
+		    <properties>
+			<property name="StringColumn" />
+			<property name="Int32Column" />
+		    </properties>
+		</finder>
+	    </finders>
+	</entity>
+	<entity name="Testsqlentity2" sqlentity="Testsqlentity2">
+	    <properties>
+		<property name="Id" type="IdType" />
+	    </properties>
+	</entity>
+	<entity name="TestNoProc" sqlentity="TestNoProc">
+	    <properties>
+		<property name="StringColumn" column="sqlstringcolumn" type="StringType" />
+		<property name="Int32Column" column="sqlintcolumn" type="IdType" />
+		<property name="EmailFormat" type="FormatType" column="*" />
+		<property name="Address" type="AddressData" />
+		<property name="Address.Address1" column="addr1" type="StringType" />
+		<property name="Address.Address2" column="addr2" type="StringType" />
+		<property name="Address.City" column="city" type="StringType" />
+		<property name="Address.State" column="state" type="StringType" />
+		<property name="Address.PostalCode" column="zip" type="StringType" />
+	    </properties>
+	    <finders>
+		<finder name="FindByPostalCode" sort="Int32Column, StringColumn">
+		    <properties>
+			<property name="Address.PostalCode" />
+		    </properties>
+		</finder>
+		<finder name="FindByPK" unique="True">
+		    <properties>
+			<property name="StringColumn" />
+			<property name="Int32Column" />
+		    </properties>
+		</finder>
+	    </finders>
+	</entity>
+	<entity name="TestNoUpdate" sqlentity="TestNoUpdate">
+	    <properties>
+		<property name="StringColumn" column="sqlstringcolumn" type="StringType" />
+		<property name="Int32Column" column="sqlintcolumn" type="IdType" />
+		<property name="EmailFormat" type="FormatType" column="*" />
+		<property name="Address" type="AddressData" />
+		<property name="Address.Address1" column="addr1" type="StringType" />
+		<property name="Address.Address2" column="addr2" type="StringType" />
+		<property name="Address.City" column="city" type="StringType" />
+		<property name="Address.State" column="state" type="StringType" />
+		<property name="Address.PostalCode" column="zip" type="StringType" />
+	    </properties>
+	    <finders>
+		<finder name="FindByPostalCode" sort="Int32Column, StringColumn">
+		    <properties>
+			<property name="Address.PostalCode" />
+		    </properties>
+		</finder>
+		<finder name="FindByPK" unique="True">
+		    <properties>
+			<property name="StringColumn" />
+			<property name="Int32Column" />
+		    </properties>
+		</finder>
+	    </finders>
+	</entity>
+	<entity name="TestUpdateChangedOnly" sqlentity="TestUpdateChangedOnly">
+	    <properties>
+		<property name="StringColumn" column="sqlstringcolumn" type="StringType" />
+		<property name="Int32Column" column="sqlintcolumn" type="IdType" />
+		<property name="EmailFormat" type="FormatType" column="*" />
+		<property name="Address" type="AddressData" />
+		<property name="Address.Address1" column="addr1" type="StringType" />
+		<property name="Address.Address2" column="addr2" type="StringType" />
+		<property name="Address.City" column="city" type="StringType" />
+		<property name="Address.State" column="state" type="StringType" />
+		<property name="Address.PostalCode" column="zip" type="StringType" />
+	    </properties>
+	    <finders>
+		<finder name="FindByPostalCode" sort="Int32Column, StringColumn">
+		    <properties>
+			<property name="Address.PostalCode" />
+		    </properties>
+		</finder>
+		<finder name="FindByPK" unique="True">
+		    <properties>
+			<property name="StringColumn" />
+			<property name="Int32Column" />
+		    </properties>
+		</finder>
+	    </finders>
+	</entity>
+    </entities>
+</DataTierGenerator>
