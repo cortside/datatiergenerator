@@ -18,21 +18,31 @@ namespace Spring2.DataTierGenerator.Generator.Task {
 	private Object element;
 	private TaskElement task;
 	private String name;
+	private Hashtable tools;
+	private Hashtable parameters;
 
 	// NOTES:  instead of a single object, a velocity context could be passed or a hashtable.
 	// Might want to support an ITask interface that has an execute and uses a writer
 
-	public VelocityTask(Configuration options, IList elements, Object element, TaskElement task, String name) : base(options) {
+	public VelocityTask(Configuration options, IList elements, Object element, TaskElement task, String name, Hashtable tools, Hashtable parameters) : base(options) {
 	    this.element = element;
 	    this.task = task;
 	    this.name = name;
 	    this.elements = elements;
+	    this.tools = tools;
+	    this.parameters = parameters;
 	}
 
 	public override void Generate() {
 	    IndentableStringWriter writer = new IndentableStringWriter();
 
 	    VelocityContext vc = new VelocityContext();
+	    foreach(Object key in tools.Keys) {
+		vc.Put(key.ToString(), tools[key]);
+	    }
+	    foreach(Object key in parameters.Keys) {
+		vc.Put(key.ToString(), parameters[key]);
+	    }
 	    vc.Put("dtgversion", this.GetType().Assembly.FullName);
 	    vc.Put("options", options);
 	    vc.Put("element", element);
