@@ -1,6 +1,6 @@
 using System;
 
-namespace Spring2.DataTierGenerator.Core {
+namespace Spring2.DataTierGenerator {
     public class ConfigurationData : Spring2.Core.DataObject.DataObject {
 
 	protected String rootDirectory = String.Empty;

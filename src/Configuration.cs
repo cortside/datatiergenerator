@@ -3,7 +3,7 @@ using System.Reflection;
 using System.Text;
 using System.Xml;
 
-namespace Spring2.DataTierGenerator.Core {
+namespace Spring2.DataTierGenerator {
     public class Configuration : ConfigurationData {
 
 	public Configuration () {
