@@ -1,6 +1,7 @@
 <?xml version="1.0" ?>
+<?dtg parser="Spring2.DataTierGenerator.Parser.XmlParser,Spring2.DataTierGenerator.Alpha" ?>
 <DataTierGenerator xmlns:xinc="http://www.w3.org/1999/XML/xinclude">
-  <generator class="Spring2.DataTierGenerator.Generator.GeneratorTaskManager,Spring2.DataTierGenerator">
+  <generator class="Spring2.DataTierGenerator.Generator.NVelociryGenerator,Spring2.DataTierGenerator">
     <tasks>
       <task name="dataobject" element="entity" template="Template\DataObject.vm" directory="DataObject" filenameformat="{0}Data.cs" />
       <task name="dao" element="entity" template="Template\DAO.vm" directory="DAO" filenameformat="{0}DAO.cs" />
