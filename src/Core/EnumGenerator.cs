@@ -22,8 +22,6 @@ namespace Spring2.DataTierGenerator {
 	    writer.WriteLine();
 	    writer.WriteLine(1, "public class " + type.Name + " : " + options.EnumBaseClass + " {");
 	    writer.WriteLine();
-	    writer.WriteLine(2, "private static readonly IList OPTIONS = new ArrayList();");
-	    writer.WriteLine();
 	    writer.WriteLine(2, "public static readonly new " + type.Name + " DEFAULT = new " + type.Name + "();");
 	    writer.WriteLine(2, "public static readonly new " + type.Name + " UNSET = new " + type.Name + "();");
 	    writer.WriteLine();
