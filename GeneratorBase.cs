@@ -6,51 +6,64 @@ using System.Text;
 using System.Windows.Forms;
 
 namespace Spring2.DataTierGenerator {
-	public class GeneratorBase {
+    public class GeneratorBase {
 
-		protected StreamWriter writer;
-		protected Configuration options;
-		protected Entity entity;
-		protected ArrayList fields;
+	protected Configuration options;
+	protected Entity entity;
 
-		protected GeneratorBase() {
-		}
-
-		public GeneratorBase(Configuration options, StreamWriter writer, Entity entity, ArrayList fields) {
-			this.options = options;
-			this.writer = writer;
-			this.entity = entity;
-			this.fields = fields;
-		}
-
-		/// <summary>
-		/// Internal helper method to write stored procedure to file based on options.SingleFile
-		/// </summary>
-		/// <param name="strStoredProcName">Name of stored procedure (used to name file if not outputting as single file)</param>
-		/// <param name="strStoredProcText">Text to create stored procedure.</param>
-		protected void WriteToFile(String fileName, String text) {
-			StringBuilder sb = new StringBuilder();
-
-			if (!options.SingleFile) {
-				if (File.Exists(fileName))
-					File.Delete(fileName);
-				writer = new StreamWriter(fileName);
-			} else {
-				sb.Append("/*\n");
-				sb.Append("******************************************************************************\n");
-				sb.Append("******************************************************************************\n");
-				sb.Append("*/\n");
-			}
-
-			sb.Append(text);
-			writer.Write(sb.ToString());
-
-			if (!options.SingleFile) {
-				writer.Close();
-				writer = null;
-			}
-		}
-
+	protected GeneratorBase() {
 	}
+
+	public GeneratorBase(Configuration options, Entity entity) {
+	    this.options = options;
+	    this.entity = entity;
+	}
+
+	/// <summary>
+	/// Helper method to write generated source to file.  Directory will be created if it does not already exist.
+	/// </summary>
+	/// <param name="fileName">name of file, including full path</param>
+	/// <param name="text">what to write to the file</param>
+	/// <param name="append">whether or not or overwrite the file or to append to file</param>
+	protected void WriteToFile(String fileName, String text, Boolean append) {
+	    String directory = fileName.Substring(0,fileName.LastIndexOf('\\'));
+	    if (!Directory.Exists(directory))
+		Directory.CreateDirectory(directory);
+
+	    StreamWriter writer = new StreamWriter(fileName, append);
+	    writer.Write(text);
+	    writer.Close();
+	}
+
+
+	public String GetUsingNamespaces(Boolean isDaoClass) {
+	    Hashtable namespaces = new Hashtable();
+	    namespaces.Add("System", "System");
+
+	    if (isDaoClass) {
+		namespaces.Add("System.Data", "System.Data");
+		namespaces.Add("System.Data.SqlClient", "System.Data.SqlClient");
+		namespaces.Add("System.Configuration", "System.Configuration");
+		namespaces.Add("System.Collections", "System.Collections");
+		namespaces.Add("Spring2.Core.DAO", "Spring2.Core.DAO");
+		namespaces.Add(options.GetDONameSpace(null), options.GetDONameSpace(null));
+	    }
+
+	    foreach (Field field in entity.Fields) {
+		if (field.Name.IndexOf('.')<0) {
+		    if (!field.Type.Package.Equals(String.Empty) && !namespaces.Contains(field.Type.Package)) {
+			namespaces.Add(field.Type.Package, field.Type.Package);
+		    }
+		}
+	    }
+
+	    StringBuilder sb = new StringBuilder();
+	    foreach (Object o in namespaces.Keys) {
+		sb.Append("using ").Append(o.ToString()).Append(";\n");
+	    }
+	    return sb.ToString();
+	}
+
+    }
 
 }
