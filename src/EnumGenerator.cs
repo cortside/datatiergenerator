@@ -2,7 +2,6 @@ using System;
 using System.Data;
 using System.IO;
 using System.Collections;
-using System.Text;
 
 namespace Spring2.DataTierGenerator {
 
@@ -14,59 +13,58 @@ namespace Spring2.DataTierGenerator {
 	}
 
 	public void Generate() {
-	    StringBuilder sb = new StringBuilder();
+	    IndentableStringWriter writer = new IndentableStringWriter();
 
-	    sb.Append("using System;\n");
-	    sb.Append("using System.Collections;\n");
-	    sb.Append("\n");
-	    sb.Append("namespace ").Append(options.GetTypeNameSpace(type.Name)).Append(" {\n");
-	    sb.Append("\n");
-	    sb.Append("\tpublic class ").Append(type.Name).Append(" : ").Append(options.EnumBaseClass).Append(" {\n");
-	    sb.Append("\t\n");
-	    sb.Append("\t\tprivate static readonly IList OPTIONS = new ArrayList();\n");
-	    sb.Append("\t\t\n");
-	    sb.Append("\t\tpublic static readonly new ").Append(type.Name).Append(" DEFAULT = new ").Append(type.Name).Append("();\n");
-	    sb.Append("\t\tpublic static readonly new ").Append(type.Name).Append(" UNSET = new ").Append(type.Name).Append("();\n");
-	    sb.Append("\t\t\n");
+	    writer.WriteLine("using System;");
+	    writer.WriteLine("using System.Collections;");
+	    writer.WriteLine();
+	    writer.WriteLine("namespace " + options.GetTypeNameSpace(type.Name) + " {");
+	    writer.WriteLine();
+	    writer.WriteLine(1, "public class " + type.Name + " : " + options.EnumBaseClass + " {");
+	    writer.WriteLine();
+	    writer.WriteLine(2, "private static readonly IList OPTIONS = new ArrayList();");
+	    writer.WriteLine();
+	    writer.WriteLine(2, "public static readonly new " + type.Name + " DEFAULT = new " + type.Name + "();");
+	    writer.WriteLine(2, "public static readonly new " + type.Name + " UNSET = new " + type.Name + "();");
+	    writer.WriteLine();
 
 	    foreach (EnumValue value in type.Values) {
-		sb.Append("\t\tpublic static readonly ").Append(type.Name).Append(" ").Append(value.Name.ToUpper()).Append(" = new ").Append(type.Name).Append("(\"").Append(value.Code).Append("\", \"").Append(value.Name).Append("\");\n");
+		writer.WriteLine(2, "public static readonly " + type.Name + " " + value.Name.Replace(' ','_').ToUpper() + " = new " + type.Name + "(\"" + value.Code + "\", \"" + value.Name + "\");");
 	    }
 
-	    sb.Append("\t\t\n");
-	    sb.Append("\t\tpublic static ").Append(type.Name).Append(" GetInstance(Object value) {\n");
-	    sb.Append("\t\t\tif (value is String) {\n");
-	    sb.Append("\t\t\t\tforeach (").Append(type.Name).Append(" t in OPTIONS) {\n");
-	    sb.Append("\t\t\t\t\tif (t.Value.Equals(value)) {\n");
-	    sb.Append("\t\t\t\t\t\treturn t;\n");
-	    sb.Append("\t\t\t\t\t}\n");
-	    sb.Append("\t\t\t\t}\n");
-	    sb.Append("\t\t\t}\n");
-	    sb.Append("\t\t\t\n");
-	    sb.Append("\t\t\treturn UNSET;\n");
-	    sb.Append("\t\t}\n");
-	    sb.Append("\t\t\n");
-	    sb.Append("\t\tprivate ").Append(type.Name).Append("() {\n");
-	    sb.Append("\t\t}\n");
-	    sb.Append("\t\t\n");
-	    sb.Append("\t\tprivate ").Append(type.Name).Append("(String code, String name) {\n");
-	    sb.Append("\t\t\tthis.code = code;\n");
-	    sb.Append("\t\t\tthis.name = name;\n");
-	    sb.Append("\t\t\tOPTIONS.Add(this);\n");
-	    sb.Append("\t\t}\n");
-	    sb.Append("\t\t\n");
-	    sb.Append("\t\tpublic override Boolean IsDefault {\n");
-	    sb.Append("\t\t\tget { return Object.ReferenceEquals(this, DEFAULT); }\n");
-	    sb.Append("\t\t}\n");
-	    sb.Append("\t\t\n");
-	    sb.Append("\t\tpublic override Boolean IsUnset {\n");
-	    sb.Append("\t\t\tget { return Object.ReferenceEquals(this, UNSET); }\n");
-	    sb.Append("\t\t}\n");
-	    sb.Append("\t}\n");
-	    sb.Append("}\n");
+	    writer.WriteLine();
+	    writer.WriteLine(2, "public static " + type.Name + " GetInstance(Object value) {");
+	    writer.WriteLine(3, "if (value is String) {");
+	    writer.WriteLine(4, "foreach (" + type.Name + " t in OPTIONS) {");
+	    writer.WriteLine(5, "if (t.Value.Equals(value)) {");
+	    writer.WriteLine(6, "return t;");
+	    writer.WriteLine(5, "}");
+	    writer.WriteLine(4, "}");
+	    writer.WriteLine(3, "}");
+	    writer.WriteLine();
+	    writer.WriteLine(3, "return UNSET;");
+	    writer.WriteLine(2, "}");
+	    writer.WriteLine();
+	    writer.WriteLine(2, "private " + type.Name + "() {}");
+	    writer.WriteLine();
+	    writer.WriteLine(2, "private " + type.Name + "(String code, String name) {");
+	    writer.WriteLine(3, "this.code = code;");
+	    writer.WriteLine(3, "this.name = name;");
+	    writer.WriteLine(3, "OPTIONS.Add(this);");
+	    writer.WriteLine(2, "}");
+	    writer.WriteLine();
+	    writer.WriteLine(2, "public override Boolean IsDefault {");
+	    writer.WriteLine(3, "get { return Object.ReferenceEquals(this, DEFAULT); }");
+	    writer.WriteLine(2, "}");
+	    writer.WriteLine();
+	    writer.WriteLine(2, "public override Boolean IsUnset {");
+	    writer.WriteLine(3, "get { return Object.ReferenceEquals(this, UNSET); }");
+	    writer.WriteLine(2, "}");
+	    writer.WriteLine(1, "}");
+	    writer.WriteLine("}");
 
 	    FileInfo file = new FileInfo(options.RootDirectory + options.TypesClassDirectory + "\\" + options.GetTypeClassName(type.Name) + ".cs");
-	    WriteToFile(file, sb.ToString(), false);
+	    WriteToFile(file, writer.ToString(), false);
 	}
 
     }

@@ -14,54 +14,56 @@ namespace Spring2.DataTierGenerator {
 	}
 
 	public void CreateDataObjectClass() {
-	    StringBuilder sb = new StringBuilder(4096);
+	    
+	    IndentableStringWriter writer = new IndentableStringWriter();
 			
-	    // Create the header for the class
-	    sb.Append(GetUsingNamespaces(entity.Fields, false)).Append("\n");
+	    // Create the header for the class.
+	    GetUsingNamespaces(writer, entity.Fields, false);
 
-	    // class definition
-	    sb.Append("namespace " + options.GetDONameSpace(entity.Name) + " {\n");
-	    sb.Append("    public class " + options.GetDOClassName(entity.Name));
+	    // Class definition.
+	    writer.WriteLine(0, "namespace " + options.GetDONameSpace(entity.Name) + " {");
+	    writer.Write(1, "public class " + options.GetDOClassName(entity.Name));
 	    if (options.DataObjectBaseClass.Length>0) {
-		sb.Append(" : ").Append(options.DataObjectBaseClass);
+		writer.Write(" : " + options.DataObjectBaseClass);
 	    }
-	    sb.Append(" {\n\n");
+	    writer.WriteLine(" {");
+	    writer.WriteLine();
 
-	    // declaration of private member variables
+	    // Declaration of private member variables.
 	    foreach (Field field in entity.Fields) {
 		if (field.Name.IndexOf('.')<0) {
-		    sb.Append("\t").Append(field.AccessModifier).Append(" ");
-		    sb.Append(field.Type.Name);
-		    sb.Append(" ").Append(field.GetFieldFormat()).Append(" = ");
-		    sb.Append(field.Type.NewInstanceFormat).Append(";\n");
+		    writer.Write(2, field.AccessModifier + " ");
+		    writer.Write(field.Type.Name);
+		    writer.Write(" " + field.GetFieldFormat() + " = ");
+		    writer.WriteLine(field.Type.NewInstanceFormat + ";");
 		}
 	    }
-	    sb.Append("\n");
 
-	    // accessor methods
+	    // Properties.
 	    foreach (Field field in entity.Fields) {
+		writer.WriteLine();
 		if (field.Name.IndexOf('.')<0) {
 		    if (field.Description.Length>0) {
-			sb.Append("\t/// <summary>\n");
-			sb.Append("\t/// ").Append(field.Description).Append("\n");
-			sb.Append("\t/// </summary>\n");
+			writer.WriteLine(2, "/// <summary>");
+			writer.WriteLine(2, "/// " + field.Description);
+			writer.WriteLine(2, "/// </summary>");
 		    }
 
-		    sb.Append("\tpublic ");
-		    sb.Append(field.Type.Name);
-		    sb.Append(" ").Append(field.GetMethodFormat()).Append(" {\n");
-		    sb.Append("\t    get { return this.").Append(field.GetFieldFormat()).Append("; }\n");
-		    sb.Append("\t    set { this.").Append(field.GetFieldFormat()).Append(" = value; }\n");
-		    sb.Append("\t}\n\n");
+		    writer.Write(2, "public ");
+		    writer.Write(field.Type.Name);
+		    writer.WriteLine(" " + field.GetMethodFormat() + " {");
+		    writer.WriteLine(3, "get { return this." + field.GetFieldFormat() + "; }");
+		    writer.WriteLine(3, "set { this." +  field.GetFieldFormat() + " = value; }");
+		    writer.WriteLine(2, "}");
 		}
 	    }
 		
-	    // Close out the class and namespace
-	    sb.Append("    }\n");
-	    sb.Append("}\n");
+	    // Close out the class and namespace.
+	    writer.WriteLine(1, "}");
+	    writer.WriteLine("}");
 
 	    FileInfo file = new FileInfo(options.RootDirectory + options.DoClassDirectory + "\\" + options.GetDOClassName(entity.Name) + ".cs");
-	    WriteToFile(file, sb.ToString(), false);
+	    WriteToFile(file, writer.ToString(), false);
 	}
     }
 }

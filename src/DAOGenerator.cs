@@ -25,48 +25,51 @@ namespace Spring2.DataTierGenerator {
 	/// <param name="fields">ArrayList object containing one or more Field objects as defined in the table.</param>
 	public void CreateDataAccessClass() {
 
-	    StringBuilder sb = new StringBuilder(4096);
+	    IndentableStringWriter writer = new IndentableStringWriter();
 
 	    // Create the header for the class.
-	    sb.Append(GetUsingNamespaces(entity.Fields, true));
-	    sb.Append(Environment.NewLine);
-	    sb.Append("namespace " + options.GetDAONameSpace(entity.Name) + " {\n");
-	    sb.Append("    public class " + options.GetDAOClassName(entity.Name));
+	    GetUsingNamespaces(writer, entity.Fields, true);
+
+	    writer.WriteLine();
+	    writer.WriteLine("namespace " + options.GetDAONameSpace(entity.Name) + " {");
+	    writer.Write(1, "public class " + options.GetDAOClassName(entity.Name));
 
 	    if (options.DataObjectBaseClass.Length>0) {
-		sb.Append(" : ").Append(options.DaoBaseClass);
+		writer.Write(" : " + options.DaoBaseClass);
 	    }
-	    sb.Append(" {\n\n");
+	    writer.WriteLine(" {");
+	    writer.WriteLine();
 
-	    sb.Append("\n        private static readonly String VIEW = \"").Append(entity.SqlView).Append("\";\n\n");
+	    writer.WriteLine(2, "private static readonly String VIEW = \"" + entity.SqlView + "\";");
+	    writer.WriteLine();
 
-	    CreateDAOListMethods(sb);
+	    CreateDAOListMethods(writer);
 
 	    // Append the access methods.
-	    CreateInsertMethod(sb);
+	    CreateInsertMethod(writer);
 	    if (entity.HasUpdatableFields()) {
-		sb.Append("\n\n");
-		CreateUpdateMethod(sb);
+		writer.WriteLine();
+		CreateUpdateMethod(writer);
 	    }
-	    sb.Append("\n\n");
-	    CreateDeleteMethods(sb);
+	    writer.WriteLine();
+	    CreateDeleteMethods(writer);
 
 	    if (options.GenerateSelectStoredProcs) {
-		sb.Append("\n\n");
-		CreateSelectMethods(sb);
+		writer.WriteLine();
+		CreateSelectMethods(writer);
 	    }
 
 	    if (entity.Finders.Count>0) {
-		sb.Append("\n\n");
-		sb.Append(CreateFinderMethods());
+		writer.WriteLine();
+		writer.Write(CreateFinderMethods());
 	    }
 		
 	    // Close out the class and namespace.
-	    sb.Append("    }\n");
-	    sb.Append("}\n");
+	    writer.WriteLine(1, "}");
+	    writer.WriteLine("}");
 
 	    FileInfo file = new FileInfo(options.RootDirectory + options.DaoClassDirectory + "\\" + options.GetDAOClassName(entity.Name) + ".cs");
-	    WriteToFile(file, sb.ToString(), false);
+	    WriteToFile(file, writer.ToString(), false);
 	}
 
 		
@@ -76,16 +79,16 @@ namespace Spring2.DataTierGenerator {
 	/// <param name="table">Name of the table the data access class is for.</param>
 	/// <param name="fields">ArrayList object containing one or more Field objects as defined in the table.</param>
 	/// <param name="sb">StreamBuilder object that the resulting string should be appended to.</param>
-	private void CreateInsertMethod(StringBuilder sb) {
+	private void CreateInsertMethod(IndentableStringWriter writer) {
 			
 	    // Append the method header.
-	    sb.Append("        /// <summary>\n");
-	    sb.Append("        /// Inserts a record into the " + entity.SqlObject + " table.\n");
-	    sb.Append("        /// </summary>\n");
-	    sb.Append("        /// <param name=\"\"></param>\n");
+	    writer.WriteLine(2, "/// <summary>");
+	    writer.WriteLine(2, "/// Inserts a record into the " + entity.SqlObject + " table.");
+	    writer.WriteLine(2, "/// </summary>");
+	    writer.WriteLine(2, "/// <param name=\"\"></param>");
 			
 	    // Determine the return type of the insert function.
-	    sb.Append("        public static ");
+	    writer.Write(2, "public static ");
 	    Field idField = entity.GetIdentityColumn();
 
 	    // this is a hack becuase the method above returns a new Field instead of null - fix the method above and remove this code
@@ -93,59 +96,59 @@ namespace Spring2.DataTierGenerator {
 		idField = null;
 	    }
 	    if (idField != null) {
-		sb.Append(idField.Type.Name);
+		writer.Write(idField.Type.Name);
 	    } else {
-		sb.Append("void");
+		writer.Write("void");
 	    }
 
-	    sb.Append(" Insert(");
+	    writer.Write(" Insert(");
 
 	    // Append the method call parameters - data object.
-	    sb.Append(entity.Name).Append("Data data").Append(") {\n");
+	    writer.WriteLine(entity.Name + "Data data" + ") {");
 			
 	    // Append the variable declarations.
-	    sb.Append("            SqlCommand cmd;\n");
-	    sb.Append("\n");
+	    writer.WriteLine(3, "SqlCommand cmd;");
+	    writer.WriteLine();
 
-	    sb.Append(GetCreateCommandSection(options.GetProcName(entity.SqlObject, "Insert")));
+	    GetCreateCommandSection(writer, options.GetProcName(entity.SqlObject, "Insert"));
 			
 	    if (idField != null) {
-		sb.Append("                SqlParameter rv = cmd.Parameters.Add(\"RETURN_VALUE\", SqlDbType.Int);\n");
-		sb.Append("                rv.Direction = ParameterDirection.ReturnValue;\n");
+		writer.WriteLine(3, "SqlParameter rv = cmd.Parameters.Add(\"RETURN_VALUE\", SqlDbType.Int);");
+		writer.WriteLine(3, "rv.Direction = ParameterDirection.ReturnValue;");
 	    }
 
 	    // Append the parameter appends  ;)
-	    sb.Append("                //Create the parameters and append them to the command object\n");
+	    writer.WriteLine(3, "//Create the parameters and append them to the command object");
 	    foreach (Field field in entity.Fields) {
 		if (!field.IsViewColumn && field.SqlName.Length>0) {
 		    if (field.IsIdentity || field.IsRowGuidCol) {
-			//sb.Append("                " + field.CreateSqlParameter(true, true));
+			//writer.Write(3, field.CreateSqlParameter(true, true));
 		    } else {
-			sb.Append("                " + field.CreateSqlParameter(false, true));
+			writer.Write(3, field.CreateSqlParameter(false, true));
 		    }
 		}
 	    }
-	    sb.Append("\n");
+	    writer.WriteLine();
 
 	    // Append the execute statement
-	    sb.Append("                // Execute the query\n");
-	    sb.Append("                cmd.ExecuteNonQuery();\n");
+	    writer.WriteLine(3, "// Execute the query");
+	    writer.WriteLine(3, "cmd.ExecuteNonQuery();");
 			
 	    // Append the parameter value extraction
 	    if (idField != null) {
-		sb.Append("\n                // Set the output paramter value(s)\n");
-		sb.Append("                return ");
+		writer.WriteLine(3, "// Set the output paramter value(s)");
+		writer.Write(3, "return ");
 		String readerMethod = "cmd.Parameters[\"RETURN_VALUE\"].Value";
 		if (idField.Type.ConvertFromSqlTypeFormat.Length >0) {
-		    sb.Append(String.Format(idField.Type.ConvertFromSqlTypeFormat, "", "", readerMethod, "", ""));
+		    writer.Write(String.Format(idField.Type.ConvertFromSqlTypeFormat, "", "", readerMethod, "", ""));
 		} else {
-		    sb.Append(readerMethod);
+		    writer.Write(readerMethod);
 		}
-		sb.Append(";\n");
+		writer.WriteLine(";");
 	    }
 			
 	    // Append the method footer
-	    sb.Append("        }\n");
+	    writer.WriteLine(2, "}");
 	}
 
 
@@ -155,43 +158,43 @@ namespace Spring2.DataTierGenerator {
 	/// <param name="table">Name of the table the data access class is for.</param>
 	/// <param name="fields">ArrayList object containing one or more Field objects as defined in the table.</param>
 	/// <param name="sb">StreamBuilder object that the resulting string should be appended to.</param>
-	private void CreateUpdateMethod(StringBuilder sb) {
+	private void CreateUpdateMethod(IndentableStringWriter writer) {
 			
 	    // Append the method header
-	    sb.Append("        /// <summary>\n");
-	    sb.Append("        /// Updates a record in the " + entity.SqlObject + " table.\n");
-	    sb.Append("        /// </summary>\n");
-	    sb.Append("        /// <param name=\"\"></param>\n");
-	    sb.Append("        public static void Update(");
+	    writer.WriteLine(2, "/// <summary>");
+	    writer.WriteLine(2, "/// Updates a record in the " + entity.SqlObject + " table.");
+	    writer.WriteLine(2, "/// </summary>");
+	    writer.WriteLine(2, "/// <param name=\"\"></param>");
+	    writer.Write(2, "public static void Update(");
 			
 	    // Append the method call parameters - data object
-	    sb.Append(entity.Name).Append("Data data");
+	    writer.Write(entity.Name + "Data data");
 
 	    // Append the method header
-	    sb.Append(") {\n");
+	    writer.WriteLine(") {");
 			
 	    // Append the variable declarations
-	    sb.Append("            SqlCommand cmd;\n");
-	    sb.Append("\n");
+	    writer.WriteLine(3, "SqlCommand cmd;");
+	    writer.WriteLine();
 
-	    sb.Append(GetCreateCommandSection(options.GetProcName(entity.SqlObject, "Update")));
+	    GetCreateCommandSection(writer, options.GetProcName(entity.SqlObject, "Update"));
 			
 	    // Append the parameter appends  ;)
-	    sb.Append("                //Create the parameters and append them to the command object\n");
+	    writer.WriteLine(3, "//Create the parameters and append them to the command object");
 	    for (int i = 0; i < entity.Fields.Count; i++) {
 		Field field = (Field)entity.Fields[i];
 		if (!field.IsViewColumn && field.SqlName.Length>0) {
-		    sb.Append("                " + field.CreateSqlParameter(false, true));
+		    writer.Write(3, field.CreateSqlParameter(false, true));
 		}
 	    }
-	    sb.Append("\n");
+	    writer.WriteLine();
 			
 	    // Append the execute statement
-	    sb.Append("                // Execute the query\n");
-	    sb.Append("                cmd.ExecuteNonQuery();\n");
+	    writer.WriteLine(3, "// Execute the query");
+	    writer.WriteLine(3, "cmd.ExecuteNonQuery();");
 						
 	    // Append the method footer
-	    sb.Append("        }\n");
+	    writer.WriteLine(2, "}");
 	}
 
 
@@ -201,7 +204,7 @@ namespace Spring2.DataTierGenerator {
 	/// <param name="table">Name of the table the data access class is for.</param>
 	/// <param name="fields">ArrayList object containing one or more Field objects as defined in the table.</param>
 	/// <param name="sb">StreamBuilder object that the resulting string should be appended to.</param>
-	private void CreateDeleteMethods(StringBuilder sb) {
+	private void CreateDeleteMethods(IndentableStringWriter writer) {
 			
 	    // Create the array list of key fields
 	    String primaryKeyList = String.Empty;
@@ -235,31 +238,33 @@ namespace Spring2.DataTierGenerator {
 		    }
 
 		    // Append the method header
-		    sb.Append("        /// <summary>\n");
-		    sb.Append("        /// Deletes a record from the " + entity.SqlObject + " table by " + field.Name + ".\n");
-		    sb.Append("        /// </summary>\n");
-		    sb.Append("        /// <param name=\"\"></param>\n");
-		    sb.Append("        public static void " + methodName + "(" + field.CreateMethodParameter() + ") {\n");
+		    writer.WriteLine(2, "/// <summary>");
+		    writer.WriteLine(2, "/// Deletes a record from the " + entity.SqlObject + " table by " + field.Name + ".");
+		    writer.WriteLine(2, "/// </summary>");
+		    writer.WriteLine(2, "/// <param name=\"\"></param>");
+		    writer.WriteLine(2, "public static void " + methodName + "(" + field.CreateMethodParameter() + ") {");
 					
-		    sb.Append("            SqlCommand cmd;\n");
-		    sb.Append("\n");
+		    writer.WriteLine(3, "SqlCommand cmd;");
+		    writer.WriteLine();
 
-		    sb.Append(GetCreateCommandSection(options.GetProcName(entity.SqlObject, methodName)));
+		    GetCreateCommandSection(writer, options.GetProcName(entity.SqlObject, methodName));
 
 		    // Append the parameters
-		    sb.Append("                // Create and append the parameters\n");
-		    sb.Append("                " + field.CreateSqlParameter(false, false));
-		    sb.Append("\n");
+		    writer.WriteLine(3, "// Create and append the parameters");
+		    writer.Write(3, field.CreateSqlParameter(false, false));
+		    writer.WriteLine();
 
 		    // Append the execute statement
-		    sb.Append("                // Execute the query and return the result\n");
-		    sb.Append("                cmd.ExecuteNonQuery();\n");
+		    writer.WriteLine(3, "// Execute the query and return the result");
+		    writer.WriteLine(3, "cmd.ExecuteNonQuery();");
 					
 		    // Append the method footer
 		    if (keyList.Count > 0) {
-			sb.Append("        }\n\n\n");
+			writer.WriteLine(2, "}");
+			writer.WriteLine();
 		    } else {
-			sb.Append("        }\n\n");
+			writer.WriteLine(2, "}");
+			writer.WriteLine();
 		    }
 		}
 	    }
@@ -268,19 +273,19 @@ namespace Spring2.DataTierGenerator {
 	    // Create the select functions based on a composite primary key
 	    if (keyList.Count > 1) {
 		// Append the method header
-		sb.Append("        /// <summary>\n");
-		sb.Append("        /// Deletes a record from the " + entity.SqlObject + " table by a composite primary key.\n");
-		sb.Append("        /// </summary>\n");
-		sb.Append("        /// <param name=\"\"></param>\n");
+		writer.WriteLine(2, "/// <summary>");
+		writer.WriteLine(2, "/// Deletes a record from the " + entity.SqlObject + " table by a composite primary key.");
+		writer.WriteLine(2, "/// </summary>");
+		writer.WriteLine(2, "/// <param name=\"\"></param>");
 
-		String methodName = "";
+		String methodName = String.Empty;
 		if (options.GenerateOnlyPrimaryDeleteStoredProc) {
 		    methodName = "Delete";
 		} else {
 		    methodName = "DeleteBy" + primaryKeyList;
 		}
 				
-		sb.Append("        public static void " + methodName + "(");
+		writer.Write(2, "public static void " + methodName + "(");
 
 		String parms = String.Empty;
 		foreach (Field field in keyList) {
@@ -289,27 +294,28 @@ namespace Spring2.DataTierGenerator {
 		    }
 		    parms += field.CreateMethodParameter();
 		}
-		sb.Append(parms).Append(") {\n");
+		writer.WriteLine(parms + ") {");
 				
-		sb.Append("            SqlCommand cmd;\n");
-		sb.Append("\n");
+		writer.WriteLine(3, "SqlCommand cmd;");
+		writer.WriteLine();
 
-		sb.Append(GetCreateCommandSection(options.GetProcName(entity.SqlObject, methodName)));
+		GetCreateCommandSection(writer, options.GetProcName(entity.SqlObject, methodName));
 
 		// Append the parameters
-		sb.Append("                // Create and append the parameters\n");
+		writer.WriteLine(4, "// Create and append the parameters");
 		for (int i = 0; i < keyList.Count; i++) {
 		    Field field = (Field)keyList[i];
-		    sb.Append("                " + field.CreateSqlParameter(false, false));
+		    writer.Write(4, field.CreateSqlParameter(false, false));
 		}
-		sb.Append("\n");
+		writer.WriteLine();
 
 		// Append the execute statement
-		sb.Append("                // Execute the query and return the result\n");
-		sb.Append("                cmd.ExecuteNonQuery();\n");
+		writer.WriteLine(4, "// Execute the query and return the result");
+		writer.WriteLine(4, "cmd.ExecuteNonQuery();");
 				
 		// Append the method footer
-		sb.Append("        }\n\n\n");
+		writer.WriteLine(2, "}");
+		writer.WriteLine();
 	    }
 	}
 
@@ -320,7 +326,7 @@ namespace Spring2.DataTierGenerator {
 	/// <param name="table">Name of the table the data access class is for.</param>
 	/// <param name="fields">ArrayList object containing one or more Field objects as defined in the table.</param>
 	/// <param name="sb">StreamBuilder object that the resulting string should be appended to.</param>
-	private void CreateSelectMethods(StringBuilder sb) {
+	private void CreateSelectMethods(IndentableStringWriter writer) {
 	    Field	field;
 	    int			intIndex;
 	    string		strColumnName;
@@ -328,7 +334,7 @@ namespace Spring2.DataTierGenerator {
 	    ArrayList	arrKeyList;
 			
 	    // Create the array list of key fields
-	    strPrimaryKeyList = "";
+	    strPrimaryKeyList = String.Empty;
 	    arrKeyList = new ArrayList();
 	    for (intIndex = 0; intIndex < entity.Fields.Count; intIndex++) {
 		field = (Field)entity.Fields[intIndex];
@@ -347,33 +353,34 @@ namespace Spring2.DataTierGenerator {
 	    // Create the initial "select all" function
 			
 	    // Append the method header
-	    sb.Append("        /// <summary>\n");
-	    sb.Append("        /// Selects a record from the " + entity.SqlObject + " table.\n");
-	    sb.Append("        /// </summary>\n");
-	    sb.Append("        /// <param name=\"\"></param>\n");
-	    sb.Append("        public static SqlDataReader Select() {\n");
+	    writer.WriteLine(2, "/// <summary>");
+	    writer.WriteLine(2, "/// Selects a record from the " + entity.SqlObject + " table.");
+	    writer.WriteLine(2, "/// </summary>");
+	    writer.WriteLine(2, "/// <param name=\"\"></param>");
+	    writer.WriteLine(2, "public static SqlDataReader Select() {");
 			
 	    // Append the variable declarations
-	    //            sb.Append("            SqlConnection	objConnection;\n");
-	    sb.Append("            SqlCommand cmd;\n");
-	    sb.Append("\n");
+	    //writer.WriteLine(3, "SqlConnection objConnection;");
+	    writer.WriteLine(3, "SqlCommand cmd;");
+	    writer.WriteLine();
 
 	    // Append the try block
-	    sb.Append("            try {\n");
+	    writer.WriteLine(3, "try {");
 
-	    sb.Append(GetCreateCommandSection(options.GetProcName(entity.SqlObject, "Select")));
+	    GetCreateCommandSection(writer, options.GetProcName(entity.SqlObject, "Select"));
 
 	    // Append the execute statement
-	    sb.Append("                // Execute the query and return the result\n");
-	    sb.Append("                return cmd.ExecuteReader(CommandBehavior.CloseConnection);\n");
+	    writer.WriteLine(4, "// Execute the query and return the result");
+	    writer.WriteLine(4, "return cmd.ExecuteReader(CommandBehavior.CloseConnection);");
 			
 	    // Append the catch block
-	    sb.Append("            } catch (Exception objException) {\n");
-	    sb.Append("                throw (new Exception(\"" + entity.Name.Replace(" ", "_") + ".Select\\n\\n\" + objException.Message));\n");
-	    sb.Append("            }\n");
+	    writer.WriteLine(3, "} catch (Exception objException) {");
+	    writer.WriteLine(4, "throw (new Exception(\"" + entity.Name.Replace(" ", "_") + ".Select\\n\\n\" + objException.Message));");
+	    writer.WriteLine(3, "}");
 			
 	    // Append the method footer
-	    sb.Append("        }\n\n\n");
+	    writer.WriteLine(2, "}");
+	    writer.WriteLine();
 
 	    /*********************************************************************************************************/
 	    // Create the remaining select functions based on identity columns or uniqueidentifiers
@@ -384,41 +391,45 @@ namespace Spring2.DataTierGenerator {
 		    strColumnName = field.Name.Substring(0, 1).ToUpper() + field.Name.Substring(1);
 				
 		    // Append the method header
-		    sb.Append("        /// <summary>\n");
-		    sb.Append("        /// Selects a record from the " + entity.Name + " table by " + field.Name + ".\n");
-		    sb.Append("        /// </summary>\n");
-		    sb.Append("        /// <param name=\"\"></param>\n");
-		    sb.Append("        public static SqlDataReader SelectBy" + strColumnName.Replace(" ", "_") + "(" + field.CreateMethodParameter() + ") {\n");
+		    writer.WriteLine(2, "/// <summary>");
+		    writer.WriteLine(2, "/// Selects a record from the " + entity.Name + " table by " + field.Name + ".");
+		    writer.WriteLine(2, "/// </summary>");
+		    writer.WriteLine(2, "/// <param name=\"\"></param>");
+		    writer.WriteLine(2, "public static SqlDataReader SelectBy" + strColumnName.Replace(" ", "_") + "(" + field.CreateMethodParameter() + ") {");
 					
 		    // Append the variable declarations
-		    //                    sb.Append("            SqlConnection	objConnection;\n");
-		    sb.Append("            SqlCommand cmd;\n");
-		    sb.Append("\n");
+		    //writer.WriteLine(3, "SqlConnection objConnection;");
+		    writer.WriteLine(3, "SqlCommand cmd;");
+		    writer.WriteLine();
 
 		    // Append the try block
-		    sb.Append("            try {\n");
+		    writer.WriteLine(3, "try {");
 
-		    sb.Append(GetCreateCommandSection(options.GetProcName(entity.Name, options.GetProcName(entity.Name, "SelectBy" + strColumnName.Replace(" ", "_")))));
+		    GetCreateCommandSection(writer, options.GetProcName(entity.Name, options.GetProcName(entity.Name, "SelectBy" + strColumnName.Replace(" ", "_"))));
 
 		    // Append the parameters
-		    sb.Append("                // Create and append the parameters\n");
-		    sb.Append("                " + field.CreateSqlParameter(false, false));
-		    sb.Append("\n");
+		    writer.WriteLine(4, "// Create and append the parameters");
+		    writer.Write(4, field.CreateSqlParameter(false, false));
+		    writer.WriteLine();
 
 		    // Append the execute statement
-		    sb.Append("                // Execute the query and return the result\n");
-		    sb.Append("                return cmd.ExecuteReader(CommandBehavior.CloseConnection);\n");
+		    writer.WriteLine(4, "// Execute the query and return the result");
+		    writer.WriteLine(4, "return cmd.ExecuteReader(CommandBehavior.CloseConnection);");
 					
 		    // Append the catch block
-		    sb.Append("            } catch (Exception objException) {\n");
-		    sb.Append("                throw (new Exception(\"" + entity.Name.Replace(" ", "_") + ".SelectBy" + strColumnName.Replace(" ", "_") + "\\n\\n\" + objException.Message));\n");
-		    sb.Append("            }\n");
+		    writer.WriteLine(3, "} catch (Exception objException) {");
+		    writer.WriteLine(4, "throw (new Exception(\"" + entity.Name.Replace(" ", "_") + ".SelectBy" + strColumnName.Replace(" ", "_") + "\\n\\n\" + objException.Message));");
+		    writer.WriteLine(3, "}");
 					
 		    // Append the method footer
-		    if (arrKeyList.Count > 0)
-			sb.Append("        }\n\n\n");
-		    else
-			sb.Append("        }\n\n");
+		    if (arrKeyList.Count > 0) {
+			writer.WriteLine(2, "}");
+			writer.WriteLine();
+			writer.WriteLine();
+		    } else {
+			writer.WriteLine(2, "}");
+			writer.WriteLine();
+		    }
 				
 		    field = null;
 		}
@@ -428,191 +439,190 @@ namespace Spring2.DataTierGenerator {
 	    // Create the select functions based on a composite primary key
 	    if (arrKeyList.Count > 1) {
 		// Append the method header
-		sb.Append("        /// <summary>\n");
-		sb.Append("        /// Selects a record from the " + entity.Name + " table by a composite primary key.\n");
-		sb.Append("        /// </summary>\n");
-		sb.Append("        /// <param name=\"\"></param>\n");
+		writer.WriteLine(2, "/// <summary>");
+		writer.WriteLine(2, "/// Selects a record from the " + entity.Name + " table by a composite primary key.");
+		writer.WriteLine(2, "/// </summary>");
+		writer.WriteLine(2, "/// <param name=\"\"></param>");
 				
-		sb.Append("        public static SqlDataReader SelectBy" + strPrimaryKeyList + "(");
+		writer.Write(2, "public static SqlDataReader SelectBy" + strPrimaryKeyList + "(");
 		for (intIndex = 0; intIndex < arrKeyList.Count; intIndex++) {
 		    field = (Field)arrKeyList[intIndex];
-		    sb.Append(field.CreateMethodParameter() + ", ");
+		    writer.Write(field.CreateMethodParameter() + ", ");
 		}
-		sb.Append("SqlConnection connection) {\n");
+		writer.WriteLine("SqlConnection connection) {");
 				
 		// Append the variable declarations
-		//                sb.Append("            SqlConnection	objConnection;\n");
-		sb.Append("            SqlCommand cmd;\n");
-		sb.Append("\n");
+		//writer.WriteLine(3, "SqlConnection objConnection;");
+		writer.WriteLine(3, "SqlCommand cmd;");
+		writer.WriteLine();
 
 		// Append the try block
-		sb.Append("            try {\n");
+		writer.WriteLine(3, "try {");
 
-		sb.Append(GetCreateCommandSection(options.GetProcName(entity.Name, options.GetProcName(entity.Name, "SelectBy" + strPrimaryKeyList))));
+		GetCreateCommandSection(writer, options.GetProcName(entity.Name, options.GetProcName(entity.Name, "SelectBy" + strPrimaryKeyList)));
 
 		// Append the parameters
-		sb.Append("                // Create and append the parameters\n");
+		writer.WriteLine(4, "// Create and append the parameters");
 		for (intIndex = 0; intIndex < arrKeyList.Count; intIndex++) {
 		    field = (Field)arrKeyList[intIndex];
-		    sb.Append("                " + field.CreateSqlParameter(false, false));
+		    writer.Write(4, field.CreateSqlParameter(false, false));
 		    field = null;
 		}
-		sb.Append("\n");
+		writer.WriteLine();
 
 		// Append the execute statement
-		sb.Append("                // Execute the query and return the result\n");
-		sb.Append("                return cmd.ExecuteReader(CommandBehavior.CloseConnection);\n");
+		writer.WriteLine(4, "// Execute the query and return the result");
+		writer.WriteLine(4, "return cmd.ExecuteReader(CommandBehavior.CloseConnection);");
 				
 		// Append the catch block
-		sb.Append("            } catch (Exception objException) {\n");
-		sb.Append("                throw (new Exception(\"" + entity.Name.Replace(" ", "_") + ".SelectBy" + strPrimaryKeyList + "\\n\\n\" + objException.Message));\n");
-		sb.Append("            }\n");
+		writer.WriteLine(3, "} catch (Exception objException) {");
+		writer.WriteLine(4, "throw (new Exception(\"" + entity.Name.Replace(" ", "_") + ".SelectBy" + strPrimaryKeyList + "\\n\\n\" + objException.Message));");
+		writer.WriteLine(3, "}");
 				
 		// Append the method footer
-		sb.Append("        }\n\n\n");
+		writer.WriteLine(2, "}");
+		writer.WriteLine();
+		writer.WriteLine();
 			
 		field = null;
 	    }
 	}
 		
-	private void CreateDAOListMethods(StringBuilder sb) {
+	private void CreateDAOListMethods(IndentableStringWriter writer) {
 			
 	    // GetList - no parms
-	    sb.Append("        public static IList GetList() { \n");
-	    sb.Append("            return GetList(null, null);\n");
-	    sb.Append("        }\n");
-	    sb.Append("\n");
+	    writer.WriteLine(2, "public static IList GetList() { ");
+	    writer.WriteLine(3, "return GetList(null, null);");
+	    writer.WriteLine(2, "}");
+	    writer.WriteLine();
 
 	    // GetList - where
-	    sb.Append("        public static IList GetList(IWhere whereClause) { \n");
-	    sb.Append("            return GetList(whereClause, null);\n");
-	    sb.Append("        }\n");
-	    sb.Append("\n");
+	    writer.WriteLine(2, "public static IList GetList(IWhere whereClause) { ");
+	    writer.WriteLine(3, "return GetList(whereClause, null);");
+	    writer.WriteLine(2, "}");
+	    writer.WriteLine();
 
 	    // GetList - order by
-	    sb.Append("        public static IList GetList(IOrderBy orderByClause) { \n");
-	    sb.Append("            return GetList(null, orderByClause);\n");
-	    sb.Append("        }\n");
-	    sb.Append("\n");
+	    writer.WriteLine(2, "public static IList GetList(IOrderBy orderByClause) { ");
+	    writer.WriteLine(3, "return GetList(null, orderByClause);");
+	    writer.WriteLine(2, "}");
+	    writer.WriteLine();
 
 	    // GetList - both
-	    sb.Append("        public static IList GetList(IWhere whereClause, IOrderBy orderByClause) { \n");
-	    sb.Append("        	SqlDataReader dataReader = GetListReader(VIEW, whereClause, orderByClause); \n");
-	    sb.Append("        	 \n");
-	    sb.Append("        	ArrayList list = new ArrayList(); \n");
-	    sb.Append("        	while (dataReader.Read()) { \n");
-	    sb.Append("        		list.Add(GetDataObjectFromReader(dataReader)); \n");
-	    sb.Append("        	} \n");
-	    sb.Append("        	dataReader.Close(); \n");
-	    sb.Append("        	return list; \n");
-	    sb.Append("        } \n");
-	    sb.Append("\n");
+	    writer.WriteLine(2, "public static IList GetList(IWhere whereClause, IOrderBy orderByClause) { ");
+	    writer.WriteLine(3, "SqlDataReader dataReader = GetListReader(VIEW, whereClause, orderByClause); ");
+	    writer.WriteLine();
+	    writer.WriteLine(3, "ArrayList list = new ArrayList(); ");
+	    writer.WriteLine(3, "while (dataReader.Read()) { ");
+	    writer.WriteLine(4, "list.Add(GetDataObjectFromReader(dataReader)); ");
+	    writer.WriteLine(3, "}");
+	    writer.WriteLine(3, "dataReader.Close();");
+	    writer.WriteLine(3, "return list; ");
+	    writer.WriteLine(2, "}");
+	    writer.WriteLine();
 
 	    // Load
 	    IList keys = entity.GetPrimaryKeyColumns();
-	    String parms = "";
+	    String parms = String.Empty;
 	    foreach (Field field in keys) {
 		if (!parms.Equals(String.Empty)) {
 		    parms += ", ";
 		}
 		parms += field.CreateMethodParameter();
 	    }
-	    sb.Append("        public static ").Append(options.GetDOClassName(entity.Name)).Append(" Load(").Append(parms).Append(") {\n");
-	    sb.Append("        	WhereClause w = new WhereClause();\n");
+	    writer.WriteLine(2, "public static " + options.GetDOClassName(entity.Name) + " Load(" + parms + ") {");
+	    writer.WriteLine(3, "WhereClause w = new WhereClause();");
 	    foreach (Field field in keys) {
-		sb.Append("        	w.And(\"").Append(field.SqlName).Append("\", ").Append(String.Format(field.Type.ConvertToSqlTypeFormat, "", field.GetFieldFormat(), "", "", field.GetFieldFormat())).Append(");\n");
+		writer.WriteLine(3, "w.And(\"" + field.SqlName + "\", " + String.Format(field.Type.ConvertToSqlTypeFormat, "", field.GetFieldFormat(), "", "", field.GetFieldFormat()) + ");");
 	    }
-	    sb.Append("        	SqlDataReader dataReader = GetListReader(VIEW, w, null);\n");
-	    sb.Append("            \n");
-	    sb.Append("        	dataReader.Read();\n");
-	    sb.Append("                ").Append(options.GetDOClassName(entity.Name)).Append(" data = GetDataObjectFromReader(dataReader);\n");
-	    sb.Append("                dataReader.Close();\n");
-	    sb.Append("        	return data;\n");
-	    sb.Append("        }\n");
-	    sb.Append("\n");			
+	    writer.WriteLine(3, "SqlDataReader dataReader = GetListReader(VIEW, w, null);");
+	    writer.WriteLine();
+	    writer.WriteLine(3, "dataReader.Read();");
+	    writer.WriteLine(3, options.GetDOClassName(entity.Name) + " data = GetDataObjectFromReader(dataReader);");
+	    writer.WriteLine(3, "dataReader.Close();");
+	    writer.WriteLine(3, "return data;");
+	    writer.WriteLine(2, "}");
+	    writer.WriteLine();			
 
 	    // GetDataObjectFromReader
-	    sb.Append("        private static ").Append(options.GetDOClassName(entity.Name)).Append(" GetDataObjectFromReader(SqlDataReader dataReader) {\n");
-	    sb.Append("        	").Append(options.GetDOClassName(entity.Name)).Append(" data = new ").Append(options.GetDOClassName(entity.Name)).Append("();\n");
+	    writer.WriteLine(2, "private static " + options.GetDOClassName(entity.Name) + " GetDataObjectFromReader(SqlDataReader dataReader) {");
+	    writer.WriteLine(3, options.GetDOClassName(entity.Name) + " data = new " + options.GetDOClassName(entity.Name) + "();");
 
 	    foreach (Field field in entity.Fields) {
 		if (field.SqlType.Name.Length>0) {
-		    sb.Append("        if (dataReader.IsDBNull(dataReader.GetOrdinal(\"").Append(field.SqlName).Append("\"))) { \n");
-		    sb.Append("            data.").Append(field.GetMethodFormat()).Append(" = ").Append(field.Type.NullInstanceFormat).Append(";\n"); 
-		    sb.Append("        } else {\n");
+		    writer.WriteLine(3, "if (dataReader.IsDBNull(dataReader.GetOrdinal(\"" + field.SqlName + "\"))) { ");
+		    writer.WriteLine(4, "data." + field.GetMethodFormat() + " = " + field.Type.NullInstanceFormat + ";"); 
+		    writer.WriteLine(3, "} else {");
 
-		    sb.Append("            data.").Append(field.GetMethodFormat()).Append(" = "); 
+		    writer.Write(4, "data." + field.GetMethodFormat() + " = "); 
 		    String readerMethod = String.Format(field.SqlType.ReaderMethodFormat, "dataReader", field.SqlName);
 		    if (field.Type.ConvertFromSqlTypeFormat.Length >0) {
-			sb.Append(String.Format(field.Type.ConvertFromSqlTypeFormat, "data", field.GetMethodFormat(), readerMethod, "dataReader", field.SqlName));
+			writer.Write(String.Format(field.Type.ConvertFromSqlTypeFormat, "data", field.GetMethodFormat(), readerMethod, "dataReader", field.SqlName));
 		    } else {
-			sb.Append(readerMethod);
+			writer.Write(readerMethod);
 		    }
-		    sb.Append(";\n");
-		    sb.Append("        }\n");
-
+		    writer.WriteLine(";");
+		    writer.WriteLine(3, "}");
 		}
 	    }
-	    sb.Append("        \n");
-	    sb.Append("        	return data;\n");
-	    sb.Append("        }\n");
-	    sb.Append("\n");			
+	    writer.WriteLine();
+	    writer.WriteLine(3, "return data;");
+	    writer.WriteLine(2, "}");
+	    writer.WriteLine();			
 	}
 
 
-	private String GetCreateCommandSection(String procName) {
-	    StringBuilder sb = new StringBuilder();
-
-	    sb.Append("                // Create and execute the command\n");
-	    sb.Append("                cmd = GetSqlCommand(\"" + procName + "\", CommandType.StoredProcedure);\n");
-	    sb.Append("\n");
-	    return sb.ToString();
+	private String GetCreateCommandSection(IndentableStringWriter writer, String procName) {
+	    writer.WriteLine(3, "// Create and execute the command");
+	    writer.WriteLine(3, "cmd = GetSqlCommand(\"" + procName + "\", CommandType.StoredProcedure);");
+	    writer.WriteLine();
+	    return writer.ToString();
 	}
 
 
 	private String CreateFinderMethods() {
-	    StringBuilder sb = new StringBuilder();
+	    IndentableStringWriter writer = new IndentableStringWriter();
 
 	    foreach (Finder finder in entity.Finders) {
 
-		String parms = "";
+		String parms = String.Empty;
 		foreach (Field field in finder.Fields) {
 		    if (!parms.Equals(String.Empty)) {
 			parms += ", ";
 		    }
 		    parms += field.CreateMethodParameter();
 		}
-		sb.Append("        public static ");
+		writer.Write(2, "public static ");
 		if (finder.Unique) {
-		    sb.Append(options.GetDOClassName(entity.Name));
+		    writer.Write(options.GetDOClassName(entity.Name));
 		} else {
-		    sb.Append("IList");
+		    writer.Write("IList");
 		}
-		sb.Append(" ").Append(finder.Name).Append("(").Append(parms).Append(") {\n");
-		sb.Append("        	WhereClause filter = new WhereClause();\n");
-		sb.Append("        	OrderByClause sort = new OrderByClause(\"").Append(finder.Sort).Append("\");\n");
+		writer.WriteLine(" " + finder.Name + "(" + parms + ") {");
+		writer.WriteLine(2, "	WhereClause filter = new WhereClause();");
+		writer.WriteLine(2, "	OrderByClause sort = new OrderByClause(\"" + finder.Sort + "\");");
 		foreach (Field field in finder.Fields) {
-		    sb.Append("        	filter.And(\"").Append(field.SqlName).Append("\", ").Append(String.Format(field.Type.ConvertToSqlTypeFormat, "", field.GetFieldFormat(), "", "", field.GetFieldFormat())).Append(");\n");
+		    writer.WriteLine(2, "	filter.And(\"" + field.SqlName + "\", " + String.Format(field.Type.ConvertToSqlTypeFormat, "", field.GetFieldFormat(), "", "", field.GetFieldFormat()) + ");");
 		}
 
 		if (!finder.Unique) {
-		    sb.Append("            \n");
-		    sb.Append("                return GetList(filter, sort);\n");
+		    writer.WriteLine();
+		    writer.WriteLine(4, "return GetList(filter, sort);");
     		} else {
-		    sb.Append("        	SqlDataReader dataReader = GetListReader(VIEW, filter, sort);\n");
-		    sb.Append("            \n");
-		    sb.Append("        	dataReader.Read();\n");
-		    sb.Append("                ").Append(options.GetDOClassName(entity.Name)).Append(" data = GetDataObjectFromReader(dataReader);\n");
-		    sb.Append("                dataReader.Close();\n");
-		    sb.Append("        	return data;\n");
+		    writer.WriteLine(2, "	SqlDataReader dataReader = GetListReader(VIEW, filter, sort);");
+		    writer.WriteLine();
+		    writer.WriteLine(2, "	dataReader.Read();");
+		    writer.WriteLine(4, options.GetDOClassName(entity.Name) + " data = GetDataObjectFromReader(dataReader);");
+		    writer.WriteLine(4, "dataReader.Close();");
+		    writer.WriteLine(2, "	return data;");
 		}
-		sb.Append("        }\n");
-		sb.Append("\n");			
+		writer.WriteLine(2, "}");
+		writer.WriteLine();			
 
 	    }
 
 
-	    return sb.ToString();
+	    return writer.ToString();
 	}
     }
 }
