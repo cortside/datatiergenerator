@@ -30,7 +30,7 @@ AS
 INSERT INTO ${element.EscapedName} (
 #set($cols = 0)
 #foreach($column in $element.Columns)#if(!$column.Identity && !$column.ViewColumn)#set($cols = $cols + 1)#if($cols>1),
-#end	${column.Name}#end#end)
+#end	${column.EscapedName}#end#end)
 #set($cols = 0)
 VALUES (
 #foreach($column in $element.Columns)#if(!$column.Identity && !$column.ViewColumn)#set($cols = $cols + 1)#if($cols>1),
