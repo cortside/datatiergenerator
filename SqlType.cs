@@ -11,6 +11,8 @@ namespace Spring2.DataTierGenerator {
 	private Int32 scale = 0;
 	private Int32 precision = 0;
 	private String readerMethodFormat = String.Empty;
+	private String sqlDbType = String.Empty;
+	private String declarationFormat = "{0}";
 
 	public String Name {
 	    get { return this.name; }
@@ -42,12 +44,27 @@ namespace Spring2.DataTierGenerator {
 	    set { this.readerMethodFormat = value; }
 	}
 
+	public String SqlDbType {
+	    get { return this.sqlDbType; }
+	    set { this.sqlDbType = value; }
+	}
+
+	public String DeclarationFormat {
+	    get { return this.declarationFormat; }
+	    set { this.declarationFormat = value; }
+	}
+
+	public String Declaration {
+	    get { return String.Format(declarationFormat, name, length, precision, scale); }
+	}
+
 	public static Hashtable ParseFromXml(XmlDocument doc) {
 	    Hashtable sqltypes = new Hashtable();
 	    XmlNodeList elements = doc.DocumentElement.GetElementsByTagName("sqltype");
 	    foreach (XmlNode node in elements) {
 		SqlType sqltype = new SqlType();
 		sqltype.Name = node.Attributes["name"].Value;
+		sqltype.SqlDbType = sqltype.Name.Substring(0, 1).ToUpper() + sqltype.Name.Substring(1);
 		if (node.Attributes["type"] != null) {
 		    sqltype.Type = node.Attributes["type"].Value;
 		}
@@ -63,7 +80,17 @@ namespace Spring2.DataTierGenerator {
 		if (node.Attributes["readermethodformat"] != null) {
 		    sqltype.ReaderMethodFormat = node.Attributes["readermethodformat"].Value;
 		}
-		sqltypes.Add(sqltype.Name, sqltype);
+		if (node.Attributes["sqldbtype"] != null) {
+		    sqltype.SqlDbType = node.Attributes["sqldbtype"].Value;
+		}
+		if (node.Attributes["declarationformat"] != null) {
+		    sqltype.DeclarationFormat = node.Attributes["declarationformat"].Value;
+		}
+		if (sqltypes.ContainsKey(sqltype.Name)) {
+		    Console.Out.WriteLine ("WARNING: ignoring duplicate definition of sqltype: " + sqltype.Name);
+		} else {
+		    sqltypes.Add(sqltype.Name, sqltype);
+		}
 	    }
 	    return sqltypes;
 	}
