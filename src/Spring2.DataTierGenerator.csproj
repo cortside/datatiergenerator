@@ -313,6 +313,10 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "Template\DAO.vm"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "Template\enum.vm"
                     BuildAction = "EmbeddedResource"
                 />
