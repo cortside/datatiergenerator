@@ -4,15 +4,15 @@
 
 *###
 #if($element.GenerateSqlViewScripts)
-if exists (select * from sysobjects where id = object_id(N'[vw$element.Name]') and OBJECTPROPERTY(id, N'IsView') = 1)
-drop view [vw$element.Name]
+if exists (select * from sysobjects where id = object_id(N'[$element.View]') and OBJECTPROPERTY(id, N'IsView') = 1)
+drop view [$element.View]
 GO
 
 SET ANSI_NULLS ON
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE VIEW [vw$element.Name]
+CREATE VIEW [$element.View]
 
 AS
 
