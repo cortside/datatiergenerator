@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using System.Text;
 using System.Xml;
 using System.Xml.Xsl;
+using System.IO;
 
 namespace Spring2.DataTierGenerator {
     /// <summary>
@@ -406,8 +407,42 @@ namespace Spring2.DataTierGenerator {
 	/// The main entry point for the application.
 	/// </summary>
 	[STAThread]
-	static void Main() {
-	    Application.Run(new frmMain());
+	static void Main(string[] args) {
+
+	    FileStream fs = new FileStream("DataTierGenerator.log", FileMode.Create);
+	    StreamWriter sw = new StreamWriter(fs);
+	    Console.SetOut(sw);
+
+	    Console.Out.WriteLine(String.Empty.PadLeft(20,'='));
+	    Console.Out.WriteLine("Start :: " + DateTime.Now.ToString());
+	    Console.WriteLine("Number of command line parameters = {0}", args.Length);
+	    foreach(string s in args) {
+		Console.WriteLine(s);
+	    }
+	    Console.Out.WriteLine(String.Empty.PadLeft(20,'='));
+	    if (args.Length==1) {
+		XmlDocument doc = new XmlDocument();
+			
+		doc.Load(args[0]);
+		XmlNode root = doc.DocumentElement["config"];
+		Configuration config;
+		if (root != null) {
+		    config = new Configuration(root);
+		    config.XmlConfigFilename = args[0];
+		    Generator generator = new Generator(config);
+		    generator.GenerateSource();
+		} else {
+		    Console.Out.WriteLine("No configuration section found in config file.");
+		}
+	    } else {
+		Application.Run(new frmMain());
+	    }
+
+	    Console.Out.WriteLine(String.Empty.PadLeft(20,'='));
+	    Console.Out.WriteLine("Done :: " + DateTime.Now.ToString());
+	    Console.Out.WriteLine(String.Empty.PadLeft(20,'='));
+
+	    sw.Close();
 	}
 #endregion
 
@@ -443,7 +478,7 @@ namespace Spring2.DataTierGenerator {
 	    GetDataFromForm();
 
 	    objGenerator = new Generator(config);
-	    objGenerator.ProcessTables();
+	    objGenerator.GenerateSource();
 	    objGenerator = null;
 
 	    // Alert the user everything went ok
@@ -513,7 +548,8 @@ namespace Spring2.DataTierGenerator {
 
 	private void frmMain_Load(object sender, System.EventArgs e) {
 	    config = new Configuration();
-	    config.XmlConfigFilename = "..\\..\\dtg-config.xml";
+	    //config.XmlConfigFilename = "..\\..\\dtg-config.xml";
+	    config.XmlConfigFilename = "C:\\Data\\work\\seamlessweb\\manhattan\\src\\DataTierGenerator.config.xml";
 	    PopulateForm();
 
 	    if (config.XmlConfigFilename.Length>0) {
@@ -578,7 +614,6 @@ namespace Spring2.DataTierGenerator {
 
 	    // Alert the user everything went ok
 	    MessageBox.Show("Data tier generated successfully.");
-		
 	}
 
 	private void button1_Click(object sender, System.EventArgs e) {
