@@ -34,6 +34,8 @@
                                                                     <xs:attribute name="concretetype" type="xs:string" />
                                                                     <xs:attribute name="convertfromsqltypeformat" type="xs:string" />
                                                                     <xs:attribute name="converttosqltypeformat" type="xs:string" />
+                                                                    <xs:attribute name="entity" type="xs:string" />
+                                                                    <xs:attribute name="prefix" type="xs:string" />
                                                                 </xs:extension>
                                                             </xs:simpleContent>
                                                         </xs:complexType>
@@ -222,6 +224,27 @@
                                                                                     <xs:attribute name="name" type="xs:string" />
                                                                                     <xs:attribute name="unique" type="BooleanEnum" />
                                                                                     <xs:attribute name="clustered" type="BooleanEnum" />
+                                                                                </xs:complexType>
+                                                                            </xs:element>
+                                                                        </xs:sequence>
+                                                                    </xs:complexType>
+                                                                </xs:element>
+                                                                <xs:element name="views" minOccurs="0" maxOccurs="1">
+                                                                    <xs:complexType>
+                                                                        <xs:sequence>
+                                                                            <xs:element name="view" minOccurs="1" maxOccurs="unbounded">
+                                                                                <xs:complexType>
+                                                                                    <xs:sequence>
+                                                                                        <xs:element name="constraint" minOccurs="0" maxOccurs="unbounded">
+                                                                                            <xs:complexType>
+                                                                                                <xs:sequence>
+                                                                                                </xs:sequence>
+                                                                                                <xs:attribute name="name" type="xs:string" />
+                                                                                                <xs:attribute name="prefix" type="xs:string" />
+                                                                                            </xs:complexType>
+                                                                                        </xs:element>
+                                                                                    </xs:sequence>
+                                                                                    <xs:attribute name="name" type="xs:string" />
                                                                                 </xs:complexType>
                                                                             </xs:element>
                                                                         </xs:sequence>
