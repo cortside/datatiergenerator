@@ -265,7 +265,7 @@ namespace Spring2.DataTierGenerator.Element {
 		}
 		PropertyElement field = BuildElement(node, types, sqltypes, entity, isReference, vd);
 
-		// ADd in any subfields...
+		// Add in any subfields...
 		if (node.Attributes["entity"]!=null) {
 		    EntityElement subentity = EntityElement.FindEntityByName((ArrayList)entities, node.Attributes["entity"].Value);
 		    if (subentity != null) {
