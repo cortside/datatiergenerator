@@ -95,47 +95,47 @@ namespace Golf.Tournament.DAO {
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("GolferId"))) { 
 		data.GolferId = IdType.UNSET;
 	    } else {
-		data.GolferId = IdType.NewInstance(dataReader.GetInt32(dataReader.GetOrdinal("GolferId")));
+		data.GolferId = new IdType(dataReader.GetInt32(dataReader.GetOrdinal("GolferId")));
 	    }
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("FirstName"))) { 
 		data.FirstName = StringType.UNSET;
 	    } else {
-		data.FirstName = StringType.NewInstance(dataReader.GetString(dataReader.GetOrdinal("FirstName")));
+		data.FirstName = StringType.Parse(dataReader.GetString(dataReader.GetOrdinal("FirstName")));
 	    }
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("MiddleInitial"))) { 
 		data.MiddleInitial = StringType.UNSET;
 	    } else {
-		data.MiddleInitial = StringType.NewInstance(dataReader.GetString(dataReader.GetOrdinal("MiddleInitial")));
+		data.MiddleInitial = StringType.Parse(dataReader.GetString(dataReader.GetOrdinal("MiddleInitial")));
 	    }
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("LastName"))) { 
 		data.LastName = StringType.UNSET;
 	    } else {
-		data.LastName = StringType.NewInstance(dataReader.GetString(dataReader.GetOrdinal("LastName")));
+		data.LastName = StringType.Parse(dataReader.GetString(dataReader.GetOrdinal("LastName")));
 	    }
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("Phone"))) { 
 		data.Phone = StringType.UNSET;
 	    } else {
-		data.Phone = StringType.NewInstance(dataReader.GetString(dataReader.GetOrdinal("Phone")));
+		data.Phone = StringType.Parse(dataReader.GetString(dataReader.GetOrdinal("Phone")));
 	    }
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("Email"))) { 
 		data.Email = StringType.UNSET;
 	    } else {
-		data.Email = StringType.NewInstance(dataReader.GetString(dataReader.GetOrdinal("Email")));
+		data.Email = StringType.Parse(dataReader.GetString(dataReader.GetOrdinal("Email")));
 	    }
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("Address1"))) { 
 		data.Address.Address1 = StringType.UNSET;
 	    } else {
-		data.Address.Address1 = StringType.NewInstance(dataReader.GetString(dataReader.GetOrdinal("Address1")));
+		data.Address.Address1 = StringType.Parse(dataReader.GetString(dataReader.GetOrdinal("Address1")));
 	    }
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("Address2"))) { 
 		data.Address.Address2 = StringType.UNSET;
 	    } else {
-		data.Address.Address2 = StringType.NewInstance(dataReader.GetString(dataReader.GetOrdinal("Address2")));
+		data.Address.Address2 = StringType.Parse(dataReader.GetString(dataReader.GetOrdinal("Address2")));
 	    }
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("City"))) { 
 		data.Address.City = StringType.UNSET;
 	    } else {
-		data.Address.City = StringType.NewInstance(dataReader.GetString(dataReader.GetOrdinal("City")));
+		data.Address.City = StringType.Parse(dataReader.GetString(dataReader.GetOrdinal("City")));
 	    }
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("State"))) { 
 		data.Address.State = USStateCodeEnum.UNSET;
@@ -145,32 +145,32 @@ namespace Golf.Tournament.DAO {
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("Country"))) { 
 		data.Address.Country = StringType.UNSET;
 	    } else {
-		data.Address.Country = StringType.NewInstance(dataReader.GetString(dataReader.GetOrdinal("Country")));
+		data.Address.Country = StringType.Parse(dataReader.GetString(dataReader.GetOrdinal("Country")));
 	    }
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("PostalCode"))) { 
 		data.Address.PostalCode = StringType.UNSET;
 	    } else {
-		data.Address.PostalCode = StringType.NewInstance(dataReader.GetString(dataReader.GetOrdinal("PostalCode")));
+		data.Address.PostalCode = StringType.Parse(dataReader.GetString(dataReader.GetOrdinal("PostalCode")));
 	    }
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("DateOfBirth"))) { 
 		data.DateOfBirth = DateType.UNSET;
 	    } else {
-		data.DateOfBirth = DateType.NewInstance(dataReader.GetDateTime(dataReader.GetOrdinal("DateOfBirth")));
+		data.DateOfBirth = new DateType(dataReader.GetDateTime(dataReader.GetOrdinal("DateOfBirth")));
 	    }
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("Handicap"))) { 
 		data.Handicap = DecimalType.UNSET;
 	    } else {
-		data.Handicap = DecimalType.NewInstance(dataReader.GetDecimal(dataReader.GetOrdinal("Handicap")));
+		data.Handicap = new DecimalType(dataReader.GetDecimal(dataReader.GetOrdinal("Handicap")));
 	    }
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("CourseNumber"))) { 
 		data.CourseNumber = StringType.UNSET;
 	    } else {
-		data.CourseNumber = StringType.NewInstance(dataReader.GetString(dataReader.GetOrdinal("CourseNumber")));
+		data.CourseNumber = StringType.Parse(dataReader.GetString(dataReader.GetOrdinal("CourseNumber")));
 	    }
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("PlayerNumber"))) { 
 		data.PlayerNumber = StringType.UNSET;
 	    } else {
-		data.PlayerNumber = StringType.NewInstance(dataReader.GetString(dataReader.GetOrdinal("PlayerNumber")));
+		data.PlayerNumber = StringType.Parse(dataReader.GetString(dataReader.GetOrdinal("PlayerNumber")));
 	    }
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("Gender"))) { 
 		data.Gender = GenderType.UNSET;
@@ -219,7 +219,7 @@ namespace Golf.Tournament.DAO {
 	    cmd.ExecuteNonQuery();
 	    cmd.Connection.Close();
 	    // Set the output paramter value(s)
-	    return IdType.NewInstance((Int32)(cmd.Parameters["RETURN_VALUE"].Value));
+	    return new IdType((Int32)(cmd.Parameters["RETURN_VALUE"].Value));
 	}
 
 	/// <summary>

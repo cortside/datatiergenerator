@@ -94,22 +94,22 @@ namespace Golf.Tournament.DAO {
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("TournamentFeeId"))) { 
 		data.TournamentFeeId = IdType.UNSET;
 	    } else {
-		data.TournamentFeeId = IdType.NewInstance(dataReader.GetInt32(dataReader.GetOrdinal("TournamentFeeId")));
+		data.TournamentFeeId = new IdType(dataReader.GetInt32(dataReader.GetOrdinal("TournamentFeeId")));
 	    }
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("TournamentId"))) { 
 		data.TournamentId = IdType.UNSET;
 	    } else {
-		data.TournamentId = IdType.NewInstance(dataReader.GetInt32(dataReader.GetOrdinal("TournamentId")));
+		data.TournamentId = new IdType(dataReader.GetInt32(dataReader.GetOrdinal("TournamentId")));
 	    }
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("Key"))) { 
 		data.Key = StringType.UNSET;
 	    } else {
-		data.Key = StringType.NewInstance(dataReader.GetString(dataReader.GetOrdinal("Key")));
+		data.Key = StringType.Parse(dataReader.GetString(dataReader.GetOrdinal("Key")));
 	    }
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("Fee"))) { 
 		data.Fee = CurrencyType.UNSET;
 	    } else {
-		data.Fee = CurrencyType.NewInstance(dataReader.GetDecimal(dataReader.GetOrdinal("Fee")));
+		data.Fee = new CurrencyType(dataReader.GetDecimal(dataReader.GetOrdinal("Fee")));
 	    }
 
 	    return data;
@@ -134,7 +134,7 @@ namespace Golf.Tournament.DAO {
 	    cmd.ExecuteNonQuery();
 	    cmd.Connection.Close();
 	    // Set the output paramter value(s)
-	    return IdType.NewInstance((Int32)(cmd.Parameters["RETURN_VALUE"].Value));
+	    return new IdType((Int32)(cmd.Parameters["RETURN_VALUE"].Value));
 	}
 
 	/// <summary>

@@ -95,37 +95,37 @@ namespace Golf.Tournament.DAO {
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("PaymentId"))) { 
 		data.PaymentId = IdType.UNSET;
 	    } else {
-		data.PaymentId = IdType.NewInstance(dataReader.GetInt32(dataReader.GetOrdinal("PaymentId")));
+		data.PaymentId = new IdType(dataReader.GetInt32(dataReader.GetOrdinal("PaymentId")));
 	    }
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("TournamentId"))) { 
 		data.Tournament.TournamentId = IdType.UNSET;
 	    } else {
-		data.Tournament.TournamentId = IdType.NewInstance(dataReader.GetInt32(dataReader.GetOrdinal("TournamentId")));
+		data.Tournament.TournamentId = new IdType(dataReader.GetInt32(dataReader.GetOrdinal("TournamentId")));
 	    }
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("AuthorizationNumber"))) { 
 		data.AuthorizationNumber = StringType.UNSET;
 	    } else {
-		data.AuthorizationNumber = StringType.NewInstance(dataReader.GetString(dataReader.GetOrdinal("AuthorizationNumber")));
+		data.AuthorizationNumber = StringType.Parse(dataReader.GetString(dataReader.GetOrdinal("AuthorizationNumber")));
 	    }
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("ReferenceNumber"))) { 
 		data.ReferenceNumber = StringType.UNSET;
 	    } else {
-		data.ReferenceNumber = StringType.NewInstance(dataReader.GetString(dataReader.GetOrdinal("ReferenceNumber")));
+		data.ReferenceNumber = StringType.Parse(dataReader.GetString(dataReader.GetOrdinal("ReferenceNumber")));
 	    }
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("TransactionNumber"))) { 
 		data.TransactionNumber = StringType.UNSET;
 	    } else {
-		data.TransactionNumber = StringType.NewInstance(dataReader.GetString(dataReader.GetOrdinal("TransactionNumber")));
+		data.TransactionNumber = StringType.Parse(dataReader.GetString(dataReader.GetOrdinal("TransactionNumber")));
 	    }
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("Amount"))) { 
 		data.Amount = CurrencyType.UNSET;
 	    } else {
-		data.Amount = CurrencyType.NewInstance(dataReader.GetDecimal(dataReader.GetOrdinal("Amount")));
+		data.Amount = new CurrencyType(dataReader.GetDecimal(dataReader.GetOrdinal("Amount")));
 	    }
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("ProcessDate"))) { 
 		data.ProcessDate = DateType.UNSET;
 	    } else {
-		data.ProcessDate = DateType.NewInstance(dataReader.GetDateTime(dataReader.GetOrdinal("ProcessDate")));
+		data.ProcessDate = new DateType(dataReader.GetDateTime(dataReader.GetOrdinal("ProcessDate")));
 	    }
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("PaymentStatus"))) { 
 		data.PaymentStatus = PaymentStatusEnum.UNSET;
@@ -135,37 +135,37 @@ namespace Golf.Tournament.DAO {
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("GolferId"))) { 
 		data.Golfer.GolferId = IdType.UNSET;
 	    } else {
-		data.Golfer.GolferId = IdType.NewInstance(dataReader.GetInt32(dataReader.GetOrdinal("GolferId")));
+		data.Golfer.GolferId = new IdType(dataReader.GetInt32(dataReader.GetOrdinal("GolferId")));
 	    }
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("CreditCardNumber"))) { 
 		data.CreditCard.Number = StringType.UNSET;
 	    } else {
-		data.CreditCard.Number = StringType.NewInstance(dataReader.GetString(dataReader.GetOrdinal("CreditCardNumber")));
+		data.CreditCard.Number = StringType.Parse(dataReader.GetString(dataReader.GetOrdinal("CreditCardNumber")));
 	    }
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("ExpirationDate"))) { 
 		data.CreditCard.ExpirationDate = DateType.UNSET;
 	    } else {
-		data.CreditCard.ExpirationDate = DateType.NewInstance(Spring2.Core.Util.DateUtil.ToDateTimeFromCreditCardDate(dataReader.GetString(dataReader.GetOrdinal("ExpirationDate"))));
+		data.CreditCard.ExpirationDate = new DateType(Spring2.Core.Util.DateUtil.ToDateTimeFromCreditCardDate(dataReader.GetString(dataReader.GetOrdinal("ExpirationDate"))));
 	    }
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("CardholderName"))) { 
 		data.CreditCard.Name = StringType.UNSET;
 	    } else {
-		data.CreditCard.Name = StringType.NewInstance(dataReader.GetString(dataReader.GetOrdinal("CardholderName")));
+		data.CreditCard.Name = StringType.Parse(dataReader.GetString(dataReader.GetOrdinal("CardholderName")));
 	    }
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("Address1"))) { 
 		data.CreditCard.Address.Address1 = StringType.UNSET;
 	    } else {
-		data.CreditCard.Address.Address1 = StringType.NewInstance(dataReader.GetString(dataReader.GetOrdinal("Address1")));
+		data.CreditCard.Address.Address1 = StringType.Parse(dataReader.GetString(dataReader.GetOrdinal("Address1")));
 	    }
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("Address2"))) { 
 		data.CreditCard.Address.Address2 = StringType.UNSET;
 	    } else {
-		data.CreditCard.Address.Address2 = StringType.NewInstance(dataReader.GetString(dataReader.GetOrdinal("Address2")));
+		data.CreditCard.Address.Address2 = StringType.Parse(dataReader.GetString(dataReader.GetOrdinal("Address2")));
 	    }
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("City"))) { 
 		data.CreditCard.Address.City = StringType.UNSET;
 	    } else {
-		data.CreditCard.Address.City = StringType.NewInstance(dataReader.GetString(dataReader.GetOrdinal("City")));
+		data.CreditCard.Address.City = StringType.Parse(dataReader.GetString(dataReader.GetOrdinal("City")));
 	    }
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("State"))) { 
 		data.CreditCard.Address.State = USStateCodeEnum.UNSET;
@@ -175,22 +175,22 @@ namespace Golf.Tournament.DAO {
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("Country"))) { 
 		data.CreditCard.Address.Country = StringType.UNSET;
 	    } else {
-		data.CreditCard.Address.Country = StringType.NewInstance(dataReader.GetString(dataReader.GetOrdinal("Country")));
+		data.CreditCard.Address.Country = StringType.Parse(dataReader.GetString(dataReader.GetOrdinal("Country")));
 	    }
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("PostalCode"))) { 
 		data.CreditCard.Address.PostalCode = StringType.UNSET;
 	    } else {
-		data.CreditCard.Address.PostalCode = StringType.NewInstance(dataReader.GetString(dataReader.GetOrdinal("PostalCode")));
+		data.CreditCard.Address.PostalCode = StringType.Parse(dataReader.GetString(dataReader.GetOrdinal("PostalCode")));
 	    }
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("ConfirmationCode"))) { 
 		data.ConfirmationCode = StringType.UNSET;
 	    } else {
-		data.ConfirmationCode = StringType.NewInstance(dataReader.GetString(dataReader.GetOrdinal("ConfirmationCode")));
+		data.ConfirmationCode = StringType.Parse(dataReader.GetString(dataReader.GetOrdinal("ConfirmationCode")));
 	    }
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("PaymentDate"))) { 
 		data.PaymentDate = DateType.UNSET;
 	    } else {
-		data.PaymentDate = DateType.NewInstance(dataReader.GetDateTime(dataReader.GetOrdinal("PaymentDate")));
+		data.PaymentDate = new DateType(dataReader.GetDateTime(dataReader.GetOrdinal("PaymentDate")));
 	    }
 
 	    return data;
@@ -231,7 +231,7 @@ namespace Golf.Tournament.DAO {
 	    cmd.ExecuteNonQuery();
 	    cmd.Connection.Close();
 	    // Set the output paramter value(s)
-	    return IdType.NewInstance((Int32)(cmd.Parameters["RETURN_VALUE"].Value));
+	    return new IdType((Int32)(cmd.Parameters["RETURN_VALUE"].Value));
 	}
 
 	/// <summary>

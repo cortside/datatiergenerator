@@ -95,12 +95,12 @@ namespace Golf.Tournament.DAO {
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("TeamId"))) { 
 		data.TeamId = IdType.UNSET;
 	    } else {
-		data.TeamId = IdType.NewInstance(dataReader.GetInt32(dataReader.GetOrdinal("TeamId")));
+		data.TeamId = new IdType(dataReader.GetInt32(dataReader.GetOrdinal("TeamId")));
 	    }
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("RegistrationKey"))) { 
 		data.RegistrationKey = StringType.UNSET;
 	    } else {
-		data.RegistrationKey = StringType.NewInstance(dataReader.GetString(dataReader.GetOrdinal("RegistrationKey")));
+		data.RegistrationKey = StringType.Parse(dataReader.GetString(dataReader.GetOrdinal("RegistrationKey")));
 	    }
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("Status"))) { 
 		data.Status = TeamStatusEnum.UNSET;
@@ -110,7 +110,7 @@ namespace Golf.Tournament.DAO {
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("TournamentId"))) { 
 		data.TournamentId = IdType.UNSET;
 	    } else {
-		data.TournamentId = IdType.NewInstance(dataReader.GetInt32(dataReader.GetOrdinal("TournamentId")));
+		data.TournamentId = new IdType(dataReader.GetInt32(dataReader.GetOrdinal("TournamentId")));
 	    }
 
 	    return data;
@@ -135,7 +135,7 @@ namespace Golf.Tournament.DAO {
 	    cmd.ExecuteNonQuery();
 	    cmd.Connection.Close();
 	    // Set the output paramter value(s)
-	    return IdType.NewInstance((Int32)(cmd.Parameters["RETURN_VALUE"].Value));
+	    return new IdType((Int32)(cmd.Parameters["RETURN_VALUE"].Value));
 	}
 
 	/// <summary>

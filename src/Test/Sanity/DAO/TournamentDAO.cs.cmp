@@ -95,22 +95,22 @@ namespace Golf.Tournament.DAO {
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("TournamentId"))) { 
 		data.TournamentId = IdType.UNSET;
 	    } else {
-		data.TournamentId = IdType.NewInstance(dataReader.GetInt32(dataReader.GetOrdinal("TournamentId")));
+		data.TournamentId = new IdType(dataReader.GetInt32(dataReader.GetOrdinal("TournamentId")));
 	    }
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("Name"))) { 
 		data.Name = StringType.UNSET;
 	    } else {
-		data.Name = StringType.NewInstance(dataReader.GetString(dataReader.GetOrdinal("Name")));
+		data.Name = StringType.Parse(dataReader.GetString(dataReader.GetOrdinal("Name")));
 	    }
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("Description"))) { 
 		data.Description = StringType.UNSET;
 	    } else {
-		data.Description = StringType.NewInstance(dataReader.GetString(dataReader.GetOrdinal("Description")));
+		data.Description = StringType.Parse(dataReader.GetString(dataReader.GetOrdinal("Description")));
 	    }
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("NumberOfTeams"))) { 
-		data.NumberOfTeams = NumberType.UNSET;
+		data.NumberOfTeams = IntegerType.UNSET;
 	    } else {
-		data.NumberOfTeams = NumberType.NewInstance(dataReader.GetInt32(dataReader.GetOrdinal("NumberOfTeams")));
+		data.NumberOfTeams = new IntegerType(dataReader.GetInt32(dataReader.GetOrdinal("NumberOfTeams")));
 	    }
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("TeamSize"))) { 
 		data.TeamSize = TeamSizeEnum.UNSET;
@@ -125,67 +125,67 @@ namespace Golf.Tournament.DAO {
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("RegistrationBeginDate"))) { 
 		data.RegistrationBeginDate = DateType.UNSET;
 	    } else {
-		data.RegistrationBeginDate = DateType.NewInstance(dataReader.GetDateTime(dataReader.GetOrdinal("RegistrationBeginDate")));
+		data.RegistrationBeginDate = new DateType(dataReader.GetDateTime(dataReader.GetOrdinal("RegistrationBeginDate")));
 	    }
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("RegistrationEndDate"))) { 
 		data.RegistrationEndDate = DateType.UNSET;
 	    } else {
-		data.RegistrationEndDate = DateType.NewInstance(dataReader.GetDateTime(dataReader.GetOrdinal("RegistrationEndDate")));
+		data.RegistrationEndDate = new DateType(dataReader.GetDateTime(dataReader.GetOrdinal("RegistrationEndDate")));
 	    }
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("CancellationCutoffDate"))) { 
 		data.CancellationCutoffDate = DateType.UNSET;
 	    } else {
-		data.CancellationCutoffDate = DateType.NewInstance(dataReader.GetDateTime(dataReader.GetOrdinal("CancellationCutoffDate")));
+		data.CancellationCutoffDate = new DateType(dataReader.GetDateTime(dataReader.GetOrdinal("CancellationCutoffDate")));
 	    }
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("RegistrationFee"))) { 
 		data.RegistrationFee = CurrencyType.UNSET;
 	    } else {
-		data.RegistrationFee = CurrencyType.NewInstance(dataReader.GetDecimal(dataReader.GetOrdinal("RegistrationFee")));
+		data.RegistrationFee = new CurrencyType(dataReader.GetDecimal(dataReader.GetOrdinal("RegistrationFee")));
 	    }
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("RegistrationFeeDescription"))) { 
 		data.RegistrationFeeDescription = StringType.UNSET;
 	    } else {
-		data.RegistrationFeeDescription = StringType.NewInstance(dataReader.GetString(dataReader.GetOrdinal("RegistrationFeeDescription")));
+		data.RegistrationFeeDescription = StringType.Parse(dataReader.GetString(dataReader.GetOrdinal("RegistrationFeeDescription")));
 	    }
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("DatesText"))) { 
 		data.DatesText = StringType.UNSET;
 	    } else {
-		data.DatesText = StringType.NewInstance(dataReader.GetString(dataReader.GetOrdinal("DatesText")));
+		data.DatesText = StringType.Parse(dataReader.GetString(dataReader.GetOrdinal("DatesText")));
 	    }
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("PrizesText"))) { 
 		data.PrizesText = StringType.UNSET;
 	    } else {
-		data.PrizesText = StringType.NewInstance(dataReader.GetString(dataReader.GetOrdinal("PrizesText")));
+		data.PrizesText = StringType.Parse(dataReader.GetString(dataReader.GetOrdinal("PrizesText")));
 	    }
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("SponsorsText"))) { 
 		data.SponsorsText = StringType.UNSET;
 	    } else {
-		data.SponsorsText = StringType.NewInstance(dataReader.GetString(dataReader.GetOrdinal("SponsorsText")));
+		data.SponsorsText = StringType.Parse(dataReader.GetString(dataReader.GetOrdinal("SponsorsText")));
 	    }
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("LocationsText"))) { 
 		data.LocationsText = StringType.UNSET;
 	    } else {
-		data.LocationsText = StringType.NewInstance(dataReader.GetString(dataReader.GetOrdinal("LocationsText")));
+		data.LocationsText = StringType.Parse(dataReader.GetString(dataReader.GetOrdinal("LocationsText")));
 	    }
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("OrganizerId"))) { 
 		data.Organizer.OrganizerId = IdType.UNSET;
 	    } else {
-		data.Organizer.OrganizerId = IdType.NewInstance(dataReader.GetInt32(dataReader.GetOrdinal("OrganizerId")));
+		data.Organizer.OrganizerId = new IdType(dataReader.GetInt32(dataReader.GetOrdinal("OrganizerId")));
 	    }
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("RegisteredParticipants"))) { 
-		data.RegisteredParticipants = NumberType.UNSET;
+		data.RegisteredParticipants = IntegerType.UNSET;
 	    } else {
-		data.RegisteredParticipants = NumberType.NewInstance(dataReader.GetInt32(dataReader.GetOrdinal("RegisteredParticipants")));
+		data.RegisteredParticipants = new IntegerType(dataReader.GetInt32(dataReader.GetOrdinal("RegisteredParticipants")));
 	    }
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("MaximumHandicap"))) { 
-		data.MaximumHandicap = NumberType.UNSET;
+		data.MaximumHandicap = IntegerType.UNSET;
 	    } else {
-		data.MaximumHandicap = NumberType.NewInstance(dataReader.GetInt32(dataReader.GetOrdinal("MaximumHandicap")));
+		data.MaximumHandicap = new IntegerType(dataReader.GetInt32(dataReader.GetOrdinal("MaximumHandicap")));
 	    }
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("Host"))) { 
 		data.Host = StringType.UNSET;
 	    } else {
-		data.Host = StringType.NewInstance(dataReader.GetString(dataReader.GetOrdinal("Host")));
+		data.Host = StringType.Parse(dataReader.GetString(dataReader.GetOrdinal("Host")));
 	    }
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("ShowPercentFull"))) { 
 		data.ShowPercentFull = BooleanType.UNSET;
@@ -236,7 +236,7 @@ namespace Golf.Tournament.DAO {
 	    cmd.ExecuteNonQuery();
 	    cmd.Connection.Close();
 	    // Set the output paramter value(s)
-	    return IdType.NewInstance((Int32)(cmd.Parameters["RETURN_VALUE"].Value));
+	    return new IdType((Int32)(cmd.Parameters["RETURN_VALUE"].Value));
 	}
 
 	/// <summary>

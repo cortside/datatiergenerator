@@ -106,7 +106,7 @@
 		<property name="ExpirationDate" type="DateType" column="*" />
 		<property name="ContactUserID" type="IdType" column="*" />
 		<property name="PhoneNumber" type="StringType" column="*" />
-		<property name="DefaultTerms" type="NumberType" column="*" />
+		<property name="DefaultTerms" type="IntegerType" column="*" />
 		<property name="TranRate" type="CurrencyType" column="*" />
 		<property name="IsPercent" type="BooleanType" column="*" />
 		<property name="ExpenseCodeFormatText" type="StringType" column="*" />
@@ -199,7 +199,7 @@
 		<property name="LineID" column="*" type="IdType" />
 		<property name="Price" column="*" type="CurrencyType" />
 		<property name="ProductID" column="*" type="IdType" />
-		<property name="Quantity" column="*" type="NumberType" />
+		<property name="Quantity" column="*" type="IntegerType" />
 		<property name="CategoryID" column="*" type="IdType" />
 		<property name="VendorLocationID" column="*" type="IdType" />
 		<property name="TemplateID" column="*" type="IdType" />
@@ -250,9 +250,9 @@
 		<property name="Processed" column="*" type="BooleanType" />
 		<property name="Printed" column="*" type="BooleanType" />
 		<property name="ChargeInProcess" column="*" type="BooleanType" />
-		<property name="ChargeErrorCode" column="*" type="NumberType" />
+		<property name="ChargeErrorCode" column="*" type="IntegerType" />
 		<property name="FaxID" column="*" type="IdType" />
-		<property name="FaxSendRetryCount" column="*" type="NumberType" />
+		<property name="FaxSendRetryCount" column="*" type="IntegerType" />
 		<property name="FaxStatus" column="*" type="StringType" />
 		<property name="FaxImageGenerated" column="*" type="DateType" />
 		<property name="FirmLocationId" column="*" type="IdType" />
@@ -287,7 +287,7 @@
 		<property name="Vendor.FinalTip" column="FinalTip" type="BooleanType" />
 		<property name="Vendor.GratuityAmt" column="VendorGratuityAmt" type="CurrencyType" />
 		<property name="Vendor.GratuityPct" column="GratuityPct" type="CurrencyType" />
-		<property name="Vendor.GuestCount" column="GuestCount" type="NumberType" />
+		<property name="Vendor.GuestCount" column="GuestCount" type="IntegerType" />
 		<property name="Vendor.PickupTime" column="PickupTime" type="StringType" />
 		<property name="Vendor.RequestedDeliveryTime" column="RequestedDeliveryTime" type="DateType" />
 		<property name="Vendor.VendorProductAmt" column="VendorProductAmt" type="CurrencyType" />
@@ -311,7 +311,7 @@
 		<property name="ActualDeliveryTime" column="*" type="DateType" />
 		<property name="FinalTip" column="*" type="BooleanType" />
 		<property name="CCDeductedAmt" column="*" type="CurrencyType" />
-		<property name="GuestCount" column="*" type="NumberType" />
+		<property name="GuestCount" column="*" type="IntegerType" />
 		<property name="DeliveryFee" column="*" type="CurrencyType" />
 		<property name="PickupTime" column="*" type="StringType" />
 		<property name="EventEndTime" column="*" type="StringType" />
@@ -321,8 +321,8 @@
 	</entity>
 	<entity name="OrderPayment" sqlentity="OrdPmt">
 	    <properties>
-		<property name="pmt_id" column="*" type="NumberType" />
-		<property name="OrderID" column="*" type="NumberType" />
+		<property name="pmt_id" column="*" type="IntegerType" />
+		<property name="OrderID" column="*" type="IntegerType" />
 		<property name="pmtdate" column="*" type="DateType" />
 		<property name="pmtamt" column="*" type="QuantityType" />
 		<property name="pmt_type_id" column="*" type="StringType" />
@@ -340,12 +340,12 @@
 	    <properties>
 		<property name="pmt_type_id" column="*" type="StringType" />
 		<property name="pmt_type_descr" column="*" type="StringType" />
-		<property name="credit_card" column="*" type="NumberType" />
+		<property name="credit_card" column="*" type="IntegerType" />
 	    </properties>
 	</entity>
 	<entity name="GroupOrder" sqlentity="GroupOrders">
 	    <properties>
-		<property name="GroupOrderID" column="*" type="NumberType" />
+		<property name="GroupOrderID" column="*" type="IntegerType" />
 		<property name="Title" column="*" type="StringType" />
 		<property name="Weekly" column="*" type="StringType" />
 		<property name="OpenTime" column="*" type="DateType" />
@@ -354,13 +354,13 @@
 		<property name="GratuityType" column="*" type="StringType" />
 		<property name="MasterGratuityType" column="*" type="StringType" />
 		<property name="MasterGratuityAmt" column="*" type="CurrencyType" />
-		<property name="FirmID" column="*" type="NumberType" />
+		<property name="FirmID" column="*" type="IntegerType" />
 		<property name="DayOfWeek" column="DOW" type="StringType" />
 		<property name="TipProcessed" column="*" type="BooleanType" />
 		<property name="Notified" column="*" type="BooleanType" />
 		<property name="Individual" column="*" type="BooleanType" />
 		<property name="Processed" column="*" type="BooleanType" />
-		<property name="GroupOrderContact" column="*" type="NumberType" />
+		<property name="GroupOrderContact" column="*" type="IntegerType" />
 		<property name="DeliveryLocation" column="*" type="StringType" />
 		<property name="DeliveryFloor" column="*" type="StringType" />
 		<property name="DeliveryPhoneNumber" column="*" type="StringType" />
@@ -368,21 +368,21 @@
 	</entity>
 	<entity name="GroupOrderDetail" sqlentity="GroupOrderDetail">
 	    <properties>
-		<property name="GroupOrderID" column="*" type="NumberType" />
+		<property name="GroupOrderID" column="*" type="IntegerType" />
 		<property name="Type" column="*" type="StringType" />
-		<property name="Id" column="ID" type="NumberType" />
+		<property name="Id" column="ID" type="IntegerType" />
 	    </properties>
 	</entity>
 	<entity name="GroupOrderVendor" sqlentity="GroupOrderVendors">
 	    <properties>
-		<property name="GroupOrderID" column="*" type="NumberType" />
-		<property name="VendorLocationID" column="*" type="NumberType" />
+		<property name="GroupOrderID" column="*" type="IntegerType" />
+		<property name="VendorLocationID" column="*" type="IntegerType" />
 		<property name="VendorReceiptTime" column="*" type="DateType" />
 		<property name="Processed" column="*" type="BooleanType" />
-		<property name="TotalOrders" column="*" type="NumberType" />
-		<property name="FaxID" column="*" type="NumberType" />
+		<property name="TotalOrders" column="*" type="IntegerType" />
+		<property name="FaxID" column="*" type="IntegerType" />
 		<property name="FaxImageGenerated" column="*" type="DateType" />
-		<property name="FaxSendRetryCount" column="*" type="NumberType" />
+		<property name="FaxSendRetryCount" column="*" type="IntegerType" />
 		<property name="FaxStatus" column="*" type="StringType" />
 		<property name="Printed" column="*" type="BooleanType" />
 		<property name="ActualDeliveryTime" column="*" type="DateType" />
@@ -397,11 +397,11 @@
 		<property name="ErrorID" column="*" type="IdType" />
 		<property name="EventTime" column="*" type="DateType" />
 		<property name="AppName" column="*" type="StringType" />
-		<property name="ErrorNumber" column="*" type="NumberType" convertfromsqltypeformat="NumberType.NewInstance((Int32){2})" />
+		<property name="ErrorNumber" column="*" type="IntegerType" convertfromsqltypeformat="new IntegerType((Int32){2})" />
 		<property name="Description" column="*" type="StringType" />
-		<property name="LineNumber" column="*" type="NumberType" />
-		<property name="UserID" column="*" type="NumberType" />
-		<property name="OrderID" column="*" type="NumberType" />
+		<property name="LineNumber" column="*" type="IntegerType" />
+		<property name="UserID" column="*" type="IntegerType" />
+		<property name="OrderID" column="*" type="IntegerType" />
 		<property name="Source" column="*" type="StringType" />
 		<property name="ErrorParams" column="*" type="StringType" />
 		<property name="ErrorLevel" column="*" type="StringType" />
@@ -416,15 +416,15 @@
 	</entity>
 	<entity name="SecurityGroup" sqlentity="SecurityGroup">
 	    <properties>
-		<property name="SecurityGroupID" column="*" type="NumberType" />
+		<property name="SecurityGroupID" column="*" type="IntegerType" />
 		<property name="SecurityGroupName" column="*" type="StringType" />
 		<property name="Description" column="*" type="StringType" />
 	    </properties>
 	</entity>
 	<entity name="SecurityGroupFunction" sqlentity="SecurityGroupFunction">
 	    <properties>
-		<property name="SecurityGroupID" column="*" type="NumberType" />
-		<property name="FunctionID" column="*" type="NumberType" />
+		<property name="SecurityGroupID" column="*" type="IntegerType" />
+		<property name="FunctionID" column="*" type="IntegerType" />
 	    </properties>
 	</entity>
 	<entity name="User" sqlentity="Users">
@@ -561,10 +561,10 @@
 		<property name="Name" type="StringType" />
 		<property name="Type" type="StringType" />
 		<property name="SqlObject" type="StringType" />
-		<property name="OrdinalPosition" type="NumberType" />
-		<property name="Length" type="NumberType" />
-		<property name="Precision" type="NumberType" />
-		<property name="Scale" type="NumberType" />
+		<property name="OrdinalPosition" type="IntegerType" />
+		<property name="Length" type="IntegerType" />
+		<property name="Precision" type="IntegerType" />
+		<property name="Scale" type="IntegerType" />
 	    </properties>
 	</entity>
 	<entity name="ValidationError">

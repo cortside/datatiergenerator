@@ -11,7 +11,7 @@ namespace Golf.Tournament.DataObject {
 	private IdType tournamentId = IdType.DEFAULT;
 	private StringType name = StringType.DEFAULT;
 	private StringType description = StringType.DEFAULT;
-	private NumberType numberOfTeams = NumberType.DEFAULT;
+	private IntegerType numberOfTeams = IntegerType.DEFAULT;
 	private TeamSizeEnum teamSize = TeamSizeEnum.DEFAULT;
 	private TournamentFormatEnum format = TournamentFormatEnum.DEFAULT;
 	private DateType registrationBeginDate = DateType.DEFAULT;
@@ -24,8 +24,8 @@ namespace Golf.Tournament.DataObject {
 	private StringType sponsorsText = StringType.DEFAULT;
 	private StringType locationsText = StringType.DEFAULT;
 	private OrganizerData organizer = new OrganizerData();
-	private NumberType registeredParticipants = NumberType.DEFAULT;
-	private NumberType maximumHandicap = NumberType.DEFAULT;
+	private IntegerType registeredParticipants = IntegerType.DEFAULT;
+	private IntegerType maximumHandicap = IntegerType.DEFAULT;
 	private TeamCollection teams = TeamCollection.DEFAULT;
 	private ParticipantCollection participants = ParticipantCollection.DEFAULT;
 	private StringType host = StringType.DEFAULT;
@@ -90,7 +90,7 @@ namespace Golf.Tournament.DataObject {
 	    set { this.description = value; }
 	}
 
-	public NumberType NumberOfTeams {
+	public IntegerType NumberOfTeams {
 	    get { return this.numberOfTeams; }
 	    set { this.numberOfTeams = value; }
 	}
@@ -156,12 +156,12 @@ namespace Golf.Tournament.DataObject {
 	    set { this.organizer = value; }
 	}
 
-	public NumberType RegisteredParticipants {
+	public IntegerType RegisteredParticipants {
 	    get { return this.registeredParticipants; }
 	    set { this.registeredParticipants = value; }
 	}
 
-	public NumberType MaximumHandicap {
+	public IntegerType MaximumHandicap {
 	    get { return this.maximumHandicap; }
 	    set { this.maximumHandicap = value; }
 	}

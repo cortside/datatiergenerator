@@ -94,27 +94,27 @@ namespace Golf.Tournament.DAO {
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("OrganizerId"))) { 
 		data.OrganizerId = IdType.UNSET;
 	    } else {
-		data.OrganizerId = IdType.NewInstance(dataReader.GetInt32(dataReader.GetOrdinal("OrganizerId")));
+		data.OrganizerId = new IdType(dataReader.GetInt32(dataReader.GetOrdinal("OrganizerId")));
 	    }
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("Name"))) { 
 		data.Name = StringType.UNSET;
 	    } else {
-		data.Name = StringType.NewInstance(dataReader.GetString(dataReader.GetOrdinal("Name")));
+		data.Name = StringType.Parse(dataReader.GetString(dataReader.GetOrdinal("Name")));
 	    }
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("Address1"))) { 
 		data.Address.Address1 = StringType.UNSET;
 	    } else {
-		data.Address.Address1 = StringType.NewInstance(dataReader.GetString(dataReader.GetOrdinal("Address1")));
+		data.Address.Address1 = StringType.Parse(dataReader.GetString(dataReader.GetOrdinal("Address1")));
 	    }
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("Address2"))) { 
 		data.Address.Address2 = StringType.UNSET;
 	    } else {
-		data.Address.Address2 = StringType.NewInstance(dataReader.GetString(dataReader.GetOrdinal("Address2")));
+		data.Address.Address2 = StringType.Parse(dataReader.GetString(dataReader.GetOrdinal("Address2")));
 	    }
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("City"))) { 
 		data.Address.City = StringType.UNSET;
 	    } else {
-		data.Address.City = StringType.NewInstance(dataReader.GetString(dataReader.GetOrdinal("City")));
+		data.Address.City = StringType.Parse(dataReader.GetString(dataReader.GetOrdinal("City")));
 	    }
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("State"))) { 
 		data.Address.State = USStateCodeEnum.UNSET;
@@ -124,42 +124,42 @@ namespace Golf.Tournament.DAO {
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("Country"))) { 
 		data.Address.Country = StringType.UNSET;
 	    } else {
-		data.Address.Country = StringType.NewInstance(dataReader.GetString(dataReader.GetOrdinal("Country")));
+		data.Address.Country = StringType.Parse(dataReader.GetString(dataReader.GetOrdinal("Country")));
 	    }
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("PostalCode"))) { 
 		data.Address.PostalCode = StringType.UNSET;
 	    } else {
-		data.Address.PostalCode = StringType.NewInstance(dataReader.GetString(dataReader.GetOrdinal("PostalCode")));
+		data.Address.PostalCode = StringType.Parse(dataReader.GetString(dataReader.GetOrdinal("PostalCode")));
 	    }
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("OrganizerContactName"))) { 
 		data.OrganizerContact.Name = StringType.UNSET;
 	    } else {
-		data.OrganizerContact.Name = StringType.NewInstance(dataReader.GetString(dataReader.GetOrdinal("OrganizerContactName")));
+		data.OrganizerContact.Name = StringType.Parse(dataReader.GetString(dataReader.GetOrdinal("OrganizerContactName")));
 	    }
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("OrganizerContactPhone"))) { 
 		data.OrganizerContact.Phone = StringType.UNSET;
 	    } else {
-		data.OrganizerContact.Phone = StringType.NewInstance(dataReader.GetString(dataReader.GetOrdinal("OrganizerContactPhone")));
+		data.OrganizerContact.Phone = StringType.Parse(dataReader.GetString(dataReader.GetOrdinal("OrganizerContactPhone")));
 	    }
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("OrganizerContactEmail"))) { 
 		data.OrganizerContact.Email = StringType.UNSET;
 	    } else {
-		data.OrganizerContact.Email = StringType.NewInstance(dataReader.GetString(dataReader.GetOrdinal("OrganizerContactEmail")));
+		data.OrganizerContact.Email = StringType.Parse(dataReader.GetString(dataReader.GetOrdinal("OrganizerContactEmail")));
 	    }
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("TechnicalContactName"))) { 
 		data.TechnicalContact.Name = StringType.UNSET;
 	    } else {
-		data.TechnicalContact.Name = StringType.NewInstance(dataReader.GetString(dataReader.GetOrdinal("TechnicalContactName")));
+		data.TechnicalContact.Name = StringType.Parse(dataReader.GetString(dataReader.GetOrdinal("TechnicalContactName")));
 	    }
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("TechnicalContactPhone"))) { 
 		data.TechnicalContact.Phone = StringType.UNSET;
 	    } else {
-		data.TechnicalContact.Phone = StringType.NewInstance(dataReader.GetString(dataReader.GetOrdinal("TechnicalContactPhone")));
+		data.TechnicalContact.Phone = StringType.Parse(dataReader.GetString(dataReader.GetOrdinal("TechnicalContactPhone")));
 	    }
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("TechnicalContactEmail"))) { 
 		data.TechnicalContact.Email = StringType.UNSET;
 	    } else {
-		data.TechnicalContact.Email = StringType.NewInstance(dataReader.GetString(dataReader.GetOrdinal("TechnicalContactEmail")));
+		data.TechnicalContact.Email = StringType.Parse(dataReader.GetString(dataReader.GetOrdinal("TechnicalContactEmail")));
 	    }
 
 	    return data;
@@ -194,7 +194,7 @@ namespace Golf.Tournament.DAO {
 	    cmd.ExecuteNonQuery();
 	    cmd.Connection.Close();
 	    // Set the output paramter value(s)
-	    return IdType.NewInstance((Int32)(cmd.Parameters["RETURN_VALUE"].Value));
+	    return new IdType((Int32)(cmd.Parameters["RETURN_VALUE"].Value));
 	}
 
 	/// <summary>

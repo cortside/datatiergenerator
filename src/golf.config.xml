@@ -37,7 +37,7 @@
 		<property name="TournamentId" type="IdType" column="*" />
 		<property name="Name" type="StringType" column="*" />
 		<property name="Description" type="StringType" column="*" />
-		<property name="NumberOfTeams" type="NumberType" column="*" />
+		<property name="NumberOfTeams" type="IntegerType" column="*" />
 		<property name="TeamSize" type="TeamSizeEnum" column="*" />
 		<property name="Format" type="TournamentFormatEnum" column="*" />
 		<property name="RegistrationBeginDate" type="DateType" column="*" />
@@ -51,8 +51,8 @@
 		<property name="LocationsText" type="StringType" column="*" />
 		<property name="Organizer.OrganizerId" type="IdType" column="OrganizerId" />
 		<property name="Organizer" type="OrganizerData" />
-		<property name="RegisteredParticipants" type="NumberType" column="*" />
-		<property name="MaximumHandicap" type="NumberType" column="*" />
+		<property name="RegisteredParticipants" type="IntegerType" column="*" />
+		<property name="MaximumHandicap" type="IntegerType" column="*" />
 		<property name="Teams" type="TeamCollection">
 		    List of TeamData objects.
 		</property>
@@ -316,22 +316,22 @@
 	<type name="Hashtable" namespace="System.Collections" newinstanceformat="new Hashtable()" />
 	<!-- Spring2.Core.Types -->
 	<type name="BooleanType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="BooleanType.GetInstance({2})" newinstanceformat="BooleanType.DEFAULT" nullinstanceformat="BooleanType.UNSET" />
-	<type name="StringType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="StringType.NewInstance({2})" newinstanceformat="StringType.DEFAULT" nullinstanceformat="StringType.UNSET" />
-	<type name="IdType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="IdType.NewInstance({2})" newinstanceformat="IdType.DEFAULT" nullinstanceformat="IdType.UNSET" />
-	<type name="DateType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="DateType.NewInstance({2})" newinstanceformat="DateType.DEFAULT" nullinstanceformat="DateType.UNSET" />
-	<type name="NumberType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="NumberType.NewInstance({2})" newinstanceformat="NumberType.DEFAULT" nullinstanceformat="NumberType.UNSET" />
-	<type name="DecimalType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="DecimalType.NewInstance({2})" newinstanceformat="DecimalType.DEFAULT" nullinstanceformat="DecimalType.UNSET" />
-	<type name="CurrencyType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="CurrencyType.NewInstance({2})" newinstanceformat="CurrencyType.DEFAULT" nullinstanceformat="CurrencyType.UNSET" />
-	<type name="QuantityType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="QuantityType.NewInstance({2})" newinstanceformat="QuantityType.DEFAULT" nullinstanceformat="QuantityType.UNSET" />
+	<type name="StringType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="StringType.Parse({2})" newinstanceformat="StringType.DEFAULT" nullinstanceformat="StringType.UNSET" />
+	<type name="IdType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="new IdType({2})" newinstanceformat="IdType.DEFAULT" nullinstanceformat="IdType.UNSET" />
+	<type name="DateType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="new DateType({2})" newinstanceformat="DateType.DEFAULT" nullinstanceformat="DateType.UNSET" />
+	<type name="IntegerType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="new IntegerType({2})" newinstanceformat="IntegerType.DEFAULT" nullinstanceformat="IntegerType.UNSET" />
+	<type name="DecimalType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="new DecimalType({2})" newinstanceformat="DecimalType.DEFAULT" nullinstanceformat="DecimalType.UNSET" />
+	<type name="CurrencyType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="new CurrencyType({2})" newinstanceformat="CurrencyType.DEFAULT" nullinstanceformat="CurrencyType.UNSET" />
+	<type name="QuantityType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="new QuantityType({2})" newinstanceformat="QuantityType.DEFAULT" nullinstanceformat="QuantityType.UNSET" />
 	<type name="GenderType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="GenderType.GetInstance({2})" newinstanceformat="GenderType.DEFAULT" nullinstanceformat="GenderType.UNSET" />
 	<type name="USStateCodeEnum" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="USStateCodeEnum.GetInstance({2})" newinstanceformat="USStateCodeEnum.DEFAULT" nullinstanceformat="USStateCodeEnum.UNSET" />
     </types>
     <sqltypes>
 	<sqltype name="float" type="DecimalType" readermethodformat='{0}.GetDouble({0}.GetOrdinal("{1}"))' declarationformat="{0}({2})" />
 	<sqltype name="datetime" sqldbtype="DateTime" type="DateType" readermethodformat='{0}.GetDateTime({0}.GetOrdinal("{1}"))' />
-	<sqltype name="bit" type="NumberType" readermethodformat='{0}.GetInt32({0}.GetOrdinal("{1}"))' />
-	<sqltype name="smallint" sqldbtype="SmallInt" type="NumberType" readermethodformat='{0}.GetInt32({0}.GetOrdinal("{1}"))' />
-	<sqltype name="tinyint" sqldbtype="TinyInt" type="NumberType" readermethodformat='{0}.GetInt32({0}.GetOrdinal("{1}"))' />
+	<sqltype name="bit" type="IntegerType" readermethodformat='{0}.GetInt32({0}.GetOrdinal("{1}"))' />
+	<sqltype name="smallint" sqldbtype="SmallInt" type="IntegerType" readermethodformat='{0}.GetInt32({0}.GetOrdinal("{1}"))' />
+	<sqltype name="tinyint" sqldbtype="TinyInt" type="IntegerType" readermethodformat='{0}.GetInt32({0}.GetOrdinal("{1}"))' />
 	<sqltype name="smallmoney" sqldbtype="SmallMoney" type="CurrencyType" readermethodformat='{0}.GetDecimal({0}.GetOrdinal("{1}"))' />
 	<sqltype name="money" type="CurrencyType" readermethodformat='{0}.GetDecimal({0}.GetOrdinal("{1}"))' />
 	<sqltype name="image" length="50" type="StringType" readermethodformat='{0}.GetString({0}.GetOrdinal("{1}"))' />
@@ -339,7 +339,7 @@
 	<sqltype name="smalldatetime" sqldbtype="SmallDateTime" type="DateType" readermethodformat='{0}.GetDateTime({0}.GetOrdinal("{1}"))' />
 	<sqltype name="char" length="1" type="StringType" readermethodformat='{0}.GetString({0}.GetOrdinal("{1}"))' declarationformat="{0}({1})" />
 	<sqltype name="varchar" sqldbtype="VarChar" length="50" type="StringType" readermethodformat='{0}.GetString({0}.GetOrdinal("{1}"))' declarationformat="{0}({1})" />
-	<sqltype name="int" scale="0" precision="10" type="NumberType" readermethodformat='{0}.GetInt32({0}.GetOrdinal("{1}"))' />
+	<sqltype name="int" scale="0" precision="10" type="IntegerType" readermethodformat='{0}.GetInt32({0}.GetOrdinal("{1}"))' />
 	<sqltype name="numeric" sqldbtype="Decimal" type="DecimalType" readermethodformat='{0}.GetDecimal({0}.GetOrdinal("{1}"))' declarationformat="{0}({2}, {3})" />
 	<sqltype name="binary" type="byte[]" declarationformat="{0}({1})" />
 	<sqltype name="bigint" sqldbtype="BigInt" type="Int64" readermethodformat='{0}.GetInt64({0}.GetOrdinal("{1}"))' />

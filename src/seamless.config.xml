@@ -68,7 +68,7 @@
 		<property name="ExpirationDate" type="DateType" column="*" />
 		<property name="ContactUserID" type="IdType" column="*" />
 		<property name="PhoneNumber" type="StringType" column="*" />
-		<property name="DefaultTerms" type="NumberType" column="*" />
+		<property name="DefaultTerms" type="IntegerType" column="*" />
 		<property name="TranRate" type="CurrencyType" column="*" />
 		<property name="IsPercent" type="BooleanType" column="*" />
 		<property name="ExpenseCodeFormatText" type="StringType" column="*" />
@@ -157,7 +157,7 @@
 		<property name="LineID" column="*" type="IdType" isprimarykey="True" />
 		<property name="Price" column="*" type="CurrencyType" />
 		<property name="ProductID" column="*" type="IdType" />
-		<property name="Quantity" column="*" type="NumberType" />
+		<property name="Quantity" column="*" type="IntegerType" />
 		<property name="CategoryID" column="*" type="IdType" />
 		<property name="VendorLocationID" column="*" type="IdType" />
 		<property name="TemplateID" column="*" type="IdType" />
@@ -208,9 +208,9 @@
 		<property name="Processed" column="*" type="BooleanType" />
 		<property name="Printed" column="*" type="BooleanType" />
 		<property name="ChargeInProcess" column="*" type="BooleanType" />
-		<property name="ChargeErrorCode" column="*" type="NumberType" />
+		<property name="ChargeErrorCode" column="*" type="IntegerType" />
 		<property name="FaxID" column="*" type="IdType" />
-		<property name="FaxSendRetryCount" column="*" type="NumberType" />
+		<property name="FaxSendRetryCount" column="*" type="IntegerType" />
 		<property name="FaxStatus" column="*" type="StringType" />
 		<property name="FaxImageGenerated" column="*" type="DateType" />
 		<property name="FirmLocationId" column="*" type="IdType" />
@@ -243,7 +243,7 @@
 		<property name="Vendor.FinalTip" column="FinalTip" type="BooleanType" />
 		<property name="Vendor.GratuityAmt" column="VendorGratuityAmt" type="CurrencyType" />
 		<property name="Vendor.GratuityPct" column="GratuityPct" type="CurrencyType" />
-		<property name="Vendor.GuestCount" column="GuestCount" type="NumberType" />
+		<property name="Vendor.GuestCount" column="GuestCount" type="IntegerType" />
 		<property name="Vendor.PickupTime" column="PickupTime" type="StringType" />
 		<property name="Vendor.RequestedDeliveryTime" column="RequestedDeliveryTime" type="DateType" />
 		<property name="Vendor.VendorProductAmt" column="VendorProductAmt" type="CurrencyType" />
@@ -267,7 +267,7 @@
 		<property name="ActualDeliveryTime" column="*" type="DateType" />
 		<property name="FinalTip" column="*" type="BooleanType" />
 		<property name="CCDeductedAmt" column="*" type="CurrencyType" />
-		<property name="GuestCount" column="*" type="NumberType" />
+		<property name="GuestCount" column="*" type="IntegerType" />
 		<property name="DeliveryFee" column="*" type="CurrencyType" />
 		<property name="PickupTime" column="*" type="StringType" />
 		<property name="EventEndTime" column="*" type="StringType" />
@@ -277,8 +277,8 @@
 	</entity>
 	<entity name="OrderPayment" sqlentity="OrdPmt">
 	    <properties>
-		<property name="pmt_id" column="*" type="NumberType" isprimarykey="True" />
-		<property name="OrderID" column="*" type="NumberType" />
+		<property name="pmt_id" column="*" type="IntegerType" isprimarykey="True" />
+		<property name="OrderID" column="*" type="IntegerType" />
 		<property name="pmtdate" column="*" type="DateType" />
 		<property name="pmtamt" column="*" type="QuantityType" />
 		<property name="pmt_type_id" column="*" type="StringType" />
@@ -295,12 +295,12 @@
 	    <properties>
 		<property name="pmt_type_id" column="*" type="StringType" isprimarykey="True" />
 		<property name="pmt_type_descr" column="*" type="StringType" />
-		<property name="credit_card" column="*" type="NumberType" />
+		<property name="credit_card" column="*" type="IntegerType" />
 	    </properties>
 	</entity>
 	<entity name="GroupOrder" sqlentity="GroupOrders">
 	    <properties>
-		<property name="GroupOrderID" column="*" type="NumberType" isidentity="True" isprimarykey="True" />
+		<property name="GroupOrderID" column="*" type="IntegerType" isidentity="True" isprimarykey="True" />
 		<property name="Title" column="*" type="StringType" />
 		<property name="Weekly" column="*" type="StringType" />
 		<property name="OpenTime" column="*" type="DateType" />
@@ -309,13 +309,13 @@
 		<property name="GratuityType" column="*" type="StringType" />
 		<property name="MasterGratuityType" column="*" type="StringType" />
 		<property name="MasterGratuityAmt" column="*" type="CurrencyType" />
-		<property name="FirmID" column="*" type="NumberType" />
+		<property name="FirmID" column="*" type="IntegerType" />
 		<property name="DOW" column="*" type="StringType" />
 		<property name="TipProcessed" column="*" type="BooleanType" />
 		<property name="Notified" column="*" type="BooleanType" />
 		<property name="Individual" column="*" type="BooleanType" />
 		<property name="Processed" column="*" type="BooleanType" />
-		<property name="GroupOrderContact" column="*" type="NumberType" />
+		<property name="GroupOrderContact" column="*" type="IntegerType" />
 		<property name="DeliveryLocation" column="*" type="StringType" />
 		<property name="DeliveryFloor" column="*" type="StringType" />
 		<property name="DeliveryPhoneNumber" column="*" type="StringType" />
@@ -323,21 +323,21 @@
 	</entity>
 	<entity name="GroupOrderDetail" sqlentity="GroupOrderDetail">
 	    <properties>
-		<property name="GroupOrderID" column="*" type="NumberType" isprimarykey="True" />
+		<property name="GroupOrderID" column="*" type="IntegerType" isprimarykey="True" />
 		<property name="Type" column="*" type="StringType" isprimarykey="True" />
-		<property name="ID" column="*" type="NumberType" isprimarykey="True" />
+		<property name="ID" column="*" type="IntegerType" isprimarykey="True" />
 	    </properties>
 	</entity>
 	<entity name="GroupOrderVendor" sqlentity="GroupOrderVendors">
 	    <properties>
-		<property name="GroupOrderID" column="*" type="NumberType" isprimarykey="True" />
-		<property name="VendorLocationID" column="*" type="NumberType" isprimarykey="True" />
+		<property name="GroupOrderID" column="*" type="IntegerType" isprimarykey="True" />
+		<property name="VendorLocationID" column="*" type="IntegerType" isprimarykey="True" />
 		<property name="VendorReceiptTime" column="*" type="DateType" />
 		<property name="Processed" column="*" type="BooleanType" />
-		<property name="TotalOrders" column="*" type="NumberType" />
-		<property name="FaxID" column="*" type="NumberType" />
+		<property name="TotalOrders" column="*" type="IntegerType" />
+		<property name="FaxID" column="*" type="IntegerType" />
 		<property name="FaxImageGenerated" column="*" type="DateType" />
-		<property name="FaxSendRetryCount" column="*" type="NumberType" />
+		<property name="FaxSendRetryCount" column="*" type="IntegerType" />
 		<property name="FaxStatus" column="*" type="StringType" />
 		<property name="Printed" column="*" type="BooleanType" />
 		<property name="ActualDeliveryTime" column="*" type="DateType" />
@@ -345,36 +345,36 @@
 	</entity>
 	<entity name="ErrorLog" sqlentity="ErrorLog">
 	    <properties>
-		<property name="ErrorID" column="*" type="NumberType" isidentity="True" isprimarykey="True" />
+		<property name="ErrorID" column="*" type="IntegerType" isidentity="True" isprimarykey="True" />
 		<property name="EventTime" column="*" type="DateType" />
 		<property name="AppName" column="*" type="StringType" />
-		<property name="ErrorNumber" column="*" type="NumberType" />
+		<property name="ErrorNumber" column="*" type="IntegerType" />
 		<property name="Description" column="*" type="StringType" />
-		<property name="LineNumber" column="*" type="NumberType" />
-		<property name="UserID" column="*" type="NumberType" />
-		<property name="OrderID" column="*" type="NumberType" />
+		<property name="LineNumber" column="*" type="IntegerType" />
+		<property name="UserID" column="*" type="IntegerType" />
+		<property name="OrderID" column="*" type="IntegerType" />
 		<property name="Source" column="*" type="StringType" />
 		<property name="ErrorParams" column="*" type="StringType" />
 	    </properties>
 	</entity>
 	<entity name="Function" sqlentity="Function">
 	    <properties>
-		<property name="FunctionID" column="*" type="NumberType" isidentity="True" isprimarykey="True" />
+		<property name="FunctionID" column="*" type="IntegerType" isidentity="True" isprimarykey="True" />
 		<property name="FunctionName" column="*" type="StringType" />
 		<property name="Description" column="*" type="StringType" />
 	    </properties>
 	</entity>
 	<entity name="SecurityGroup" sqlentity="SecurityGroup">
 	    <properties>
-		<property name="SecurityGroupID" column="*" type="NumberType" isidentity="True" isprimarykey="True" />
+		<property name="SecurityGroupID" column="*" type="IntegerType" isidentity="True" isprimarykey="True" />
 		<property name="SecurityGroupName" column="*" type="StringType" />
 		<property name="Description" column="*" type="StringType" />
 	    </properties>
 	</entity>
 	<entity name="SecurityGroupFunction" sqlentity="SecurityGroupFunction">
 	    <properties>
-		<property name="SecurityGroupID" column="*" type="NumberType" isprimarykey="True" isforeignkey="True" />
-		<property name="FunctionID" column="*" type="NumberType" isprimarykey="True" isforeignkey="True" />
+		<property name="SecurityGroupID" column="*" type="IntegerType" isprimarykey="True" isforeignkey="True" />
+		<property name="FunctionID" column="*" type="IntegerType" isprimarykey="True" isforeignkey="True" />
 	    </properties>
 	</entity>
 	<entity name="User" sqlentity="Users" sqlview="vwUser">
@@ -508,9 +508,9 @@
     <sqltypes>
 	<sqltype name="float" type="DecimalType" readermethodformat='{0}.GetDouble({0}.GetOrdinal("{1}"))' declarationformat="{0}({2})" />
 	<sqltype name="datetime" sqldbtype="DateTime" type="DateType" readermethodformat='{0}.GetDateTime({0}.GetOrdinal("{1}"))' />
-	<sqltype name="bit" type="NumberType" readermethodformat='{0}.GetInt32({0}.GetOrdinal("{1}"))' />
-	<sqltype name="smallint" sqldbtype="SmallInt" type="NumberType" readermethodformat='{0}.GetInt16({0}.GetOrdinal("{1}"))' />
-	<sqltype name="tinyint" sqldbtype="TinyInt" type="NumberType" readermethodformat='{0}.GetInt32({0}.GetOrdinal("{1}"))' />
+	<sqltype name="bit" type="IntegerType" readermethodformat='{0}.GetInt32({0}.GetOrdinal("{1}"))' />
+	<sqltype name="smallint" sqldbtype="SmallInt" type="IntegerType" readermethodformat='{0}.GetInt16({0}.GetOrdinal("{1}"))' />
+	<sqltype name="tinyint" sqldbtype="TinyInt" type="IntegerType" readermethodformat='{0}.GetInt32({0}.GetOrdinal("{1}"))' />
 	<sqltype name="smallmoney" sqldbtype="SmallMoney" type="CurrencyType" readermethodformat='{0}.GetDecimal({0}.GetOrdinal("{1}"))' />
 	<sqltype name="money" type="CurrencyType" readermethodformat='{0}.GetDecimal({0}.GetOrdinal("{1}"))' />
 	<sqltype name="image" sqldbtype="VarChar" length="50" type="StringType" readermethodformat='{0}.GetString({0}.GetOrdinal("{1}"))' />
@@ -518,7 +518,7 @@
 	<sqltype name="smalldatetime" sqldbtype="SmallDateTime" type="DateType" readermethodformat='{0}.GetDateTime({0}.GetOrdinal("{1}"))' />
 	<sqltype name="char" length="1" type="StringType" readermethodformat='{0}.GetString({0}.GetOrdinal("{1}"))' declarationformat="{0}({1})" />
 	<sqltype name="varchar" sqldbtype="VarChar" length="50" type="StringType" readermethodformat='{0}.GetString({0}.GetOrdinal("{1}"))' declarationformat="{0}({1})" />
-	<sqltype name="int" scale="0" precision="10" type="NumberType" readermethodformat='{0}.GetInt32({0}.GetOrdinal("{1}"))' />
+	<sqltype name="int" scale="0" precision="10" type="IntegerType" readermethodformat='{0}.GetInt32({0}.GetOrdinal("{1}"))' />
 	<sqltype name="numeric" sqldbtype="Decimal" type="DecimalType" readermethodformat='{0}.GetDecimal({0}.GetOrdinal("{1}"))' declarationformat="{0}({2}, {3})" />
 	<sqltype name="binary" type="byte[]" declarationformat="{0}({1})" />
 	<sqltype name="bigint" sqldbtype="BigInt" type="Int64" readermethodformat='{0}.GetInt64({0}.GetOrdinal("{1}"))' />
@@ -554,13 +554,13 @@
 	<type name="Hashtable" namespace="System.Collections" newinstanceformat="new Hashtable()" />
 	<!-- Spring2.Core.Types -->
 	<type name="BooleanType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="BooleanType.GetInstance({2})" newinstanceformat="BooleanType.DEFAULT" nullinstanceformat="BooleanType.UNSET" />
-	<type name="StringType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="StringType.NewInstance({2})" newinstanceformat="StringType.DEFAULT" nullinstanceformat="StringType.UNSET" />
-	<type name="IdType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="IdType.NewInstance({2})" newinstanceformat="IdType.DEFAULT" nullinstanceformat="IdType.UNSET" />
-	<type name="DateType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="DateType.NewInstance({2})" newinstanceformat="DateType.DEFAULT" nullinstanceformat="DateType.UNSET" />
-	<type name="NumberType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="NumberType.NewInstance({2})" newinstanceformat="NumberType.DEFAULT" nullinstanceformat="NumberType.UNSET" />
-	<type name="DecimalType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="DecimalType.NewInstance({2})" newinstanceformat="DecimalType.DEFAULT" nullinstanceformat="DecimalType.UNSET" />
-	<type name="CurrencyType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="CurrencyType.NewInstance({2})" newinstanceformat="CurrencyType.DEFAULT" nullinstanceformat="CurrencyType.UNSET" />
-	<type name="QuantityType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="QuantityType.NewInstance({2})" newinstanceformat="QuantityType.DEFAULT" nullinstanceformat="QuantityType.UNSET" />
+	<type name="StringType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="StringType.Parse({2})" newinstanceformat="StringType.DEFAULT" nullinstanceformat="StringType.UNSET" />
+	<type name="IdType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="new IdType({2})" newinstanceformat="IdType.DEFAULT" nullinstanceformat="IdType.UNSET" />
+	<type name="DateType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="new DateType({2})" newinstanceformat="DateType.DEFAULT" nullinstanceformat="DateType.UNSET" />
+	<type name="IntegerType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="new IntegerType({2})" newinstanceformat="IntegerType.DEFAULT" nullinstanceformat="IntegerType.UNSET" />
+	<type name="DecimalType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="new DecimalType({2})" newinstanceformat="DecimalType.DEFAULT" nullinstanceformat="DecimalType.UNSET" />
+	<type name="CurrencyType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="new CurrencyType({2})" newinstanceformat="CurrencyType.DEFAULT" nullinstanceformat="CurrencyType.UNSET" />
+	<type name="QuantityType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="new QuantityType({2})" newinstanceformat="QuantityType.DEFAULT" nullinstanceformat="QuantityType.UNSET" />
     </types>
     
     
