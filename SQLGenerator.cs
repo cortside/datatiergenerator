@@ -11,602 +11,621 @@ namespace Spring2.DataTierGenerator {
     /// </summary>
     public class SQLGenerator : GeneratorBase {
 
-        /// <summary>
-        /// Contructor for the Generator class.
-        /// </summary>
-        /// <param name="strConnectionString">Connecion string to a SQL Server database.</param>
-        public SQLGenerator(Configuration options, StreamWriter writer, Entity entity, ArrayList fields) : base(options, writer, entity, fields) {
-        }
+	/// <summary>
+	/// Contructor for the Generator class.
+	/// </summary>
+	/// <param name="strConnectionString">Connecion string to a SQL Server database.</param>
+	public SQLGenerator(Configuration options, Entity entity) : base(options, entity) {
+	    if (options.SingleFile) {
+		String fileName = options.SqlScriptDirectory + "\\" + options.Database + ".sql";
+		if (File.Exists(fileName))
+		    File.Delete(fileName);
+	    }
+	}
 		
-        /// <summary>
-        /// Creates an insert stored procedure SQL script for the specified table
-        /// </summary>
-        /// <param name="table">Name of the table the stored procedure should be generated from.</param>
-        /// <param name="fields">ArrayList object containing one or more Field objects as defined in the table.</param>
-        public void CreateInsertStoredProcedure() {
-            Field		objField;
-            int				i;
-            StringBuilder	sb;
-            String			strProcName;
+	/// <summary>
+	/// Creates an insert stored procedure SQL script for the specified table
+	/// </summary>
+	/// <param name="table">Name of the table the stored procedure should be generated from.</param>
+	/// <param name="fields">ArrayList object containing one or more Field objects as defined in the table.</param>
+	public void CreateInsertStoredProcedure() {
+	    Field		field;
+	    int				i;
+	    StringBuilder	sb;
+	    String			strProcName;
 			
-            // Create the SQL for the stored procedure
-            sb = new StringBuilder(1024);
+	    // Create the SQL for the stored procedure
+	    sb = new StringBuilder(1024);
 
-            strProcName = options.GetProcName(entity.SqlObject, "Insert");
+	    strProcName = options.GetProcName(entity.SqlObject, "Insert");
 
-            sb.Append("CREATE PROCEDURE " + strProcName + "\n");
+	    sb.Append("CREATE PROCEDURE " + strProcName + "\n");
 
-            // Create the parameter list
-            Boolean first = true;
-            for (i = 0; i < fields.Count; i++) {
-                objField = (Field)fields[i];
-                if (!objField.IsIdentity && !objField.IsViewColumn) {
-                    if (!first) {
-                        sb.Append(",\n");
-                    } else {
-                        first=false;
-                    }
-                    sb.Append("\t").Append(objField.CreateParameterString(false));
-                }
-                objField = null;
-            }
-            sb.Append("\n\nAS\n\n");
+	    // Create the parameter list
+	    Boolean first = true;
+	    for (i = 0; i < entity.Fields.Count; i++) {
+		field = (Field)entity.Fields[i];
+		if (!field.IsIdentity && !field.IsViewColumn && !field.SqlName.Equals(String.Empty)) {
+		    if (!first) {
+			sb.Append(",\n");
+		    } else {
+			first=false;
+		    }
+		    sb.Append("\t").Append(field.CreateParameterString(false));
+		}
+		field = null;
+	    }
+	    sb.Append("\n\nAS\n\n");
 			
-            for (i = 0; i < fields.Count; i++) {
-                objField = (Field)fields[i];
-                if (!objField.IsViewColumn) {
-                    if (objField.IsRowGuidCol) {
-                        sb.Append("SET @" + objField.Name.Replace(" ", "_") + " = @@NEWID()\n\n");
-                        break;
-                    }
-                }
-            }
+	    for (i = 0; i < entity.Fields.Count; i++) {
+		field = (Field)entity.Fields[i];
+		if (!field.IsViewColumn && !field.SqlName.Equals(String.Empty)) {
+		    if (field.IsRowGuidCol) {
+			sb.Append("SET @" + field.SqlName.Replace(" ", "_") + " = @@NEWID()\n\n");
+			break;
+		    }
+		}
+	    }
 			
-            sb.Append("INSERT INTO [" + entity.SqlObject + "] (\n");
+	    sb.Append("INSERT INTO [" + entity.SqlObject + "] (\n");
 			
-            // Create the parameter list
-            first = true;
-            for (i = 0; i < fields.Count; i++) {
-                objField = (Field)fields[i];
-                if (!objField.IsViewColumn) {
-                    // Is the current field an identity column?
-                    if (objField.IsIdentity == false) {
-                        if (!first) {
-                            sb.Append(",\n");
-                        } else {
-                            first=false;
-                        }
-                        sb.Append("\t[" + objField.Name + "]");
-                    }
-                }
-                objField = null;
-            }
-            sb.Append(")\nVALUES (\n");
+	    // Create the parameter list
+	    first = true;
+	    for (i = 0; i < entity.Fields.Count; i++) {
+		field = (Field)entity.Fields[i];
+		if (!field.IsViewColumn && !field.SqlName.Equals(String.Empty)) {
+		    // Is the current field an identity column?
+		    if (field.IsIdentity == false) {
+			if (!first) {
+			    sb.Append(",\n");
+			} else {
+			    first=false;
+			}
+			sb.Append("\t[" + field.SqlName + "]");
+		    }
+		}
+		field = null;
+	    }
+	    sb.Append(")\nVALUES (\n");
 
-            // Create the parameter list
-            first=true;
-            for (i = 0; i < fields.Count; i++) {
-                objField = (Field)fields[i];
-                if (!objField.IsViewColumn) {
-                    // Is the current field an identity column?
-                    if (objField.IsIdentity == false) {
-                        if (!first) {
-                            sb.Append(",\n");
-                        } else {
-                            first=false;
-                        }
-                        sb.Append("\t@" + objField.Name.Replace(" ", "_"));
-                    }
-                }
-                objField = null;
-            }
-            sb.Append(")\n");
+	    // Create the parameter list
+	    first=true;
+	    for (i = 0; i < entity.Fields.Count; i++) {
+		field = (Field)entity.Fields[i];
+		if (!field.IsViewColumn && !field.SqlName.Equals(String.Empty)) {
+		    // Is the current field an identity column?
+		    if (field.IsIdentity == false) {
+			if (!first) {
+			    sb.Append(",\n");
+			} else {
+			    first=false;
+			}
+			sb.Append("\t@" + field.SqlName.Replace(" ", "_"));
+		    }
+		}
+		field = null;
+	    }
+	    sb.Append(")\n");
 
-            sb.Append("\n\nif @@rowcount <> 1 or @@error!=0\n");
-            sb.Append("    BEGIN\n");
-            sb.Append("        RAISERROR  20000 '").Append(strProcName).Append(": Unable to insert new row into ").Append(entity.SqlObject).Append(" table '\n");
-            //sb.Append("        ROLLBACK TRAN\n");
-            sb.Append("        RETURN(-1)\n");
-            sb.Append("    END\n");
+	    sb.Append("\n\nif @@rowcount <> 1 or @@error!=0\n");
+	    sb.Append("    BEGIN\n");
+	    sb.Append("        RAISERROR  20000 '").Append(strProcName).Append(": Unable to insert new row into ").Append(entity.SqlObject).Append(" table '\n");
+	    //sb.Append("        ROLLBACK TRAN\n");
+	    sb.Append("        RETURN(-1)\n");
+	    sb.Append("    END\n");
 
 
-            // Should we include a line for returning the identity?
-/*            for (i = 0; i < fields.Count; i++) {
-                objField = (Field)fields[i];
-                if (!objField.IsViewColumn) {
-                    // Is the current field an identity column?
-                    if (objField.IsIdentity)
-                        sb.Append("\nSET @" + objField.Name.Replace(" ", "_") + " = @@IDENTITY\n");
-                }
-                objField = null;
-            }
-*/
-			sb.Append("\nreturn @@IDENTITY\n");
+	    // Should we include a line for returning the identity?
+	    /*            for (i = 0; i < fields.Count; i++) {
+			    field = (Field)fields[i];
+			    if (!field.IsViewColumn) {
+				// Is the current field an identity column?
+				if (field.IsIdentity)
+				    sb.Append("\nSET @" + field.Name.Replace(" ", "_") + " = @@IDENTITY\n");
+			    }
+			    field = null;
+			}
+	    */
+	    sb.Append("\nreturn @@IDENTITY\n");
 
-            // Write out the stored procedure
-            WriteProcToFile(strProcName, sb.ToString() + "\nGO\n\n");
-            sb = null;
-        }
+	    // Write out the stored procedure
+	    WriteProcToFile(strProcName, sb.ToString() + "\nGO\n\n");
+	    sb = null;
+	}
 
 		
-        /// <summary>
-        /// Creates an update stored procedure SQL script for the specified table
-        /// </summary>
-        /// <param name="table">Name of the table the stored procedure should be generated from.</param>
-        /// <param name="fields">ArrayList object containing one or more Field objects as defined in the table.</param>
-        public void CreateUpdateStoredProcedure() {
-            Field objField;
-            Field objOldField;
-            Field objNewField;
-            int i;
-            StringBuilder sb = new StringBuilder(1024);
-            int intWhereClauseCount;
+	/// <summary>
+	/// Creates an update stored procedure SQL script for the specified table
+	/// </summary>
+	/// <param name="table">Name of the table the stored procedure should be generated from.</param>
+	/// <param name="fields">ArrayList object containing one or more Field objects as defined in the table.</param>
+	public void CreateUpdateStoredProcedure() {
+	    Field field;
+	    Field objOldField;
+	    Field objNewField;
+	    int i;
+	    StringBuilder sb = new StringBuilder(1024);
+	    int intWhereClauseCount;
 
-            sb.Append("CREATE PROCEDURE " + options.GetProcName(entity.SqlObject, "Update") + "\n\n");
+	    sb.Append("CREATE PROCEDURE " + options.GetProcName(entity.SqlObject, "Update") + "\n\n");
 
-            // Create the parameter list
-			Boolean first = true;
-				for (i = 0; i < fields.Count; i++) {
-					objField = (Field)fields[i];
-					if (!objField.IsViewColumn) {
-//						if (!first) {
-//							sb.Append(",\n");
-//						} else {
-//							first=false;
-//						}
-						//MessageBox.Show("isPrimaryKey=" + objField.IsPrimaryKey.ToString() + "\nisIdentity=" + objField.IsIdentity.ToString() + "\n", objField.Name);
+	    // Create the parameter list
+	    Boolean first = true;
+	    for (i = 0; i < entity.Fields.Count; i++) {
+		field = (Field)entity.Fields[i];
+		if (!field.IsViewColumn && !field.SqlName.Equals(String.Empty)) {
+		    //						if (!first) {
+		    //							sb.Append(",\n");
+		    //						} else {
+		    //							first=false;
+		    //						}
+		    //MessageBox.Show("isPrimaryKey=" + field.IsPrimaryKey.ToString() + "\nisIdentity=" + field.IsIdentity.ToString() + "\n", field.Name);
 
-						//if (!objField.IsPrimaryKey && !objField.IsIdentity && !objField.IsRowGuidCol) {
-							if (!first) {
-								sb.Append(",\n");
-							} else {
-								first=false;
-							}
+		    //if (!field.IsPrimaryKey && !field.IsIdentity && !field.IsRowGuidCol) {
+		    if (!first) {
+			sb.Append(",\n");
+		    } else {
+			first=false;
+		    }
 
-							sb.Append(objField.CreateParameterString(false));
-						//}
-						/*							objOldField = objField.Copy();
+		    sb.Append(field.CreateParameterString(false));
+		    //}
+		    /*							objOldField = field.Copy();
 													objOldField.Name = "Old" + objOldField.Name;
 					
-													objNewField = objField.Copy();
+													objNewField = field.Copy();
 													objNewField.Name = "New" + objNewField.Name;
 					
 													sb.Append(objOldField.CreateParameterString(false));
 													sb.Append(",\n");
 													sb.Append(objNewField.CreateParameterString(false));
 												} else {
-													sb.Append(objField.CreateParameterString(false));
+													sb.Append(field.CreateParameterString(false));
 												} */
-					}
-					objField = null;
-				}
-				sb.Append("\n");
+		}
+		field = null;
+	    }
+	    sb.Append("\n");
 
-            sb.Append("\nAS\n");
-            sb.Append("\nUPDATE\n\t[" + entity.SqlObject + "]\n");
-            sb.Append("SET\n");
+	    sb.Append("\nAS\n");
+	    sb.Append("\nUPDATE\n\t[" + entity.SqlObject + "]\n");
+	    sb.Append("SET\n");
 			
-            // Create the set statement
-            first = true;
-            for (i = 0; i < fields.Count; i++) {
-                objField = (Field)fields[i];
-                if (!objField.IsViewColumn) {
-                    if (objField.IsIdentity == false && objField.IsRowGuidCol == false) {
-//                        if (!first) {
-//                            sb.Append(",\n");
-//                        } else {
-//                            first=false;
-//                        }
-                        if (objField.IsPrimaryKey) {
-                            //sb.Append("\t[" + objField.Name + "] = @New" + objField.Name.Replace(" ", "_"));
-                        } else {
-							if (!first) {
-								sb.Append(",\n");
-							} else {
-								first=false;
-							}
+	    // Create the set statement
+	    first = true;
+	    for (i = 0; i < entity.Fields.Count; i++) {
+		field = (Field)entity.Fields[i];
+		if (!field.IsViewColumn && !field.SqlName.Equals(String.Empty)) {
+		    if (field.IsIdentity == false && field.IsRowGuidCol == false) {
+			//                        if (!first) {
+			//                            sb.Append(",\n");
+			//                        } else {
+			//                            first=false;
+			//                        }
+			if (field.IsPrimaryKey) {
+			    //sb.Append("\t[" + field.Name + "] = @New" + field.Name.Replace(" ", "_"));
+			} else {
+			    if (!first) {
+				sb.Append(",\n");
+			    } else {
+				first=false;
+			    }
 
-                            sb.Append("\t[" + objField.Name + "] = @" + objField.Name.Replace(" ", "_"));
-                        }
-                    }
-                }
-                objField = null;
-            }
-            sb.Append("\n");
-            sb.Append("WHERE\n");
-			
-            // Create the where clause
-            intWhereClauseCount = 0;
-			for (i = 0; i < fields.Count; i++) {
-				objField = (Field)fields[i];
-				if (!objField.IsViewColumn) {
-					if (objField.IsIdentity || objField.IsRowGuidCol || objField.IsPrimaryKey) {
-						intWhereClauseCount++;
-				
-						if (i == (fields.Count  - 1))
-							sb.Append("\t");
-						else if (i < (fields.Count - 1) && i > 0 && intWhereClauseCount > 1)
-							sb.Append("\tAND ");
-						else
-							sb.Append("\t");
-					
-//						if (objField.IsPrimaryKey && !objField.IsIdentity && objField.IsRowGuidCol)
-//							sb.Append("[" + objField.Name + "] = @Old" + objField.Name.Replace(" ", "_") + "\n");
-//						else
-							sb.Append("[" + objField.Name + "] = @" + objField.Name.Replace(" ", "_") + "\n");
-					}
-				}
-				objField = null;
+			    sb.Append("\t[" + field.SqlName + "] = @" + field.SqlName.Replace(" ", "_"));
 			}
-
-            sb.Append("\n\nif @@ROWCOUNT <> 1\n");
-            sb.Append("    BEGIN\n");
-            //sb.Append("        RAISERROR  ('").Append(options.GetProcName(entity.SqlObject, "Update")).Append(": ").Append(Field.GetIdentityColumn(fields).Name).Append(" %d not found to update', 16,1, @").Append(Field.GetIdentityColumn(fields).Name).Append(")\n");
-			sb.Append("        RAISERROR  ('").Append(options.GetProcName(entity.SqlObject, "Update")).Append(":  update was expected to update a single row and updated %d rows', 16,1, @@ROWCOUNT)\n");
-            sb.Append("        RETURN(-1)\n");
-            sb.Append("    END\n");
-
-
-            // Write out the stored procedure
-            WriteProcToFile(options.GetProcName(entity.SqlObject, "Update"), sb.ToString() + "\nGO\n\n");
-            sb = null;
-        }
-
-
-        /// <summary>
-        /// Creates delete stored procedures for the specified table
-        /// </summary>
-        /// <param name="table">Name of the table the stored procedure should be generated from.</param>
-        /// <param name="fields">ArrayList object containing one or more Field objects as defined in the table.</param>
-        public void CreateDeleteStoredProcedures() {
-            ArrayList		arrKeyList;
-            Field		objField;
-            int				i;
-            string			strColumnName;
-            StringBuilder	sb;
-            string			strPrimaryKeyList;
-
-            // Create the array list of key fields
-            strPrimaryKeyList = "";
-            arrKeyList = new ArrayList();
-            for (i = 0; i < fields.Count; i++) {
-                objField = (Field)fields[i];
-                if (objField.IsPrimaryKey) {
-                    arrKeyList.Add(objField);
-                    strPrimaryKeyList += objField.Name.Replace(" ", "_") + "_";
-                }
-                objField = null;
-            }
+		    }
+		}
+		field = null;
+	    }
+	    sb.Append("\n");
+	    sb.Append("WHERE\n");
 			
-            // Trim off the last underscore
-            if (strPrimaryKeyList.Length > 0)
-                strPrimaryKeyList = strPrimaryKeyList.Substring(0, strPrimaryKeyList.Length - 1);
-
-            /************************************************************************************/
-            // Create the stored procedures, with parameters for each identity, RowGuidCol, primary key, or foreign key column
-            for (i = 0; i < fields.Count; i++) {
-                objField = (Field)fields[i];
-
-                // Is is an identity or uniqueidentifier column?
-                if (objField.IsIdentity || (options.GenerateProcsForForeignKey && (objField.IsRowGuidCol || objField.IsPrimaryKey || objField.IsForeignKey))) {
-
-					// if this option is on, only generate the PK 
-					if (options.GenerateOnlyPrimaryDeleteStoredProc) {
-						arrKeyList.Clear();
-					}
-
-                    // Format the column name to make sure the first character is upper case
-                    strColumnName = objField.Name;
-                    strColumnName = strColumnName.Substring(0, 1).ToUpper() + strColumnName.Substring(1);
+	    // Create the where clause
+	    intWhereClauseCount = 0;
+	    for (i = 0; i < entity.Fields.Count; i++) {
+		field = (Field)entity.Fields[i];
+		if (!field.IsViewColumn && !field.SqlName.Equals(String.Empty)) {
+		    if (field.IsIdentity || field.IsRowGuidCol || field.IsPrimaryKey) {
+			intWhereClauseCount++;
 				
-                    // Create the SQL for the stored procedure
-                    String			strProcName;
+			if (i == (entity.Fields.Count  - 1))
+			    sb.Append("\t");
+			else if (i < (entity.Fields.Count - 1) && i > 0 && intWhereClauseCount > 1)
+			    sb.Append("\tAND ");
+			else
+			    sb.Append("\t");
+					
+			//						if (field.IsPrimaryKey && !field.IsIdentity && field.IsRowGuidCol)
+			//							sb.Append("[" + field.Name + "] = @Old" + field.Name.Replace(" ", "_") + "\n");
+			//						else
+			sb.Append("[" + field.SqlName + "] = @" + field.SqlName.Replace(" ", "_") + "\n");
+		    }
+		}
+		field = null;
+	    }
+
+	    sb.Append("\n\nif @@ROWCOUNT <> 1\n");
+	    sb.Append("    BEGIN\n");
+	    //sb.Append("        RAISERROR  ('").Append(options.GetProcName(entity.SqlObject, "Update")).Append(": ").Append(Field.GetIdentityColumn(fields).Name).Append(" %d not found to update', 16,1, @").Append(Field.GetIdentityColumn(fields).Name).Append(")\n");
+	    sb.Append("        RAISERROR  ('").Append(options.GetProcName(entity.SqlObject, "Update")).Append(":  update was expected to update a single row and updated %d rows', 16,1, @@ROWCOUNT)\n");
+	    sb.Append("        RETURN(-1)\n");
+	    sb.Append("    END\n");
+
+
+	    // Write out the stored procedure
+	    WriteProcToFile(options.GetProcName(entity.SqlObject, "Update"), sb.ToString() + "\nGO\n\n");
+	    sb = null;
+	}
+
+
+	/// <summary>
+	/// Creates delete stored procedures for the specified table
+	/// </summary>
+	/// <param name="table">Name of the table the stored procedure should be generated from.</param>
+	/// <param name="fields">ArrayList object containing one or more Field objects as defined in the table.</param>
+	public void CreateDeleteStoredProcedures() {
+	    ArrayList		arrKeyList;
+	    Field		field;
+	    int				i;
+	    string			strColumnName;
+	    StringBuilder	sb;
+	    string			strPrimaryKeyList;
+
+	    // Create the array list of key fields
+	    strPrimaryKeyList = "";
+	    arrKeyList = new ArrayList();
+	    for (i = 0; i < entity.Fields.Count; i++) {
+		field = (Field)entity.Fields[i];
+		if (field.IsPrimaryKey) {
+		    arrKeyList.Add(field);
+		    strPrimaryKeyList += field.SqlName.Replace(" ", "_") + "_";
+		}
+		field = null;
+	    }
 			
-                    // Create the SQL for the stored procedure
-                    sb = new StringBuilder(1024);
+	    // Trim off the last underscore
+	    if (strPrimaryKeyList.Length > 0)
+		strPrimaryKeyList = strPrimaryKeyList.Substring(0, strPrimaryKeyList.Length - 1);
+
+	    /************************************************************************************/
+	    // Create the stored procedures, with parameters for each identity, RowGuidCol, primary key, or foreign key column
+	    for (i = 0; i < entity.Fields.Count; i++) {
+		field = (Field)entity.Fields[i];
+
+		// Is is an identity or uniqueidentifier column?
+		if (field.IsIdentity || (options.GenerateProcsForForeignKey && (field.IsRowGuidCol || field.IsPrimaryKey || field.IsForeignKey))) {
+
+		    // if this option is on, only generate the PK 
+		    if (options.GenerateOnlyPrimaryDeleteStoredProc) {
+			arrKeyList.Clear();
+		    }
+
+		    // Format the column name to make sure the first character is upper case
+		    strColumnName = field.SqlName;
+		    strColumnName = strColumnName.Substring(0, 1).ToUpper() + strColumnName.Substring(1);
+				
+		    // Create the SQL for the stored procedure
+		    String			strProcName;
+			
+		    // Create the SQL for the stored procedure
+		    sb = new StringBuilder(1024);
                     
-                    if (objField.IsIdentity) {
-                        strProcName = options.GetProcName(entity.SqlObject, "Delete");
-                    } else {
-                        strProcName = options.GetProcName(entity.SqlObject, "DeleteBy" + strColumnName.Replace(" ", "_"));
-                    }
+		    if (field.IsIdentity) {
+			strProcName = options.GetProcName(entity.SqlObject, "Delete");
+		    } else {
+			strProcName = options.GetProcName(entity.SqlObject, "DeleteBy" + strColumnName.Replace(" ", "_"));
+		    }
 
-                    sb.Append("CREATE PROCEDURE " + strProcName + "\n\n");
+		    sb.Append("CREATE PROCEDURE " + strProcName + "\n\n");
 
-                    sb.Append("@" + objField.Name.Replace(" ", "_") + " " + objField.SqlType);
-                    sb.Append("\n\nAS\n\n");
+		    sb.Append("@" + field.SqlName.Replace(" ", "_") + " " + field.SqlType);
+		    sb.Append("\n\nAS\n\n");
 
-                    sb.Append("if not exists(SELECT ").Append(objField.Name).Append(" FROM [").Append(entity.SqlObject).Append("] WHERE ([").Append(objField.Name).Append("] = @").Append(objField.Name).Append("))\n");
-                    sb.Append("    BEGIN\n");
-                    sb.Append("        RAISERROR  ('").Append(strProcName).Append(": ").Append(objField.Name).Append(" %d not found to delete', 16,1, @").Append(objField.Name).Append(")\n");
-                    sb.Append("        RETURN(-1)\n");
-                    sb.Append("    END\n\n");
+		    sb.Append("if not exists(SELECT ").Append(field.SqlName).Append(" FROM [").Append(entity.SqlObject).Append("] WHERE ([").Append(field.SqlName).Append("] = @").Append(field.SqlName).Append("))\n");
+		    sb.Append("    BEGIN\n");
+		    sb.Append("        RAISERROR  ('").Append(strProcName).Append(": ").Append(field.SqlName).Append(" %d not found to delete', 16,1, @").Append(field.SqlName).Append(")\n");
+		    sb.Append("        RETURN(-1)\n");
+		    sb.Append("    END\n\n");
 
 
-                    sb.Append("DELETE\n");
-                    sb.Append("FROM\n\t[" + entity.SqlObject + "]\n");
-                    sb.Append("WHERE \n");
-                    sb.Append("\t[" + objField.Name + "] = @" + objField.Name.Replace(" ", "_") + "\n");
+		    sb.Append("DELETE\n");
+		    sb.Append("FROM\n\t[" + entity.SqlObject + "]\n");
+		    sb.Append("WHERE \n");
+		    sb.Append("\t[" + field.SqlName + "] = @" + field.SqlName.Replace(" ", "_") + "\n");
 
-                    // Write out the stored procedure
-                    WriteProcToFile(strProcName, sb.ToString() + "\nGO\n\n");
-                    sb = null;
-                }
-            }
+		    // Write out the stored procedure
+		    WriteProcToFile(strProcName, sb.ToString() + "\nGO\n\n");
+		    sb = null;
+		}
+	    }
 				
-            /************************************************************************************/
-            // Create the stored procedure for a composite primary key
-            if (arrKeyList.Count > 1) {
-                // Create the SQL for the stored procedure
-                String			strProcName;
+	    /************************************************************************************/
+	    // Create the stored procedure for a composite primary key
+	    if (arrKeyList.Count > 1) {
+		// Create the SQL for the stored procedure
+		String			strProcName;
 			
-                // Create the SQL for the stored procedure
-                sb = new StringBuilder(1024);
+		// Create the SQL for the stored procedure
+		sb = new StringBuilder(1024);
 
-				if (options.GenerateOnlyPrimaryDeleteStoredProc) {
-					strProcName = options.GetProcName(entity.SqlObject, "Delete");
-				} else {
-					strProcName = options.GetProcName(entity.SqlObject, "DeleteBy" + strPrimaryKeyList);
-				}
+		if (options.GenerateOnlyPrimaryDeleteStoredProc) {
+		    strProcName = options.GetProcName(entity.SqlObject, "Delete");
+		} else {
+		    strProcName = options.GetProcName(entity.SqlObject, "DeleteBy" + strPrimaryKeyList);
+		}
 
-                sb.Append("CREATE PROCEDURE " + strProcName + "\n\n");				
+		sb.Append("CREATE PROCEDURE " + strProcName + "\n\n");				
 				
-                //// Is this a self-referencing key?
-                //sb.Append("CREATE PROCEDURE proc" + entity.SqlObject.Replace(" ", "_") + "DeleteBy" + strPrimaryKeyList + "\n\n");
+		//// Is this a self-referencing key?
+		//sb.Append("CREATE PROCEDURE proc" + entity.SqlObject.Replace(" ", "_") + "DeleteBy" + strPrimaryKeyList + "\n\n");
 
-                // Create the parameter list
-                for (i = 0; i < arrKeyList.Count; i++) {
-                    objField = (Field)arrKeyList[i];
-                    sb.Append("@" + objField.Name.Replace(" ", "_") + "\t" + objField.SqlType);
-                    objField = null;
+		// Create the parameter list
+		for (i = 0; i < arrKeyList.Count; i++) {
+		    field = (Field)arrKeyList[i];
+		    sb.Append("@" + field.SqlName.Replace(" ", "_") + "\t" + field.SqlType);
+		    field = null;
 					
-                    if (i == arrKeyList.Count-1)
-                        sb.Append("\n");
-                    else
-                        sb.Append(",\n");
-                }
+		    if (i == arrKeyList.Count-1)
+			sb.Append("\n");
+		    else
+			sb.Append(",\n");
+		}
 				
-                sb.Append("\n\nAS\n\n");
+		sb.Append("\n\nAS\n\n");
 
-				// Create the where clause
-				StringBuilder where = new StringBuilder();
+		// Create the where clause
+		StringBuilder where = new StringBuilder();
+		for (i = 0; i < arrKeyList.Count; i++) {
+		    field = (Field)arrKeyList[i];
+		    where.Append("\t[" + field.SqlName + "] = @" + field.SqlName.Replace(" ", "_"));
+					
+		    if (i != arrKeyList.Count-1)
+			where.Append(" and \n");
+		    else
+			where.Append("\n");
+		}
+
+
+		sb.Append("if not exists(SELECT ").Append("*").Append(" FROM [").Append(entity.SqlObject).Append("] WHERE (").Append(where.ToString()).Append("))\n");
+		sb.Append("    BEGIN\n");
+		sb.Append("        RAISERROR  ('").Append(strProcName).Append(": ").Append("record").Append(" not found to delete', 16,1)\n");
+		sb.Append("        RETURN(-1)\n");
+		sb.Append("    END\n\n");
+
+
+		sb.Append("DELETE\n");
+		sb.Append("FROM\n\t[" + entity.SqlObject + "]\n");
+		sb.Append("WHERE \n");
+
+		/*                // Create the where clause
 				for (i = 0; i < arrKeyList.Count; i++) {
-					objField = (Field)arrKeyList[i];
-					where.Append("\t[" + objField.Name + "] = @" + objField.Name.Replace(" ", "_"));
+				    field = (Field)fields[i];
+				    sb.Append("\t[" + field.Name + "] = @" + field.Name.Replace(" ", "_"));
 					
-					if (i != arrKeyList.Count-1)
-						where.Append(" and \n");
-					else
-						where.Append("\n");
-				}
+				    if (i != fields.Count)
+					sb.Append(",\n");
+				    else
+					sb.Append("\n");
+				} */
+		sb.Append(where.ToString());
+				
+		// Write out the stored procedure
+		WriteProcToFile(strProcName, sb.ToString() + "\nGO\n\n");
+		sb = null;
+	    }
+	}
 
 
-				sb.Append("if not exists(SELECT ").Append("*").Append(" FROM [").Append(entity.SqlObject).Append("] WHERE (").Append(where.ToString()).Append("))\n");
-				sb.Append("    BEGIN\n");
-				sb.Append("        RAISERROR  ('").Append(strProcName).Append(": ").Append("record").Append(" not found to delete', 16,1)\n");
-				sb.Append("        RETURN(-1)\n");
-				sb.Append("    END\n\n");
+	/// <summary>
+	/// Creates a select stored procedure SQL script for the specified table by the table's identity or uniqueidentifier column,
+	///	and select stored procedures for all foreign keys columns in the table.
+	/// </summary>
+	/// <param name="table">Name of the table the stored procedure should be generated from.</param>
+	/// <param name="fields">ArrayList object containing one or more Field objects as defined in the table.</param>
+	public void CreateSelectStoredProcedures() {
+	    ArrayList		arrKeyList;
+	    Field		field;
+	    string			strColumnName;
+	    int				i;
+	    StringBuilder	sb;
+	    string			strPrimaryKeyList;
 
+	    /************************************************************************************/
+	    // Create the full list stored procedure
+	    String			strProcName;
+			
+	    // Create the SQL for the stored procedure
+	    sb = new StringBuilder(1024);
 
-                sb.Append("DELETE\n");
-                sb.Append("FROM\n\t[" + entity.SqlObject + "]\n");
-                sb.Append("WHERE \n");
+	    strProcName = options.GetProcName(entity.SqlObject, "Select");
 
-/*                // Create the where clause
-                for (i = 0; i < arrKeyList.Count; i++) {
-                    objField = (Field)fields[i];
-                    sb.Append("\t[" + objField.Name + "] = @" + objField.Name.Replace(" ", "_"));
+	    sb.Append("CREATE PROCEDURE " + strProcName + "\n\n");
+	    sb.Append("\n\nAS\n\n");
+	    sb.Append("SELECT\n\t*\n");
+	    sb.Append("FROM\n\t[");
+	    if (options.UseViews)
+		sb.Append("vw");
+	    sb.Append(entity.SqlObject);
+	    sb.Append("]\n");
+			
+	    // Write out the stored procedure
+	    WriteProcToFile(strProcName, sb.ToString() + "\nGO\n\n");
+	    sb = null;
+
+	    // Create the array list of key fields
+	    strPrimaryKeyList = "";
+	    arrKeyList = new ArrayList();
+	    for (i = 0; i < entity.Fields.Count; i++) {
+		field = (Field)entity.Fields[i];
+		if (field.IsPrimaryKey) {
+		    arrKeyList.Add(field);
+		    strPrimaryKeyList += field.SqlName.Replace(" ", "_") + "_";
+		}
+		field = null;
+	    }
+			
+	    // Trim off the last underscore
+	    if (strPrimaryKeyList.Length > 0)
+		strPrimaryKeyList = strPrimaryKeyList.Substring(0, strPrimaryKeyList.Length - 1);
+
+	    /************************************************************************************/
+	    // Create the stored procedures, with parameters for each identity, RowGuidCol, primary key, or foreign key column
+	    for (i = 0; i < entity.Fields.Count; i++) {
+		field = (Field)entity.Fields[i];
+
+		// Is is an identity or uniqueidentifier column?
+		if (field.IsIdentity || (options.GenerateProcsForForeignKey && (field.IsRowGuidCol || field.IsPrimaryKey || field.IsForeignKey))) {
+
+		    // Format the column name to make sure the first character is upper case
+		    strColumnName = field.SqlName;
+		    strColumnName = strColumnName.Substring(0, 1).ToUpper() + strColumnName.Substring(1);
+				
+		    // Create the SQL for the stored procedure
+		    sb = new StringBuilder(1024);
+
+		    strProcName = options.GetProcName(entity.SqlObject, "SelectBy" + strColumnName.Replace(" ", "_"));
+		    sb.Append("CREATE PROCEDURE " + strProcName + "\n\n");
+
+		    sb.Append("@" + field.SqlName.Replace(" ", "_") + "\t" + field.SqlType);
+		    sb.Append("\n\nAS\n\n");
+		    sb.Append("SELECT\n\t*\n");
+		    sb.Append("FROM\n\t[");
+		    if (options.UseViews)
+			sb.Append("vw");
+		    sb.Append(entity.SqlObject);
+		    sb.Append("]\n");
+
+		    sb.Append("WHERE \n");
+		    sb.Append("\t[" + field.SqlName + "] = @" + field.SqlName.Replace(" ", "_") + "\n");
 					
-                    if (i != fields.Count)
-                        sb.Append(",\n");
-                    else
-                        sb.Append("\n");
-                } */
-				sb.Append(where.ToString());
+		    // Write out the stored procedure
+		    WriteProcToFile(strProcName, sb.ToString() + "\nGO\n\n");
+		    sb = null;
+		}
+	    }
 				
-                // Write out the stored procedure
-                WriteProcToFile(strProcName, sb.ToString() + "\nGO\n\n");
-                sb = null;
-            }
-        }
+	    /************************************************************************************/
+	    // Create the stored procedure for a composite primary key
+	    if (arrKeyList.Count > 1) {
+		// Create the SQL for the stored procedure
+		sb = new StringBuilder(1024);
 
-
-        /// <summary>
-        /// Creates a select stored procedure SQL script for the specified table by the table's identity or uniqueidentifier column,
-        ///	and select stored procedures for all foreign keys columns in the table.
-        /// </summary>
-        /// <param name="table">Name of the table the stored procedure should be generated from.</param>
-        /// <param name="fields">ArrayList object containing one or more Field objects as defined in the table.</param>
-        public void CreateSelectStoredProcedures() {
-            ArrayList		arrKeyList;
-            Field		objField;
-            string			strColumnName;
-            int				i;
-            StringBuilder	sb;
-            string			strPrimaryKeyList;
-
-            /************************************************************************************/
-            // Create the full list stored procedure
-            String			strProcName;
-			
-            // Create the SQL for the stored procedure
-            sb = new StringBuilder(1024);
-
-            strProcName = options.GetProcName(entity.SqlObject, "Select");
-
-            sb.Append("CREATE PROCEDURE " + strProcName + "\n\n");
-            sb.Append("\n\nAS\n\n");
-            sb.Append("SELECT\n\t*\n");
-            sb.Append("FROM\n\t[");
-            if (options.UseViews)
-                sb.Append("vw");
-            sb.Append(entity.SqlObject);
-            sb.Append("]\n");
-			
-            // Write out the stored procedure
-            WriteProcToFile(strProcName, sb.ToString() + "\nGO\n\n");
-            sb = null;
-
-            // Create the array list of key fields
-            strPrimaryKeyList = "";
-            arrKeyList = new ArrayList();
-            for (i = 0; i < fields.Count; i++) {
-                objField = (Field)fields[i];
-                if (objField.IsPrimaryKey) {
-                    arrKeyList.Add(objField);
-                    strPrimaryKeyList += objField.Name.Replace(" ", "_") + "_";
-                }
-                objField = null;
-            }
-			
-            // Trim off the last underscore
-            if (strPrimaryKeyList.Length > 0)
-                strPrimaryKeyList = strPrimaryKeyList.Substring(0, strPrimaryKeyList.Length - 1);
-
-            /************************************************************************************/
-            // Create the stored procedures, with parameters for each identity, RowGuidCol, primary key, or foreign key column
-            for (i = 0; i < fields.Count; i++) {
-                objField = (Field)fields[i];
-
-                // Is is an identity or uniqueidentifier column?
-                if (objField.IsIdentity || (options.GenerateProcsForForeignKey && (objField.IsRowGuidCol || objField.IsPrimaryKey || objField.IsForeignKey))) {
-
-                    // Format the column name to make sure the first character is upper case
-                    strColumnName = objField.Name;
-                    strColumnName = strColumnName.Substring(0, 1).ToUpper() + strColumnName.Substring(1);
+		strProcName = options.GetProcName(entity.SqlObject, "SelectBy" + strPrimaryKeyList);
+		sb.Append("CREATE PROCEDURE " + strProcName + "\n\n");
 				
-                    // Create the SQL for the stored procedure
-                    sb = new StringBuilder(1024);
+		//// Is this a self-referencing key?
+		//sb.Append("CREATE PROCEDURE proc" + entity.SqlObject.Replace(" ", "_") + "SelectBy" + strPrimaryKeyList + "\n\n");
 
-                    strProcName = options.GetProcName(entity.SqlObject, "SelectBy" + strColumnName.Replace(" ", "_"));
-                    sb.Append("CREATE PROCEDURE " + strProcName + "\n\n");
-
-                    sb.Append("@" + objField.Name.Replace(" ", "_") + "\t" + objField.SqlType);
-                    sb.Append("\n\nAS\n\n");
-                    sb.Append("SELECT\n\t*\n");
-                    sb.Append("FROM\n\t[");
-                    if (options.UseViews)
-                        sb.Append("vw");
-                    sb.Append(entity.SqlObject);
-                    sb.Append("]\n");
-
-                    sb.Append("WHERE \n");
-                    sb.Append("\t[" + objField.Name + "] = @" + objField.Name.Replace(" ", "_") + "\n");
+		// Create the parameter list
+		for (i = 0; i < arrKeyList.Count; i++) {
+		    field = (Field)arrKeyList[i];
+		    sb.Append("@" + field.SqlName.Replace(" ", "_") + "\t" + field.SqlType);
+		    field = null;
 					
-                    // Write out the stored procedure
-                    WriteProcToFile(strProcName, sb.ToString() + "\nGO\n\n");
-                    sb = null;
-                }
-            }
+		    if (i == arrKeyList.Count)
+			sb.Append("\n");
+		    else
+			sb.Append(",\n");
+		}
 				
-            /************************************************************************************/
-            // Create the stored procedure for a composite primary key
-            if (arrKeyList.Count > 1) {
-                // Create the SQL for the stored procedure
-                sb = new StringBuilder(1024);
+		sb.Append("\n\nAS\n\n");
+		sb.Append("SELECT\n\t*\n");
+		sb.Append("FROM\n\t[" + entity.SqlObject + "]\n");
+		sb.Append("WHERE \n");
 
-                strProcName = options.GetProcName(entity.SqlObject, "SelectBy" + strPrimaryKeyList);
-                sb.Append("CREATE PROCEDURE " + strProcName + "\n\n");
-				
-                //// Is this a self-referencing key?
-                //sb.Append("CREATE PROCEDURE proc" + entity.SqlObject.Replace(" ", "_") + "SelectBy" + strPrimaryKeyList + "\n\n");
-
-                // Create the parameter list
-                for (i = 0; i < arrKeyList.Count; i++) {
-                    objField = (Field)arrKeyList[i];
-                    sb.Append("@" + objField.Name.Replace(" ", "_") + "\t" + objField.SqlType);
-                    objField = null;
+		// Create the where clause
+		for (i = 0; i < arrKeyList.Count; i++) {
+		    field = (Field)entity.Fields[i];
+		    sb.Append("\t[" + field.SqlName + "] = @" + field.SqlName.Replace(" ", "_"));
 					
-                    if (i == arrKeyList.Count)
-                        sb.Append("\n");
-                    else
-                        sb.Append(",\n");
-                }
+		    if (i != entity.Fields.Count)
+			sb.Append(",\n");
+		    else
+			sb.Append("\n");
+		}
 				
-                sb.Append("\n\nAS\n\n");
-                sb.Append("SELECT\n\t*\n");
-                sb.Append("FROM\n\t[" + entity.SqlObject + "]\n");
-                sb.Append("WHERE \n");
+		// Write out the stored procedure
+		WriteProcToFile(strProcName, sb.ToString() + "\nGO\n\n");
+		sb = null;
+	    }
+	}
 
-                // Create the where clause
-                for (i = 0; i < arrKeyList.Count; i++) {
-                    objField = (Field)fields[i];
-                    sb.Append("\t[" + objField.Name + "] = @" + objField.Name.Replace(" ", "_"));
-					
-                    if (i != fields.Count)
-                        sb.Append(",\n");
-                    else
-                        sb.Append("\n");
-                }
-				
-                // Write out the stored procedure
-                WriteProcToFile(strProcName, sb.ToString() + "\nGO\n\n");
-                sb = null;
-            }
-        }
-
-        public void CreateView() {
-            Field		objField;
-            int				i;
-            StringBuilder	sb;
-            String			strProcName;
+	public void CreateView() {
+	    Field		field;
+	    int				i;
+	    StringBuilder	sb;
+	    String			strProcName;
 			
-            // Create the SQL for the stored procedure
-            sb = new StringBuilder(1024);
+	    // Create the SQL for the stored procedure
+	    sb = new StringBuilder(1024);
 
-            strProcName = "vw" + entity.SqlObject;
-
-            sb.Append("if exists (select * from sysobjects where id = object_id(N'[" + strProcName + "]') and OBJECTPROPERTY(id, N'IsView') = 1)\n");
-            sb.Append("drop view [" + strProcName + "]\n");
-            sb.Append("GO\n");
-            sb.Append("\n");
-            sb.Append("create view " + strProcName + "\n");
-            sb.Append("\n");
-            sb.Append("AS\n");
-            sb.Append("\n");
-            sb.Append("SELECT ");
-			
-            // Create the parameter list
-            for (i = 0; i < fields.Count; i++) {
-                objField = (Field)fields[i];
-                if (!objField.IsViewColumn) {
-                    if (i>0) {
-                        sb.Append(",\n");
-                    }
-                    sb.Append("\t[" + objField.Name + "]");
-                }
-                objField = null;
-            }
-            sb.Append("\n");			
-            sb.Append("FROM\n\t[");
-            sb.Append(entity.SqlObject);
-            sb.Append("]\n");
-
-            // Write out the stored procedure
-			String fileName = options.RootDirectory + options.SqlScriptDirectory + "\\view\\" + strProcName + ".view.sql";
-            WriteToFile(fileName, sb.ToString() + "\nGO\n\n");
-            sb = null;
-        }
-
-        /// <summary>
-        /// Internal helper method to write stored procedure to file based on options.SingleFile
-        /// </summary>
-        /// <param name="strStoredProcName">Name of stored procedure (used to name file if not outputting as single file)</param>
-        /// <param name="strStoredProcText">Text to create stored procedure.</param>
-        private void WriteProcToFile(String strStoredProcName, String strStoredProcText) {
-            StringBuilder sb = new StringBuilder();
+	    if (options.SingleFile) {
+		sb.Append("/*\n");
+		sb.Append("******************************************************************************\n");
+		sb.Append("******************************************************************************\n");
+		sb.Append("*/\n\n");
+	    }
             
-            if (options.ScriptDropStatement) {
-                sb.Append("if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[" + strStoredProcName + "]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)\n");
-                sb.Append("drop procedure [dbo].[" + strStoredProcName + "]\n");
-                sb.Append("GO\n\n");
-            }
+	    strProcName = "vw" + entity.SqlObject;
 
-            sb.Append(strStoredProcText);
+	    sb.Append("if exists (select * from sysobjects where id = object_id(N'[" + strProcName + "]') and OBJECTPROPERTY(id, N'IsView') = 1)\n");
+	    sb.Append("drop view [" + strProcName + "]\n");
+	    sb.Append("GO\n");
+	    sb.Append("\n");
+	    sb.Append("create view " + strProcName + "\n");
+	    sb.Append("\n");
+	    sb.Append("AS\n");
+	    sb.Append("\n");
+	    sb.Append("SELECT ");
+			
+	    // Create the parameter list
+	    for (i = 0; i < entity.Fields.Count; i++) {
+		field = (Field)entity.Fields[i];
+		if (!field.IsViewColumn && !field.SqlName.Equals(String.Empty)) {
+		    if (i>0) {
+			sb.Append(",\n");
+		    }
+		    sb.Append("\t[" + field.SqlName + "]");
+		}
+		field = null;
+	    }
+	    sb.Append("\n");			
+	    sb.Append("FROM\n\t[");
+	    sb.Append(entity.SqlObject);
+	    sb.Append("]\n");
 
-			String fileName = options.RootDirectory + options.SqlScriptDirectory + "\\proc\\" + strStoredProcName + ".proc.sql";
-            WriteToFile(fileName, sb.ToString());
-        }
+	    // Write out the stored procedure
+	    String fileName = options.RootDirectory + options.SqlScriptDirectory + "\\view\\" + strProcName + ".view.sql";
+	    WriteToFile(fileName, sb.ToString() + "\nGO\n\n", options.SingleFile);
+	    sb = null;
+	}
+
+	/// <summary>
+	/// Internal helper method to write stored procedure to file based on options.SingleFile
+	/// </summary>
+	/// <param name="strStoredProcName">Name of stored procedure (used to name file if not outputting as single file)</param>
+	/// <param name="strStoredProcText">Text to create stored procedure.</param>
+	private void WriteProcToFile(String strStoredProcName, String strStoredProcText) {
+	    StringBuilder sb = new StringBuilder();
+
+	    if (options.SingleFile) {
+		sb.Append("/*\n");
+		sb.Append("******************************************************************************\n");
+		sb.Append("******************************************************************************\n");
+		sb.Append("*/\n\n");
+	    }
+
+	    if (options.ScriptDropStatement) {
+		sb.Append("if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[" + strStoredProcName + "]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)\n");
+		sb.Append("drop procedure [dbo].[" + strStoredProcName + "]\n");
+		sb.Append("GO\n\n");
+	    }
+
+	    sb.Append(strStoredProcText);
+
+	    String fileName = options.RootDirectory + options.SqlScriptDirectory + "\\proc\\" + strStoredProcName + ".proc.sql";
+	    WriteToFile(fileName, sb.ToString(), options.SingleFile);
+	}
 
     }
 }
