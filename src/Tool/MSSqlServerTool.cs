@@ -46,9 +46,5 @@ namespace Spring2.DataTierGenerator.Tool {
 	    return "'" + s.Replace("'", "''") + "'";
 	}
 
-	public String RemoveInvalidChars(String s) {
-	    return s.Replace(" ", String.Empty).Replace("/", String.Empty).Replace("-", String.Empty);
-	}
-
     }
 }
