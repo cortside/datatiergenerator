@@ -26,6 +26,7 @@ namespace Spring2.DataTierGenerator.Parser {
 	protected ArrayList databases = new ArrayList();
 	protected Hashtable types = new Hashtable();
 	protected Hashtable sqltypes = new Hashtable();
+	protected Element.Generator generator = new Element.Generator();
 
 	protected Boolean isValid = false;
 	protected IList errors = new ArrayList();
@@ -74,6 +75,10 @@ namespace Spring2.DataTierGenerator.Parser {
 
 	public ICollection SqlTypes {
 	    get { return sqltypes.Values; }
+	}
+
+	public Element.Generator Generator {
+	    get { return generator; }
 	}
 
     }
