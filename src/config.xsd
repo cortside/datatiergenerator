@@ -385,6 +385,7 @@
                                                 <xs:attribute name="element" type="xs:string" />
                                                 <xs:attribute name="directory" type="xs:string" />
                                                 <xs:attribute name="filenameformat" type="xs:string" />
+                                                <xs:attribute name="writer" type="xs:string" />
                                             </xs:complexType>
                                         </xs:element>
                                     </xs:sequence>
@@ -408,7 +409,7 @@
                         <xs:attribute name="class" type="xs:string" />
                     </xs:complexType>
                 </xs:element>
-                <xs:element name="parser"  minOccurs="0" maxOccurs="1">
+                <xs:element name="parser" minOccurs="0" maxOccurs="1">
                     <xs:complexType>
                         <xs:sequence>
                             <xs:element name="argument" minOccurs="0" maxOccurs="unbounded">
