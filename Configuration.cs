@@ -13,91 +13,93 @@ namespace Spring2.DataTierGenerator {
 	    if (root.HasChildNodes) {
 		for (Int32 i=0; i<root.ChildNodes.Count; i++) {
 		    XmlNode node = root.ChildNodes[i];
-		    switch(node.Attributes["name"].Value.ToLower()) {
-			case "rootnamespace":
-			    this.rootNameSpace = node.Attributes["value"].Value;
-			    break;
-			case "server":
-			    this.server = node.Attributes["value"].Value;
-			    break;
-			case "database":
-			    this.database = node.Attributes["value"].Value;
-			    break;
-			case "user":
-			    this.user = node.Attributes["value"].Value;
-			    break;
-			case "password":
-			    this.password = node.Attributes["value"].Value;
-			    break;
-			case "rootdirectory":
-			    this.rootDirectory = node.Attributes["value"].Value;
-			    break;
-			case "typesclassdirectory":
-			    this.typesClassDirectory = node.Attributes["value"].Value;
-			    break;
-			case "sqlscriptdirectory":
-			    this.sqlScriptDirectory = node.Attributes["value"].Value;
-			    break;
-			case "daoclassdirectory":
-			    this.daoClassDirectory = node.Attributes["value"].Value;
-			    break;
-			case "doclassdirectory":
-			    this.doClassDirectory = node.Attributes["value"].Value;
-			    break;
-			case "singlefile":
-			    this.singleFile = Boolean.Parse(node.Attributes["value"].Value);
-			    break;
-			case "generatesqlviewscripts":
-			    this.generateSqlViewScripts = Boolean.Parse(node.Attributes["value"].Value);
-			    break;
-			case "generatesqltablescripts":
-			    this.generateSqlTableScripts = Boolean.Parse(node.Attributes["value"].Value);
-			    break;
-			case "generatedataobjectclasses":
-			    this.generateDataObjectClasses = Boolean.Parse(node.Attributes["value"].Value);
-			    break;
-			case "scriptdropstatement":
-			    this.scriptDropStatement = Boolean.Parse(node.Attributes["value"].Value);
-			    break;
-			case "storedprocnameformat":
-			    this.storedProcNameFormat = node.Attributes["value"].Value;
-			    break;
-			case "generateprocsforforeignkey":
-			    this.generateProcsForForeignKey = Boolean.Parse(node.Attributes["value"].Value);
-			    break;
-			case "generateselectstoredprocs":
-			    this.generateSelectStoredProcs= Boolean.Parse(node.Attributes["value"].Value);
-			    break;
-			case "generateonlyprimarydeletestoredproc":
-			    this.generateOnlyPrimaryDeleteStoredProc= Boolean.Parse(node.Attributes["value"].Value);
-			    break;
-			case "allowupdateofprimarykey":
-			    this.allowUpdateOfPrimaryKey = Boolean.Parse(node.Attributes["value"].Value);
-			    break;
-			case "useviews":
-			    this.allowUpdateOfPrimaryKey = Boolean.Parse(node.Attributes["value"].Value);
-			    break;
-			case "autodiscoverentities":
-			    this.autoDiscoverEntities = Boolean.Parse(node.Attributes["value"].Value);
-			    break;
-			case "autodiscoverproperties":
-			    this.autoDiscoverProperties = Boolean.Parse(node.Attributes["value"].Value);
-			    break;
-			case "autodiscoverattributes":
-			    this.autoDiscoverAttributes = Boolean.Parse(node.Attributes["value"].Value);
-			    break;
-			case "dataobjectbaseclass":
-			    this.dataObjectBaseClass= node.Attributes["value"].Value;
-			    break;
-			case "daobaseclass":
-			    this.daoBaseClass= node.Attributes["value"].Value;
-			    break;
-			case "enumbaseclass":
-			    this.enumBaseClass= node.Attributes["value"].Value;
-			    break;
-			default:
-			    Console.Out.WriteLine("Unrecognized configuration option: " + node.Attributes["name"].Value + " = " + node.Attributes["value"].Value);
-			    break;
+		    if (node.Name.Equals("setting")) {
+			switch(node.Attributes["name"].Value.ToLower()) {
+			    case "rootnamespace":
+				this.rootNameSpace = node.Attributes["value"].Value;
+				break;
+			    case "server":
+				this.server = node.Attributes["value"].Value;
+				break;
+			    case "database":
+				this.database = node.Attributes["value"].Value;
+				break;
+			    case "user":
+				this.user = node.Attributes["value"].Value;
+				break;
+			    case "password":
+				this.password = node.Attributes["value"].Value;
+				break;
+			    case "rootdirectory":
+				this.rootDirectory = node.Attributes["value"].Value;
+				break;
+			    case "typesclassdirectory":
+				this.typesClassDirectory = node.Attributes["value"].Value;
+				break;
+			    case "sqlscriptdirectory":
+				this.sqlScriptDirectory = node.Attributes["value"].Value;
+				break;
+			    case "daoclassdirectory":
+				this.daoClassDirectory = node.Attributes["value"].Value;
+				break;
+			    case "doclassdirectory":
+				this.doClassDirectory = node.Attributes["value"].Value;
+				break;
+			    case "singlefile":
+				this.singleFile = Boolean.Parse(node.Attributes["value"].Value);
+				break;
+			    case "generatesqlviewscripts":
+				this.generateSqlViewScripts = Boolean.Parse(node.Attributes["value"].Value);
+				break;
+			    case "generatesqltablescripts":
+				this.generateSqlTableScripts = Boolean.Parse(node.Attributes["value"].Value);
+				break;
+			    case "generatedataobjectclasses":
+				this.generateDataObjectClasses = Boolean.Parse(node.Attributes["value"].Value);
+				break;
+			    case "scriptdropstatement":
+				this.scriptDropStatement = Boolean.Parse(node.Attributes["value"].Value);
+				break;
+			    case "storedprocnameformat":
+				this.storedProcNameFormat = node.Attributes["value"].Value;
+				break;
+			    case "generateprocsforforeignkey":
+				this.generateProcsForForeignKey = Boolean.Parse(node.Attributes["value"].Value);
+				break;
+			    case "generateselectstoredprocs":
+				this.generateSelectStoredProcs= Boolean.Parse(node.Attributes["value"].Value);
+				break;
+			    case "generateonlyprimarydeletestoredproc":
+				this.generateOnlyPrimaryDeleteStoredProc= Boolean.Parse(node.Attributes["value"].Value);
+				break;
+			    case "allowupdateofprimarykey":
+				this.allowUpdateOfPrimaryKey = Boolean.Parse(node.Attributes["value"].Value);
+				break;
+			    case "useviews":
+				this.allowUpdateOfPrimaryKey = Boolean.Parse(node.Attributes["value"].Value);
+				break;
+			    case "autodiscoverentities":
+				this.autoDiscoverEntities = Boolean.Parse(node.Attributes["value"].Value);
+				break;
+			    case "autodiscoverproperties":
+				this.autoDiscoverProperties = Boolean.Parse(node.Attributes["value"].Value);
+				break;
+			    case "autodiscoverattributes":
+				this.autoDiscoverAttributes = Boolean.Parse(node.Attributes["value"].Value);
+				break;
+			    case "dataobjectbaseclass":
+				this.dataObjectBaseClass= node.Attributes["value"].Value;
+				break;
+			    case "daobaseclass":
+				this.daoBaseClass= node.Attributes["value"].Value;
+				break;
+			    case "enumbaseclass":
+				this.enumBaseClass= node.Attributes["value"].Value;
+				break;
+			    default:
+				Console.Out.WriteLine("Unrecognized configuration option: " + node.Attributes["name"].Value + " = " + node.Attributes["value"].Value);
+				break;
+			}
 		    }
 		}
 	    }
