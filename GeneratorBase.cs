@@ -6,12 +6,15 @@ using System.Text;
 using System.Windows.Forms;
 
 namespace Spring2.DataTierGenerator {
-    public class GeneratorBase {
+    public abstract class GeneratorBase {
+
+	private readonly String REGION = "#region";
+	private readonly String END_REGION = "#endregion";
 
 	protected Configuration options;
 	protected Entity entity;
 
-	protected GeneratorBase() {
+	public GeneratorBase() {
 	}
 
 	public GeneratorBase(Configuration options, Entity entity) {
@@ -25,59 +28,110 @@ namespace Spring2.DataTierGenerator {
 	/// <param name="fileName">name of file, including full path</param>
 	/// <param name="text">what to write to the file</param>
 	/// <param name="append">whether or not or overwrite the file or to append to file</param>
-	protected void WriteToFile(String filename, String text, Boolean append) {
-	    String directory = filename.Substring(0,filename.LastIndexOf('\\'));
-	    if (!Directory.Exists(directory))
-		Directory.CreateDirectory(directory);
-	    text.Trim();
+	protected void WriteToFile(FileInfo file, String text, Boolean append) {
 
-	    Boolean write = true;
-	    if (File.Exists(filename)) {
-		StreamReader r = File.OpenText(filename);
-		String s = r.ReadToEnd();
-		r.Close();
-		s.Trim();
-		if (s.Equals(text)) {
-		    write=false;
-		}
+	    // Create the directory if it doesn't exist.
+	    if (!file.Directory.Exists) {
+		file.Directory.Create();
 	    }
 
-	    if (write) {
-		StreamWriter writer = new StreamWriter(filename, append);
-		writer.Write(text);
+	    text.Trim();
+
+	    Boolean changed = false;
+	    StringWriter regions = new StringWriter();
+
+	    // Check that either file does not exist or that it has changed
+	    // before writing to the file.  This is so that the generated file's
+	    // timestamp won't change unless the contents have changed.
+	    if (file.Exists) {
+
+		// Create a reader for the newly generated text and the existing file.
+		StringReader textReader = new StringReader(text);
+		StreamReader fileReader = file.OpenText();
+		
+		Boolean inRegion = false;
+		String fileLine = fileReader.ReadLine();
+		String textLine = textReader.ReadLine();
+		while (fileLine != null) {
+		    // Check to see if we have entered a region.
+		    inRegion = inRegion || fileLine.Trim().StartsWith(REGION);
+
+		    // If we are in a region, save the line.  Otherwise, check
+		    // to see if the line in the file is different than the line
+		    // in the generated text.
+		    if (inRegion) {
+			regions.WriteLine(fileLine);
+		    } else {
+			changed = !changed && !fileLine.Equals(textLine);
+		    }
+
+		    // Check to see if we have left a region.
+		    inRegion = inRegion && !fileLine.Trim().StartsWith(END_REGION);
+
+		    // Read the next line from both the file and the generated text.
+		    fileLine = fileReader.ReadLine();
+		    textLine = textReader.ReadLine();
+		}
+
+		// Handle the case where the generated text has more lines than the
+		// existing file but up to that point they were identical.  Don't
+		// know how that could happen, but this should handle it.
+		changed = !changed && fileLine != null;
+
+		fileReader.Close();
+		textReader.Close();
+	    }
+
+	    // Only write to the file if it has changed or does not exist.
+	    if (changed) {
+		StreamWriter writer = new StreamWriter(file.FullName, append);
+
+		// If any #region tags were found, append the regions to the end
+		// of the class.  Otherwise, write the generated text to the file.
+		String regionsString = regions.ToString();
+		if (regionsString != String.Empty) {
+		    Int32 index = text.Substring(0, text.LastIndexOf('}')).LastIndexOf('}');
+		    writer.Write(text.Substring(0, index));
+		    writer.Write(regionsString);
+		    writer.WriteLine("    }");
+		    writer.Write('}');
+		} else {
+		    writer.Write(text);
+		}
 		writer.Close();
 	    }
 	}
 
-
 	public String GetUsingNamespaces(Boolean isDaoClass) {
-	    Hashtable namespaces = new Hashtable();
-	    namespaces.Add("System", "System");
+
+	    IList namespaces = new ArrayList();
+	    namespaces.Add("System");
 
 	    if (isDaoClass) {
-		namespaces.Add("System.Data", "System.Data");
-		namespaces.Add("System.Data.SqlClient", "System.Data.SqlClient");
-		namespaces.Add("System.Configuration", "System.Configuration");
-		namespaces.Add("System.Collections", "System.Collections");
-		namespaces.Add("Spring2.Core.DAO", "Spring2.Core.DAO");
-		namespaces.Add(options.GetDONameSpace(null), options.GetDONameSpace(null));
+		namespaces.Add("System.Collections");
+		namespaces.Add("System.Configuration");
+		namespaces.Add("System.Data");
+		namespaces.Add("System.Data.SqlClient");
+		namespaces.Add("Spring2.Core.DAO");
+		namespaces.Add(options.GetDONameSpace(null));
 	    }
 
 	    foreach (Field field in entity.Fields) {
-		if (field.Name.IndexOf('.')<0) {
+		if (field.Name.IndexOf('.') < 0) {
 		    if (!field.Type.Package.Equals(String.Empty) && !namespaces.Contains(field.Type.Package)) {
-			namespaces.Add(field.Type.Package, field.Type.Package);
+			namespaces.Add(field.Type.Package);
 		    }
 		}
 	    }
 
+
 	    StringBuilder sb = new StringBuilder();
-	    foreach (Object o in namespaces.Keys) {
-		sb.Append("using ").Append(o.ToString()).Append(";\n");
+	    foreach (String s in namespaces) {
+		sb.Append("using ").Append(s).Append(";\n");
 	    }
+
 	    return sb.ToString();
+
 	}
-
     }
-
 }
