@@ -206,10 +206,11 @@ namespace Spring2.DataTierGenerator {
 	/// <param name="field">Field whose reader syntax is needed.</param>
 	/// <returns>Reader syntax to use.</returns>
 	public String GetReaderString(PropertyElement field) {
-	    String readerMethod = String.Format(field.Column.SqlType.ReaderMethodFormat, "dataReader", field.Column.Name);
+	    string fieldRef = field.Alias.Length==0?field.Column.Name:field.Alias;
+	    String readerMethod = String.Format(field.Column.SqlType.ReaderMethodFormat, "dataReader", fieldRef);
 	    if (field.Type.ConvertFromSqlTypeFormat.Length >0) {
 		readerMethod = 
-		    String.Format(field.Type.ConvertFromSqlTypeFormat, "data", field.GetMethodFormat(), readerMethod, "dataReader", field.Column.Name);
+		    String.Format(field.Type.ConvertFromSqlTypeFormat, "data", field.GetMethodFormat(), readerMethod, "dataReader", fieldRef);
 	    } 
 	    return readerMethod;
 	}
