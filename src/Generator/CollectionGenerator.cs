@@ -64,6 +64,18 @@ namespace Spring2.DataTierGenerator.Generator {
 	    writer.WriteLine(3, "}");
 	    writer.WriteLine(2, "}");
 	    writer.WriteLine();
+
+	    writer.WriteLine(2, "public void AddRange(System.Collections.IList list) {");
+	    writer.WriteLine(3, "foreach(Object o in list) {");
+	    writer.WriteLine(4, "if (o is " + collection.Name + ") {");
+	    writer.WriteLine(5, "Add((" + collection.Name + ")o);");
+	    writer.WriteLine(4, "} else {");
+	    writer.WriteLine(5, "throw new System.InvalidCastException(\"object in list could not be cast to " + collection.Name + "\");");
+	    writer.WriteLine(4, "}");
+	    writer.WriteLine(3, "}");
+	    writer.WriteLine(2, "}");
+
+	    writer.WriteLine();
 	    writer.WriteLine(1, "}");
 	    writer.WriteLine("}");
 	    writer.WriteLine();
