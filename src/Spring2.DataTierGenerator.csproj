@@ -112,20 +112,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "config.xsd"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "config.xsx"
-                    DependentUpon = "config.xsd"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "ResourceManager.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "Config\sqltypes.inc.xml"
                     BuildAction = "EmbeddedResource"
                 />
