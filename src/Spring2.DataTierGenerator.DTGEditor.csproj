@@ -109,10 +109,89 @@
                     Project = "{069AFE42-50D3-48D3-A12B-FAE1D8A2A44A}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
+                <Reference
+                    Name = "Infragistics.Win.UltraWinTabControl.v3.2"
+                    AssemblyName = "Infragistics.Win.UltraWinTabControl.v3.2"
+                    HintPath = "..\..\..\..\..\Program Files\Infragistics\NetAdvantage 2004 Volume 2\Windows Forms\Bin\Infragistics.Win.UltraWinTabControl.v3.2.dll"
+                    AssemblyFolderKey = "hklm\infragistics.winassemblies.20042"
+                />
+                <Reference
+                    Name = "Infragistics.Win.v3.2"
+                    AssemblyName = "Infragistics.Win.v3.2"
+                    HintPath = "..\..\..\..\..\Program Files\Infragistics\NetAdvantage 2004 Volume 2\Windows Forms\Bin\Infragistics.Win.v3.2.dll"
+                    AssemblyFolderKey = "hklm\infragistics.winassemblies.20042"
+                />
+                <Reference
+                    Name = "Infragistics.Shared.v3.2"
+                    AssemblyName = "Infragistics.Shared.v3.2"
+                    HintPath = "..\..\..\..\..\Program Files\Infragistics\NetAdvantage 2004 Volume 2\Windows Forms\Bin\Infragistics.Shared.v3.2.dll"
+                    AssemblyFolderKey = "hklm\infragistics.winassemblies.20042"
+                />
+                <Reference
+                    Name = "System.Design"
+                    AssemblyName = "System.Design"
+                    HintPath = "..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Design.dll"
+                />
+                <Reference
+                    Name = "System.Runtime.Serialization.Formatters.Soap"
+                    AssemblyName = "System.Runtime.Serialization.Formatters.Soap"
+                    HintPath = "..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Runtime.Serialization.Formatters.Soap.dll"
+                />
+                <Reference
+                    Name = "Infragistics.Win.UltraWinDock.v3.2"
+                    AssemblyName = "Infragistics.Win.UltraWinDock.v3.2"
+                    HintPath = "..\..\..\..\..\Program Files\Infragistics\NetAdvantage 2004 Volume 2\Windows Forms\Bin\Infragistics.Win.UltraWinDock.v3.2.dll"
+                    AssemblyFolderKey = "hklm\infragistics.winassemblies.20042"
+                />
+                <Reference
+                    Name = "Infragistics.Win.UltraWinGrid.v3.2"
+                    AssemblyName = "Infragistics.Win.UltraWinGrid.v3.2"
+                    HintPath = "..\..\..\..\..\Program Files\Infragistics\NetAdvantage 2004 Volume 2\Windows Forms\Bin\Infragistics.Win.UltraWinGrid.v3.2.dll"
+                    AssemblyFolderKey = "hklm\infragistics.winassemblies.20042"
+                />
+                <Reference
+                    Name = "Microsoft.VisualBasic"
+                    AssemblyName = "Microsoft.VisualBasic"
+                    HintPath = "..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\Microsoft.VisualBasic.dll"
+                />
+                <Reference
+                    Name = "Infragistics.Win.UltraWinTree.v3.2"
+                    AssemblyName = "Infragistics.Win.UltraWinTree.v3.2"
+                    HintPath = "..\..\..\..\..\Program Files\Infragistics\NetAdvantage 2004 Volume 2\Windows Forms\Bin\Infragistics.Win.UltraWinTree.v3.2.dll"
+                    AssemblyFolderKey = "hklm\infragistics.winassemblies.20042"
+                />
+                <Reference
+                    Name = "Infragistics.Win.UltraWinToolbars.v3.2"
+                    AssemblyName = "Infragistics.Win.UltraWinToolbars.v3.2"
+                    HintPath = "..\..\..\..\..\Program Files\Infragistics\NetAdvantage 2004 Volume 2\Windows Forms\Bin\Infragistics.Win.UltraWinToolbars.v3.2.dll"
+                    AssemblyFolderKey = "hklm\infragistics.winassemblies.20042"
+                />
+                <Reference
+                    Name = "Infragistics.Win.Misc.v3.2"
+                    AssemblyName = "Infragistics.Win.Misc.v3.2"
+                    HintPath = "..\..\..\..\..\Program Files\Infragistics\NetAdvantage 2004 Volume 2\Windows Forms\Bin\Infragistics.Win.Misc.v3.2.dll"
+                    AssemblyFolderKey = "hklm\infragistics.winassemblies.20042"
+                />
+                <Reference
+                    Name = "Infragistics.Win.UltraWinEditors.v3.2"
+                    AssemblyName = "Infragistics.Win.UltraWinEditors.v3.2"
+                    HintPath = "..\..\..\..\..\Program Files\Infragistics\NetAdvantage 2004 Volume 2\Windows Forms\Bin\Infragistics.Win.UltraWinEditors.v3.2.dll"
+                    AssemblyFolderKey = "hklm\infragistics.winassemblies.20042"
+                />
+                <Reference
+                    Name = "Infragistics.Win.UltraWinStatusBar.v3.2"
+                    AssemblyName = "Infragistics.Win.UltraWinStatusBar.v3.2"
+                    HintPath = "..\..\..\..\..\Program Files\Infragistics\NetAdvantage 2004 Volume 2\Windows Forms\Bin\Infragistics.Win.UltraWinStatusBar.v3.2.dll"
+                    AssemblyFolderKey = "hklm\infragistics.winassemblies.20042"
+                />
             </References>
         </Build>
         <Files>
             <Include>
+                <File
+                    RelPath = "licenses.licx"
+                    BuildAction = "EmbeddedResource"
+                />
                 <File
                     RelPath = "DTGEditor\App.ico"
                     BuildAction = "Content"
@@ -121,6 +200,16 @@
                     RelPath = "DTGEditor\AssemblyInfo.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "DTGEditor\Editor.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "DTGEditor\Editor.resx"
+                    DependentUpon = "Editor.cs"
+                    BuildAction = "EmbeddedResource"
                 />
                 <File
                     RelPath = "DTGEditor\frmMain.cs"

@@ -250,7 +250,8 @@ namespace Spring2.DataTierGenerator.DTGEditor {
 	    //if (args.Length==1) {
 	    //	Generate(args[0]);
 	    //} else {
-		Application.Run(new frmMain());
+		//Application.Run(new frmMain());
+	    Application.Run(new Editor());
 	    //}
 	}
 
@@ -338,7 +339,9 @@ namespace Spring2.DataTierGenerator.DTGEditor {
 
 
 	private void frmMain_Load(object sender, System.EventArgs e) {
-	    file.Text = System.Environment.CurrentDirectory;
+	    file.Text = @"C:\Data\work\UHEAA\UESP\src\";//System.Environment.CurrentDirectory;
+	    Editor editor = new Editor();
+	    editor.Show();
 	}
 
 	private void validate_Click(object sender, System.EventArgs e) {
