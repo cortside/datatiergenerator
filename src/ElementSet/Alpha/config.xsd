@@ -2,7 +2,140 @@
 <xs:schema id="DataTierGenerator" xmlns="" xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.0">
     <xs:element name="DataTierGenerator">
 	<xs:complexType>
-	    <xs:all>
+	    <xs:sequence>
+		<xs:element name="generator" minOccurs="0" maxOccurs="1">
+		    <xs:complexType>
+			<xs:sequence>
+			    <xs:element name="writer" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+				    <xs:sequence>
+					<xs:element name="option" minOccurs="0" maxOccurs="unbounded">
+					    <xs:complexType>
+						<xs:sequence></xs:sequence>
+						<xs:attribute name="name" type="xs:string" />
+						<xs:attribute name="value" type="xs:string" />
+					    </xs:complexType>
+					</xs:element>
+				    </xs:sequence>
+				    <xs:attribute name="name" type="xs:string" />
+				    <xs:attribute name="class" type="xs:string" />
+				</xs:complexType>
+			    </xs:element>
+			    <xs:element name="styler" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+				    <xs:sequence>
+					<xs:element name="option" minOccurs="0" maxOccurs="unbounded">
+					    <xs:complexType>
+						<xs:sequence></xs:sequence>
+						<xs:attribute name="value" type="xs:string" />
+						<xs:attribute name="name" type="xs:string" />
+					    </xs:complexType>
+					</xs:element>
+				    </xs:sequence>
+				    <xs:attribute name="name" type="xs:string" />
+				    <xs:attribute name="class" type="xs:string" />
+				</xs:complexType>
+			    </xs:element>
+			    <xs:element name="tasks" minOccurs="0" maxOccurs="1">
+				<xs:complexType>
+				    <xs:sequence>
+					<xs:element name="task" minOccurs="0" maxOccurs="unbounded">
+					    <xs:complexType>
+						<xs:sequence>
+						    <xs:element name="type" minOccurs="0" maxOccurs="unbounded">
+							<xs:complexType>
+							    <xs:attribute name="name" type="xs:string" />
+							    <xs:attribute name="concretetype" type="xs:string" />
+							    <xs:attribute name="newinstanceformat" type="xs:string" />
+							    <xs:attribute name="namespace" type="xs:string" />
+							    <xs:attribute name="converttosqltypeformat" type="xs:string" />
+							    <xs:attribute name="convertfromsqltypeformat" type="xs:string" />
+							    <xs:attribute name="convertforcompare" type="xs:string" />
+							    <xs:attribute name="nullinstanceformat" type="xs:string" />
+							</xs:complexType>
+						    </xs:element>
+						    <xs:element name="includes" minOccurs="0" maxOccurs="1">
+							<xs:complexType>
+							    <xs:sequence>
+								<xs:element name="include" minOccurs="0" maxOccurs="unbounded">
+								    <xs:complexType>
+									<xs:sequence></xs:sequence>
+									<xs:attribute name="name" type="xs:string" />
+								    </xs:complexType>
+								</xs:element>
+							    </xs:sequence>
+							</xs:complexType>
+						    </xs:element>
+						    <xs:element name="excludes" minOccurs="0" maxOccurs="1">
+							<xs:complexType>
+							    <xs:sequence>
+								<xs:element name="exclude" minOccurs="0" maxOccurs="unbounded">
+								    <xs:complexType>
+									<xs:sequence></xs:sequence>
+									<xs:attribute name="name" type="xs:string" />
+								    </xs:complexType>
+								</xs:element>
+							    </xs:sequence>
+							</xs:complexType>
+						    </xs:element>
+						    <xs:element name="parameters" minOccurs="0" maxOccurs="1">
+							<xs:complexType>
+							    <xs:sequence>
+								<xs:element name="parameter" minOccurs="0" maxOccurs="unbounded">
+								    <xs:complexType>
+									<xs:sequence></xs:sequence>
+									<xs:attribute name="name" type="xs:string" />
+									<xs:attribute name="value" type="xs:string" />
+								    </xs:complexType>
+								</xs:element>
+							    </xs:sequence>
+							</xs:complexType>
+						    </xs:element>
+						</xs:sequence>
+						<xs:attribute name="name" type="xs:string" use="required" />
+						<xs:attribute name="template" type="xs:string" use="required" />
+						<xs:attribute name="element" type="xs:string" use="required" />
+						<xs:attribute name="directory" type="xs:string" use="required" />
+						<xs:attribute name="filenameformat" type="xs:string" use="required" />
+						<xs:attribute name="writer" type="xs:string" use="required" />
+						<xs:attribute name="styler" type="xs:string" use="optional" />
+						<xs:attribute name="backupdirectory" type="xs:string" use="optional" />
+					    </xs:complexType>
+					</xs:element>
+				    </xs:sequence>
+				</xs:complexType>
+			    </xs:element>
+			    <xs:element name="tools" minOccurs="0" maxOccurs="1">
+				<xs:complexType>
+				    <xs:sequence>
+					<xs:element name="tool" minOccurs="0" maxOccurs="unbounded">
+					    <xs:complexType>
+						<xs:sequence></xs:sequence>
+						<xs:attribute name="name" type="xs:string" />
+						<xs:attribute name="class" type="xs:string" />
+					    </xs:complexType>
+					</xs:element>
+				    </xs:sequence>
+				</xs:complexType>
+			    </xs:element>
+			</xs:sequence>
+			<xs:attribute name="class" type="xs:string" />
+		    </xs:complexType>
+		</xs:element>
+		<xs:element name="parser" minOccurs="0" maxOccurs="1">
+		    <xs:complexType>
+			<xs:sequence>
+			    <xs:element name="argument" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+				    <xs:sequence></xs:sequence>
+				    <xs:attribute name="value" type="xs:string" />
+				    <xs:attribute name="name" type="xs:string" />
+				</xs:complexType>
+			    </xs:element>
+			</xs:sequence>
+			<xs:attribute name="class" type="xs:string" />
+		    </xs:complexType>
+		</xs:element>
 		<xs:element name="config">
 		    <xs:complexType>
 			<xs:sequence>
@@ -148,7 +281,7 @@
 			</xs:sequence>
 		    </xs:complexType>
 		</xs:element>
-		<xs:element name="entities">
+		<xs:element name="entities" minOccurs="0" maxOccurs="unbounded">
 		    <xs:complexType>
 			<xs:sequence>
 			    <xs:element name="entity" minOccurs="0" maxOccurs="unbounded">
@@ -253,7 +386,7 @@
 			</xs:sequence>
 		    </xs:complexType>
 		</xs:element>
-		<xs:element name="collections">
+		<xs:element name="collections" minOccurs="0" maxOccurs="unbounded">
 		    <xs:complexType>
 			<xs:sequence>
 			    <xs:element name="collection" minOccurs="0" maxOccurs="unbounded">
@@ -510,140 +643,7 @@
 			<xs:attribute name="user" type="xs:string" />
 		    </xs:complexType>
 		</xs:element>
-		<xs:element name="generator" minOccurs="0" maxOccurs="1">
-		    <xs:complexType>
-			<xs:sequence>
-			    <xs:element name="writer" minOccurs="0" maxOccurs="unbounded">
-				<xs:complexType>
-				    <xs:sequence>
-					<xs:element name="option" minOccurs="0" maxOccurs="unbounded">
-					    <xs:complexType>
-						<xs:sequence></xs:sequence>
-						<xs:attribute name="name" type="xs:string" />
-						<xs:attribute name="value" type="xs:string" />
-					    </xs:complexType>
-					</xs:element>
-				    </xs:sequence>
-				    <xs:attribute name="name" type="xs:string" />
-				    <xs:attribute name="class" type="xs:string" />
-				</xs:complexType>
-			    </xs:element>
-			    <xs:element name="styler" minOccurs="0" maxOccurs="unbounded">
-				<xs:complexType>
-				    <xs:sequence>
-					<xs:element name="option" minOccurs="0" maxOccurs="unbounded">
-					    <xs:complexType>
-						<xs:sequence></xs:sequence>
-						<xs:attribute name="value" type="xs:string" />
-						<xs:attribute name="name" type="xs:string" />
-					    </xs:complexType>
-					</xs:element>
-				    </xs:sequence>
-				    <xs:attribute name="name" type="xs:string" />
-				    <xs:attribute name="class" type="xs:string" />
-				</xs:complexType>
-			    </xs:element>
-			    <xs:element name="tasks" minOccurs="0" maxOccurs="1">
-				<xs:complexType>
-				    <xs:sequence>
-					<xs:element name="task" minOccurs="0" maxOccurs="unbounded">
-					    <xs:complexType>
-						<xs:sequence>
-						    <xs:element name="type" minOccurs="0" maxOccurs="unbounded">
-							<xs:complexType>
-							    <xs:attribute name="name" type="xs:string" />
-							    <xs:attribute name="concretetype" type="xs:string" />
-							    <xs:attribute name="newinstanceformat" type="xs:string" />
-							    <xs:attribute name="namespace" type="xs:string" />
-							    <xs:attribute name="converttosqltypeformat" type="xs:string" />
-							    <xs:attribute name="convertfromsqltypeformat" type="xs:string" />
-							    <xs:attribute name="convertforcompare" type="xs:string" />
-							    <xs:attribute name="nullinstanceformat" type="xs:string" />
-							</xs:complexType>
-						    </xs:element>
-						    <xs:element name="includes" minOccurs="0" maxOccurs="1">
-							<xs:complexType>
-							    <xs:sequence>
-								<xs:element name="include" minOccurs="0" maxOccurs="unbounded">
-								    <xs:complexType>
-									<xs:sequence></xs:sequence>
-									<xs:attribute name="name" type="xs:string" />
-								    </xs:complexType>
-								</xs:element>
-							    </xs:sequence>
-							</xs:complexType>
-						    </xs:element>
-						    <xs:element name="excludes" minOccurs="0" maxOccurs="1">
-							<xs:complexType>
-							    <xs:sequence>
-								<xs:element name="exclude" minOccurs="0" maxOccurs="unbounded">
-								    <xs:complexType>
-									<xs:sequence></xs:sequence>
-									<xs:attribute name="name" type="xs:string" />
-								    </xs:complexType>
-								</xs:element>
-							    </xs:sequence>
-							</xs:complexType>
-						    </xs:element>
-						    <xs:element name="parameters" minOccurs="0" maxOccurs="1">
-							<xs:complexType>
-							    <xs:sequence>
-								<xs:element name="parameter" minOccurs="0" maxOccurs="unbounded">
-								    <xs:complexType>
-									<xs:sequence></xs:sequence>
-									<xs:attribute name="name" type="xs:string" />
-									<xs:attribute name="value" type="xs:string" />
-								    </xs:complexType>
-								</xs:element>
-							    </xs:sequence>
-							</xs:complexType>
-						    </xs:element>
-						</xs:sequence>
-						<xs:attribute name="name" type="xs:string" use="required" />
-						<xs:attribute name="template" type="xs:string" use="required" />
-						<xs:attribute name="element" type="xs:string" use="required" />
-						<xs:attribute name="directory" type="xs:string" use="required" />
-						<xs:attribute name="filenameformat" type="xs:string" use="required" />
-						<xs:attribute name="writer" type="xs:string" use="required" />
-						<xs:attribute name="styler" type="xs:string" use="optional" />
-						<xs:attribute name="backupdirectory" type="xs:string" use="optional" />
-					    </xs:complexType>
-					</xs:element>
-				    </xs:sequence>
-				</xs:complexType>
-			    </xs:element>
-			    <xs:element name="tools" minOccurs="0" maxOccurs="1">
-				<xs:complexType>
-				    <xs:sequence>
-					<xs:element name="tool" minOccurs="0" maxOccurs="unbounded">
-					    <xs:complexType>
-						<xs:sequence></xs:sequence>
-						<xs:attribute name="name" type="xs:string" />
-						<xs:attribute name="class" type="xs:string" />
-					    </xs:complexType>
-					</xs:element>
-				    </xs:sequence>
-				</xs:complexType>
-			    </xs:element>
-			</xs:sequence>
-			<xs:attribute name="class" type="xs:string" />
-		    </xs:complexType>
-		</xs:element>
-		<xs:element name="parser" minOccurs="0" maxOccurs="1">
-		    <xs:complexType>
-			<xs:sequence>
-			    <xs:element name="argument" minOccurs="0" maxOccurs="unbounded">
-				<xs:complexType>
-				    <xs:sequence></xs:sequence>
-				    <xs:attribute name="value" type="xs:string" />
-				    <xs:attribute name="name" type="xs:string" />
-				</xs:complexType>
-			    </xs:element>
-			</xs:sequence>
-			<xs:attribute name="class" type="xs:string" />
-		    </xs:complexType>
-		</xs:element>
-	    </xs:all>
+	    </xs:sequence>
 	</xs:complexType>
     </xs:element>
     <xs:simpleType name="BooleanEnum">
