@@ -59,12 +59,6 @@ namespace Spring2.DataTierGenerator {
 		    }
 		}
 	    }
-	    Console.Out.Write("\n");
-	    Console.Out.WriteLine(String.Empty.PadLeft(20,'='));
-	    Console.Out.WriteLine("Configuration Information");
-	    Console.Out.WriteLine(String.Empty.PadLeft(20,'='));
-	    Console.Out.WriteLine(ToString());
-	    Console.Out.WriteLine(String.Empty.PadLeft(20,'='));
 	}
 
 	// methods
