@@ -3,8 +3,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spring2.DataTierGenerator",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spring2.DataTierGenerator.Test", "Spring2.DataTierGenerator.Test.csproj", "{50037EF4-B0A4-4044-8638-E94A6D090CAB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spring2.DataTierGenerator.DTGEditor", "Spring2.DataTierGenerator.DTGEditor.csproj", "{6A2FB4F6-83E4-455C-800B-21C9267D9651}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spring2.DataTierGenerator.Nant", "Spring2.DataTierGenerator.Nant.csproj", "{2844DE77-37C4-4DD5-A1B2-F217D40EEEFE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spring2.DataTierGenerator.Tool", "Spring2.DataTierGenerator.Tool.csproj", "{0AFCF054-A3E0-4502-B41C-347AD69DBFA5}"
@@ -15,17 +13,16 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spring2.DataTierGenerator.A
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spring2.DataTierGenerator.Beta", "ElementSet\Beta\Spring2.DataTierGenerator.Beta.csproj", "{715E64DD-2DAD-4DA8-ACC5-2BAEBA573487}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spring2.DataTierGenerator.ConsoleRunner", "Spring2.DataTierGenerator.ConsoleRunner.csproj", "{C49BE045-C72A-43DD-8DAC-CE11F08C6A6F}"
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		ConfigName.0 = Debug
 		ConfigName.1 = Release
 	EndGlobalSection
 	GlobalSection(ProjectDependencies) = postSolution
-		{50037EF4-B0A4-4044-8638-E94A6D090CAB}.0 = {6A2FB4F6-83E4-455C-800B-21C9267D9651}
+		{50037EF4-B0A4-4044-8638-E94A6D090CAB}.0 = {8BE555A1-8BBA-4CF7-9B4A-6BBEF7E20FA8}
 		{50037EF4-B0A4-4044-8638-E94A6D090CAB}.1 = {2844DE77-37C4-4DD5-A1B2-F217D40EEEFE}
-		{50037EF4-B0A4-4044-8638-E94A6D090CAB}.2 = {8BE555A1-8BBA-4CF7-9B4A-6BBEF7E20FA8}
-		{6A2FB4F6-83E4-455C-800B-21C9267D9651}.0 = {2844DE77-37C4-4DD5-A1B2-F217D40EEEFE}
-		{6A2FB4F6-83E4-455C-800B-21C9267D9651}.1 = {8BE555A1-8BBA-4CF7-9B4A-6BBEF7E20FA8}
 		{2844DE77-37C4-4DD5-A1B2-F217D40EEEFE}.0 = {8BE555A1-8BBA-4CF7-9B4A-6BBEF7E20FA8}
 	EndGlobalSection
 	GlobalSection(ProjectConfiguration) = postSolution
@@ -37,10 +34,6 @@ Global
 		{50037EF4-B0A4-4044-8638-E94A6D090CAB}.Debug.Build.0 = Debug|.NET
 		{50037EF4-B0A4-4044-8638-E94A6D090CAB}.Release.ActiveCfg = Release|.NET
 		{50037EF4-B0A4-4044-8638-E94A6D090CAB}.Release.Build.0 = Release|.NET
-		{6A2FB4F6-83E4-455C-800B-21C9267D9651}.Debug.ActiveCfg = Debug|.NET
-		{6A2FB4F6-83E4-455C-800B-21C9267D9651}.Debug.Build.0 = Debug|.NET
-		{6A2FB4F6-83E4-455C-800B-21C9267D9651}.Release.ActiveCfg = Release|.NET
-		{6A2FB4F6-83E4-455C-800B-21C9267D9651}.Release.Build.0 = Release|.NET
 		{2844DE77-37C4-4DD5-A1B2-F217D40EEEFE}.Debug.ActiveCfg = Debug|.NET
 		{2844DE77-37C4-4DD5-A1B2-F217D40EEEFE}.Debug.Build.0 = Debug|.NET
 		{2844DE77-37C4-4DD5-A1B2-F217D40EEEFE}.Release.ActiveCfg = Release|.NET
@@ -61,6 +54,10 @@ Global
 		{715E64DD-2DAD-4DA8-ACC5-2BAEBA573487}.Debug.Build.0 = Debug|.NET
 		{715E64DD-2DAD-4DA8-ACC5-2BAEBA573487}.Release.ActiveCfg = Release|.NET
 		{715E64DD-2DAD-4DA8-ACC5-2BAEBA573487}.Release.Build.0 = Release|.NET
+		{C49BE045-C72A-43DD-8DAC-CE11F08C6A6F}.Debug.ActiveCfg = Debug|.NET
+		{C49BE045-C72A-43DD-8DAC-CE11F08C6A6F}.Debug.Build.0 = Debug|.NET
+		{C49BE045-C72A-43DD-8DAC-CE11F08C6A6F}.Release.ActiveCfg = Release|.NET
+		{C49BE045-C72A-43DD-8DAC-CE11F08C6A6F}.Release.Build.0 = Release|.NET
 	EndGlobalSection
 	GlobalSection(SolutionItems) = postSolution
 		Item:1 = collections.inc.xml
