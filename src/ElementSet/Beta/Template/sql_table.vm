@@ -15,13 +15,31 @@ SET ANSI_NULLS ON
 SET QUOTED_IDENTIFIER ON
 GO
 
+if exists (select * from tempdb..sysobjects where name like '#spAlterColumn%' and xtype='P')
+drop procedure #spAlterColumn
+GO
+
+CREATE PROCEDURE #spAlterColumn
+    @table varchar(100),
+    @column varchar(100),
+    @type varchar(50),
+    @required bit
+AS
+if exists (select * from syscolumns where name=@column and id=object_id(@table))
+begin
+	declare @nullstring varchar(8)
+	set @nullstring = case when @required=0 then 'null' else 'not null' end
+	exec('alter table ' + @table + ' alter column ' + @column + ' ' + @type + ' ' + @nullstring)
+end
+GO
+
 if not exists (select * from dbo.sysobjects where id = object_id(N'[$element.Name]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
 CREATE TABLE $sql.Escape($element.Name) (
 #foreach ($column in $element.Columns)
 #if (!$column.ViewColumn)
 #if ($velocityCount>1),
 #end
-	$sql.Escape($column.Name) ${column.Declaration}#if ($column.Identity) IDENTITY($column.Seed,$column.Increment)#end#if ($column.RowGuidCol) ROWGUIDCOL#end#if ($column.Identity || $column.Required || $column.RowGuidCol || $column.Default.Length>0) NOT#end NULL#if ($column.Default.Length>0) CONSTRAINT [DF_${element.Name}_$column.Name] DEFAULT ($column.Default)#end
+	$sql.Escape($column.Name) ${column.SqlType.Declaration}#if ($column.Identity) IDENTITY($column.Seed,$column.Increment)#end#if ($column.RowGuidCol) ROWGUIDCOL#end#if ($column.Identity || $column.Required || $column.RowGuidCol || $column.Default.Length>0) NOT#end NULL#if ($column.Default.Length>0) CONSTRAINT [DF_${element.Name}_$column.Name] DEFAULT ($column.Default)#end
 #end
 #end
 
@@ -31,20 +49,28 @@ GO
 ## create alter table scripts for each column - don't know when they got added
 #foreach ($column in $element.Columns)
 #if (!$column.ViewColumn)
-#if ($column.Required && $column.Default.Length==0 && !$column.Identity)
-/* -- commented out because column does not have default value and is required
-#end
 if not exists(select * from syscolumns where id=object_id('$sql.Escape($element.Name)') and name = '$column.Name')
   BEGIN
+#if ($column.Required && $column.Default.Length==0 && !$column.Identity)
+	select '$column.Name will not be added becuase it has not default and is required'
+	/* -- commented out because column does not have default value and is required
+#end
 	ALTER TABLE $sql.Escape($element.Name) ADD
-	    $sql.Escape($column.Name) $column.Declaration#if ($column.Identity) IDENTITY($column.Seed,$column.Increment)#end#if ($column.RowGuidCol) ROWGUIDCOL#end#if ($column.Identity || $column.Required || $column.RowGuidCol || $column.Default.Length>0) NOT#end NULL
+	    $sql.Escape($column.Name) $column.SqlType.Declaration#if ($column.Identity) IDENTITY($column.Seed,$column.Increment)#end#if ($column.RowGuidCol) ROWGUIDCOL#end#if ($column.Identity || $column.Required || $column.RowGuidCol || $column.Default.Length>0) NOT#end NULL
 #if ($column.Default.Length>0)
 	CONSTRAINT
 	    DF_${element.Name}_$column.Name DEFAULT $column.Default WITH VALUES
 #end
-  END
 #if ($column.Required && $column.Default.Length==0 && !$column.Identity)
-*/
+	*/
+#end
+  END
+#if (!$column.SqlType.Declaration.Equals("text") && !$column.SqlType.Declaration.Equals("timestamp"))
+else
+  BEGIN
+	exec #spAlterColumn '$sql.Escape($element.Name)', '$sql.Escape($column.Name)', '$column.SqlType.Declaration',#if ($column.Required) 1#else 0#end
+
+  END
 #end
 GO
 
@@ -65,12 +91,12 @@ ALTER TABLE $sql.Escape($element.Name)#if ($constraint.Type.ToUpper().Equals("PR
 #end
 	)
 #if ($constraint.Type.ToUpper().Equals("FOREIGN KEY"))
-	REFERENCES $sql.Escape($constraint.ForeignEntity.Name)
+	REFERENCES $sql.Escape($constraint.ForeignEntity)
 	(
-#foreach ($column in $constraint.ForeignColumns)
+#foreach ($column in $constraint.Columns)
 #if ($velocityCount>1),
 #end
-		$sql.Escape($column.Name)
+		$sql.Escape($column.ForeignColumn)
 #end
 	)
 #end
