@@ -31,7 +31,7 @@ namespace Spring2.DataTierGenerator.Element {
 	protected String EscapeSqlName(String s) {
 	    Boolean needsEscaping = false;
 
-	    if (s.IndexOf(" ")>=0) {
+	    if (s.IndexOf(" ")>=0 || s.IndexOf("/")>=0 || s.IndexOf("-")>=0) {
 		needsEscaping = true;
 	    }
 	    if (KEYWORDS.IndexOf("|"+s.ToLower()+"|")>=0) {

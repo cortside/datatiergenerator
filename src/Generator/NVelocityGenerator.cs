@@ -78,7 +78,7 @@ namespace Spring2.DataTierGenerator.Generator {
 		template = Velocity.GetTemplate(task.Template);
 		template.Merge(vc, writer);
 
-		FileInfo file = new FileInfo(task.Directory + "\\" + task.FileNameFormat.Replace("{element.Name}", element.Name));
+		FileInfo file = new FileInfo(task.Directory + "\\" + task.FileNameFormat.Replace("{removewhitespace(element.Name)}", element.Name.Replace(" ", String.Empty)).Replace("{element.Name}", element.Name));
 		String content = writer.ToString();
 		if (content.Length > 0) {
 		    IStyler s = parser.GetStyler(task.Styler);

@@ -28,7 +28,7 @@ namespace Spring2.DataTierGenerator.Tool {
 	public String Escape(String s) {
 	    Boolean needsEscaping = false;
 
-	    if (s.IndexOf(" ")>=0) {
+	    if (s.IndexOf(" ")>=0 || s.IndexOf("/")>=0 || s.IndexOf("-")>=0) {
 		needsEscaping = true;
 	    }
 	    if (KEYWORDS.IndexOf("|"+s.ToLower()+"|")>=0) {
@@ -44,6 +44,10 @@ namespace Spring2.DataTierGenerator.Tool {
 
 	public String Quote(String s) {
 	    return "'" + s.Replace("'", "''") + "'";
+	}
+
+	public String RemoveInvalidChars(String s) {
+	    return s.Replace(" ", String.Empty).Replace("/", String.Empty).Replace("-", String.Empty);
 	}
 
     }

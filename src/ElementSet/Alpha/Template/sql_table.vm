@@ -59,7 +59,7 @@ if not exists(select * from syscolumns where id=object_id('$sql.Escape($element.
 	    $sql.Escape($column.Name) $column.SqlType.Declaration#if ($column.Identity) IDENTITY($column.Seed,$column.Increment)#end#if ($column.RowGuidCol) ROWGUIDCOL#end#if ($column.Identity || $column.Required || $column.RowGuidCol || $column.Default.Length>0) NOT#end NULL
 #if ($column.Default.Length>0)
 	CONSTRAINT
-	    DF_${element.Name}_$column.Name DEFAULT $column.Default WITH VALUES
+	    [DF_${element.Name}_$column.Name] DEFAULT $column.Default WITH VALUES
 #end
 #if ($column.Required && $column.Default.Length==0 && !$column.Identity)
 	*/
@@ -72,13 +72,13 @@ if exists(select * from syscolumns where id=object_id('$sql.Escape($element.Name
   BEGIN
 #if($column.Default.Length>0)
 	declare @cdefault varchar(1000)
-	select @cdefault = object_name(cdefault) from syscolumns where id=object_id('${element.Name}') and name = '$column.Name'
+	select @cdefault = '[' + object_name(cdefault) + ']' from syscolumns where id=object_id('${element.Name}') and name = '$column.Name'
 
 	if @cdefault is not null
 		exec('alter table $sql.Escape($element.Name) DROP CONSTRAINT ' + @cdefault)
 		
 #if($column.Required)
-	update $sql.Escape($element.Name) set $column.Name = $column.Default where $column.Name IS NULL
+	update $sql.Escape($element.Name) set $sql.Escape($column.Name) = $column.Default where $sql.Escape($column.Name) IS NULL
 #end
 #end
 	exec #spAlterColumn '$element.Name', '$column.Name', '$column.SqlType.Declaration',#if ($column.Required) 1#else 0#end
@@ -86,7 +86,7 @@ if exists(select * from syscolumns where id=object_id('$sql.Escape($element.Name
 #if($column.Default.Length>0)
 	if not exists(select * from sysobjects where name = 'DF_${element.Name}_$column.Name' and xtype='D')
 		alter table $sql.Escape($element.Name)
-			ADD CONSTRAINT DF_${element.Name}_$column.Name DEFAULT $column.Default FOR $column.Name WITH VALUES
+			ADD CONSTRAINT [DF_${element.Name}_$column.Name] DEFAULT $column.Default FOR $sql.Escape($column.Name) WITH VALUES
 #end  
   END
 #end

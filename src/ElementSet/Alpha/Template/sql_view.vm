@@ -12,7 +12,7 @@ SET ANSI_NULLS ON
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE VIEW vw$element.Name
+CREATE VIEW [vw$element.Name]
 
 AS
 
@@ -24,16 +24,16 @@ SELECT
 #set($table = $column.Prefix.Substring(0,$length))
 #end
 #if($column.Expression.Length > 0)
-	(${column.Expression}) $sql.Escape($column.Name)#if($velocityCount!=$element.Columns.Count),
+    (${column.Expression}) $sql.Escape($column.Name)#if($velocityCount!=$element.Columns.Count),
 #end	
 #else
-	$sql.Escape($table).#if($column.Prefix.Length==0)$sql.Escape($column.Name)#else$column.Name.Substring($column.Prefix.Length) $column.Name#end#if($velocityCount!=$element.Columns.Count),
+    $sql.Escape($table).#if($column.Prefix.Length==0)$sql.Escape($column.Name)#else$column.Name.Substring($column.Prefix.Length) $column.Name#end#if($velocityCount!=$element.Columns.Count),
 #end
 #end
 #end
 
 FROM
-	$sql.Escape($element.Name)
+    $sql.Escape($element.Name)
 #if ($element.Views.Count==1)
 #foreach($constraint in $element.Views.get_Item(0).Constraints)
 #set($length = $constraint.Prefix.Length - 1)

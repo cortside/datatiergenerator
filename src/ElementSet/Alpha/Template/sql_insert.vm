@@ -13,11 +13,11 @@ SET ANSI_NULLS ON
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE PROCEDURE sp${element.Name}_Insert
+CREATE PROCEDURE [sp${element.Name}_Insert]
 #set($cols = 0)
 #set($id = $element.GetIdentityColumn())
 #foreach($column in $element.Columns)#if(!$column.ViewColumn && (!$column.Identity || $doBoth))#set($cols = $cols + 1)#if($cols>1),
-#end	@${column.Name}	${column.SqlType.Declaration}#end
+#end	@$sql.RemoveInvalidChars(${column.Name})	${column.SqlType.Declaration}#end
 #end
 
 
@@ -35,7 +35,7 @@ DEFAULT VALUES
 #set($cols = 0)
 VALUES (
 #foreach($column in $element.Columns)#if(!$column.Identity && !$column.ViewColumn)#set($cols = $cols + 1)#if($cols>1),
-#end	${at}${column.Name}#end#end)
+#end	${at}$sql.RemoveInvalidChars(${column.Name})#end#end)
 #end
 
 if @@rowcount <> 1 or @@error!=0

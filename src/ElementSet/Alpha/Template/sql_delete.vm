@@ -13,10 +13,10 @@ SET ANSI_NULLS ON
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE PROCEDURE sp${element.Name}_Delete
+CREATE PROCEDURE [sp${element.Name}_Delete]
 
 #foreach($column in $element.GetPrimaryKeyColumns())#if($velocityCount > 1),
-#end${at}${column.Name}	${column.SqlType.Declaration}#end
+#end${at}$sql.RemoveInvalidChars(${column.Name})	${column.SqlType.Declaration}#end
 
 
 AS
@@ -24,7 +24,7 @@ AS
 if not exists(SELECT * FROM $sql.Escape($element.Name) WHERE (#foreach($column in $element.GetPrimaryKeyColumns())
 #if($velocityCount > 1) and
 #end
-	${column.Name} = @${column.Name}
+	$sql.Escape(${column.Name}) = @$sql.RemoveInvalidChars(${column.Name})
 #end
 ))
     BEGIN
@@ -39,7 +39,7 @@ WHERE
 #foreach($column in $element.GetPrimaryKeyColumns())
 #if($velocityCount > 1) and
 #end
-	${column.Name} = @${column.Name}
+	$sql.Escape(${column.Name}) = @$sql.RemoveInvalidChars(${column.Name})
 #end
 GO
 

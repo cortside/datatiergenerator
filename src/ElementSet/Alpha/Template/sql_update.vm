@@ -13,7 +13,7 @@ SET ANSI_NULLS ON
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE PROCEDURE sp${element.Name}_Update
+CREATE PROCEDURE [sp${element.Name}_Update]
 
 #set($id = $element.GetIdentityColumn())
 #set($cols = 0)
@@ -21,7 +21,7 @@ CREATE PROCEDURE sp${element.Name}_Update
 #if(!$column.ViewColumn)
 #set($cols = $cols + 1)#if($cols>1),
 #end
-	${at}${column.Name}	${column.SqlType.Declaration}#end
+	${at}$sql.RemoveInvalidChars(${column.Name})	${column.SqlType.Declaration}#end
 #end
 
 
@@ -36,13 +36,13 @@ SET
 #if(!$column.ViewColumn && !$column.Identity && !$element.IsPrimaryKeyColumn($column.Name))
 #set($cols = $cols + 1)#if($cols>1),
 #end
-	$sql.Escape(${column.Name}) = @${column.Name}#end
+	$sql.Escape(${column.Name}) = @$sql.RemoveInvalidChars(${column.Name})#end
 #end
 
 WHERE
 #foreach($column in $element.GetPrimaryKeyColumns())
 #if($velocityCount > 1)
-	 AND #end${column.Name} = @${column.Name}
+	 AND #end$sql.Escape(${column.Name}) = @$sql.RemoveInvalidChars(${column.Name})
 #end
 
 
