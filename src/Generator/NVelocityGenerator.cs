@@ -42,6 +42,7 @@ namespace Spring2.DataTierGenerator.Generator {
 		}
 
 		foreach(ITask task in parser.Tasks) {
+//WriteToLog("executing task: " + task.Template);
 		    foreach(IElement element in task.Elements) {
 			GenerateFile(parser, element, task);
 		    }
@@ -79,9 +80,13 @@ namespace Spring2.DataTierGenerator.Generator {
 	    String content = writer.ToString();
 	    if (content.Length > 0) {
 		IWriter w = WriterFactory.GetWriter(task.Writer);
-		if (w.Write(file, content)) {
-		    WriteToLog(w.Log);
-		    WriteToLog("generating " + file.FullName);
+		try {
+		    if (w.Write(file, content)) {
+			WriteToLog(w.Log);
+			WriteToLog("generating " + file.FullName);
+		    } 
+		} catch(Exception ex) { 
+		    WriteToLog("error generating " + file.FullName + " -- " + ex.Message);
 		}
 	    }
 	}
