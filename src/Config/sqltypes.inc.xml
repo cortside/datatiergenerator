@@ -1,0 +1,46 @@
+    <!--
+	This section defines the actual sql types that can be queried from the 
+	database.  Each sqltype can have the following attributes:
+		name = (required) This identifies the type - should be the same as the type returned by querying the database
+				information.schema tables.
+		length = 
+		precision = 
+		scale = 
+		type = (optional) this is the default type, if one is not specified for a particular property.
+		readermethodformat = (optional) This is a format string that will be used when data objects are generated, if one is not
+				specified for a particular property.  The format will have access to the following values:
+					0=reader variable name
+					1=column name (not quoted)
+		sqldbtype = relates to System.Data.SqlDbType enum.  If not specified, default to name with first character upper-cased.
+		declarationformat = used to define parameters in stored procs.  default is {0}.
+			0=name
+			1=length
+			2=precision
+			3=scale
+	-->
+    <sqltypes>
+	<sqltype name="float" type="DecimalType" readermethodformat='{0}.GetDouble({0}.GetOrdinal("{1}"))' declarationformat="{0}({2})" />
+	<sqltype name="datetime" sqldbtype="DateTime" type="DateType" readermethodformat='{0}.GetDateTime({0}.GetOrdinal("{1}"))' />
+	<sqltype name="bit" type="NumberType" readermethodformat='{0}.GetInt32({0}.GetOrdinal("{1}"))' />
+	<sqltype name="smallint" sqldbtype="SmallInt" type="NumberType" readermethodformat='{0}.GetInt32({0}.GetOrdinal("{1}"))' />
+	<sqltype name="tinyint" sqldbtype="TinyInt" type="NumberType" readermethodformat='{0}.GetInt32({0}.GetOrdinal("{1}"))' />
+	<sqltype name="smallmoney" sqldbtype="SmallMoney" type="CurrencyType" readermethodformat='{0}.GetDecimal({0}.GetOrdinal("{1}"))' />
+	<sqltype name="money" type="CurrencyType" readermethodformat='{0}.GetDecimal({0}.GetOrdinal("{1}"))' />
+	<sqltype name="image" length="50" type="StringType" readermethodformat='{0}.GetString({0}.GetOrdinal("{1}"))' />
+	<sqltype name="text" length="50" type="StringType" readermethodformat='{0}.GetString({0}.GetOrdinal("{1}"))' />
+	<sqltype name="smalldatetime" sqldbtype="SmallDateTime" type="DateType" readermethodformat='{0}.GetDateTime({0}.GetOrdinal("{1}"))' />
+	<sqltype name="char" length="1" type="StringType" readermethodformat='{0}.GetString({0}.GetOrdinal("{1}"))' declarationformat="{0}({1})" />
+	<sqltype name="varchar" sqldbtype="VarChar" length="50" type="StringType" readermethodformat='{0}.GetString({0}.GetOrdinal("{1}"))' declarationformat="{0}({1})" />
+	<sqltype name="int" scale="0" precision="10" type="NumberType" readermethodformat='{0}.GetInt32({0}.GetOrdinal("{1}"))' />
+	<sqltype name="numeric" sqldbtype="Decimal" type="DecimalType" readermethodformat='{0}.GetDecimal({0}.GetOrdinal("{1}"))' declarationformat="{0}({2}, {3})" />
+	<sqltype name="binary" type="byte[]" declarationformat="{0}({1})" />
+	<sqltype name="bigint" sqldbtype="BigInt" type="Int64" readermethodformat='{0}.GetInt64({0}.GetOrdinal("{1}"))' />
+	<sqltype name="decimal" type="Decimal" readermethodformat='{0}.GetDecimal({0}.GetOrdinal("{1}"))' declarationformat="{0}({2}, {3})" />
+	<sqltype name="nchar" sqldbtype="NChar" type="String" readermethodformat='{0}.GetString({0}.GetOrdinal("{1}"))' declarationformat="{0}({1})" />
+	<sqltype name="ntext" sqldbtype="NText" type="String" readermethodformat='{0}.GetString({0}.GetOrdinal("{1}"))' declarationformat="{0}({1})" />
+	<sqltype name="nvarchar" sqldbtype="NVarChar" type="String" readermethodformat='{0}.GetString({0}.GetOrdinal("{1}"))' declarationformat="{0}({1})" />
+	<sqltype name="real" type="Single" readermethodformat='{0}.GetString({0}.GetOrdinal("{1}"))' />
+	<sqltype name="varbinary" sqldbtype="VarBinary" type="byte[]" declarationformat="{0}({1})" />
+	<sqltype name="uniqueidentifier" sqldbtype="UniqueIdentifier" type="Guid" />
+	<sqltype name="timestamp" type="DateTime" readermethodformat='{0}.GetDateTime({0}.GetOrdinal("{1}"))' />
+    </sqltypes>
