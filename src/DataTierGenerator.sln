@@ -9,7 +9,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spring2.DataTierGenerator.N
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spring2.DataTierGenerator.Tool", "Spring2.DataTierGenerator.Tool.csproj", "{0AFCF054-A3E0-4502-B41C-347AD69DBFA5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spring2.DataTierGenerator.Attribute", "Spring2.DataTierGenerator.Attribute.csproj", "{3131371A-6B4B-4B39-9DB0-18B9F955E0BD}"
+EndProject
 Global
+	GlobalSection(DevPartner Solution Properties) = postSolution
+	EndGlobalSection
 	GlobalSection(SolutionConfiguration) = preSolution
 		ConfigName.0 = Debug
 		ConfigName.1 = Release
@@ -43,6 +47,10 @@ Global
 		{0AFCF054-A3E0-4502-B41C-347AD69DBFA5}.Debug.Build.0 = Debug|.NET
 		{0AFCF054-A3E0-4502-B41C-347AD69DBFA5}.Release.ActiveCfg = Release|.NET
 		{0AFCF054-A3E0-4502-B41C-347AD69DBFA5}.Release.Build.0 = Release|.NET
+		{3131371A-6B4B-4B39-9DB0-18B9F955E0BD}.Debug.ActiveCfg = Debug|.NET
+		{3131371A-6B4B-4B39-9DB0-18B9F955E0BD}.Debug.Build.0 = Debug|.NET
+		{3131371A-6B4B-4B39-9DB0-18B9F955E0BD}.Release.ActiveCfg = Release|.NET
+		{3131371A-6B4B-4B39-9DB0-18B9F955E0BD}.Release.Build.0 = Release|.NET
 	EndGlobalSection
 	GlobalSection(SolutionItems) = postSolution
 		Item:1 = collections.inc.xml
@@ -63,5 +71,11 @@ Global
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection
 	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+	GlobalSection(DevPartner) = postSolution
+	EndGlobalSection
+	GlobalSection(DevPartner) = postSolution
+	EndGlobalSection
+	GlobalSection(DevPartner) = postSolution
 	EndGlobalSection
 EndGlobal
