@@ -284,6 +284,9 @@ namespace Spring2.DataTierGenerator.DTGEditor {
 		    // if the generator is not null, generate
 		    if (g != null) {
 			g.Generate();
+			foreach(String s in g.Log) {
+			    Console.Out.WriteLine(s);
+			}
 		    }
 		} else {
 		    Console.Out.WriteLine("ERROR: Parser found errors:\n" + p.ErrorDescription);
