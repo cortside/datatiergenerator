@@ -54,6 +54,12 @@ namespace Spring2.DataTierGenerator {
 		dogen.CreateDataObjectClass();
 		if (!String.Empty.Equals(entity.SqlObject)) daogen.CreateDataAccessClass();
 	    }
+
+	    ArrayList enumtypes = EnumType.ParseFromXml(options,doc,sqltypes,types);
+	    foreach (EnumType type in enumtypes) {
+		EnumGenerator eg = new EnumGenerator(options, type);
+		eg.Generate();
+	    }
 			
 	    Console.Out.WriteLine(String.Empty.PadLeft(20,'='));
 	}
