@@ -11,6 +11,7 @@ Todo:
     - DataObject, DAO, stored proc, view name formats specifiable in config.xml
 	- ident level in generating code
     - look for read-only files when writing output and change the attribute before proceeding.
+    - finder methods that support named stored procedures and arguments.  would also have to support knowing what object is to be populated from the data reader.
     - ability to externally define sql keywords
 
 Completed:
