@@ -14,6 +14,7 @@ using Spring2.DataTierGenerator;
 using Spring2.DataTierGenerator.Element;
 
 namespace Spring2.DataTierGenerator.Parser {
+
     /// <summary>
     /// Summary description for XMLParser.
     /// </summary>
@@ -31,7 +32,9 @@ namespace Spring2.DataTierGenerator.Parser {
 	    ValidateSchema(filename);
 
 	    doc = new XmlDocument();
-	    doc.Load(XIncludeReader.GetStream(filename));
+	    Stream filestream = XIncludeReader.GetStream(filename);
+	    doc.Load(filestream);
+	    filestream.Close();
 
 	    if (doc==null) {
 		throw new InvalidOperationException("Could not parse xml document: " + filename);
@@ -55,6 +58,8 @@ namespace Spring2.DataTierGenerator.Parser {
 		options.RootDirectory += "\\";
 	    }
 
+	    generator = Element.Generator.ParseFromXml(options, doc, vd);
+
 	    sqltypes = SqlType.ParseFromXml(doc, vd);
 	    types = Spring2.DataTierGenerator.Element.Type.ParseFromXml(options, doc, vd);
 	    databases = GetDatabases(doc, vd);
@@ -62,30 +67,36 @@ namespace Spring2.DataTierGenerator.Parser {
 	    enumtypes = EnumType.ParseFromXml(options,doc,sqltypes,types, vd);
 	    collections = Collection.ParseFromXml(options,doc,sqltypes,types, vd);
 
-	    Validate();
+	    Validate(vd);
 	}
 
-	private void Validate() {
+	private void Validate(ParserValidationDelegate vd) {
 	    //TODO: walk through collection to make sure that cross relations are correct.
 
-//	    if (entity.SqlEntity.Name.Length>0 && !entity.SqlEntity.HasUpdatableColumns()) {
-//		Console.Out.WriteLine("WARNING: entity " + entity.Name + " does not have any editable fields and does not have x specified.  No update stored procedures or update DAO methods will be generated.");
-//	    }
+	    foreach(Entity entity in entities) {
+		if (entity.SqlEntity.Name.Length>0 && !entity.SqlEntity.HasUpdatableColumns()) {
+		    vd(ParserValidationArgs.NewWarning("WARNING: entity " + entity.Name + " does not have any editable fields and does not have x specified.  No update stored procedures or update DAO methods will be generated."));
+		}
+	    }
 	}
 
 
 	private void ValidateSchema(String filename) {
 	    try {
+		ResourceManager rm = new ResourceManager();
+		ValidationEventHandler veh = new ValidationEventHandler(SchemaValidationEventHandler);
+		XmlSchema xsd = XmlSchema.Read(rm.ConfigSchema, veh);
+
 		XmlTextReader xml = XIncludeReader.GetXmlTextReader(filename);
 		XmlValidatingReader vr = new XmlValidatingReader(xml);
-		// TODO: this assumes that the xsd is moved to the build directory
-		vr.Schemas.Add(null, AppDomain.CurrentDomain.BaseDirectory + "\\config.xsd");
+		vr.Schemas.Add(xsd);
 		vr.ValidationType = ValidationType.Schema;
 
-		//and validation errors events go to...
-		vr.ValidationEventHandler += new ValidationEventHandler(SchemaValidationEventHandler);
+		// and validation errors events go to...
+		vr.ValidationEventHandler += veh;
 				
-		//wait until the read is over, its occuring in a different thread - kinda like when your walking to get a cup of coffee and your mind is in Hawaii
+		// wait until the read is over, its occuring in a different thread - kinda like 
+		// when your walking to get a cup of coffee and your mind is in Hawaii
 		while (vr.Read());
 		vr.Close();
 	    }
