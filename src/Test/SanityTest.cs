@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.IO;
 
 using NUnit.Framework;
 
@@ -19,16 +20,26 @@ namespace Spring2.DataTierGenerator.Test {
 	[Test]
 	public void TestSanity() {
 	    IParser parser = new XmlParser("..\\..\\src\\Test\\Sanity\\sanity.xml");
+	    if (!parser.IsValid) {
+		foreach(String s in parser.Log) {
+		    Console.Out.WriteLine(s);
+		}
+	    } else {
+		IGenerator gen = new GeneratorTaskManager(parser);
+		if (Directory.Exists(@".\SanityTest")) {
+		    Directory.Delete(@".\SanityTest", true);
+		}
+		gen.Generate();
+		foreach(String s in gen.Log) {
+		    Console.Out.WriteLine(s);
+		}
 
-	    IGenerator gen = new GeneratorTaskManager(parser);
-	    //TODO: clean output directory
-	    gen.Generate();
-
-	    CompareResults("..\\..\\src\\Test\\Sanity", true);
+		CompareResults("..\\..\\src\\Test\\Sanity");
+	    }
 	}
 
 
-	private void CompareResults(String compareRoot, Boolean includeTests) {
+	private void CompareResults(String compareRoot) {
 	    Boolean pass = true;
 
 	    pass = pass && CompareFile(compareRoot, "DAO", "GolferDAO.cs");
@@ -103,17 +114,18 @@ namespace Spring2.DataTierGenerator.Test {
 	    pass = pass && CompareFile(compareRoot, "Sql\\view", "vwTeam.view.sql");
 	    pass = pass && CompareFile(compareRoot, "Sql\\view", "vwTournamentFee.view.sql");
 
-	    if (includeTests) {
-		pass = pass && CompareFile(compareRoot, "Test", "CreditCardTypeEnumTest.cs");
-		pass = pass && CompareFile(compareRoot, "Test", "ExpMonthEnumTest.cs");
-		pass = pass && CompareFile(compareRoot, "Test", "ExpYearEnumTest.cs");
-		pass = pass && CompareFile(compareRoot, "Test", "GolferStatusEnumTest.cs");
-		pass = pass && CompareFile(compareRoot, "Test", "PaymentStatusEnumTest.cs");
-		pass = pass && CompareFile(compareRoot, "Test", "TeamSizeEnumTest.cs");
-		pass = pass && CompareFile(compareRoot, "Test", "TeamStatusEnumTest.cs");
-		pass = pass && CompareFile(compareRoot, "Test", "TournamentFormatEnumTest.cs");
-		pass = pass && CompareFile(compareRoot, "Test", "USStateEnumTest.cs");
-	    }
+	    pass = pass && CompareFile(compareRoot, "Sql\\data", "GolferStatusEnum.data.sql");
+	    pass = pass && CompareFile(compareRoot, "Sql\\data", "FunctionEnum.data.sql");
+
+	    pass = pass && CompareFile(compareRoot, "Test", "CreditCardTypeEnumTest.cs");
+	    pass = pass && CompareFile(compareRoot, "Test", "ExpMonthEnumTest.cs");
+	    pass = pass && CompareFile(compareRoot, "Test", "ExpYearEnumTest.cs");
+	    pass = pass && CompareFile(compareRoot, "Test", "GolferStatusEnumTest.cs");
+	    pass = pass && CompareFile(compareRoot, "Test", "PaymentStatusEnumTest.cs");
+	    pass = pass && CompareFile(compareRoot, "Test", "TeamSizeEnumTest.cs");
+	    pass = pass && CompareFile(compareRoot, "Test", "TeamStatusEnumTest.cs");
+	    pass = pass && CompareFile(compareRoot, "Test", "TournamentFormatEnumTest.cs");
+	    pass = pass && CompareFile(compareRoot, "Test", "USStateEnumTest.cs");
 
 	    pass = pass && CompareFile(compareRoot, "Types", "CreditCardTypeEnum.cs");
 	    pass = pass && CompareFile(compareRoot, "Types", "ExpMonthEnum.cs");
@@ -132,7 +144,7 @@ namespace Spring2.DataTierGenerator.Test {
 
 
 	private Boolean CompareFile(String compareRoot, String directory, String filename) {
-	    if (!isMatch(directory, compareRoot + "\\" +directory, filename, "", "cmp")) {
+	    if (!isMatch("SanityTest\\" + directory, compareRoot + "\\" +directory, filename, "", "cmp")) {
 		Console.Out.WriteLine(directory + "\\" + filename + "...FAIL");
 		return false;
 	    }
