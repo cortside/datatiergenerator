@@ -11,11 +11,11 @@ $$elementDescription).Append("
 
 #end
 ## initial table script - if table does not already exist
-if not exists (select * from dbo.sysobjects where id = object_id(N'[$element.Name]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
 SET ANSI_NULLS ON
 SET QUOTED_IDENTIFIER ON
 GO
 
+if not exists (select * from dbo.sysobjects where id = object_id(N'[$element.Name]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
 CREATE TABLE $element.EscapedName (
 #foreach ($column in $element.Columns)
 #if (!$column.ViewColumn)
