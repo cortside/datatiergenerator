@@ -1,0 +1,9 @@
+- sqltypes image and binary do not generate correct code for pulling data from a datareader (populating a dataobject).
+- data objects could/should support ICloneable with MemberwiseClone().
+- when loading property attributes, not all overridable values are being loaded (i.e. readerformat)
+- load method does not take the correct parameters and types based on identity or primary key columns.
+- if generated output is the same as the file contents - don't overwrite.  This will help when looking in WinCVS to see what has been modified.
+- when parsing type - add any entities as data objects
+- if not using data types, need to check for null before trying to assign to primitive types in GetDataObjectFromReader method in DAO classes.
+- DTD/Schema.  XML validation
+- better validation on load
