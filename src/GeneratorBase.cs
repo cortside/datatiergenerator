@@ -84,7 +84,7 @@ namespace Spring2.DataTierGenerator {
 
 	    // Only write to the file if it has changed or does not exist.
 	    if (changed) {
-		    StreamWriter writer = new StreamWriter(file.FullName, append);
+		StreamWriter writer = new StreamWriter(file.FullName, append);
 
 		// If any #region tags were found, append the regions to the end
 		// of the class.  Otherwise, write the generated text to the file.
