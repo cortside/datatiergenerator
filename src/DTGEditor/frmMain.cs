@@ -284,7 +284,7 @@ namespace Spring2.DataTierGenerator.DTGEditor {
 		//	    }
 		Console.Out.WriteLine(String.Empty.PadLeft(20,'='));
 
-		XmlParser p = new XmlParser(filename);
+		ConfigParser p = new ConfigParser(filename);
 		if (p.IsValid) {
 		    IGenerator g = null;
 		    try {
@@ -332,7 +332,7 @@ namespace Spring2.DataTierGenerator.DTGEditor {
 
 	private void LoadDoc() {
 	    try {
-		XmlParser p = new XmlParser(file.Text);
+		ConfigParser p = new ConfigParser(file.Text);
 		result.Text = p.IsValid ? "" : "Document is invalid - fix errors";
 		generate.Visible = p.IsValid;
 		resultErrors.Text = p.ErrorDescription;
@@ -357,7 +357,7 @@ namespace Spring2.DataTierGenerator.DTGEditor {
 	    LoadDoc();
 	}
     
-	private void LoadTree(TreeView tree, XmlParser p) {
+	private void LoadTree(TreeView tree, IParser p) {
 	    tree.Nodes.Clear();
 
 	    TreeNode node;
