@@ -1,0 +1,34 @@
+#*
+
+        dataobject.vm - default data object templates (replaces DataObjectGenerator class)
+
+*###
+#nameSpaces($options $element false)
+namespace $options.GetDONameSpace($element.Name) {
+    public class $options.GetDOClassName($element.Name) #if($options.DataObjectBaseClass.Length > 0): $options.DataObjectBaseClass #end{
+
+#foreach($field in $element.Fields)
+#if($field.Name.IndexOf('.')<0)
+	$field.AccessModifier $field.Type.Name $field.GetFieldFormat() = $field.Type.NewInstanceFormat;
+#end
+#end
+
+#foreach($propertyName in $element.GetPropertyNames($options, $elements))
+	public static readonly String $propertyName.FieldName = $propertyName.FieldValue;
+#end
+#foreach($field in $element.Fields)
+
+#if($field.Name.IndexOf('.')<0)
+#if ($field.Description.Length>0)
+	/// <summary>
+	/// $field.Description
+	/// </summary>
+#end
+	public $field.Type.Name $field.GetMethodFormat() {
+	    get { return this.$field.GetFieldFormat(); }
+	    set { this.$field.GetFieldFormat() = value; }
+	}
+#end
+#end
+    }
+}
