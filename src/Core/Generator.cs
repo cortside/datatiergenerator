@@ -105,7 +105,7 @@ namespace Spring2.DataTierGenerator.Core {
 		}
 		// create classes
 		DAOGenerator daogen = new DAOGenerator(options, entity);
-		DOGenerator dogen = new DOGenerator(options, entity);
+		DOGenerator dogen = new DOGenerator(options, entity, entities);
 		dogen.CreateDataObjectClass();
 		if (!String.Empty.Equals(entity.SqlEntity.Name)) daogen.CreateDataAccessClass();
 	    }
