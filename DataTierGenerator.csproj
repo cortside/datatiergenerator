@@ -143,11 +143,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "FieldData.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "frmMain.cs"
                     SubType = "Form"
                     BuildAction = "Compile"
