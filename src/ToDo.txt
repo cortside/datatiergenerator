@@ -2,8 +2,6 @@ how to support read only properties
 
 Generator Todo:
 ---------------
-    M remove support for CodeGenerator; make <generator> a required element
-
     L support generation of CHECK CONSTRAINTS in table scripts (escaping of clause?)
     L sqltypes image and binary do not generate correct code for pulling data from a datareader (populating a dataobject).
 
@@ -16,9 +14,7 @@ Generator Todo:
     M all elements needs to have an Equals() method so that 2 instances can be compared, including collections. (needed to complete DatabaseCompareParser)
     M create custom element collections (generics) - find and compare methods could be put at this level
     H implement logger that can be passed to NVelocity for template processing messages
-    L NVelocity Toolbox tool for sql - escape can be the first method - remove from elements
     H (BUG)having a comment node in the /databases/database/sqlentities/sqlentity/column childern causes a null exception
-    H update version of NVelocity used
     H use of log4net for logging instead of caputuring System.Out to a file stream.
     H (bug)if 2 properties on an entity have the same name, no errors or warnings are generated
     L ability to generate stored procs based on finder methods (this could be done for performance reasons, saving stored proc compile time) (Seamless)
@@ -32,12 +28,11 @@ Generator Todo:
     - ability to describe business logic methods
     - ability to describe and generate facade classes and methods
     - api docs
-    - ability to specify a filter on a task so that only a subset of a collection is processes (currently this is done in the template and the output of the template is nothing, then no file is written)
     - ability to define begin and end region markers on a task
     - to support generating business logic entities:
 	- add attribute to entity (
     - check for duplicate defined properties/columns
-    - modify schema to ensure that required elements are set (i.e. constraint/@type) or gracefully deal when they are not
+    - modify schema to ensure that required elements are set (i.e. constraint[@type]) or gracefully deal when they are not
 
 Template Todo:
 --------------
@@ -76,7 +71,10 @@ Completed:
     - DataObject, DAO, stored proc, view name formats specifiable in config.xml (via VelocityTask)
     - COMMAND_TIMEOUT in read-only DAO classes does not need to be output
     - view templates do no properly escape joined table references
-
+    M remove support for CodeGenerator; make <generator> a required element
+    L NVelocity Toolbox tool for sql - escape can be the first method - remove from elements
+    H update version of NVelocity used
+    - ability to specify a filter on a task so that only a subset of a collection is processes (currently this is done in the template and the output of the template is nothing, then no file is written)
 
 Other:
     - possibility of introducing new mapper element to express more complex mappings between entities and sqlentities.  include the possibility for updatating multiple sqlentities with one dao call.
