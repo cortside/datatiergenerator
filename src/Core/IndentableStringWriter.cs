@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 
-namespace Spring2.DataTierGenerator {
+namespace Spring2.DataTierGenerator.Core {
     /// <summary>
     /// Summary description for FileWriter.
     /// </summary>

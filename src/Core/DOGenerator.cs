@@ -4,7 +4,7 @@ using System.IO;
 using System.Collections;
 using System.Text;
 
-namespace Spring2.DataTierGenerator {
+namespace Spring2.DataTierGenerator.Core {
 
     public class DOGenerator : GeneratorBase {
 	private Entity entity;

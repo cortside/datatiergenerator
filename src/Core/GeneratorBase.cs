@@ -5,7 +5,7 @@ using System.Collections;
 using System.Text;
 //using System.Windows.Forms;
 
-namespace Spring2.DataTierGenerator {
+namespace Spring2.DataTierGenerator.Core {
 
     public abstract class GeneratorBase {
 

@@ -3,7 +3,7 @@ using System.Data;
 using System.IO;
 using System.Collections;
 
-namespace Spring2.DataTierGenerator {
+namespace Spring2.DataTierGenerator.Core {
 
     public class CollectionGenerator : GeneratorBase {
 	private Collection collection;

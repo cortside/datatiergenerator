@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Xml;
 
-namespace Spring2.DataTierGenerator {
+namespace Spring2.DataTierGenerator.Core {
     public class Type : Spring2.Core.DataObject.DataObject, ICloneable {
 
 	private String name = String.Empty;
