@@ -1,8 +1,8 @@
 Todo:
 	- load method does not take the correct parameters and types based on identity or primary key columns.
-	- check for null before trying to use primitive reader methods in GetDataObjectFromReader method in DAO classes.
     - preservation of custom regions (pull code from regions and insert into generated source before overwritting)
     - generation of sql table scripts
+	- DAO GetList method should return IList not ICollection
 	
 	- sqltypes image and binary do not generate correct code for pulling data from a datareader (populating a dataobject).
 	- data objects could/should support ICloneable with MemberwiseClone().
@@ -18,3 +18,4 @@ Completed:
 	- generate enums
     - update stored procs - if there are no fields other than primary key, don't generate update procs
 	- if generated output is the same as the file contents - don't overwrite.  This will help when looking in WinCVS to see what has been modified.
+	- check for null before trying to use primitive reader methods in GetDataObjectFromReader method in DAO classes.
