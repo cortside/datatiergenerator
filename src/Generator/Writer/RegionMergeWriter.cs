@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.IO;
+using System.Text;
 
 namespace Spring2.DataTierGenerator.Generator.Writer {
 
@@ -31,135 +32,76 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 
 	    Boolean changed = false;
 	    StringWriter regions = new StringWriter();
+	    StringWriter current = new StringWriter();
 
 	    // Check that either file does not exist or that it has changed
 	    // before writing to the file.  This is so that the generated file's
 	    // timestamp won't change unless the contents have changed.
 	    if (file.Exists) {
-		// Create a reader for the newly generated text and the existing file.
-		StringReader textReader = new StringReader(text);
 		StreamReader fileReader = file.OpenText();
 		
 		Boolean inRegion = false;
 		String fileLine = fileReader.ReadLine();
-		String textLine = textReader.ReadLine();
 		while (fileLine != null) {
+		    current.WriteLine(fileLine);
+
 		    // Check to see if we have entered a region.
 		    inRegion = inRegion || fileLine.Trim().StartsWith(RegionTag);
 
-		    // If we are in a region, save the line.  Otherwise, check
-		    // to see if the line in the file is different than the line
-		    // in the generated text.
+		    // If we are in a region, save the line.
 		    if (inRegion) {
 			regions.WriteLine(fileLine);
-		    } else {
-			changed = changed || !fileLine.Equals(textLine);
-			textLine = textReader.ReadLine();
 		    }
 
 		    // Check to see if we have left a region.
 		    inRegion = inRegion && !fileLine.Trim().StartsWith(EndRegionTag);
 
-		    // Read the next line from both the file and the generated text.
+		    // Read the next line from the file.
 		    fileLine = fileReader.ReadLine();
 		}
 
-		// Handle the case where the generated text has more lines than the
-		// existing file but up to that point they were identical.  Don't
-		// know how that could happen, but this should handle it.
-		changed = changed || textLine != null;
-
 		fileReader.Close();
-		textReader.Close();
-	    } else {
-		changed = true;
 	    }
+
+	    // compare the current file text with the text that will be written (merging any existing regions if necessary)
+	    String output; 
+	    if (regions.ToString().Length > 0) {
+		output = MergeRegion(text, regions.ToString());
+	    } else {
+		output = text;
+	    }
+	    changed = !current.GetStringBuilder().ToString().Equals(output);
 
 	    // Only write to the file if it has changed or does not exist.
 	    if (changed) {
-		StreamWriter writer = new StreamWriter(file.FullName, false);
-
-		// If any #region tags were found, append the regions to the end
-		// of the class.  Otherwise, write the generated text to the file.
-		String regionsString = regions.ToString();
-		if (regionsString != String.Empty) {
-		    WriteRegion(writer, text, regionsString);
-		} else {
-		    writer.Write(text);
+		// make a backup of the current file if it exists
+		if (file.Exists) {
+		    file.CopyTo(file.FullName + "~", true);
 		}
+
+		// write the new file
+		StreamWriter writer = new StreamWriter(file.FullName, false);
+		writer.Write(output);
 		writer.Close();
 	    }
 
 	    return changed;
 	}
-
-
-//	protected void GetUsingNamespaces(TextWriter writer, ArrayList fields, Boolean isDaoClass) {
-//	    ArrayList namespaces = new ArrayList();
-//	    namespaces.Add("System");
-//
-//	    if (isDaoClass) {
-//		namespaces.Add("System.Collections");
-//		namespaces.Add("System.Configuration");
-//		namespaces.Add("System.Data");
-//		namespaces.Add("System.Data.SqlClient");
-//		namespaces.Add("Spring2.Core.DAO");
-//		namespaces.Add(options.GetDONameSpace(null));
-//	    }
-//
-//	    foreach (PropertyElement field in fields) {
-//		if (!field.Type.Package.Equals(String.Empty) && !namespaces.Contains(field.Type.Package)) {
-//		    namespaces.Add(field.Type.Package);
-//		}
-//	    }
-//
-//	    Array names = namespaces.ToArray(typeof(String));
-//	    Array.Sort(names);
-//
-//	    // Append system.
-//	    Boolean added = false;
-//	    foreach (String s in names) {
-//		if (s.StartsWith("System")) {
-//		    added = true;
-//		    writer.WriteLine("using " + s + ";");
-//		}
-//	    }
-//	    if (added) {
-//		writer.WriteLine();
-//	    }
-//
-//	    added = false;
-//	    foreach (String s in names) {
-//		if (s.StartsWith("Spring2")) {
-//		    added = true;
-//		    writer.WriteLine("using " + s + ";");
-//		}
-//	    }
-//	    if (added) {
-//		writer.WriteLine();
-//	    }
-//
-//	    added = false;
-//	    foreach (String s in names) {
-//		if (!s.StartsWith("Spring2") && !s.StartsWith("System")) {
-//		    added = true;
-//		    writer.WriteLine("using " + s + ";");
-//		}
-//	    }
-//	    if (added) {
-//		writer.WriteLine();
-//	    }
-//	}
-
 	
-	protected virtual void WriteRegion(StreamWriter writer, String text, String regionsString) {
+	protected virtual String MergeRegion(String text, String regionsString) {
+	    StringWriter writer = new StringWriter();
+
 	    Int32 index = text.Substring(0, text.LastIndexOf('}')).LastIndexOf('}');
-	    writer.Write(text.Substring(0, index));
-	    writer.Write(regionsString);
+	    index = text.Substring(0, index).LastIndexOf('}') + 1;
+	    writer.WriteLine(text.Substring(0, index));
+	    writer.WriteLine();
+	    writer.Write("\t");
+	    writer.WriteLine(regionsString.Trim());
 	    writer.WriteLine("    }");
-	    writer.Write('}');
+	    writer.WriteLine('}');
+
+	    return writer.GetStringBuilder().ToString();
 	}
-    
 
 	protected virtual String RegionTag {
 	    get { return REGION; }
