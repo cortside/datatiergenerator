@@ -46,7 +46,14 @@ namespace Spring2.DataTierGenerator.Core {
 	public static ArrayList ParseFromXml(Configuration options, XmlDocument doc, Hashtable sqltypes, Hashtable types) {
 	    Database defaults = new Database();
 	    XmlNodeList elements = doc.DocumentElement.GetElementsByTagName("databases");
-	    SqlEntity.ParseNodeAttributes(elements[0], defaults);
+	    if (elements.Count < 1)
+	    {
+		Console.Out.WriteLine("ERROR: No databases tags found.  You must have at least one databases tag.");
+	    }
+	    else
+	    {
+		SqlEntity.ParseNodeAttributes(elements[0], defaults);
+	    }
 
 	    ArrayList list = new ArrayList();
 	    elements = doc.DocumentElement.GetElementsByTagName("database");
