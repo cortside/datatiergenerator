@@ -201,7 +201,7 @@ namespace $options.GetDAONameSpace($element.Name) {
 	public static $options.GetDOClassName($element.Name) Load(#parameterList(true $element.GetPrimaryKeyFields())) {
 	    WhereClause w = new WhereClause();
 #foreach ($field in $element.GetPrimaryKeyFields())
-	    w.And("$field.GetSqlAlias()", $options.GetSqlConversion($field));
+	    w.And("[$field.GetSqlAlias()]", $options.GetSqlConversion($field));
 #end
 	    SqlDataReader dataReader = GetListReader(CONNECTION_STRING_KEY, VIEW, w, null);
 
@@ -382,7 +382,7 @@ namespace $options.GetDAONameSpace($element.Name) {
 #if($finder.Expression == "")
 	    WhereClause filter = new WhereClause();
 #foreach($field in $finder.Fields)
-	    filter.And("$field.GetSqlExpression()", $options.GetSqlConversion($field));
+	    filter.And("[$field.GetSqlExpression()]", $options.GetSqlConversion($field));
 #end
 #if($finder.Unique)
 	    SqlDataReader dataReader = GetListReader(CONNECTION_STRING_KEY, VIEW, filter, sort#if($finder.Limit), limit#end);
