@@ -9,7 +9,7 @@ GO
 CREATE PROCEDURE spTestSqlEntities_Update
 
 	@TestSqlEntitiesId	int,
-	@float	float(10),
+	@float	float(0),
 	@datetime	datetime,
 	@bit	bit,
 	@smallint	smallint,

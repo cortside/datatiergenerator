@@ -7,7 +7,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 CREATE PROCEDURE spTestSqlEntities_Insert
-	@float	float(10),
+	@float	float(0),
 	@datetime	datetime,
 	@bit	bit,
 	@smallint	smallint,

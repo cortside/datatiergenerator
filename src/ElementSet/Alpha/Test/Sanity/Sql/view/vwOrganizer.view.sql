@@ -24,7 +24,8 @@ SELECT
 	Organizer.OrganizerContactEmail,
 	Organizer.TechnicalContactName,
 	Organizer.TechnicalContactPhone,
-	Organizer.TechnicalContactEmail
+	Organizer.TechnicalContactEmail,
+	(select count(*) from OrganizationDetail where OrganizationDetail.OrganizationId=Organization.OrganizationId) ComputedColumn
 FROM
 	Organizer
 GO

@@ -19,11 +19,126 @@ namespace Golf.Tournament.DAO {
 	private static readonly Int32 COMMAND_TIMEOUT = 15;
 
 	/// <summary>
+	/// Hash table mapping entity property names to sql code.
+	/// </summary>
+	private static Hashtable propertyToSqlMap = new Hashtable();
+
+	/// <summary>
+	/// Initializes the static map of property names to sql expressions.
+	/// </summary>
+	static GolferDAO() {
+	    if (!propertyToSqlMap.Contains("GolferId")) {
+		propertyToSqlMap.Add("GolferId",@"GolferId");
+	    }
+	    if (!propertyToSqlMap.Contains("FirstName")) {
+		propertyToSqlMap.Add("FirstName",@"FirstName");
+	    }
+	    if (!propertyToSqlMap.Contains("MiddleInitial")) {
+		propertyToSqlMap.Add("MiddleInitial",@"MiddleInitial");
+	    }
+	    if (!propertyToSqlMap.Contains("LastName")) {
+		propertyToSqlMap.Add("LastName",@"LastName");
+	    }
+	    if (!propertyToSqlMap.Contains("Phone")) {
+		propertyToSqlMap.Add("Phone",@"Phone");
+	    }
+	    if (!propertyToSqlMap.Contains("Email")) {
+		propertyToSqlMap.Add("Email",@"Email");
+	    }
+	    if (!propertyToSqlMap.Contains("Address.Address1")) {
+		propertyToSqlMap.Add("Address.Address1",@"Address1");
+	    }
+	    if (!propertyToSqlMap.Contains("Address.Address2")) {
+		propertyToSqlMap.Add("Address.Address2",@"Address2");
+	    }
+	    if (!propertyToSqlMap.Contains("Address.City")) {
+		propertyToSqlMap.Add("Address.City",@"City");
+	    }
+	    if (!propertyToSqlMap.Contains("Address.State")) {
+		propertyToSqlMap.Add("Address.State",@"State");
+	    }
+	    if (!propertyToSqlMap.Contains("Address.Country")) {
+		propertyToSqlMap.Add("Address.Country",@"Country");
+	    }
+	    if (!propertyToSqlMap.Contains("Address.PostalCode")) {
+		propertyToSqlMap.Add("Address.PostalCode",@"PostalCode");
+	    }
+	    if (!propertyToSqlMap.Contains("DateOfBirth")) {
+		propertyToSqlMap.Add("DateOfBirth",@"DateOfBirth");
+	    }
+	    if (!propertyToSqlMap.Contains("Handicap")) {
+		propertyToSqlMap.Add("Handicap",@"Handicap");
+	    }
+	    if (!propertyToSqlMap.Contains("CourseNumber")) {
+		propertyToSqlMap.Add("CourseNumber",@"CourseNumber");
+	    }
+	    if (!propertyToSqlMap.Contains("PlayerNumber")) {
+		propertyToSqlMap.Add("PlayerNumber",@"PlayerNumber");
+	    }
+	    if (!propertyToSqlMap.Contains("Gender")) {
+		propertyToSqlMap.Add("Gender",@"Gender");
+	    }
+	    if (!propertyToSqlMap.Contains("GolferStatus")) {
+		propertyToSqlMap.Add("GolferStatus",@"GolferStatus");
+	    }
+	}
+
+	/// <summary>
+	/// Creates a where clause object by mapping the given where clause text.  The text may reference
+	/// entity properties which will be mapped to sql code by enclosing the property names in braces.
+	/// </summary>
+	/// <param name="whereText">Text to be mapped</param>
+	/// <returns>WhereClause object.</returns>
+	/// <exception cref="ApplicationException">When property name found in braces is not found in the entity.</exception>
+	public static IWhere Where(String whereText) {
+	    return new WhereClause(ProcessExpression(propertyToSqlMap, whereText));
+	}
+
+	/// <summary>
+	/// Creates a where clause object that can be used to create sql to find objects whose entity property value
+	/// matches the value passed.  Note that the propertyName passed is an entity property name and will be mapped
+	/// to the appropriate sql.
+	/// </summary>
+	/// <param name="propertyName">Entity property to be matched.</param>
+	/// <param name="value">Value to match the property with</param>
+	/// <returns>A WhereClause object.</returns>
+	/// <exception cref="ApplicationException">When the property name passed is not found in the entity.</exception>
+	public static IWhere Where(String propertyName, String value) {
+	    return new WhereClause(GetPropertyMapping(propertyToSqlMap, propertyName), value);
+	}
+
+	/// <summary>
+	/// Creates a where clause object that can be used to create sql to find objects whose entity property value
+	/// matches the value passed.  Note that the propertyName passed is an entity property name and will be mapped
+	/// to the appropriate sql.
+	/// </summary>
+	/// <param name="propertyName">Entity property to be matched.</param>
+	/// <param name="value">Value to match the property with</param>
+	/// <returns>A WhereClause object.</returns>
+	/// <exception cref="ApplicationException">When the property name passed is not found in the entity.</exception>
+	public static IWhere Where(String propertyName, Int32 value) {
+	    return new WhereClause(GetPropertyMapping(propertyToSqlMap, propertyName), value);
+	}
+
+	/// <summary>
+	/// Creates a where clause object that can be used to create sql to find objects whose entity property value
+	/// matches the value passed.  Note that the propertyName passed is an entity property name and will be mapped
+	/// to the appropriate sql.
+	/// </summary>
+	/// <param name="propertyName">Entity property to be matched.</param>
+	/// <param name="value">Value to match the property with</param>
+	/// <returns>A WhereClause object.</returns>
+	/// <exception cref="ApplicationException">When the property name passed is not found in the entity.</exception>
+	public static IWhere Where(String propertyName, DateTime value)	{
+	    return new WhereClause(GetPropertyMapping(propertyToSqlMap, propertyName), value);
+	}
+
+	/// <summary>
 	/// Returns a list of all Golfer rows.
 	/// </summary>
 	/// <returns>List of GolferData objects.</returns>
 	/// <exception cref="Spring2.Core.DAO.FinderException">Thrown when no rows are found.</exception>
-	public static IList GetList() { 
+	public static IList GetList() {
 	    return GetList(null, null);
 	}
 
@@ -33,7 +148,7 @@ namespace Golf.Tournament.DAO {
 	/// <param name="whereClause">Filtering criteria.</param>
 	/// <returns>List of GolferData objects.</returns>
 	/// <exception cref="Spring2.Core.DAO.FinderException">Thrown when no rows are found matching the where criteria.</exception>
-	public static IList GetList(IWhere whereClause) { 
+	public static IList GetList(IWhere whereClause) {
 	    return GetList(whereClause, null);
 	}
 
@@ -43,7 +158,7 @@ namespace Golf.Tournament.DAO {
 	/// <param name="orderByClause">Ordering criteria.</param>
 	/// <returns>List of GolferData objects.</returns>
 	/// <exception cref="Spring2.Core.DAO.FinderException">Thrown when no rows are found.</exception>
-	public static IList GetList(IOrderBy orderByClause) { 
+	public static IList GetList(IOrderBy orderByClause) {
 	    return GetList(null, orderByClause);
 	}
 
@@ -54,15 +169,62 @@ namespace Golf.Tournament.DAO {
 	/// <param name="orderByClause">Ordering criteria.</param>
 	/// <returns>List of GolferData objects.</returns>
 	/// <exception cref="Spring2.Core.DAO.FinderException">Thrown when no rows are found matching the where criteria.</exception>
-	public static IList GetList(IWhere whereClause, IOrderBy orderByClause) { 
-	    SqlDataReader dataReader = GetListReader(CONNECTION_STRING_KEY, VIEW, whereClause, orderByClause); 
+	public static IList GetList(IWhere whereClause, IOrderBy orderByClause) {
+	    SqlDataReader dataReader = GetListReader(CONNECTION_STRING_KEY, VIEW, whereClause, orderByClause);
 
-	    ArrayList list = new ArrayList(); 
-	    while (dataReader.Read()) { 
-		list.Add(GetDataObjectFromReader(dataReader)); 
+	    IList list = new ArrayList();
+	    while (dataReader.Read()) {
+		list.Add(GetDataObjectFromReader(dataReader));
 	    }
 	    dataReader.Close();
-	    return list; 
+	    return list;
+	}
+
+	/// <summary>
+	/// Returns a list of all Golfer rows.
+	/// </summary>
+	/// <returns>List of GolferData objects.</returns>
+	/// <exception cref="Spring2.Core.DAO.FinderException">Thrown when no rows are found.</exception>
+	public static IList GetList(Int32 maxRows) {
+	    return GetList(null, null, maxRows);
+	}
+
+	/// <summary>
+	/// Returns a filtered list of Golfer rows.
+	/// </summary>
+	/// <param name="whereClause">Filtering criteria.</param>
+	/// <returns>List of GolferData objects.</returns>
+	/// <exception cref="Spring2.Core.DAO.FinderException">Thrown when no rows are found matching the where criteria.</exception>
+	public static IList GetList(IWhere whereClause, Int32 maxRows) {
+	    return GetList(whereClause, null, maxRows);
+	}
+
+	/// <summary>
+	/// Returns an ordered list of Golfer rows.  All rows in the database are returned
+	/// </summary>
+	/// <param name="orderByClause">Ordering criteria.</param>
+	/// <returns>List of GolferData objects.</returns>
+	/// <exception cref="Spring2.Core.DAO.FinderException">Thrown when no rows are found.</exception>
+	public static IList GetList(IOrderBy orderByClause, Int32 maxRows) {
+	    return GetList(null, orderByClause, maxRows);
+	}
+
+	/// <summary>
+	/// Returns an ordered and filtered list of Golfer rows.
+	/// </summary>
+	/// <param name="whereClause">Filtering criteria.</param>
+	/// <param name="orderByClause">Ordering criteria.</param>
+	/// <returns>List of GolferData objects.</returns>
+	/// <exception cref="Spring2.Core.DAO.FinderException">Thrown when no rows are found matching the where criteria.</exception>
+	public static IList GetList(IWhere whereClause, IOrderBy orderByClause, Int32 maxRows) {
+	    SqlDataReader dataReader = GetListReader(CONNECTION_STRING_KEY, VIEW, whereClause, orderByClause, maxRows);
+
+	    ArrayList list = new ArrayList();
+	    while (dataReader.Read()) {
+		list.Add(GetDataObjectFromReader(dataReader));
+	    }
+	    dataReader.Close();
+	    return list;
 	}
 
 	/// <summary>
@@ -92,92 +254,92 @@ namespace Golf.Tournament.DAO {
 	/// <returns>Data object built from current row.</returns>
 	private static GolferData GetDataObjectFromReader(SqlDataReader dataReader) {
 	    GolferData data = new GolferData();
-	    if (dataReader.IsDBNull(dataReader.GetOrdinal("GolferId"))) { 
+	    if (dataReader.IsDBNull(dataReader.GetOrdinal("GolferId"))) {
 		data.GolferId = IdType.UNSET;
 	    } else {
 		data.GolferId = new IdType(dataReader.GetInt32(dataReader.GetOrdinal("GolferId")));
 	    }
-	    if (dataReader.IsDBNull(dataReader.GetOrdinal("FirstName"))) { 
+	    if (dataReader.IsDBNull(dataReader.GetOrdinal("FirstName"))) {
 		data.FirstName = StringType.UNSET;
 	    } else {
 		data.FirstName = StringType.Parse(dataReader.GetString(dataReader.GetOrdinal("FirstName")));
 	    }
-	    if (dataReader.IsDBNull(dataReader.GetOrdinal("MiddleInitial"))) { 
+	    if (dataReader.IsDBNull(dataReader.GetOrdinal("MiddleInitial"))) {
 		data.MiddleInitial = StringType.UNSET;
 	    } else {
 		data.MiddleInitial = StringType.Parse(dataReader.GetString(dataReader.GetOrdinal("MiddleInitial")));
 	    }
-	    if (dataReader.IsDBNull(dataReader.GetOrdinal("LastName"))) { 
+	    if (dataReader.IsDBNull(dataReader.GetOrdinal("LastName"))) {
 		data.LastName = StringType.UNSET;
 	    } else {
 		data.LastName = StringType.Parse(dataReader.GetString(dataReader.GetOrdinal("LastName")));
 	    }
-	    if (dataReader.IsDBNull(dataReader.GetOrdinal("Phone"))) { 
+	    if (dataReader.IsDBNull(dataReader.GetOrdinal("Phone"))) {
 		data.Phone = StringType.UNSET;
 	    } else {
 		data.Phone = StringType.Parse(dataReader.GetString(dataReader.GetOrdinal("Phone")));
 	    }
-	    if (dataReader.IsDBNull(dataReader.GetOrdinal("Email"))) { 
+	    if (dataReader.IsDBNull(dataReader.GetOrdinal("Email"))) {
 		data.Email = StringType.UNSET;
 	    } else {
 		data.Email = StringType.Parse(dataReader.GetString(dataReader.GetOrdinal("Email")));
 	    }
-	    if (dataReader.IsDBNull(dataReader.GetOrdinal("Address1"))) { 
+	    if (dataReader.IsDBNull(dataReader.GetOrdinal("Address1"))) {
 		data.Address.Address1 = StringType.UNSET;
 	    } else {
 		data.Address.Address1 = StringType.Parse(dataReader.GetString(dataReader.GetOrdinal("Address1")));
 	    }
-	    if (dataReader.IsDBNull(dataReader.GetOrdinal("Address2"))) { 
+	    if (dataReader.IsDBNull(dataReader.GetOrdinal("Address2"))) {
 		data.Address.Address2 = StringType.UNSET;
 	    } else {
 		data.Address.Address2 = StringType.Parse(dataReader.GetString(dataReader.GetOrdinal("Address2")));
 	    }
-	    if (dataReader.IsDBNull(dataReader.GetOrdinal("City"))) { 
+	    if (dataReader.IsDBNull(dataReader.GetOrdinal("City"))) {
 		data.Address.City = StringType.UNSET;
 	    } else {
 		data.Address.City = StringType.Parse(dataReader.GetString(dataReader.GetOrdinal("City")));
 	    }
-	    if (dataReader.IsDBNull(dataReader.GetOrdinal("State"))) { 
+	    if (dataReader.IsDBNull(dataReader.GetOrdinal("State"))) {
 		data.Address.State = USStateCodeEnum.UNSET;
 	    } else {
 		data.Address.State = USStateCodeEnum.GetInstance(dataReader.GetString(dataReader.GetOrdinal("State")));
 	    }
-	    if (dataReader.IsDBNull(dataReader.GetOrdinal("Country"))) { 
+	    if (dataReader.IsDBNull(dataReader.GetOrdinal("Country"))) {
 		data.Address.Country = StringType.UNSET;
 	    } else {
 		data.Address.Country = StringType.Parse(dataReader.GetString(dataReader.GetOrdinal("Country")));
 	    }
-	    if (dataReader.IsDBNull(dataReader.GetOrdinal("PostalCode"))) { 
+	    if (dataReader.IsDBNull(dataReader.GetOrdinal("PostalCode"))) {
 		data.Address.PostalCode = StringType.UNSET;
 	    } else {
 		data.Address.PostalCode = StringType.Parse(dataReader.GetString(dataReader.GetOrdinal("PostalCode")));
 	    }
-	    if (dataReader.IsDBNull(dataReader.GetOrdinal("DateOfBirth"))) { 
+	    if (dataReader.IsDBNull(dataReader.GetOrdinal("DateOfBirth"))) {
 		data.DateOfBirth = DateType.UNSET;
 	    } else {
 		data.DateOfBirth = new DateType(dataReader.GetDateTime(dataReader.GetOrdinal("DateOfBirth")));
 	    }
-	    if (dataReader.IsDBNull(dataReader.GetOrdinal("Handicap"))) { 
+	    if (dataReader.IsDBNull(dataReader.GetOrdinal("Handicap"))) {
 		data.Handicap = DecimalType.UNSET;
 	    } else {
 		data.Handicap = new DecimalType(dataReader.GetDecimal(dataReader.GetOrdinal("Handicap")));
 	    }
-	    if (dataReader.IsDBNull(dataReader.GetOrdinal("CourseNumber"))) { 
+	    if (dataReader.IsDBNull(dataReader.GetOrdinal("CourseNumber"))) {
 		data.CourseNumber = StringType.UNSET;
 	    } else {
 		data.CourseNumber = StringType.Parse(dataReader.GetString(dataReader.GetOrdinal("CourseNumber")));
 	    }
-	    if (dataReader.IsDBNull(dataReader.GetOrdinal("PlayerNumber"))) { 
+	    if (dataReader.IsDBNull(dataReader.GetOrdinal("PlayerNumber"))) {
 		data.PlayerNumber = StringType.UNSET;
 	    } else {
 		data.PlayerNumber = StringType.Parse(dataReader.GetString(dataReader.GetOrdinal("PlayerNumber")));
 	    }
-	    if (dataReader.IsDBNull(dataReader.GetOrdinal("Gender"))) { 
+	    if (dataReader.IsDBNull(dataReader.GetOrdinal("Gender"))) {
 		data.Gender = GenderType.UNSET;
 	    } else {
 		data.Gender = GenderType.GetInstance(dataReader.GetString(dataReader.GetOrdinal("Gender")));
 	    }
-	    if (dataReader.IsDBNull(dataReader.GetOrdinal("GolferStatus"))) { 
+	    if (dataReader.IsDBNull(dataReader.GetOrdinal("GolferStatus"))) {
 		data.GolferStatus = GolferStatusEnum.UNSET;
 	    } else {
 		data.GolferStatus = GolferStatusEnum.GetInstance(dataReader.GetString(dataReader.GetOrdinal("GolferStatus")));
@@ -191,8 +353,16 @@ namespace Golf.Tournament.DAO {
 	/// </summary>
 	/// <param name=""></param>
 	public static IdType Insert(GolferData data) {
+	    return Insert(data, null);
+	}
+
+	/// <summary>
+	/// Inserts a record into the Golfer table.
+	/// </summary>
+	/// <param name=""></param>
+	public static IdType Insert(GolferData data, SqlTransaction transaction) {
 	    // Create and execute the command
-	    SqlCommand cmd = GetSqlCommand(CONNECTION_STRING_KEY, "spGolfer_Insert", CommandType.StoredProcedure, COMMAND_TIMEOUT);
+	    SqlCommand cmd = GetSqlCommand(CONNECTION_STRING_KEY, "spGolfer_Insert", CommandType.StoredProcedure, COMMAND_TIMEOUT, transaction);
 
 	    SqlParameter rv = cmd.Parameters.Add("RETURN_VALUE", SqlDbType.Int);
 	    rv.Direction = ParameterDirection.ReturnValue;
@@ -217,7 +387,12 @@ namespace Golf.Tournament.DAO {
 
 	    // Execute the query
 	    cmd.ExecuteNonQuery();
-	    cmd.Connection.Close();
+
+	    // do not close the connection if it is part of a transaction
+	    if (transaction == null) {
+		cmd.Connection.Close();
+	    }
+
 	    // Set the output paramter value(s)
 	    return new IdType((Int32)(cmd.Parameters["RETURN_VALUE"].Value));
 	}
@@ -227,8 +402,16 @@ namespace Golf.Tournament.DAO {
 	/// </summary>
 	/// <param name=""></param>
 	public static void Update(GolferData data) {
+	    Update(data, null);
+	}
+
+	/// <summary>
+	/// Updates a record in the Golfer table.
+	/// </summary>
+	/// <param name=""></param>
+	public static void Update(GolferData data, SqlTransaction transaction) {
 	    // Create and execute the command
-	    SqlCommand cmd = GetSqlCommand(CONNECTION_STRING_KEY, "spGolfer_Update", CommandType.StoredProcedure, COMMAND_TIMEOUT);
+	    SqlCommand cmd = GetSqlCommand(CONNECTION_STRING_KEY, "spGolfer_Update", CommandType.StoredProcedure, COMMAND_TIMEOUT, transaction);
 
 	    //Create the parameters and append them to the command object
 	    cmd.Parameters.Add(new SqlParameter("@GolferId", SqlDbType.Int, 0, ParameterDirection.Input, false, 10, 0, "GolferId", DataRowVersion.Proposed, data.GolferId.DBValue));
@@ -252,7 +435,11 @@ namespace Golf.Tournament.DAO {
 
 	    // Execute the query
 	    cmd.ExecuteNonQuery();
-	    cmd.Connection.Close();
+
+	    // do not close the connection if it is part of a transaction
+	    if (transaction == null) {
+		cmd.Connection.Close();
+	    }
 	}
 
 	/// <summary>
@@ -260,15 +447,47 @@ namespace Golf.Tournament.DAO {
 	/// </summary>
 	/// <param name=""></param>
 	public static void Delete(IdType golferId) {
+	    Delete(golferId, null);
+	}
+
+	/// <summary>
+	/// Deletes a record from the Golfer table by GolferId.
+	/// </summary>
+	/// <param name=""></param>
+	public static void Delete(IdType golferId, SqlTransaction transaction) {
 	    // Create and execute the command
-	    SqlCommand cmd = GetSqlCommand(CONNECTION_STRING_KEY, "spGolfer_Delete", CommandType.StoredProcedure, COMMAND_TIMEOUT);
+	    SqlCommand cmd = GetSqlCommand(CONNECTION_STRING_KEY, "spGolfer_Delete", CommandType.StoredProcedure, COMMAND_TIMEOUT, transaction);
 
 	    // Create and append the parameters
 	    cmd.Parameters.Add(new SqlParameter("@GolferId", SqlDbType.Int, 0, ParameterDirection.Input, false, 10, 0, "GolferId", DataRowVersion.Proposed, golferId.DBValue));
 
 	    // Execute the query and return the result
 	    cmd.ExecuteNonQuery();
-	    cmd.Connection.Close();
+
+	    // do not close the connection if it is part of a transaction
+	    if (transaction == null) {
+		cmd.Connection.Close();
+	    }
+	}
+
+	/// <summary>
+	/// Get a new transaction for a connection that can be created from this classes connection string
+	/// </summary>
+	public static DaoTransaction GetNewTransaction(String transactionName) {
+	    SqlConnection conn = GetSqlConnection(GetConnectionString(CONNECTION_STRING_KEY));
+	    DaoTransaction transaction = new DaoTransaction(conn.BeginTransaction(transactionName));
+
+	    return transaction;
+	}
+
+	/// <summary>
+	/// Get a new transaction for a connection that can be created from this classes connection string
+	/// </summary>
+	public static DaoTransaction GetNewTransaction() {
+	    SqlConnection conn = GetSqlConnection(GetConnectionString(CONNECTION_STRING_KEY));
+	    DaoTransaction transaction = new DaoTransaction(conn.BeginTransaction());
+
+	    return transaction;
 	}
 
     }
