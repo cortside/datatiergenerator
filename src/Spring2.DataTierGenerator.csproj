@@ -199,6 +199,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Element\SqlElementSkeleton.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Element\SqlEntity.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
