@@ -335,20 +335,23 @@
 									<xs:sequence>
 									    <xs:element name="column" minOccurs="0" maxOccurs="unbounded">
 										<xs:complexType>
-										    <xs:all />
-										    <xs:attribute name="name" type="xs:string" />
-										    <xs:attribute name="sqltype" type="xs:string" />
-										    <xs:attribute name="identity" type="BooleanEnum" />
-										    <xs:attribute name="length" type="xs:nonNegativeInteger" />
-										    <xs:attribute name="required" type="BooleanEnum" />
-										    <xs:attribute name="viewcolumn" type="BooleanEnum" />
-										    <xs:attribute name="precision" type="xs:nonNegativeInteger" />
-										    <xs:attribute name="scale" type="xs:nonNegativeInteger" />
-										    <xs:attribute name="expression" type="xs:string" />
-										    <xs:attribute name="default" type="xs:string" />
-										    <xs:attribute name="increment" type="xs:nonNegativeInteger" />
-										    <xs:attribute name="seed" type="xs:nonNegativeInteger" />
-										    <xs:attribute name="obsolete" type="BooleanEnum" />
+										    <xs:simpleContent>
+											<xs:extension base="xs:string">
+											    <xs:attribute name="name" type="xs:string" />
+											    <xs:attribute name="sqltype" type="xs:string" />
+											    <xs:attribute name="identity" type="BooleanEnum" />
+											    <xs:attribute name="length" type="xs:nonNegativeInteger" />
+											    <xs:attribute name="required" type="BooleanEnum" />
+											    <xs:attribute name="viewcolumn" type="BooleanEnum" />
+											    <xs:attribute name="precision" type="xs:nonNegativeInteger" />
+											    <xs:attribute name="scale" type="xs:nonNegativeInteger" />
+											    <xs:attribute name="expression" type="xs:string" />
+											    <xs:attribute name="default" type="xs:string" />
+											    <xs:attribute name="increment" type="xs:nonNegativeInteger" />
+											    <xs:attribute name="seed" type="xs:nonNegativeInteger" />
+											    <xs:attribute name="obsolete" type="BooleanEnum" />
+											</xs:extension>
+										    </xs:simpleContent>
 										</xs:complexType>
 									    </xs:element>
 									</xs:sequence>

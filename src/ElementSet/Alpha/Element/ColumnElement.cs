@@ -152,9 +152,7 @@ namespace Spring2.DataTierGenerator.Element {
 	/// <param name="node"></param>
 	/// <param name="columnElements"></param>
 	public static void ParseFromXml(XmlNode node, IList columnElements) {
-
 	    if (node != null && columnElements != null) {
-
 		foreach (XmlNode columnNode in node.ChildNodes) {
 		    if (columnNode.NodeType.Equals(XmlNodeType.Element)) {
 			ColumnElement columnElement = new ColumnElement();
@@ -173,6 +171,7 @@ namespace Spring2.DataTierGenerator.Element {
 			columnElement.Seed = Int32.Parse(GetAttributeValue(columnNode, SEED, columnElement.Seed.ToString()));
 			columnElement.ForeignColumn = GetAttributeValue(columnNode, FOREIGN_COLUMN, columnElement.ForeignColumn);
 			columnElement.obsolete = Boolean.Parse(GetAttributeValue(columnNode, OBSOLETE, columnElement.Obsolete.ToString()));
+			columnElement.Description = columnNode.InnerText.Trim();
 		
 			columnElements.Add(columnElement);
 		    }
@@ -252,6 +251,7 @@ namespace Spring2.DataTierGenerator.Element {
 			if (node.Attributes["obsolete"] != null) {
 			    column.Obsolete = Boolean.Parse(node.Attributes[OBSOLETE].Value);
 			}
+			column.Description = node.InnerText.Trim();
 
 			columns.Add(column);
 		    }
