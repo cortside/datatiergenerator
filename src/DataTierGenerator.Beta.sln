@@ -1,6 +1,10 @@
 Microsoft Visual Studio Solution File, Format Version 7.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spring2.DataTierGenerator.Beta", "ElementSet\Beta\Spring2.DataTierGenerator.Beta.csproj", "{715E64DD-2DAD-4DA8-ACC5-2BAEBA573487}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spring2.DataTierGenerator", "Spring2.DataTierGenerator.csproj", "{8BE555A1-8BBA-4CF7-9B4A-6BBEF7E20FA8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spring2.DataTierGenerator.Attribute", "Spring2.DataTierGenerator.Attribute.csproj", "{3131371A-6B4B-4B39-9DB0-18B9F955E0BD}"
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		ConfigName.0 = Debug
@@ -13,6 +17,14 @@ Global
 		{715E64DD-2DAD-4DA8-ACC5-2BAEBA573487}.Debug.Build.0 = Debug|.NET
 		{715E64DD-2DAD-4DA8-ACC5-2BAEBA573487}.Release.ActiveCfg = Release|.NET
 		{715E64DD-2DAD-4DA8-ACC5-2BAEBA573487}.Release.Build.0 = Release|.NET
+		{8BE555A1-8BBA-4CF7-9B4A-6BBEF7E20FA8}.Debug.ActiveCfg = Debug|.NET
+		{8BE555A1-8BBA-4CF7-9B4A-6BBEF7E20FA8}.Debug.Build.0 = Debug|.NET
+		{8BE555A1-8BBA-4CF7-9B4A-6BBEF7E20FA8}.Release.ActiveCfg = Release|.NET
+		{8BE555A1-8BBA-4CF7-9B4A-6BBEF7E20FA8}.Release.Build.0 = Release|.NET
+		{3131371A-6B4B-4B39-9DB0-18B9F955E0BD}.Debug.ActiveCfg = Debug|.NET
+		{3131371A-6B4B-4B39-9DB0-18B9F955E0BD}.Debug.Build.0 = Debug|.NET
+		{3131371A-6B4B-4B39-9DB0-18B9F955E0BD}.Release.ActiveCfg = Release|.NET
+		{3131371A-6B4B-4B39-9DB0-18B9F955E0BD}.Release.Build.0 = Release|.NET
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection
