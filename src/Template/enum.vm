@@ -11,7 +11,7 @@ namespace $options.GetTypeNameSpace($element.Name) {
 	public static readonly new $element.Name UNSET = new ${element.Name}();
 
 #foreach ($value in $element.Values)
-#if ( $value.Description > "" )
+#if ( !$value.Description.Equals("") )
 	/// <summary>
 	/// $value.Description
 	/// </summary>
@@ -28,7 +28,6 @@ namespace $options.GetTypeNameSpace($element.Name) {
 		    }
 		}
 	    }
-
 #if ( $element.IntegerBased )
 	    if (value is Int32) {
 		foreach ($element.Name t in OPTIONS) {
@@ -42,6 +41,7 @@ namespace $options.GetTypeNameSpace($element.Name) {
 		}
 	    }
 #end
+
 	    return UNSET;
 	}
 
@@ -70,7 +70,7 @@ namespace $options.GetTypeNameSpace($element.Name) {
 	/// Convert a $element.Name instance to an Int32;
 	/// </summary>
 	/// <returns>the Int32 representation for the enum instance.</returns>
-	/// <exception cref=\"InvalidCastException\">when converting DEFAULT or UNSET to an Int32.</exception>
+	/// <exception cref="InvalidCastException">when converting DEFAULT or UNSET to an Int32.</exception>
 	public Int32 ToInt32() {
 	    if (IsValid) {
 		try {
