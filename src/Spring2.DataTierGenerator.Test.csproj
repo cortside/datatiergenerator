@@ -139,6 +139,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Test\StylerTest.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Test\CodeDomMerge\GolferDAO.cs"
                     SubType = "Code"
                     BuildAction = "None"
