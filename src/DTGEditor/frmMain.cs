@@ -1,19 +1,20 @@
-//by Joe Miguel on 4-14-2002
-//use as you wish, just give me some credit if you
-//improve it (and tell me too, i might want a copy)!
-
 using System;
 using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
+using System.IO;
 using System.Windows.Forms;
 using System.Data;
 using System.Xml;
 using System.Xml.Schema;
 
-using Spring2.DataTierGenerator.Core;
+using Spring2.Core.Xml;
 
-namespace Spring2.DataTierGenerator {
+using Spring2.DataTierGenerator.Element;
+using Spring2.DataTierGenerator.Generator;
+using Spring2.DataTierGenerator.Parser;
+
+namespace Spring2.DataTierGenerator.DTGEditor {
     /// <summary>
     /// Summary description for frmMain.
     /// </summary>
@@ -22,9 +23,6 @@ namespace Spring2.DataTierGenerator {
 	/// Required designer variable.
 	/// </summary>
 	private System.ComponentModel.Container components = null;
-	private static bool isValid;
-	private static string error;
-	private static string header;
 
 	private IList entities = new ArrayList();
 	private IList databases = new ArrayList();
@@ -45,6 +43,7 @@ namespace Spring2.DataTierGenerator {
         private System.Windows.Forms.TreeView treeView1;
         private System.Windows.Forms.Splitter splitter1;
         private System.Windows.Forms.ListView listView1;
+        private System.Windows.Forms.Button generate;
 	private System.Windows.Forms.TextBox file;
 
 	public frmMain() {
@@ -89,6 +88,7 @@ namespace Spring2.DataTierGenerator {
 	    this.treeView1 = new System.Windows.Forms.TreeView();
 	    this.splitter1 = new System.Windows.Forms.Splitter();
 	    this.listView1 = new System.Windows.Forms.ListView();
+	    this.generate = new System.Windows.Forms.Button();
 	    this.SuspendLayout();
 	    // 
 	    // label1
@@ -114,11 +114,11 @@ namespace Spring2.DataTierGenerator {
 	    // validate
 	    // 
 	    this.validate.Anchor = (System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right);
-	    this.validate.Location = new System.Drawing.Point(640, 456);
+	    this.validate.Location = new System.Drawing.Point(672, 456);
 	    this.validate.Name = "validate";
-	    this.validate.Size = new System.Drawing.Size(112, 24);
+	    this.validate.Size = new System.Drawing.Size(80, 24);
 	    this.validate.TabIndex = 2;
-	    this.validate.Text = "&Validate";
+	    this.validate.Text = "Validate";
 	    this.validate.Click += new System.EventHandler(this.validate_Click);
 	    // 
 	    // result
@@ -217,11 +217,23 @@ namespace Spring2.DataTierGenerator {
 	    this.listView1.TabIndex = 13;
 	    this.listView1.View = System.Windows.Forms.View.Details;
 	    // 
+	    // generate
+	    // 
+	    this.generate.Anchor = (System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right);
+	    this.generate.Location = new System.Drawing.Point(584, 456);
+	    this.generate.Name = "generate";
+	    this.generate.Size = new System.Drawing.Size(80, 24);
+	    this.generate.TabIndex = 14;
+	    this.generate.Text = "Generate";
+	    this.generate.Visible = false;
+	    this.generate.Click += new System.EventHandler(this.generate_Click);
+	    // 
 	    // frmMain
 	    // 
 	    this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
 	    this.ClientSize = new System.Drawing.Size(760, 486);
 	    this.Controls.AddRange(new System.Windows.Forms.Control[] {
+									  this.generate,
 									  this.listView1,
 									  this.splitter1,
 									  this.treeView1,
@@ -247,8 +259,47 @@ namespace Spring2.DataTierGenerator {
 	/// The main entry point for the application.
 	/// </summary>
 	[STAThread]
-	static void Main() {
-	    Application.Run(new frmMain());
+	static void Main(string[] args) {
+	    // decide whether to parse XML file and go or bring up form
+	    if (args.Length==1) {
+		Generate(args[0]);
+	    } else {
+		Application.Run(new frmMain());
+	    }
+	}
+
+
+	private static void Generate(String filename) {
+	    try {
+		FileStream fs = new FileStream("DataTierGenerator.log", FileMode.Create);
+		StreamWriter sw = new StreamWriter(fs);
+		Console.SetOut(sw);
+
+		Console.Out.WriteLine(String.Empty.PadLeft(20,'='));
+		Console.Out.WriteLine("Start :: " + DateTime.Now.ToString());
+		//	    Console.WriteLine("Number of command line parameters = {0}", args.Length);
+		//	    foreach(string s in args) {
+		//		Console.WriteLine(s);
+		//	    }
+		Console.Out.WriteLine(String.Empty.PadLeft(20,'='));
+
+		XmlParser p = new XmlParser(filename);
+		if (p.IsValid) {
+		    CodeGenerator g = new CodeGenerator(p);
+		    g.Generate();
+		} else {
+		    Console.Out.WriteLine("ERROR: Parser found errors:\n" + p.ErrorDescription);
+		}
+
+		Console.Out.WriteLine(String.Empty.PadLeft(20,'='));
+		Console.Out.WriteLine("Done :: " + DateTime.Now.ToString());
+		Console.Out.WriteLine(String.Empty.PadLeft(20,'='));
+
+		sw.Close();
+	    } catch (Exception ex) {
+		MessageBox.Show("An error occcurred while generating.\n\n" + ex.ToString());
+		Console.Out.WriteLine("An error occcurred while generating.\n\n" + ex.ToString());
+	    }
 	}
 
 	private void frmMain_Load(object sender, System.EventArgs e) {
@@ -261,49 +312,14 @@ namespace Spring2.DataTierGenerator {
 
 	private void LoadDoc() {
 	    try {
-		String errors = ValidateSchema();
-		Boolean isValid = errors.Equals(String.Empty);
-
-		result.Text = isValid ? "" : "Document is invalid - fix errors";
-		resultErrors.Text = errors;
-
-		LoadTree(treeView1, file.Text);
+		XmlParser p = new XmlParser(file.Text);
+		result.Text = p.IsValid ? "" : "Document is invalid - fix errors";
+		generate.Visible = p.IsValid;
+		resultErrors.Text = p.ErrorDescription;
+		LoadTree(treeView1, p);
 	    } catch (Exception ex) {
 		MessageBox.Show("An error occcurred while loading.\n\n" + ex.ToString());
 	    }
-	}
-
-	private String ValidateSchema() {
-	    error = "";
-
-	    try {
-		XmlTextReader xml = new XmlTextReader(file.Text);
-		XmlValidatingReader xsd = new XmlValidatingReader(xml);
-		xsd.ValidationType = ValidationType.Schema;
-
-		//and validation errors events go to...
-		xsd.ValidationEventHandler += new ValidationEventHandler(MyValidationEventHandler);
-				
-		//wait until the read is over, its occuring in a different thread - kinda like when your walking to get a cup of coffee and your mind is in Hawaii
-		while (xsd.Read()) {
-		}
-		xsd.Close();
-	    }
-	    catch(UnauthorizedAccessException a) {
-		//dont have access permission
-		error = a.Message;
-	    }
-	    catch(Exception a) {
-		//and other things that could go wrong
-		error = a.Message;
-	    }
-	    return error;
-	}
-
-	//handle our XML validation errors
-	public static void MyValidationEventHandler(object sender, ValidationEventArgs args) {
-	    isValid = false;
-	    error += args.Severity.ToString() + " :: " + args.Message + "\n\n";
 	}
 
 	//start file browser 
@@ -320,43 +336,41 @@ namespace Spring2.DataTierGenerator {
 	    openFileDialog.Dispose();
 	    LoadDoc();
 	}
-
     
-	private void LoadTree(TreeView tree, String filename) {
+	private void LoadTree(TreeView tree, XmlParser p) {
 	    tree.Nodes.Clear();
 
-	    Generator g = new Generator(filename);
 	    TreeNode node;
 
-	    sqltypes = g.SqlTypes;
+	    sqltypes = p.SqlTypes;
 	    node = new TreeNode("SqlTypes");
 	    foreach(SqlType sqltype in sqltypes) {
 		node.Nodes.Add(sqltype.Name);
 	    }
 	    tree.Nodes.Add(node);
 
-	    types = g.Types;
+	    types = p.Types;
 	    node = new TreeNode("Types");
-	    foreach(Core.Type type in types) {
+	    foreach(Element.Type type in types) {
 		node.Nodes.Add(type.Name);
 	    }
 	    tree.Nodes.Add(node);
 
-	    enums = g.Enums;
+	    enums = p.Enums;
 	    node = new TreeNode("Enums");
 	    foreach(EnumType e in enums) {
 		node.Nodes.Add(e.Name);
 	    }
 	    tree.Nodes.Add(node);
 
-	    collections = g.Collections;
+	    collections = p.Collections;
 	    node = new TreeNode("Collections");
 	    foreach(Collection c in collections) {
 		node.Nodes.Add(c.Name);
 	    }
 	    tree.Nodes.Add(node);
 
-	    databases = g.Databases;
+	    databases = p.Databases;
 	    node = new TreeNode("Databases");
 	    foreach(Database database in databases) {
 		TreeNode d = new TreeNode(database.Name);
@@ -364,7 +378,7 @@ namespace Spring2.DataTierGenerator {
 		    TreeNode n = new TreeNode(sqlentity.Name);
 		    if (sqlentity.Constraints.Count>0) {
 			TreeNode c = new TreeNode("contraints");
-			foreach (Core.Constraint constraint in sqlentity.Constraints) {
+			foreach (Element.Constraint constraint in sqlentity.Constraints) {
 			    c.Nodes.Add(constraint.Name);
 			}
 			n.Nodes.Add(c);
@@ -383,7 +397,7 @@ namespace Spring2.DataTierGenerator {
 	    }
 	    tree.Nodes.Add(node);
 
-	    entities = g.Entities;
+	    entities = p.Entities;
 	    node = new TreeNode("Entities");
 	    foreach(Entity entity in entities) {
 		TreeNode n = new TreeNode(entity.Name);
@@ -507,6 +521,11 @@ namespace Spring2.DataTierGenerator {
 	    for (int i=0; i<lv.Columns.Count; i++) {
 		lv.Columns[i].Width = size;
 	    }
+	}
+
+        private void generate_Click(object sender, System.EventArgs e) {
+	    Generate(file.Text);
+	    MessageBox.Show("Data tier generated successfully.");
 	}
 
     }
