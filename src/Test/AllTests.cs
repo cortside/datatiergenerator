@@ -17,6 +17,7 @@ namespace Spring2.DataTierGenerator.Test {
 		TestSuite suite = new TestSuite(typeof(AllTests).FullName);
 		suite.AddTestSuite(typeof (Spring2.DataTierGenerator.Test.ParserTest));
 
+		suite.AddTestSuite(typeof (Spring2.DataTierGenerator.Test.SanityTest));
 		return suite;
 	    }
 	}
