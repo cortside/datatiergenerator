@@ -1,29 +1,43 @@
-Microsoft Visual Studio Solution File, Format Version 7.00
+Microsoft Visual Studio Solution File, Format Version 8.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spring2.DataTierGenerator", "Spring2.DataTierGenerator.csproj", "{8BE555A1-8BBA-4CF7-9B4A-6BBEF7E20FA8}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spring2.DataTierGenerator.Test", "Spring2.DataTierGenerator.Test.csproj", "{50037EF4-B0A4-4044-8638-E94A6D090CAB}"
+	ProjectSection(ProjectDependencies) = postProject
+		{2844DE77-37C4-4DD5-A1B2-F217D40EEEFE} = {2844DE77-37C4-4DD5-A1B2-F217D40EEEFE}
+		{8BE555A1-8BBA-4CF7-9B4A-6BBEF7E20FA8} = {8BE555A1-8BBA-4CF7-9B4A-6BBEF7E20FA8}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spring2.DataTierGenerator.Nant", "Spring2.DataTierGenerator.Nant.csproj", "{2844DE77-37C4-4DD5-A1B2-F217D40EEEFE}"
+	ProjectSection(ProjectDependencies) = postProject
+		{8BE555A1-8BBA-4CF7-9B4A-6BBEF7E20FA8} = {8BE555A1-8BBA-4CF7-9B4A-6BBEF7E20FA8}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spring2.DataTierGenerator.Tool", "Spring2.DataTierGenerator.Tool.csproj", "{0AFCF054-A3E0-4502-B41C-347AD69DBFA5}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spring2.DataTierGenerator.Attribute", "Spring2.DataTierGenerator.Attribute.csproj", "{3131371A-6B4B-4B39-9DB0-18B9F955E0BD}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spring2.DataTierGenerator.Alpha", "ElementSet\Alpha\Spring2.DataTierGenerator.Alpha.csproj", "{069AFE42-50D3-48D3-A12B-FAE1D8A2A44A}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spring2.DataTierGenerator.Beta", "ElementSet\Beta\Spring2.DataTierGenerator.Beta.csproj", "{715E64DD-2DAD-4DA8-ACC5-2BAEBA573487}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spring2.DataTierGenerator.ConsoleRunner", "Spring2.DataTierGenerator.ConsoleRunner.csproj", "{C49BE045-C72A-43DD-8DAC-CE11F08C6A6F}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
-		ConfigName.0 = Debug
-		ConfigName.1 = Release
-	EndGlobalSection
-	GlobalSection(ProjectDependencies) = postSolution
-		{50037EF4-B0A4-4044-8638-E94A6D090CAB}.0 = {8BE555A1-8BBA-4CF7-9B4A-6BBEF7E20FA8}
-		{50037EF4-B0A4-4044-8638-E94A6D090CAB}.1 = {2844DE77-37C4-4DD5-A1B2-F217D40EEEFE}
-		{2844DE77-37C4-4DD5-A1B2-F217D40EEEFE}.0 = {8BE555A1-8BBA-4CF7-9B4A-6BBEF7E20FA8}
+		Debug = Debug
+		Release = Release
 	EndGlobalSection
 	GlobalSection(ProjectConfiguration) = postSolution
 		{8BE555A1-8BBA-4CF7-9B4A-6BBEF7E20FA8}.Debug.ActiveCfg = Debug|.NET
@@ -60,20 +74,20 @@ Global
 		{C49BE045-C72A-43DD-8DAC-CE11F08C6A6F}.Release.Build.0 = Release|.NET
 	EndGlobalSection
 	GlobalSection(SolutionItems) = postSolution
-		Item:1 = collections.inc.xml
-		Item:2 = config.inc.xml
-		Item:3 = config.xml
-		Item:4 = databases.inc.xml
-		Item:5 = bin\DataTierGenerator.log
-		Item:6 = dtg-config.xml
-		Item:7 = entities.inc.xml
-		Item:8 = enums.inc.xml
-		Item:9 = golf.config.xml
-		Item:10 = project.config.xml
-		Item:11 = seamless.config.xml
-		Item:12 = sqltypes.inc.xml
-		Item:13 = ToDo.txt
-		Item:14 = types.inc.xml
+		collections.inc.xml = collections.inc.xml
+		config.inc.xml = config.inc.xml
+		config.xml = config.xml
+		databases.inc.xml = databases.inc.xml
+		bin\DataTierGenerator.log = bin\DataTierGenerator.log
+		dtg-config.xml = dtg-config.xml
+		entities.inc.xml = entities.inc.xml
+		enums.inc.xml = enums.inc.xml
+		golf.config.xml = golf.config.xml
+		project.config.xml = project.config.xml
+		seamless.config.xml = seamless.config.xml
+		sqltypes.inc.xml = sqltypes.inc.xml
+		ToDo.txt = ToDo.txt
+		types.inc.xml = types.inc.xml
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection
