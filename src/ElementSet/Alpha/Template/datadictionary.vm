@@ -1,0 +1,210 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+
+<html>
+<head>
+    <title>Data Dictionary</title>
+</head>
+
+<body>
+
+<h1><a name="index">Index<a></h1>
+#foreach($entity in $element.List)
+	<a href="#$entity.Name">$entity.Name</a><br>
+#end
+<br>
+<br>
+#foreach($entity in $element.List)
+    <div style=
+    'border:none;border-top:solid windowtext 3.0pt;padding:1.0pt 0in 0in 0in'>
+	<a name="$entity.Name"></a>
+    <a href="#index">index</a>
+    <h1><a name="xx $entity.Name">$velocityCount<span style=
+    'font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+    $entity.Name</a></h1>
+    </div>
+
+    <p class="Body">(description goes here)${entity.Description}&nbsp;</p>
+
+    <h2><a name="_Toc55981261">${velocityCount}.1<span style=
+    'font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+    The $entity.Name Entity</a></h2>
+
+    <p class="Body">Data relating to recipients will be held in the
+    Recipient table.&nbsp; Fields to be included in the Recipient
+    table are contained in Table ${velocityCount}a.</p>
+
+    <p class="TableTitle"><a name="_Toc55981318"></a><a name=
+    "_Toc525704228">Table ${velocityCount}a.&nbsp; Properties of the
+    $entity.Name entity</a></p>
+
+    <div align="center">
+        <table class="MsoNormalTable"
+               border="0"
+               cellspacing="0"
+               cellpadding="0"
+               style='border-collapse:collapse'>
+            <thead>
+                <tr style='height:.2in'>
+                    <td style=
+                    'border:solid black 1.0pt;padding:0in 6.0pt 0in 6.0pt;height:.2in'>
+                    <p class="MsoNormal"
+                           align="center"
+                           style='text-align:center'>
+                              <b><span style='font-size:10.0pt'>Property Name</span></b></p>
+                    </td>
+
+                    <td style=
+                    'border:solid black 1.0pt;border-left:none;padding:0in 6.0pt 0in 6.0pt; height:.2in'>
+                    <p class="MsoNormal"
+                           align="center"
+                           style='text-align:center'>
+                              <b><span style='font-size:10.0pt'>
+                              Type</span></b></p>
+                    </td>
+
+                    <td style=
+                    'border:solid black 1.0pt;border-left:none;padding:0in 6.0pt 0in 6.0pt; height:.2in'>
+                    <p class="MsoNormal"
+                           align="center"
+                           style='text-align:center'>
+                              <b><span style='font-size:10.0pt'>Sql Column</span></b></p>
+                    </td>
+
+                    <td style=
+                    'border:solid black 1.0pt;border-left:none;padding:0in 6.0pt 0in 6.0pt; height:.2in'>
+                    <p class="MsoNormal"
+                           align="center"
+                           style='text-align:center'>
+                              <b><span style='font-size:10.0pt'>Sql Type</span></b></p>
+                    </td>
+
+                    <td style=
+                    'border:solid black 1.0pt;border-left:none;padding:0in 6.0pt 0in 6.0pt; height:.2in'>
+                    <p class="MsoNormal"
+                           align="center"
+                           style='text-align:center'>
+                              <b><span style='font-size:10.0pt'>Identity</span></b></p>
+                    </td>
+
+                    <td style=
+                    'border:solid black 1.0pt;border-left:none;padding:0in 6.0pt 0in 6.0pt; height:.2in'>
+                    <p class="MsoNormal"
+                           align="center"
+                           style='text-align:center'>
+                              <b><span style='font-size:10.0pt'>Required</span></b></p>
+                    </td>
+                    
+                    <td style=
+                    'border:solid black 1.0pt;border-left:none;padding:0in 6.0pt 0in 6.0pt; height:.2in'>
+                    <p class="MsoNormal"
+                           align="center"
+                           style='text-align:center'>
+                              <b><span style='font-size:10.0pt'>View Column</span></b></p>
+                    </td>
+                    
+<!--
+                    <td style=
+                    'border:solid black 1.0pt;border-left:none;padding:0in 6.0pt 0in 6.0pt; height:.2in'>
+                    <p class="MsoNormal"
+                           align="center"
+                           style='text-align:center'>
+                              <b><span style='font-size:10.0pt'>Description</span></b></p>
+                    </td>
+-->
+                </tr>
+            </thead>
+#foreach($property in $entity.Fields)
+<!--<pre>
+$property
+</pre>
+-->
+            <tr style='height:.2in'>
+                <td style=
+                'border:solid black 1.0pt;border-top:none;padding:0in 6.0pt 0in 6.0pt; height:.2in'>
+                <p class="MsoNormal"
+                       align="left"><span style=
+                'font-size:10.0pt'>$property.Name</span></p>
+                </td>
+
+                <td style=
+                'border-top:none;border-left:none;border-bottom:solid black 1.0pt; border-right:solid black 1.0pt;padding:0in 6.0pt 0in 6.0pt;height:.2in'>
+                <p class="MsoNormal"
+                       align="left"
+                       style='text-align:left'><span style=
+                       'font-size:10.0pt'>$property.Type.Name</span></p>
+                </td>
+
+                <td style=
+                'border-top:none;border-left:none;border-bottom:solid black 1.0pt; border-right:solid black 1.0pt;padding:0in 6.0pt 0in 6.0pt;height:.2in'>
+                <p class="MsoNormal"
+                       align="left"
+                       style='text-align:left'><span style=
+                       'font-size:10.0pt'>$property.Column.Name</span></p>
+                </td>
+
+                <td style=
+                'border-top:none;border-left:none;border-bottom:solid black 1.0pt; border-right:solid black 1.0pt;padding:0in 6.0pt 0in 6.0pt;height:.2in'>
+                <p class="MsoNormal"
+                       align="left"
+                       style='text-align:left'><span style=
+                       'font-size:10.0pt'>$property.Column.SqlType.Declaration</span></p>
+                </td>
+
+                <td style=
+                'border-top:none;border-left:none;border-bottom:solid black 1.0pt; border-right:solid black 1.0pt;padding:0in 6.0pt 0in 6.0pt;height:.2in'>
+                <p class="MsoNormal"
+                       align="left"
+                       style='text-align:left'><span style=
+                       'font-size:10.0pt'>$property.Column.Identity</span></p>
+                </td>
+
+                <td style=
+                'border-top:none;border-left:none;border-bottom:solid black 1.0pt; border-right:solid black 1.0pt;padding:0in 6.0pt 0in 6.0pt;height:.2in'>
+                <p class="MsoNormal"
+                       align="left"
+                       style='text-align:left'><span style=
+                       'font-size:10.0pt'>$property.Column.Required</span></p>
+                </td>
+
+                <td style=
+                'border-top:none;border-left:none;border-bottom:solid black 1.0pt; border-right:solid black 1.0pt;padding:0in 6.0pt 0in 6.0pt;height:.2in'>
+                <p class="MsoNormal"
+                       align="left"
+                       style='text-align:left'><span style=
+                       'font-size:10.0pt'>$property.Column.ViewColumn</span></p>
+                </td>
+
+   <!--
+                <td style=
+                'border-top:none;border-left:none;border-bottom:solid black 1.0pt; border-right:solid black 1.0pt;padding:0in 6.0pt 0in 6.0pt;height:.2in'>
+                <p class="MsoNormal"
+                       align="left"
+                       style='text-align:left'><span style=
+                       'font-size:10.0pt'>$property.Description</span></p>
+                </td>
+-->                
+            </tr>
+#end
+        </table>
+    </div>
+
+    <h3><a name="_Toc55981262"></a><a name=
+    "_Toc525704076">${velocityCount}.1.1<span style=
+    'font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+    Field Definitions</a></h3>
+
+#set ($entityNumber = $velocityCount)
+#foreach($property in $entity.Fields)
+#if($property.Description.Length > 0)
+    <h4>${entityNumber}.1.1.${velocityCount}<span style=
+    'font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+    $property.Name</h4>
+
+    <p class="Body">$property.Description</p>
+#end    
+#end
+#end
+
+</body>
+</html>
