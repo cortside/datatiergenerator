@@ -135,7 +135,7 @@ namespace Spring2.DataTierGenerator {
 				DataTable columns = GetTableColumns(entity, connection);
 				foreach (DataRow objDataRow in columns.Rows) {
 					if (objDataRow["COLUMN_COMPUTED"].ToString() == "0") {
-						if (Field.FindFieldBySqlName(fields, objDataRow["COLUMN_NAME"].ToString()) == null) {
+						if (entity.FindFieldBySqlName(objDataRow["COLUMN_NAME"].ToString()) == null) {
 							Field field = new Field();
 							field.Name = objDataRow["COLUMN_NAME"].ToString();
 							field.SqlName = field.Name;
