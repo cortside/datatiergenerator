@@ -27,8 +27,7 @@ namespace Spring2.DataTierGenerator.Element {
 	/// entries of the form:
 	///	public static readonly string PROPERTY_NAME="Property.Name";
 	/// </summary>
-	public class PropertyName 
-	{
+	public class PropertyName {
 	    public String fieldName = "";
 	    public String fieldValue = "";
 
@@ -95,8 +94,7 @@ namespace Spring2.DataTierGenerator.Element {
 	private Boolean joinTable = false;
 	private Boolean dependentEntity = false;
 
-	public SqlEntityElement SqlEntity 
-	{
+	public SqlEntityElement SqlEntity {
 	    get { return this.sqlEntity; }
 	    set { this.sqlEntity = value; }
 	}
@@ -136,10 +134,26 @@ namespace Spring2.DataTierGenerator.Element {
 	    set { this.dependentEntity = value; }
 	}
 
-	public ArrayList Fields 
-	{
-	    get { return this.fields; }
+	public Boolean IsDerived {
+	    get { return !EntityElement.EMPTY.Equals(this.baseEntity); }
+	}
+
+	public ArrayList Fields {
+	    get { 
+		if (EntityElement.EMPTY.Equals(this.baseEntity)) {
+		    return this.fields;
+		} else {
+		    ArrayList fields = new ArrayList();
+		    fields.AddRange(baseEntity.Fields);
+		    fields.AddRange(this.fields);
+		    return fields;
+		}
+	    }
 	    set { this.fields = value; }
+	}
+
+	public ArrayList PrivateFields {
+	    get { return this.fields; }
 	}
 
 	public ArrayList Finders {
@@ -258,26 +272,24 @@ namespace Spring2.DataTierGenerator.Element {
 		    entity.PrepareForInsert = Boolean.Parse (node.Attributes["prepareforinsert"].Value);
 		}
 
-		if (node.Attributes["dependententity"] != null) 
-		{
+		if (node.Attributes["dependententity"] != null) {
 		    entity.DependentEntity = Boolean.Parse (node.Attributes["dependententity"].Value);
 		}
 
-		if (node.Attributes["jointable"] != null) 
-		{
+		if (node.Attributes["jointable"] != null) {
 		    entity.JoinTable = Boolean.Parse (node.Attributes["jointable"].Value);
 		}
 
-		entity.Fields = PropertyElement.ParseFromXml(doc, entities, entity, sqltypes, types, vd);
-		entity.Finders = FinderElement.ParseFromXml(doc, node, entities, entity, sqltypes, types, vd);
-		entity.Comparers = ComparerElement.ParseFromXml(node, entities, entity, sqltypes, types, vd);
+		entity.fields = PropertyElement.ParseFromXml(doc, entities, entity, sqltypes, types, vd);
+		entity.finders = FinderElement.ParseFromXml(doc, node, entities, entity, sqltypes, types, vd);
+		entity.comparers = ComparerElement.ParseFromXml(node, entities, entity, sqltypes, types, vd);
 		entities.Add(entity);
 	    }
 	    return entities;
 	}
 
 	public PropertyElement GetIdentityField() {
-	    foreach (PropertyElement field in fields) {
+	    foreach (PropertyElement field in Fields) {
 		if (field.Column.Identity && !field.Column.ViewColumn) {
 		    return field;
 		}
@@ -286,7 +298,7 @@ namespace Spring2.DataTierGenerator.Element {
 	}
 
 	public PropertyElement GetInsertReturnField() {
-	    foreach (PropertyElement field in fields) {
+	    foreach (PropertyElement field in Fields) {
 		if (field.Column.Identity || field.ReturnAsIdentity) {
 		    return field;
 		}
@@ -295,7 +307,7 @@ namespace Spring2.DataTierGenerator.Element {
 	}
 
 	public PropertyElement FindFieldByName(String name) {
-	    foreach (PropertyElement field in fields) {
+	    foreach (PropertyElement field in Fields) {
 		if (field.Name == name) {
 		    return field;
 		}
@@ -305,7 +317,7 @@ namespace Spring2.DataTierGenerator.Element {
 
 
 	public PropertyElement FindFieldByColumnName(String name) {
-	    foreach (PropertyElement field in fields) {
+	    foreach (PropertyElement field in Fields) {
 		if (field.Column.Name.ToLower().Equals(name.ToLower())) {
 		    return field;
 		}
@@ -320,7 +332,7 @@ namespace Spring2.DataTierGenerator.Element {
 	    if (id != null) {
 		list.Add(id);
 	    } else {
-		foreach (PropertyElement field in fields) {
+		foreach (PropertyElement field in Fields) {
 		    if (sqlEntity.IsPrimaryKeyColumn(field.Column.Name)) {
 			list.Add(field);
 		    }
@@ -352,7 +364,7 @@ namespace Spring2.DataTierGenerator.Element {
 	/// </summary>
 	/// <returns></returns>
 	public ArrayList GetPropertyNames(Configuration options, IList entities) {
-	    return GetPropertyNames(options, entities, this, "", new Stack());
+	    return GetPropertyNames(options, entities, this, String.Empty, new Stack());
 	}
 
 	/// <summary>
@@ -376,7 +388,7 @@ namespace Spring2.DataTierGenerator.Element {
 		}
 	    }
 
-	    // Add current entity to parent stack
+	    // Add current entity to parent stack.
 	    parentEntities.Push(entity);
 
 	    if (!matchedParent) {
@@ -388,9 +400,7 @@ namespace Spring2.DataTierGenerator.Element {
 			// Determine if this is a data object and if so append it's members.
 			foreach (EntityElement subEntity in entities) {
 			    if (field.Type.Name.Equals(options.GetDOClassName(subEntity.Name))) {
-				ArrayList subProperties = GetPropertyNames(options, entities, subEntity, 
-				    PropertyName.AppendPrefix(prefix, field.Name), 
-				    parentEntities);
+				ArrayList subProperties = GetPropertyNames(options, entities, subEntity, PropertyName.AppendPrefix(prefix, field.Name), parentEntities);
 				foreach (PropertyName subProperty in subProperties) {
 				    propertyNames.Add(subProperty);
 				}

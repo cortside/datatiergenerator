@@ -235,8 +235,9 @@ namespace Spring2.DataTierGenerator.Element {
 	    XmlNodeList elements = doc.DocumentElement.GetElementsByTagName("entity");
 	    foreach (XmlNode element in elements) {
 		String name = element.Attributes["name"].Value;
-		String sqlEntity = (element.Attributes["sqlentity"] == null) ? "" : element.Attributes["sqlentity"].Value;
-		if (((entity.SqlEntity.Name.Length>0 && sqlEntity == entity.SqlEntity.Name) || (entity.SqlEntity.Name.Length==0 && name == entity.Name)) && element.HasChildNodes) {
+		String sqlEntity = (element.Attributes["sqlentity"] == null) ? String.Empty : element.Attributes["sqlentity"].Value;
+//		if ((sqlEntity.Equals(entity.SqlEntity.Name) || (entity.SqlEntity.Name.Length == 0 && name == entity.Name)) && element.HasChildNodes) {
+		if (name.Equals(entity.Name) && element.HasChildNodes) {
 		    // look for a properties element, if one does not exist, assume that everything under the entity is a property (for backward compatablility)
 		    XmlNode propertiesNode = element;
 		    Boolean hasProperties = false;
