@@ -8,7 +8,7 @@ using System.Xml;
 
 using NVelocity;
 using NVelocity.App;
-
+using NVelocity.Exception;
 using Spring2.DataTierGenerator;
 using Spring2.DataTierGenerator.Generator.Writer;
 using Spring2.DataTierGenerator.Generator.Styler;
@@ -34,7 +34,18 @@ namespace Spring2.DataTierGenerator.Generator {
 
 	
 	public void Generate(IParser parser) {
-	    if (parser.IsValid) {
+	    Boolean hasErrors = false;
+	    foreach(ITask task in parser.Tasks) {
+		try {
+		    Velocity.GetTemplate(task.Template);
+		} catch (ResourceNotFoundException) {
+		    WriteToLog("ERROR: Unable to locate " + task.Template);
+		    hasErrors = true;
+		}
+	    }
+
+	    if (parser.IsValid && !hasErrors) {
+		WriteToLog("Starting generation");
 		if (parser.Log.Count>0) {
 		    WriteToLog("The parser is in a valid state, but reported the following issues:");
 		    foreach(String s in parser.Log) {
