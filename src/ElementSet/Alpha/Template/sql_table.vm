@@ -51,18 +51,11 @@ GO
 #if (!$column.ViewColumn)
 if not exists(select * from syscolumns where id=object_id('$sql.Escape($element.Name)') and name = '$column.Name')
   BEGIN
-#if ($column.Required && $column.Default.Length==0 && !$column.Identity)
-	select '$column.Name will not be added becuase it has no default and is required'
-	/* -- commented out because column does not have default value and is required
-#end
 	ALTER TABLE $sql.Escape($element.Name) ADD
 	    $sql.Escape($column.Name) $column.SqlType.Declaration#if ($column.Identity) IDENTITY($column.Seed,$column.Increment)#end#if ($column.RowGuidCol) ROWGUIDCOL#end#if ($column.Identity || $column.Required || $column.RowGuidCol || $column.Default.Length>0) NOT#end NULL
 #if ($column.Default.Length>0)
 	CONSTRAINT
 	    [DF_${element.Name}_$column.Name] DEFAULT $column.Default WITH VALUES
-#end
-#if ($column.Required && $column.Default.Length==0 && !$column.Identity)
-	*/
 #end
   END
 GO
