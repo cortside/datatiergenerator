@@ -134,6 +134,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Test\SqlUtilTest.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Test\CodeDomMerge\GolferDAO.cs"
                     SubType = "Code"
                     BuildAction = "None"
