@@ -241,6 +241,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Parser\ParserSkeleton.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Parser\ParserValidationArgs.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
