@@ -1,22 +1,25 @@
 <VisualStudioProject>
     <CSHARP
         ProjectType = "Local"
-        ProductVersion = "7.0.9466"
-        SchemaVersion = "1.0"
+        ProductVersion = "7.10.3077"
+        SchemaVersion = "2.0"
         ProjectGuid = "{6A2FB4F6-83E4-455C-800B-21C9267D9651}"
     >
         <Build>
             <Settings
                 ApplicationIcon = "DTGEditor\App.ico"
                 AssemblyKeyContainerName = ""
-                AssemblyName = "DataTierGenerator"
+                AssemblyName = "DTGEditor"
                 AssemblyOriginatorKeyFile = ""
                 DefaultClientScript = "JScript"
                 DefaultHTMLPageLayout = "Grid"
                 DefaultTargetSchema = "IE50"
                 DelaySign = "false"
                 OutputType = "WinExe"
+                PreBuildEvent = ""
+                PostBuildEvent = ""
                 RootNamespace = "Spring2.DataTierGenerator.DTGEditor"
+                RunPostBuildEvent = "OnBuildSuccess"
                 StartupObject = ""
             >
                 <Config
@@ -30,6 +33,8 @@
                     DebugSymbols = "true"
                     FileAlignment = "4096"
                     IncrementalBuild = "true"
+                    NoStdLib = "false"
+                    NoWarn = ""
                     Optimize = "false"
                     OutputPath = "..\build\"
                     RegisterForComInterop = "false"
@@ -48,6 +53,8 @@
                     DebugSymbols = "false"
                     FileAlignment = "4096"
                     IncrementalBuild = "false"
+                    NoStdLib = "false"
+                    NoWarn = ""
                     Optimize = "true"
                     OutputPath = "bin\Release\"
                     RegisterForComInterop = "false"
@@ -95,6 +102,11 @@
                 <Reference
                     Name = "Spring2.DataTierGenerator.Nant"
                     Project = "{2844DE77-37C4-4DD5-A1B2-F217D40EEEFE}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+                />
+                <Reference
+                    Name = "Spring2.DataTierGenerator.Alpha"
+                    Project = "{069AFE42-50D3-48D3-A12B-FAE1D8A2A44A}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
             </References>
