@@ -5,7 +5,7 @@ using System.Xml;
 
 namespace Spring2.DataTierGenerator {
 
-    public class Field : Spring2.Core.DataObject.DataObject {
+    public class Field : Spring2.Core.DataObject.DataObject, ICloneable {
 
 	protected String name = String.Empty;
 	protected String sqlName = String.Empty;
@@ -16,7 +16,7 @@ namespace Spring2.DataTierGenerator {
 	protected Boolean isPrimaryKey = false;
 	protected Boolean isForeignKey = false;
 	protected Boolean isViewColumn = false;
-	protected String accessModifier = "public";
+	protected String accessModifier = "private";
 	protected String description = String.Empty;
 
 	public String Name {
@@ -98,7 +98,7 @@ namespace Spring2.DataTierGenerator {
 	}
 
 	public String GetFieldFormat() {
-	    return this.Name.Substring(0, 1).ToLower() + this.Name.Substring(1);
+	    return this.Name.Substring(0, 1).ToLower() + this.Name.Substring(1).Replace('.', '_');
 	}
 
 	public String GetMethodFormat() {
@@ -110,7 +110,15 @@ namespace Spring2.DataTierGenerator {
 	/// </summary>
 	/// <returns>String containing parameter information of the specified field for a method call.</returns>
 	public string CreateMethodParameter() {
-	    return type.Name + " " + name.Substring(0, 1).ToLower() + name.Substring(1);
+//	    String s;
+//	    
+//	    if (name.IndexOf('.')<0) {
+//		s=name;
+//	    } else {
+//		s=name.Substring(name.LastIndexOf('.')+1);
+//	    }
+//	    return type.Name + " " + s.Substring(0, 1).ToLower() + s.Substring(1);
+	    return type.Name + " " + GetFieldFormat();
 	}
 
 	/// <summary>
@@ -255,6 +263,10 @@ namespace Spring2.DataTierGenerator {
 		}
 	    }
 	    return fields;
+	}
+
+	public Object Clone() {
+	    return MemberwiseClone();
 	}
 
     }
