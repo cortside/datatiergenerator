@@ -244,7 +244,7 @@ namespace $namespace {
 		${dataObjectClass} o1 = (${dataObjectClass})a;
 		${dataObjectClass} o2 = (${dataObjectClass})b;
 
-		if (o1 == null || o2 == null || !o1.${field.Name}.IsValid || !o2.${field.Name}.IsValid) {
+		if (o1 == null || o2 == null) {
 		    return 0;
 		}
 		return o1.${field.Name}.CompareTo(o2.${field.Name});
