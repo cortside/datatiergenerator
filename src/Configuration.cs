@@ -45,6 +45,9 @@ namespace Spring2.DataTierGenerator {
 			    case "doclassdirectory":
 				this.doClassDirectory = node.Attributes["value"].Value;
 				break;
+			    case "collectionclassdirectory":
+				this.collectionClassDirectory = node.Attributes["value"].Value;
+				break;
 			    case "singlefile":
 				this.singleFile = Boolean.Parse(node.Attributes["value"].Value);
 				break;
@@ -121,7 +124,7 @@ namespace Spring2.DataTierGenerator {
 		return objStringBuilder.ToString();
 	    }
 	}
-	
+
 	
 	// methods
 	public String GetProcName(String table, String type) {
@@ -185,6 +188,18 @@ namespace Spring2.DataTierGenerator {
 	    String s = this.rootNameSpace;
 	    if (typesClassDirectory.Length>0) {
 		s += "." + typesClassDirectory;
+	    }
+	    return s;
+	}
+
+	public String GetCollectionClassName(String name) {
+	    return name;
+	}
+
+	public String GetCollectionNameSpace(String name) {
+	    String s = this.rootNameSpace;
+	    if (collectionClassDirectory.Length>0) {
+		s += "." + collectionClassDirectory;
 	    }
 	    return s;
 	}
