@@ -1,0 +1,188 @@
+<?xml version="1.0" ?>
+<DataTierGenerator xmlns="http://www.spring2.com/xsd/datatiergenerator.xsd">
+	<config>
+		<setting name="Server" value="hal" />
+		<setting name="Database" value="cort_seamless" />
+		<setting name="User" value="sa" />
+		<setting name="Password" value="" />
+		<setting name="RootDirectory" value="c:\data\work\spring2\DataTierGenerator\" />
+		<setting name="SqlScriptDirectory" value="Sql" />
+		<setting name="DaoClassDirectory" value="Dao" />
+		<setting name="DoClassDirectory" value="DataObject" />
+		<setting name="TypesClassDirectory" value="Types" />
+		<setting name="SingleFile" value="False" />
+		<setting name="GenerateSqlViewScripts" value="True" />
+		<setting name="GenerateSqlTableScripts" value="True" />
+		<setting name="UseViews" value="True" />
+		<setting name="GenerateDataObjectClasses" value="True" />
+		<setting name="ScriptDropStatement" value="True" />
+		<setting name="StoredProcNameFormat" value="proc{%TABLE_NAME%}{%PROC_TYPE%}" />
+		<setting name="RootNameSpace" value="Spring2.DataTierGenerator" />
+		<setting name="GenerateProcsForForeignKey" value="False" />
+		<setting name="GenerateSelectStoredProcs" value="False" />
+		<setting name="GenerateOnlyPrimaryDeleteStoredProc" value="True" />
+		<setting name="AllowUpdateOfPrimaryKey" value="False" />
+		<setting name="AutoDiscoverEntities" value="False" />
+		<setting name="AutoDiscoverProperties" value="False" />
+		<setting name="AutoDiscoverAttributes" value="False" />
+		<setting name="DataObjectBaseClass" value="Spring2.Core.DataObject.DataObject" />
+		<setting name="DAOBaseClass" value="Spring2.Core.DAO.EntityDAO" />
+		<setting name="DataObjectNameFormat" value="{0}Data" />
+		<setting name="DaoNameFormat" value="{0}Dao" />
+	</config>
+	<entities>
+		<entity name="Configuration">
+			<property name="Server" type="String" accessmodifier="protected" />
+			<property name="Database" type="String" accessmodifier="protected" />
+			<property name="User" type="String" accessmodifier="protected" />
+			<property name="Password" type="String" accessmodifier="protected" />
+			<property name="RootDirectory" type="String" accessmodifier="protected" />
+			<property name="SqlScriptDirectory" type="String" accessmodifier="protected" />
+			<property name="DaoClassDirectory" type="String" accessmodifier="protected" />
+			<property name="DoClassDirectory" type="String" accessmodifier="protected" />
+			<property name="StoredProcNameFormat" type="String" accessmodifier="protected" />
+			<property name="RootNameSpace" type="String" accessmodifier="protected" />
+			<property name="XmlConfigFilename" type="String" accessmodifier="protected" />
+			<property name="SingleFile" type="Boolean" accessmodifier="protected" />
+			<property name="GenerateSqlViewScripts" type="Boolean" accessmodifier="protected" />
+			<property name="GenerateSqlTableScripts" type="Boolean" accessmodifier="protected" />
+			<property name="UseViews" type="Boolean" accessmodifier="protected" />
+			<property name="GenerateDataObjectClasses" type="Boolean" accessmodifier="protected" />
+			<property name="GenerateDaoClasses" type="Boolean" accessmodifier="protected" />
+			<property name="ScriptDropStatement" type="Boolean" accessmodifier="protected" />
+			<property name="GenerateProcsForForeignKey" type="Boolean" accessmodifier="protected" />
+			<property name="GenerateSelectStoredProcs" type="Boolean" accessmodifier="protected" />
+			<property name="GenerateOnlyPrimaryDeleteStoredProc" type="Boolean" accessmodifier="protected" />
+			<property name="AllowUpdateOfPrimaryKey" type="Boolean" accessmodifier="protected" />
+			<property name="AutoDiscoverEntities" type="Boolean" accessmodifier="protected" />
+			<property name="AutoDiscoverProperties" type="Boolean" accessmodifier="protected" />
+			<property name="AutoDiscoverAttributes" type="Boolean" accessmodifier="protected" />
+		</entity>	
+		<entity name="Entity">
+			<property name="Name" type="String" initialvalue="String.Empty" accessmodifier="protected" />
+			<property name="SqlObject" type="String" accessmodifier="protected" />
+			<property name="Types" type="Hashtable" accessmodifier="protected" />
+			<property name="SqlTypes" type="Hashtable" accessmodifier="protected" />
+		</entity>
+		<entity name="Field">
+			<property name="Name" type="String" initialvalue="String.Empty" accessmodifier="protected" />
+			<property name="SqlName" type="String" initialvalue="String.Empty" accessmodifier="protected" />
+			<property name="SqlType" type="SqlTypeData" initialvalue="new SqlTypeData()" accessmodifier="protected" />
+			<property name="Type" type="TypeData" initialvalue="new TypeData()" accessmodifier="protected" />
+			<property name="IsRowGuidCol" type="Boolean" initialvalue="false" accessmodifier="protected" />
+			<property name="IsIdentity" type="Boolean" initialvalue="false" accessmodifier="protected" />
+			<property name="IsPrimaryKey" type="Boolean" initialvalue="false" accessmodifier="protected" />
+			<property name="IsForeignKey" type="Boolean" initialvalue="false" accessmodifier="protected" />
+			<property name="IsViewColumn" type="Boolean" initialvalue="false" accessmodifier="protected" />
+			<property name="AccessModifier" type="String" accessmodifier="protected" />
+			<property name="Description" type="String" initialvalue="String.Empty" accessmodifier="protected" />
+		</entity>
+		<entity name="Type">
+			<property name="Name" type="String" />
+			<property name="ConcreteType" type="String" />
+			<property name="Package" type="String" />
+			<property name="ConvertToSqlTypeFormat" type="String" />
+			<property name="ConvertFromSqlTypeFormat" type="String" />
+			<property name="NewInstanceFormat" type="String" />
+		</entity>
+		<entity name="SqlType">
+			<property name="Name" type="String" />
+			<property name="Type" type="String" />
+			<property name="Length" type="Int32" />
+			<property name="Scale" type="Int32" />
+			<property name="Precision" type="Int32" />
+			<property name="ReaderMethodFormat" type="String" />
+		</entity>
+		<entity name="TestSqlObject" sqlobject="TestSqlObject">
+			<property name="StringColumn" sqltype="varchar" />
+			<property name="Int32Column" sqltype="int" type="IdType" isidentity="True" />
+		</entity>
+	</entities>
+	<enums>
+		<enum name="OrderType">
+			<value name="Personal" internalvalue="P" dbvalue="P" />
+			<value name="Firm" internalvalue="F" dbvalue="F" />
+		</enum>
+	</enums>
+	<datatypes>
+		<datatype name="IdType" namespace="Spring2.Core.Types" />
+		<datatype name="BooleanType" namespace="Spring2.Core.Types" constructor="GetInstance" />
+	</datatypes>
+	<sqltypes>
+		<sqltype name="varchar" length="50" type="String" readermethodformat='{0}.GetString({0}.GetOrdinal("{1}"))'>
+			0=reader variable name
+			1=column name (not quoted)
+		</sqltype>
+		<sqltype name="int" scale="0" precision="10" type="Int32" readermethodformat='{0}.GetInt32({0}.GetOrdinal("{1}"))' />
+		<!--
+		    case "binary":
+			return "byte[]";
+		    case "bigint":
+			return "Int64";
+		    case "bit":
+			return "Boolean";
+		    case "char":
+			return "String";
+		    case "datetime":
+			return "DateTime";
+		    case "decimal":
+			return "Decimal";
+		    case "float":
+			return "Double";
+		    case "image":
+			return "String"; //"byte[]";
+		    case "int":
+			return "Int32";
+		    case "money":
+			return "Decimal";
+		    case "nchar":
+			return "String";
+		    case "ntext":
+			return "String";
+		    case "nvarchar":
+			return "String";
+		    case "numeric":
+			return "Decimal";
+		    case "real":
+			return "Single";
+		    case "smalldatetime":
+			return "DateTime";
+		    case "smallint":
+			return "Int16";
+		    case "smallmoney":
+			return "Decimal";
+		    case "sql_variant":
+			return "Object";
+		    case "sysname":
+			return "String";
+		    case "text":
+			return "String";
+		    case "timestamp":
+			return "DateTime";
+		    case "tinyint":
+			return "byte";
+		    case "varbinary":
+			return "byte[]";
+		    case "varchar":
+			return "String";
+		    case "uniqueidentifier":
+			return "Guid";
+		-->
+	</sqltypes>
+	<types>
+		<type name="String" newinstanceformat="String.Empty" />
+		<type name="Int32" newinstanceformat="0" />
+		<type name="Boolean" newinstanceformat="false" />
+		<type name="IList" namespace="System.Collections" />
+		<type name="ArrayList" namespace="System.Collections" newinstanceformat="new ArrayList()" />
+		<type name="Hashtable" namespace="System.Collections" newinstanceformat="new Hashtable()" />
+		<type name="IdType" namespace="Spring2.Core.Types" converttosqltypeformat="{0}.{1}.DBValue" convertfromsqltypeformat="IdType.NewInstance({2})" newinstanceformat="IdType.DEFAULT" nullinstanceformat="IdType.UNSET" >
+			0=data object variable name
+			1=Property name (properly cased)
+			2=sqltype's readermethod (formatted by readermethodformat) (for convert from sql type, otherwise blank)
+			3=reader variable name (for convert from sql type, otherwise blank)
+		</type>
+		<type name="TypeData" namespace="Spring2.DataTierGenerator" newinstanceformat="new TypeData()" />
+		<type name="SqlTypeData" namespace="Spring2.DataTierGenerator" newinstanceformat="new SqlTypeData()" />
+	</types>
+</DataTierGenerator>
