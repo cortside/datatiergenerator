@@ -1,0 +1,313 @@
+#*
+    DTG template for enum collections
+
+*###
+#set ($namespaces = "#nameSpaces($options $element false)")
+using System;
+using Spring2.DataTierGenerator.Attribute;
+
+$namespaces
+##
+## formulate the namespace, class name and the collected class name
+##
+#set ($directory = $task.Directory)
+#if($directory.StartsWith('.\'))
+#set ($directory = $directory.Substring(2))
+#end
+#set ($namespace = "$options.RootNameSpace$directory.Replace('\','.')")
+#set ($class = $task.FileNameFormat.Replace("{element.Name}", "$element.Name"))
+#set ($len = $class.Length - 3)
+#set ($class = $class.Substring(0, $len))
+namespace $namespace {
+
+    /// <summary>
+    /// ${element.Name} generic collection
+    /// </summary>
+    public class $class : System.Collections.CollectionBase {
+	
+	[Generate]
+	public static readonly $class UNSET = new ${class}(true);
+	[Generate]
+	public static readonly $class DEFAULT = new ${class}(true);
+
+	[Generate]
+	private Boolean immutable = false;
+	
+	[Generate]
+	private $class (Boolean immutable) {
+	        this.immutable = immutable;
+	}
+
+	[Generate]
+	public ${class}() {
+	}
+
+	// Indexer implementation.
+	[Generate]
+	public ${element.Name} this[int index] {
+	    get { return (${element.Name}) List[index]; }
+	    set { 
+		if (!immutable) {
+		    List[index] = value;
+		} else {
+		    throw new System.Data.ReadOnlyException();
+		}
+	    }
+	}
+
+	[Generate]
+	public void Add(${element.Name} value) {
+	    if (!immutable) {
+		List.Add(value);
+	    } else {
+		throw new System.Data.ReadOnlyException();
+	    }
+	}
+
+	[Generate]
+	public Boolean Contains(${element.Name} value) {
+	    return List.Contains(value);
+	}
+	
+	[Generate]
+	public Int32 IndexOf(${element.Name} value) {
+	    return List.IndexOf(value);
+	}
+	
+	[Generate]
+	public void Insert(Int32 index, ${element.Name} value) {
+	    if (!immutable) {
+	    	List.Insert(index, value);
+	    } else {
+		throw new System.Data.ReadOnlyException();
+	    }
+	}
+
+	[Generate]
+	public void Remove(int index) {
+	    if (!immutable) {
+		if (index > Count - 1 || index < 0) {
+		    throw new IndexOutOfRangeException();
+		} else {
+		    List.RemoveAt(index); 
+		}
+	    } else {
+		throw new System.Data.ReadOnlyException();
+	    }
+	}
+
+	[Generate]
+	public void Remove(${element.Name} value) {
+	    if (!immutable) {
+		List.Remove(value); 
+	    } else {
+		throw new System.Data.ReadOnlyException();
+	    }
+	}
+
+	[Generate]
+	public void AddRange(System.Collections.IList list) {
+	    foreach(Object o in list) {
+		if (o is ${element.Name}) {
+		    Add((${element.Name})o);
+		} else {
+		    throw new System.InvalidCastException("object in list could not be cast to ${element.Name}");
+		}
+	    }
+	}
+	
+	[Generate]
+	public Boolean IsDefault {
+	    get { return Object.ReferenceEquals(this, DEFAULT); }
+	}
+
+	[Generate]
+	public Boolean IsUnset {
+	    get { return Object.ReferenceEquals(this, UNSET); }
+	}
+	
+	[Generate]
+	public Boolean IsValid {
+	    get {
+		return !(IsDefault || IsUnset);
+	    }
+	}
+
+## generate Contains method and indexer property by identity field, if one exists
+#set($identity = $element.GetIdentityField())
+#if($identity)
+	/// <summary>
+	/// See if the list contains an instance by identity
+	/// </summary>
+	[Generate]
+	public Boolean Contains($identity.Type.Name $identity.GetFieldFormat()) {
+	    foreach(${element.Name} o in List) {
+		if (o.${identity.Name}.Equals($identity.GetFieldFormat())) {
+		    return true;
+		}
+	    }
+	    return false;
+	}
+
+	/// <summary>
+	/// returns the instance by identity or null if it not found
+	/// </summary>
+	[Generate]
+	public ${element.Name} this[$identity.Type.Name $identity.GetFieldFormat()] {
+	    get { 
+		foreach(${element.Name} o in List) {
+		    if (o.${identity.Name}.Equals($identity.GetFieldFormat())) {
+			return o;
+		    }
+		}
+
+		// not found
+		return null;
+	    }
+	}
+	
+	/// <summary>
+	/// Returns a new list that contains all of the elements that are in both lists
+	/// </summary>
+	[Generate]
+	public $class RetainAll($class list) {
+	    $class result = new ${class}();
+
+	    foreach(${element.Name} data in List) {
+		if (list.Contains(data.$identity.GetMethodFormat())) {
+		    result.Add(data);
+		}
+	    }
+
+	    return result;
+	}
+
+	/// <summary>
+	/// return a new list that contains only the elements not contained in the argument list
+	/// </summary>
+	[Generate]
+	public $class RemoveAll($class list) {
+	    $class result = new ${class}();
+
+	    foreach(${element.Name} data in List) {
+		if (!list.Contains(data.$identity.GetMethodFormat())) {
+		    result.Add(data);
+		}
+	    }
+
+	    return result;
+	}
+#end
+
+## add sorting ability to the list by adding a sort method and a IComparer for each property
+#if($element.Fields.Count > 0)
+	/// <summary>
+	/// Sort a list by a column
+	/// </summary>
+	[Generate]
+	public void Sort(System.Collections.IComparer comparer) {
+	    this.InnerList.Sort(comparer);
+	}
+
+	/// <summary>
+	/// Sort the list given the name of a comparer class.
+	/// </summary>
+	[Generate]
+	public void Sort(String comparerName) {
+	    Type type = GetType().GetNestedType(comparerName);
+	    if (type == null) {
+		throw new System.ArgumentException(String.Format("Comparer {0} not found in class {1}.", comparerName, GetType().Name));
+	    }
+
+	    System.Collections.IComparer comparer = Activator.CreateInstance(type) as System.Collections.IComparer;
+	    if (comparer == null) {
+		throw new System.ArgumentException("compareName must be the name of class that implements IComparer.");
+	    }
+
+	    this.InnerList.Sort(comparer);
+	}
+
+#foreach($field in $element.Fields) 
+#if($field.Name.IndexOf(".")<0 && !$field.Type.Name.EndsWith("Enum") && !$field.Type.Name.EndsWith("Data") && !$field.Type.Name.EndsWith("List") && $field.Type.Name!="BooleanType" && $field.Type.Name!="Hashtable")
+	[Generate]
+	public class ${field.Name.Replace(".","_")}Sorter : System.Collections.IComparer {
+	    public Int32 Compare(Object a, Object b) {
+		${element.Name} o1 = (${element.Name})a;
+		${element.Name} o2 = (${element.Name})b;
+
+		if (o1 == null || o2 == null || !o1.${field.Name}.IsValid || !o2.${field.Name}.IsValid) {
+		    return 0;
+		}
+		return o1.${field.Name}.CompareTo(o2.${field.Name});
+	    }
+	}
+
+#end	
+#end
+#end
+#if ($element.CollectedClass.Comparers.Count > 0)
+
+        /// <summary>
+        /// Sorts the list.
+        /// </summary>
+        /// <param name="comparer">comparer to use for sorting the list.</param>
+	[Generate]
+        public void Sort(IComparer comparer)
+        {
+            InnerList.Sort(comparer);
+        }
+#end
+#foreach($comparer in $element.CollectedClass.Comparers)
+
+        /// <summary>
+        /// Used to sort or search an ArrayList of ${element.Name} objects on the #foreach($field in $comparer.Fields)#if($velocityCount > 1),#end$field.Name#end properties
+        /// </summary>
+	[Generate]
+        public class $comparer.Name : IComparer {
+            /// <summary>
+            /// Compares two ${element.Name} objects.
+            /// </summary>
+            /// <param name="o1">First object</param>
+            /// <param name="o2">Second Object</param>
+            /// <returns>0 if equal, -1 if first less than second and 1 if first greater than second.  Note that null is always less than non-null.</returns>
+            public int Compare(object o1, object o2) {
+                if (o1 == null && o2 == null) {
+		    return 0;
+                }
+
+                if (o1 == null) {
+		    return -1;
+                }
+
+                if (o2 == null) {
+		    return 1;
+                }
+
+                ${element.Name} g1 = (${element.Name})o1;
+                ${element.Name} g2 = (${element.Name})o2;
+
+#foreach($field in $comparer.Fields)
+                if (g1.${field.GetMethodFormat()}.IsValid && !g2.${field.GetMethodFormat()}.IsValid) {
+#if ($field.Direction == "descending")
+                    return -1;
+#else
+                    return 1;
+#end
+                } else if (!g1.${field.GetMethodFormat()}.IsValid && g2.${field.GetMethodFormat()}.IsValid) {
+#if ($field.Direction == "descending")
+                    return 1;
+#else
+                    return -1;
+#end
+                } else if (g1.${field.GetMethodFormat()}.IsValid && g2.${field.GetMethodFormat()}.IsValid && ${field.CreateCompareString("g1", "g2")} != 0 {
+                    return ${field.CreateCompareString("g1", "g2")}#if ($field.Direction == "descending") * -1#end;
+                }
+#end    
+
+                // No inequalities found, so they must be equal.
+                return 0;
+            }
+        }
+#end
+    }
+}
