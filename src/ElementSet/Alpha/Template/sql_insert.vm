@@ -1,6 +1,6 @@
 #*
 
-        sql_delete.vm - default sql insert stored proc template (replaces SqlGenerator)
+        sql_insert.vm - default sql insert stored proc template (replaces SqlGenerator)
 
 *###
 #if($element.GenerateInsertStoredProcScript)
@@ -13,15 +13,19 @@ SET ANSI_NULLS ON
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE PROCEDURE [sp${element.Name}_Insert]
+CREATE PROCEDURE $sql.Escape("sp${element.Name}_Insert")
 #set($cols = 0)
-#set($id = $element.GetIdentityColumn())
 #foreach($column in $element.Columns)#if(!$column.ViewColumn && (!$column.Identity || $doBoth))#set($cols = $cols + 1)#if($cols>1),
-#end	@${column.CodeSafeName}	${column.SqlType.Declaration}#end
+#end	@${column.CodeSafeName}	${column.SqlType.Declaration} = null#end
 #end
 
 
 AS
+
+## this is to set the columns set to null with their default if they have one and the column is required
+#foreach($column in $element.Columns)#if($column.Default.Length > 0 && !$column.ViewColumn && $column.Required)
+if @$column.Name is null set @$column.Name=$column.Default
+#end#end
 
 INSERT INTO $sql.Escape($element.Name)
 #set($cols = 0)

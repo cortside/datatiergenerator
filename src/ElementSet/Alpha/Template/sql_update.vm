@@ -1,6 +1,6 @@
 #*
 
-        sql_delete.vm - default sql update stored proc template (replaces SqlGenerator)
+        sql_update.vm - default sql update stored proc template (replaces SqlGenerator)
 
 *###
 #if($element.GenerateUpdateStoredProcScript)
@@ -13,7 +13,7 @@ SET ANSI_NULLS ON
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE PROCEDURE [sp${element.Name}_Update]
+CREATE PROCEDURE $sql.Escape("sp${element.Name}_Update")
 
 #set($id = $element.GetIdentityColumn())
 #set($cols = 0)
@@ -21,12 +21,16 @@ CREATE PROCEDURE [sp${element.Name}_Update]
 #if(!$column.ViewColumn)
 #set($cols = $cols + 1)#if($cols>1),
 #end
-	${at}${column.CodeSafeName}	${column.SqlType.Declaration}#end
+	${at}${column.CodeSafeName}	${column.SqlType.Declaration} = null#end
 #end
 
 
 AS
 
+## this is to set the columns set to null with their default if they have one and the column is required
+#foreach($column in $element.Columns)#if($column.Default.Length > 0 && !$column.ViewColumn && $column.Required)
+if @$column.Name is null set @$column.Name=$column.Default
+#end#end
 
 UPDATE
 	$sql.Escape(${element.Name})
