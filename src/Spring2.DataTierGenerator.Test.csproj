@@ -31,7 +31,7 @@
                     FileAlignment = "4096"
                     IncrementalBuild = "true"
                     Optimize = "false"
-                    OutputPath = "bin\NTest\"
+                    OutputPath = "..\build\Test\"
                     RegisterForComInterop = "false"
                     RemoveIntegerChecks = "false"
                     TreatWarningsAsErrors = "false"
@@ -73,16 +73,6 @@
                     HintPath = "..\..\..\..\..\..\WINNT\Microsoft.NET\Framework\v1.0.3705\System.XML.dll"
                 />
                 <Reference
-                    Name = "NUnitCore"
-                    AssemblyName = "NUnitCore"
-                    HintPath = "..\lib\NUnitCore.dll"
-                />
-                <Reference
-                    Name = "NUnitConsole"
-                    AssemblyName = "NUnitConsole"
-                    HintPath = "..\lib\NUnitConsole.dll"
-                />
-                <Reference
                     Name = "Spring2.DataTierGenerator"
                     Project = "{8BE555A1-8BBA-4CF7-9B4A-6BBEF7E20FA8}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
@@ -91,6 +81,16 @@
                     Name = "Spring2.Core"
                     AssemblyName = "Spring2.Core"
                     HintPath = "..\lib\Spring2.Core.dll"
+                />
+                <Reference
+                    Name = "nunit.framework"
+                    AssemblyName = "nunit.framework"
+                    HintPath = "..\lib\nunit.framework.dll"
+                />
+                <Reference
+                    Name = "Spring2.DataTierGenerator.Nant"
+                    Project = "{2844DE77-37C4-4DD5-A1B2-F217D40EEEFE}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
             </References>
         </Build>
