@@ -244,9 +244,9 @@ namespace Spring2.DataTierGenerator.Element {
 	public static void ParseFromXml(XmlNode node, IList entityElements) {
 
 	    if (node != null && entityElements != null) {
-
-		foreach (XmlNode entityNode in node.ChildNodes) {
-		    if (entityNode.NodeType.Equals(XmlNodeType.Element)) {
+		XmlNodeList entities = node.SelectNodes("entities/entity");
+		foreach (XmlNode entityNode in entities) {
+		    //if (entityNode.NodeType.Equals(XmlNodeType.Element)) {
 			EntityElement entityElement = new EntityElement();
 
 			entityElement.Name = GetAttributeValue(entityNode, NAME, entityElement.Name);
@@ -263,7 +263,7 @@ namespace Spring2.DataTierGenerator.Element {
 			FinderElement.ParseFromXml(GetChildNodeByName(entityNode, FINDERS), entityElement.Finders);
 			ComparerElement.ParseFromXml(GetChildNodeByName(entityNode, COMPARERS), entityElement.Comparers);
 			entityElements.Add(entityElement);
-		    }
+		    //}
 		}
 	    }
 	}
@@ -374,6 +374,18 @@ namespace Spring2.DataTierGenerator.Element {
 	    foreach (PropertyElement field in Fields) {
 		if (field.Column.Name.ToLower().Equals(name.ToLower())) {
 		    return field;
+		}
+	    }
+	    return null;
+	}
+
+
+	public static PropertyElement FindAnyFieldByColumnName(IList entities, String name) {
+	    foreach (EntityElement entity in entities) {
+		foreach (PropertyElement property in entity.Fields) {
+		    if (property.Column.Name.ToLower().Equals(name.ToLower())) {
+			return property;
+		    }
 		}
 	    }
 	    return null;
