@@ -256,10 +256,6 @@ namespace Spring2.DataTierGenerator.DTGEditor {
 
 	private static void Generate(String filename) {
 	    try {
-		FileStream fs = new FileStream("DataTierGenerator.log", FileMode.Create);
-		StreamWriter sw = new StreamWriter(fs);
-		Console.SetOut(sw);
-
 		Console.Out.WriteLine(String.Empty.PadLeft(20,'='));
 		Console.Out.WriteLine("Start :: " + DateTime.Now.ToString());
 		Console.Out.WriteLine(String.Empty.PadLeft(20,'='));
@@ -289,19 +285,17 @@ namespace Spring2.DataTierGenerator.DTGEditor {
 			}
 		    }
 		} else {
-		    Console.Out.WriteLine("ERROR: Parser found errors:\n" + p.ErrorDescription);
+		    Console.Out.WriteLine("ERROR: Parser found errors:");
+		    foreach(String s in p.Log) {
+			Console.Out.WriteLine(s);
+		    }
 		}
 
 		Console.Out.WriteLine(String.Empty.PadLeft(20,'='));
 		Console.Out.WriteLine("Done :: " + DateTime.Now.ToString());
 		Console.Out.WriteLine(String.Empty.PadLeft(20,'='));
-
-		sw.Close();
 	    } catch (Exception ex) {
-		MessageBox.Show("An error occcurred while generating.\n\n" + ex.ToString());
 		Console.Out.WriteLine("An error occcurred while generating.\n\n" + ex.ToString());
-	    } finally {
-		//sw.Close();
 	    }
 	}
 
@@ -318,7 +312,10 @@ namespace Spring2.DataTierGenerator.DTGEditor {
 		ConfigParser p = new ConfigParser(file.Text);
 		result.Text = p.IsValid ? "" : "Document is invalid - fix errors";
 		generate.Visible = p.IsValid;
-		resultErrors.Text = p.ErrorDescription;
+		resultErrors.Text=String.Empty;
+		foreach(String s in p.Log) {
+		    resultErrors.Text += s;
+		}
 		LoadTree(treeView1, p);
 	    } catch (Exception ex) {
 		MessageBox.Show("An error occcurred while loading.\n\n" + ex.ToString());
