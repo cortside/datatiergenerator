@@ -12,9 +12,6 @@ using System.Text;
 
 using Spring2.DataTierGenerator;
 using Spring2.DataTierGenerator.Attribute;
-using Spring2.DataTierGenerator.Element;
-using Spring2.DataTierGenerator.Parser;
-using Spring2.DataTierGenerator.Util;
 
 
 namespace Spring2.DataTierGenerator.Generator.Writer {

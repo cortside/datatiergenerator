@@ -2,6 +2,8 @@ using System;
 using System.Collections;
 using System.IO;
 using System.Xml;
+using System.Xml.XPath;
+using System.Xml.Xsl;
 
 using SourceForge.NAnt;
 using SourceForge.NAnt.Attributes;
@@ -11,9 +13,7 @@ using NVelocity.Runtime;
 
 using Spring2.Core.Xml;
 
-using Spring2.DataTierGenerator.Element;
 using Spring2.DataTierGenerator.Generator;
-using Spring2.DataTierGenerator.Parser;
 
 namespace Spring2.DataTierGenerator.NAnt {
     
@@ -46,32 +46,51 @@ namespace Spring2.DataTierGenerator.NAnt {
 		LogToNAnt("Start :: " + DateTime.Now.ToString());
 		LogToNAnt(String.Empty.PadLeft(20,'='));
 
-		ConfigParser p = new ConfigParser(configFile.FullName);
-		if (p.IsValid) {
-		    IGenerator g = null;
-		    try {
-			// locate and instanciate the Generator class specified by the parser
-			System.Type clazz = System.Type.GetType(p.Generator.Class, true);
-			Object[] args = { p };
-			Object o = System.Activator.CreateInstance(clazz, args);
-			if (o is IGenerator) {
-			    g = (IGenerator) o;
-			} else  {
-			    LogToNAnt("ERROR: class " + p.Generator.Class + " does not support IGenerator interface.\n");
-			}
-		    } catch (Exception ex) {
-			LogToNAnt("ERROR: could not instanciate generator class " + p.Generator.Class + "\n" + ex);
-		    }
+		XmlDocument doc = new XmlDocument();
+		// while this might seem silly, extended ASCII chararcter encoding does not happen if just the filename 
+		// is passed to the Load method
+		StreamReader reader = configFile.OpenText();
+		doc.Load(reader);
+		reader.Close();
 
-		    // if the generator is not null, generate
-		    if (g != null) {
-			g.Generate();
-			LogToNAnt(g.Log);
+		XmlNode pi = GetProcessingInstruction(doc, "dtg");
+		String parserClassname = GetProcessingInstructionAttribute(pi, "parser");
+
+		// instantiate the parser class
+		System.Type clazz = System.Type.GetType(parserClassname, true);
+		Object o = System.Activator.CreateInstance(clazz);
+		if (o is IParser) {
+		    IParser parser = (IParser) o;
+		    parser.Parse(doc);
+
+		    if (parser.IsValid) {
+			IGenerator generator = null;
+			try {
+			    // locate and instanciate the Generator class specified by the parser
+			    clazz = System.Type.GetType(parser.Generator, true);
+			    o = System.Activator.CreateInstance(clazz);
+			    if (o is IGenerator) {
+				generator = (IGenerator) o;
+			    } else  {
+				LogToNAnt("ERROR: class " + parser.Generator + " does not support IGenerator interface.\n");
+			    }
+			} catch (Exception ex) {
+			    LogToNAnt("ERROR: could not instanciate generator class " + parser.Generator + "\n" + ex);
+			}
+
+			// if the generator is not null, generate
+			if (generator != null) {
+			    generator.Generate(parser);
+			    LogToNAnt(generator.Log);
+			}
+		    } else {
+			LogToNAnt("ERROR: Parser found errors:");
+			LogToNAnt(parser.Log);
 		    }
-		} else {
-		    LogToNAnt("ERROR: Parser found errors:");
-		    LogToNAnt(p.Log);
+		} else  {
+		    LogToNAnt("ERROR: class " + parserClassname + " does not support IParser interface.\n");
 		}
+
 
 		LogToNAnt(String.Empty.PadLeft(20,'='));
 		LogToNAnt("Done :: " + DateTime.Now.ToString());
@@ -91,6 +110,24 @@ namespace Spring2.DataTierGenerator.NAnt {
 	    }
 	}
 
+	protected XmlNode GetProcessingInstruction(XmlDocument doc, String pi) {
+	    foreach(XmlNode node in doc.ChildNodes) {
+		if (node.Name.Equals(pi)) {
+		    return node;
+		}
+	    }
+	    return null;
+	}
+
+	protected String GetProcessingInstructionAttribute(XmlNode node, String attribute) {
+	    String s = node == null ? String.Empty : node.Value;
+	    if (s != null && s.IndexOf(attribute + "=\"") >= 0) { 
+		String value = s.Substring(s.IndexOf(attribute + "=\"") + attribute.Length + 2);
+		return value.Substring(0,value.IndexOf("\""));
+	    }
+
+	    return null;
+	}
 
     }
 }

@@ -12,7 +12,6 @@ using NUnit.Framework;
 
 using Spring2.Core.Util;
 
-using Spring2.DataTierGenerator.Parser;
 using Spring2.DataTierGenerator.Generator;
 using Spring2.DataTierGenerator.Generator.Writer;
 

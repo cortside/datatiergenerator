@@ -10,7 +10,7 @@ namespace Spring2.DataTierGenerator.Generator {
 	/// <summary>
 	/// Call the generator to action and output somthing.
 	/// </summary>
-	void Generate();
+	void Generate(IParser parser);
 
 	/// <summary>
 	/// List of log messages (String) that were created durring generation

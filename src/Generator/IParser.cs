@@ -1,15 +1,19 @@
 using System;
 using System.Collections;
+using System.Xml;
 
-using Spring2.DataTierGenerator.Element;
+using Spring2.DataTierGenerator.Generator;
 
-namespace Spring2.DataTierGenerator.Parser {
+
+namespace Spring2.DataTierGenerator.Generator {
     /// <summary>
     /// Summary description for IParser.
     /// </summary>
     public interface IParser {
 
-	Configuration Configuration {
+	void Parse(XmlDocument doc);
+
+	Object Configuration {
 	    get;
 	}
 
@@ -17,35 +21,19 @@ namespace Spring2.DataTierGenerator.Parser {
 	    get;
 	}
 
-	IList Databases {
+	TaskList Tasks {
+	    get;
+	}
+	
+	Hashtable Tools {
 	    get;
 	}
 
-	IList Entities {
+	String Generator {
 	    get;
 	}
 
-	IList Enums {
-	    get;
-	}
-
-	IList Collections {
-	    get;
-	}
-
-	ICollection Types {
-	    get;
-	}
-
-	ICollection SqlTypes {
-	    get;
-	}
-
-	GeneratorElement Generator {
-	    get;
-	}
-
-	ParserElement Parser {
+	String RootDirectory {
 	    get;
 	}
 
