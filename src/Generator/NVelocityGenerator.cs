@@ -65,6 +65,7 @@ namespace Spring2.DataTierGenerator.Generator {
 	    }
 
 	    if (parser.IsValid && !hasErrors) {
+		Timer timer = new Timer();
 		WriteToLog("Starting generation");
 		if (parser.Log.Count>0) {
 		    WriteToLog("The parser is in a valid state, but reported the following issues:");
@@ -81,11 +82,12 @@ namespace Spring2.DataTierGenerator.Generator {
 		    }
 		}
 
+		timer.Stop();
 		WriteToLog("files processed: " + files);
-		WriteToLog("generate: " + new TimeSpan(generateTicks).TotalMilliseconds + "ms");
-		WriteToLog("template merge: " + new TimeSpan(mergeTicks).TotalMilliseconds + "ms");
-		WriteToLog("styler: " + new TimeSpan(stylerTicks).TotalMilliseconds + "ms");
-		WriteToLog("writer: " + new TimeSpan(writerTicks).TotalMilliseconds + "ms");
+		WriteToLog("       generate: " + new TimeSpan(generateTicks).TotalMilliseconds.ToString("####0.000").PadLeft(9) + "ms (" + (new TimeSpan(generateTicks).TotalMilliseconds / timer.TimeSpan.TotalMilliseconds).ToString("P") + ")");
+		WriteToLog(" template merge: " + new TimeSpan(mergeTicks).TotalMilliseconds.ToString("####0.000").PadLeft(9) + "ms (" + (new TimeSpan(mergeTicks).TotalMilliseconds / timer.TimeSpan.TotalMilliseconds).ToString("P") + ")");
+		WriteToLog("         styler: " + new TimeSpan(stylerTicks).TotalMilliseconds.ToString("####0.000").PadLeft(9) + "ms (" + (new TimeSpan(stylerTicks).TotalMilliseconds / timer.TimeSpan.TotalMilliseconds).ToString("P") + ")");
+		WriteToLog("         writer: " + new TimeSpan(writerTicks).TotalMilliseconds.ToString("####0.000").PadLeft(9) + "ms (" + (new TimeSpan(writerTicks).TotalMilliseconds / timer.TimeSpan.TotalMilliseconds).ToString("P") + ")");
 	    } else {
 		WriteToLog("Parser was not in a valid state and reported the following errors:");
 		foreach(String s in parser.Log) {
