@@ -20,12 +20,20 @@ namespace Spring2.DataTierGenerator.Generator {
 	protected Configuration options;
 
 	public GeneratorSkeleton() {
-	    Velocity.Init();
+	    InitNVelocity();
 	}
 
 	public GeneratorSkeleton(Configuration options) {
-	    Velocity.Init();
+	    InitNVelocity();
 	    this.options = options;
+	}
+
+	/// <summary>
+	/// Init the NVelocity singleton
+	/// </summary>
+	private void InitNVelocity() {
+	    Velocity.SetProperty(NVelocity.Runtime.RuntimeConstants_Fields.FILE_RESOURCE_LOADER_CACHE, true);
+	    Velocity.Init();
 	}
 
 	public abstract void Generate();
