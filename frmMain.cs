@@ -32,6 +32,8 @@ namespace DataTierGenerator {
 		private System.Windows.Forms.TextBox txtDatabaseName;
 		private System.Windows.Forms.Label lblServerName;
 		private System.Windows.Forms.TextBox txtServerName;
+		private System.Windows.Forms.TextBox txtProjectNamespace;
+		private System.Windows.Forms.Label label2;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -86,6 +88,8 @@ namespace DataTierGenerator {
 			this.txtDatabaseName = new System.Windows.Forms.TextBox();
 			this.lblServerName = new System.Windows.Forms.Label();
 			this.txtServerName = new System.Windows.Forms.TextBox();
+			this.txtProjectNamespace = new System.Windows.Forms.TextBox();
+			this.label2 = new System.Windows.Forms.Label();
 			this.groupBox1.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.SuspendLayout();
@@ -127,6 +131,8 @@ namespace DataTierGenerator {
 			this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
 				| System.Windows.Forms.AnchorStyles.Right);
 			this.groupBox1.Controls.AddRange(new System.Windows.Forms.Control[] {
+																					this.label2,
+																					this.txtProjectNamespace,
 																					this.chkScriptDropStatement,
 																					this.chkGenerateDataObjects,
 																					this.chkUseViewsInStoreProc,
@@ -136,7 +142,7 @@ namespace DataTierGenerator {
 																					this.chkSingleFile});
 			this.groupBox1.Location = new System.Drawing.Point(8, 168);
 			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(344, 200);
+			this.groupBox1.Size = new System.Drawing.Size(344, 232);
 			this.groupBox1.TabIndex = 29;
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "Generation Options";
@@ -306,6 +312,24 @@ namespace DataTierGenerator {
 			this.txtServerName.TabIndex = 22;
 			this.txtServerName.Text = "";
 			// 
+			// txtProjectNamespace
+			// 
+			this.txtProjectNamespace.Anchor = ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+				| System.Windows.Forms.AnchorStyles.Right);
+			this.txtProjectNamespace.Location = new System.Drawing.Point(120, 184);
+			this.txtProjectNamespace.Name = "txtProjectNamespace";
+			this.txtProjectNamespace.Size = new System.Drawing.Size(216, 20);
+			this.txtProjectNamespace.TabIndex = 36;
+			this.txtProjectNamespace.Text = "";
+			// 
+			// label2
+			// 
+			this.label2.Location = new System.Drawing.Point(8, 192);
+			this.label2.Name = "label2";
+			this.label2.Size = new System.Drawing.Size(104, 16);
+			this.label2.TabIndex = 37;
+			this.label2.Text = "Project Namespace";
+			// 
 			// frmMain
 			// 
 			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
@@ -372,7 +396,7 @@ namespace DataTierGenerator {
 				objStringBuilder.Append("Password = " + txtPassword.Text + ";");
 				
 				// Generate the SQL and C#
-				objGenerator = new clsGenerator(objStringBuilder.ToString(), txtStoreProcNameFormatString.Text, chkSingleFile.Checked, chkCreateViews.Checked, chkUseViewsInStoreProc.Checked, chkGenerateDataObjects.Checked, chkScriptDropStatement.Checked);
+				objGenerator = new clsGenerator(objStringBuilder.ToString(), txtStoreProcNameFormatString.Text, chkSingleFile.Checked, chkCreateViews.Checked, chkUseViewsInStoreProc.Checked, chkGenerateDataObjects.Checked, chkScriptDropStatement.Checked, txtProjectNamespace.Text);
 				objGenerator.ProcessTables();
 				objGenerator = null;
 
@@ -411,6 +435,8 @@ namespace DataTierGenerator {
 			txtDatabaseName.Text = "cort_project";
 			txtUserID.Text = "sa";
 			chkBlankPassword.Checked = true;
+
+			txtProjectNamespace.Text = "Spring2.Project";
 
 			chkCreateViews.Checked = true;
 			chkUseViewsInStoreProc.Checked = true;
