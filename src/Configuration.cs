@@ -47,6 +47,9 @@ namespace Spring2.DataTierGenerator {
 			    case "enumbaseclass":
 				this.enumBaseClass= node.Attributes["value"].Value;
 				break;
+			    case "testclassdirectory":
+				this.testClassDirectory = node.Attributes["value"].Value;
+				break;
 			    default:
 				vd(ParserValidationArgs.NewWarning("Unrecognized configuration option: " + node.Attributes["name"].Value + " = " + node.Attributes["value"].Value));
 				break;
@@ -135,6 +138,18 @@ namespace Spring2.DataTierGenerator {
 	    }
 	    return s;
 	}
+
+	public String GetTestNameSpace(String table) {
+	    String s;
+
+	    s = this.rootNameSpace;
+	    if (testClassDirectory.Length>0) {
+		s += "." + testClassDirectory;
+	    }
+
+	    return s;
+	}
+
 
     }
 }

@@ -8,6 +8,7 @@ namespace Spring2.DataTierGenerator {
 	protected String doClassDirectory = "DataObject";
 	protected String collectionClassDirectory = "DataObject";
 	protected String typesClassDirectory = "Types";
+	protected String testClassDirectory = "Test";
 	protected String rootNameSpace = String.Empty;
 	protected String xmlConfigFilename = String.Empty;
 	protected Boolean generateDataObjectClasses = true;
@@ -79,6 +80,12 @@ namespace Spring2.DataTierGenerator {
 	    get { return this.enumBaseClass; }
 	    set { this.enumBaseClass = value; }
 	}
+
+	public String TestClassDirectory {
+	    get { return this.testClassDirectory; }
+	    set { this.testClassDirectory = value; }
+	}
+
 
     }
 }
