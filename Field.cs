@@ -5,202 +5,73 @@ using System.Xml;
 
 namespace Spring2.DataTierGenerator {
 
-    public class Field : FieldData {
+    public class Field : Spring2.Core.DataObject.DataObject {
 
-	/// <summary>
-	/// Creates a String for a method parameter representing the specified field.
-	/// </summary>
-	/// <param name="this">Object that stores the information for the field the parameter represents.</param>
-	/// <returns>String containing parameter information of the specified field for a method call.</returns>
-	public String ParameterTypeX {
-	    get {
-		switch (sqlType.Name.ToLower()) {
-		    case "binary":
-			return "byte[]";
-		    case "bigint":
-			return "Int64";
-		    case "bit":
-			return "Boolean";
-		    case "char":
-			return "String";
-		    case "datetime":
-			return "DateTime";
-		    case "decimal":
-			return "Decimal";
-		    case "float":
-			return "Double";
-		    case "image":
-			return "String"; //"byte[]";
-		    case "int":
-			return "Int32";
-		    case "money":
-			return "Decimal";
-		    case "nchar":
-			return "String";
-		    case "ntext":
-			return "String";
-		    case "nvarchar":
-			return "String";
-		    case "numeric":
-			return "Decimal";
-		    case "real":
-			return "Single";
-		    case "smalldatetime":
-			return "DateTime";
-		    case "smallint":
-			return "Int16";
-		    case "smallmoney":
-			return "Decimal";
-		    case "sql_variant":
-			return "Object";
-		    case "sysname":
-			return "String";
-		    case "text":
-			return "String";
-		    case "timestamp":
-			return "DateTime";
-		    case "tinyint":
-			return "byte";
-		    case "varbinary":
-			return "byte[]";
-		    case "varchar":
-			return "String";
-		    case "uniqueidentifier":
-			return "Guid";
-		    default:  // Unknow data type
-			throw(new Exception("Invalid SQL Server data type specified: " + sqlType));
-		}
-	    }
+	protected String name = String.Empty;
+	protected String sqlName = String.Empty;
+	protected SqlType sqlType = new SqlType();
+	protected Type type = new Type();
+	protected Boolean isRowGuidCol = false;
+	protected Boolean isIdentity = false;
+	protected Boolean isPrimaryKey = false;
+	protected Boolean isForeignKey = false;
+	protected Boolean isViewColumn = false;
+	protected String accessModifier = "public";
+	protected String description = String.Empty;
+
+	public String Name {
+	    get { return this.name; }
+	    set { this.name = value; }
 	}
 
-	/// <summary>
-	/// Creates a String for a method parameter representing the specified field.
-	/// </summary>
-	/// <param name="this">Object that stores the information for the field the parameter represents.</param>
-	/// <returns>String containing parameter information of the specified field for a method call.</returns>
-	public String ReaderType {
-	    get {
-		switch (sqlType.Name.ToLower()) {
-		    case "binary":
-			return "Bytes";
-		    case "bigint":
-			return "Int64";
-		    case "bit":
-			return "Int16";  //Boolean
-		    case "char":
-			return "String";
-		    case "datetime":
-			return "DateTime";
-		    case "decimal":
-			return "Decimal";
-		    case "float":
-			return "Double";
-		    case "image":
-			return "String";  //Bytes
-		    case "int":
-			return "Int32";
-		    case "money":
-			return "Decimal";
-		    case "nchar":
-			return "String";
-		    case "ntext":
-			return "String";
-		    case "nvarchar":
-			return "String";
-		    case "numeric":
-			return "Decimal";
-		    case "real":
-			return "Single";
-		    case "smalldatetime":
-			return "DateTime";
-		    case "smallint":
-			return "Int16";
-		    case "smallmoney":
-			return "Decimal";
-		    case "sql_variant":
-			return "Object";
-		    case "sysname":
-			return "String";
-		    case "text":
-			return "String";
-		    case "timestamp":
-			return "DateTime";
-		    case "tinyint":
-			return "Byte";
-		    case "varbinary":
-			return "Bytes";
-		    case "varchar":
-			return "String";
-		    case "uniqueidentifier":
-			return "Guid";
-		    default:  // Unknow data type
-			throw(new Exception("Invalid SQL Server data type specified: " + sqlType));
-		}
-	    }
+	public String SqlName {
+	    get { return this.sqlName; }
+	    set { this.sqlName = value; }
 	}
 
-	/// <summary>
-	/// Matches a SQL Server data type to a SqlClient.SqlDbType.
-	/// </summary>
-	/// <param name="strType">A String representing a SQL Server data type.</param>
-	/// <returns>A String representing a SqlClient.SqlDbType.</returns>
-	public String GetSqlDbType(String strType) {
-	    switch (strType.ToLower()) {
-		case "binary":
-		    return "Binary";
-		case "bigint":
-		    return "BigInt";
-		case "bit":
-		    return "Bit";
-		case "char":
-		    return "Char";
-		case "datetime":
-		    return "DateTime";
-		case "decimal":
-		    return "Decimal";
-		case "float":
-		    return "Float";
-		case "image":
-		    return "VarChar";
-		case "int":
-		    return "Int";
-		case "money":
-		    return "Money";
-		case "nchar":
-		    return "NChar";
-		case "ntext":
-		    return "NText";
-		case "nvarchar":
-		    return "NVarChar";
-		case "numeric":
-		    return "Decimal";
-		case "real":
-		    return "Real";
-		case "smalldatetime":
-		    return "SmallDateTime";
-		case "smallint":
-		    return "SmallInt";
-		case "smallmoney":
-		    return "SmallMoney";
-		case "sql_variant":
-		    return "Variant";
-		case "sysname":
-		    return "VarChar";
-		case "text":
-		    return "Text";
-		case "timestamp":
-		    return "Timestamp";
-		case "tinyint":
-		    return "TinyInt";
-		case "varbinary":
-		    return "VarBinary";
-		case "varchar":
-		    return "VarChar";
-		case "uniqueidentifier":
-		    return "UniqueIdentifier";
-		default:  // Unknow data type
-		    throw(new Exception("Invalid SQL Server data type specified: " + strType));
-	    }
+	public SqlType SqlType {
+	    get { return this.sqlType; }
+	    set { this.sqlType = value; }
+	}
+
+	public Type Type {
+	    get { return this.type; }
+	    set { this.type = value; }
+	}
+
+	public Boolean IsRowGuidCol {
+	    get { return this.isRowGuidCol; }
+	    set { this.isRowGuidCol = value; }
+	}
+
+	public Boolean IsIdentity {
+	    get { return this.isIdentity; }
+	    set { this.isIdentity = value; }
+	}
+
+	public Boolean IsPrimaryKey {
+	    get { return this.isPrimaryKey; }
+	    set { this.isPrimaryKey = value; }
+	}
+
+	public Boolean IsForeignKey {
+	    get { return this.isForeignKey; }
+	    set { this.isForeignKey = value; }
+	}
+
+	public Boolean IsViewColumn {
+	    get { return this.isViewColumn; }
+	    set { this.isViewColumn = value; }
+	}
+
+	public String AccessModifier {
+	    get { return this.accessModifier; }
+	    set { this.accessModifier = value; }
+	}
+
+	public String Description {
+	    get { return this.description; }
+	    set { this.description = value; }
 	}
 
 	/// <summary>
@@ -209,33 +80,14 @@ namespace Spring2.DataTierGenerator {
 	/// <param name="this">Object that stores the information for the field the parameter represents.</param>
 	/// <returns>String containing SqlParameter information of the specified field for a method call.</returns>
 	public string CreateSqlParameter(bool blnOutput, bool useDataObject) {
-	    // Get an array of data types and variable names
-	    //	    String[] strMethodParameter = this.CreateMethodParameter().Split(new Char[] {' '});
-
-	    // this needs to be cleaned up!!!!			
-	    // Is the parameter used for input or output
-	    //	    if (blnOutput) {
-	    //	    if (useDataObject) {
-	    //		StringBuilder sb = new StringBuilder();
-	    //		sb.Append("cmd.Parameters.Add(new SqlParameter(\"@" + this.SqlName + "\", SqlDbType." + GetSqlDbType(this.SqlType.Name) + ", " + this.SqlType.Length + ", ParameterDirection.");
-	    //		if (blnOutput) {
-	    //		    sb.Append("Output"); 
-	    //		} else {
-	    //		    sb.Append("Input");
-	    //		}
-	    //		sb.Append(", false, " + this.SqlType.Precision + ", " + this.SqlType.Scale + ", \"" + this.Name + "\", DataRowVersion.Proposed, ");
-	    //		sb.Append(String.Format(type.ConvertToSqlTypeFormat, "data", GetMethodFormat(), "", ""));
-	    //		sb.Append("));\n");
-	    //		return sb.ToString();
-	    //	    } else {
 	    StringBuilder sb = new StringBuilder();
-	    sb.Append("cmd.Parameters.Add(new SqlParameter(\"@" + this.SqlName + "\", SqlDbType." + GetSqlDbType(this.SqlType.Name) + ", " + this.SqlType.Length + ", ParameterDirection.");
+	    sb.Append("cmd.Parameters.Add(new SqlParameter(\"@" + sqlName + "\", SqlDbType." + sqlType.SqlDbType + ", " + sqlType.Length + ", ParameterDirection.");
 	    if (blnOutput) {
 		sb.Append("Output"); 
 	    } else {
 		sb.Append("Input");
 	    }
-	    sb.Append(", false, " + this.SqlType.Precision + ", " + this.SqlType.Scale + ", \"" + this.Name + "\", DataRowVersion.Proposed, ");
+	    sb.Append(", false, " + sqlType.Precision + ", " + sqlType.Scale + ", \"" + name + "\", DataRowVersion.Proposed, ");
 	    if (useDataObject) {
 		sb.Append(String.Format(type.ConvertToSqlTypeFormat, "data", "data."+GetMethodFormat(), "", "", GetMethodFormat()));
 	    } else {
@@ -244,7 +96,6 @@ namespace Spring2.DataTierGenerator {
 	    sb.Append("));\n");
 	    return sb.ToString();
 	}
-	//	}
 
 	public String GetFieldFormat() {
 	    return this.Name.Substring(0, 1).ToLower() + this.Name.Substring(1);
@@ -259,70 +110,22 @@ namespace Spring2.DataTierGenerator {
 	/// </summary>
 	/// <returns>String containing parameter information of the specified field for a method call.</returns>
 	public string CreateMethodParameter() {
-	    return type.Name + " " + this.Name.Substring(0, 1).ToUpper() + this.Name.Substring(1);
+	    return type.Name + " " + name.Substring(0, 1).ToUpper() + name.Substring(1);
 	}
 
 	/// <summary>
 	/// Creates a string containing the parameter declaration for a stored procedure based on the parameters passed in.
 	/// </summary>
 	/// <returns>String containing parameter information of the specified field for a stored procedure.</returns>
-	public string CreateParameterString(bool blnCheckForOutput) {
-	    String strParameter = "@" + this.Name.Replace(" ", "_") + "\t" + this.SqlType.Name;
-	    // this should be defined as a sqltype attribute - a format string		
-	    switch (this.SqlType.Name) {
-		case "nchar":
-		case "nvarchar":
-		case "varbinary":
-		case "varchar":
-		case "binary":
-		case "char":
-		    strParameter += "(" + this.SqlType.Length + ")";
-		    break;
-		case "decimal":
-		    if (this.SqlType.Scale == 0)
-			strParameter += "(" + this.SqlType.Precision + ")";
-		    else
-			strParameter += "(" + this.SqlType.Precision + ", "+ this.SqlType.Scale + ")";
-		    break;
-		case "float":
-		    strParameter += "(" + this.SqlType.Precision + ")";
-		    break;
-		case "numeric":
-		    if (this.SqlType.Scale == 0)
-			strParameter += "(" + this.SqlType.Precision + ")";
-		    else
-			strParameter += "(" + this.SqlType.Precision + ", "+ this.SqlType.Scale + ")";
-		    break;
-		case "bigint":
-		case "bit":
-		case "datetime":
-		case "image":
-		case "int":
-		case "money":
-		case "ntext":
-		case "real":
-		case "smalldatetime":
-		case "smallint":
-		case "smallmoney":
-		case "sql_variant":
-		case "sysname":
-		case "text":
-		case "timestamp":
-		case "tinyint":
-		case "uniqueidentifier":
-		    // default format is OK
-		    break;
-		default:  // Unknow data type
-		    throw(new Exception("Invalid SQL Server data type specified: " + this.SqlType.Name.ToLower()));
-	    }
+	public string CreateParameterString(Boolean checkForOutput) {
+	    String s = "@" + name + "\t" + sqlType.Declaration;
 			
 	    // Is the parameter an output parameter?
-	    if (blnCheckForOutput)
-		if (this.IsRowGuidCol || this.IsIdentity)
-		    strParameter += " output";
+	    if (checkForOutput)
+		if (isRowGuidCol || isIdentity)
+		    s += " output";
 			
-	    // Return the new parameter string
-	    return strParameter;
+	    return s;
 	}
 
 	public String ToXml(Boolean sqlAttributesOnly) {
@@ -390,10 +193,10 @@ namespace Spring2.DataTierGenerator {
 				    if (types.Contains(field.SqlType.Type)) {
 					field.Type = (Type)((Type)types[field.SqlType.Type]).Clone();
 				    } else {
-					Console.Out.WriteLine("Type " + field.SqlType.Type + " was not defined");
+					Console.Out.WriteLine("ERROR: Type " + field.SqlType.Type + " was not defined [property=" + field.name + "]");
 				    }
 				} else {
-				    Console.Out.WriteLine("SqlType " + field.SqlType.Name + " was not defined");
+				    Console.Out.WriteLine("ERROR: SqlType " + field.SqlType.Name + " was not defined [property=" + field.name + "]");
 				}
 			    }
 			    if (node.Attributes["length"] != null) {
