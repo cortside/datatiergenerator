@@ -524,6 +524,7 @@ namespace Spring2.DataTierGenerator.DTGEditor {
 		listView1.Columns.Add("Type", -1, HorizontalAlignment.Left);
 		listView1.Columns.Add("Concrete Type", -1, HorizontalAlignment.Left);
 		listView1.Columns.Add("SqlEntity Column", -1, HorizontalAlignment.Left);
+		listView1.Columns.Add("ViewColumn", -1, HorizontalAlignment.Left);
 		listView1.Columns.Add("Convert From SqlType Format", -1, HorizontalAlignment.Left);
 		listView1.Columns.Add("Access Modifier", -1, HorizontalAlignment.Left);
 		listView1.Columns.Add("Description", -1, HorizontalAlignment.Left);
@@ -532,6 +533,7 @@ namespace Spring2.DataTierGenerator.DTGEditor {
 		    lvi.SubItems.Add(field.Type.Name);
 		    lvi.SubItems.Add(field.Type.ConcreteType);
 		    lvi.SubItems.Add(field.Column.Name);
+		    lvi.SubItems.Add(field.Column.ViewColumn.ToString());
 		    lvi.SubItems.Add(field.Type.ConvertFromSqlTypeFormat);
 		    lvi.SubItems.Add(field.AccessModifier);
 		    lvi.SubItems.Add(field.Description);
