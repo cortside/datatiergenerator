@@ -47,5 +47,9 @@ namespace Spring2.DataTierGenerator.Parser {
 	ICollection SqlTypes {
 	    get;
 	}
+
+	Element.Generator Generator {
+	    get;
+	}
     }
 }
