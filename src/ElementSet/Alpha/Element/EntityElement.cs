@@ -138,6 +138,10 @@ namespace Spring2.DataTierGenerator.Element {
 	    get { return !EntityElement.EMPTY.Equals(this.baseEntity); }
 	}
 
+	public Boolean MultipleSqlEntities {
+	    get { return IsDerived && !this.baseEntity.SqlEntity.Name.Equals(this.sqlEntity.Name); }
+	}
+
 	public ArrayList Fields {
 	    get { 
 		if (EntityElement.EMPTY.Equals(this.baseEntity)) {
