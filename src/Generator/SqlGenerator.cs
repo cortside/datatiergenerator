@@ -83,6 +83,11 @@ namespace Spring2.DataTierGenerator.Generator {
 		}
 	    }
 	    sb.Append("\n\nAS\n\n");
+
+	    if (sqlentity.ScriptForIndexedViews) {
+		sb.Append("SET ANSI_NULLS ON\n");
+		sb.Append("SET QUOTED_IDENTIFIER ON\n\n");
+	    }
 				
 	    foreach (Column column in sqlentity.Columns) {
 		if (column.RowGuidCol) {
@@ -130,10 +135,14 @@ namespace Spring2.DataTierGenerator.Generator {
 	    sb.Append("    BEGIN\n");
 	    sb.Append("        RAISERROR  20000 '").Append(strProcName).Append(": Unable to insert new row into ").Append(sqlentity.Name).Append(" table '\n");
 	    sb.Append("        RETURN(-1)\n");
-	    sb.Append("    END\n");
+	    sb.Append("    END\n\n");
 	
+	    if (sqlentity.ScriptForIndexedViews) {
+		sb.Append("SET ANSI_NULLS ON\n");
+		sb.Append("SET QUOTED_IDENTIFIER ON\n\n");
+	    }
 	
-	    sb.Append("\nreturn @@IDENTITY\n");
+	    sb.Append("return @@IDENTITY\n");
 	
 	    // Write out the stored procedure
 	    WriteProcToFile(strProcName, sb.ToString() + "\nGO\n\n");
@@ -163,9 +172,15 @@ namespace Spring2.DataTierGenerator.Generator {
 		}
 	    }
 	    sb.Append("\n\nAS\n\n");
+
+	    if (sqlentity.ScriptForIndexedViews) {
+		sb.Append("SET ANSI_NULLS ON\n");
+		sb.Append("SET QUOTED_IDENTIFIER ON\n\n");
+	    }
+
 	    sb.Append("\nUPDATE\n\t" + EscapeSqlName(sqlentity.Name) + "\n");
 	    sb.Append("SET\n");
-				
+
 	    // Create the set statement
 	    first = true;
 	    foreach (Column column in sqlentity.Columns) {
@@ -205,6 +220,11 @@ namespace Spring2.DataTierGenerator.Generator {
 	    sb.Append("        RAISERROR  ('").Append(options.GetProcName(sqlentity.Name, "Update")).Append(":  update was expected to update a single row and updated %d rows', 16,1, @@ROWCOUNT)\n");
 	    sb.Append("        RETURN(-1)\n");
 	    sb.Append("    END\n");
+
+	    if (sqlentity.ScriptForIndexedViews) {
+		sb.Append("\nSET ANSI_NULLS ON\n");
+		sb.Append("SET QUOTED_IDENTIFIER ON\n\n");
+	    }
 	
 	    // Write out the stored procedure
 	    WriteProcToFile(options.GetProcName(sqlentity.Name, "Update"), sb.ToString() + "\nGO\n\n");
@@ -230,6 +250,11 @@ namespace Spring2.DataTierGenerator.Generator {
 	    }
 					
 	    sb.Append("\n\nAS\n\n");
+
+	    if (sqlentity.ScriptForIndexedViews) {
+		sb.Append("SET ANSI_NULLS ON\n");
+		sb.Append("SET QUOTED_IDENTIFIER ON\n\n");
+	    }
 	
 	    // Create the where clause
 	    StringBuilder where = new StringBuilder();
@@ -240,7 +265,7 @@ namespace Spring2.DataTierGenerator.Generator {
 		} else {
 		    first = false;
 		}
-		where.Append("\t" + EscapeSqlName(column.Name) + " = @" + EscapeSqlName(column.Name));
+		where.Append("\t" + EscapeSqlName(column.Name) + " = @" + EscapeSqlName(column.Name) + "\n");
 	    }
 	
 	    sb.Append("if not exists(SELECT ").Append("*").Append(" FROM ").Append(EscapeSqlName(sqlentity.Name)).Append(" WHERE (").Append(where.ToString()).Append("))\n");
@@ -255,6 +280,12 @@ namespace Spring2.DataTierGenerator.Generator {
 	    sb.Append("WHERE \n");
 	
 	    sb.Append(where.ToString());
+	    
+	    if (sqlentity.ScriptForIndexedViews) {
+		sb.Append("\nSET ANSI_NULLS OFF\n");
+		sb.Append("SET QUOTED_IDENTIFIER OFF\n\n");
+	    }
+
 					
 	    // Write out the stored procedure
 	    WriteProcToFile(strProcName, sb.ToString() + "\nGO\n\n");
