@@ -3,13 +3,15 @@ using System.Reflection;
 using System.Text;
 using System.Xml;
 
+using Spring2.DataTierGenerator.Parser;
+
 namespace Spring2.DataTierGenerator {
     public class Configuration : ConfigurationData {
 
 	public Configuration () {
 	}
 
-	public Configuration(XmlNode root) {
+	public Configuration(XmlNode root, ParserValidationDelegate vd) {
 	    if (root.HasChildNodes) {
 		for (Int32 i=0; i<root.ChildNodes.Count; i++) {
 		    XmlNode node = root.ChildNodes[i];
@@ -46,7 +48,7 @@ namespace Spring2.DataTierGenerator {
 				this.enumBaseClass= node.Attributes["value"].Value;
 				break;
 			    default:
-				Console.Out.WriteLine("Unrecognized configuration option: " + node.Attributes["name"].Value + " = " + node.Attributes["value"].Value);
+				vd(ParserValidationArgs.NewWarning("Unrecognized configuration option: " + node.Attributes["name"].Value + " = " + node.Attributes["value"].Value));
 				break;
 			}
 		    }

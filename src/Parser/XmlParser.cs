@@ -37,9 +37,12 @@ namespace Spring2.DataTierGenerator.Parser {
 		throw new InvalidOperationException("Could not parse xml document: " + filename);
 	    } 
 
+	    // event handler for all of the ParseFromXml methods
+	    ParserValidationDelegate vd = new ParserValidationDelegate(ParserValidationEventHandler);
+
 	    XmlNode root = doc.DocumentElement["config"];
 	    if (root != null) {
-		this.options = new Configuration(root);
+		this.options = new Configuration(root, vd);
 	    } else {
 		this.options = new Configuration();
 	    }
@@ -51,11 +54,6 @@ namespace Spring2.DataTierGenerator.Parser {
 	    if (!options.RootDirectory.EndsWith("\\")) {
 		options.RootDirectory += "\\";
 	    }
-
-//TODO:  when parse methods are called - pass in eventhandler method - see XmlSchema.Read
-
-	    // event handler for all of the ParseFromXml methods
-	    ParserValidationDelegate vd = new ParserValidationDelegate(ParserValidationEventHandler);
 
 	    sqltypes = SqlType.ParseFromXml(doc, vd);
 	    types = Spring2.DataTierGenerator.Element.Type.ParseFromXml(options, doc, vd);
