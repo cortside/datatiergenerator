@@ -112,6 +112,20 @@ namespace Spring2.DataTierGenerator {
 		}
 	    }
 
+	    // add collections as data objects to types if not already defined
+	    elements = doc.DocumentElement.GetElementsByTagName("collection");
+	    foreach (XmlNode node in elements) {
+		if (!types.Contains(node.Attributes["name"].Value)) {
+		    Type type = new Type();
+		    type.Name = node.Attributes["name"].Value;
+		    type.ConcreteType = type.Name;
+		    type.Package = options.GetDONameSpace("");
+		    //type.NewInstanceFormat = "new " + type.Name + "()";
+		    type.NewInstanceFormat = type.Name + ".DEFAULT";
+		    type.NullInstanceFormat = type.Name + ".UNSET";
+		    types.Add(type.Name, type);
+		}
+	    }
 	    
 	    return types;
 	}
