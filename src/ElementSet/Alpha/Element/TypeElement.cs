@@ -7,7 +7,7 @@ using Spring2.DataTierGenerator.Parser;
 
 namespace Spring2.DataTierGenerator.Element {
 
-    public class TypeElement : ElementSkeleton { //Spring2.Core.DataObject.DataObject, ICloneable {
+    public class TypeElement : ElementSkeleton {
 
 	private static readonly String NEW_INSTANCE_FORMAT = "newinstanceformat";
 	private static readonly String NAMESPACE = "namespace";
@@ -68,7 +68,7 @@ namespace Spring2.DataTierGenerator.Element {
 	public static void ParseFromXml(XmlNode node, IList typeElements) {
 	    if (node != null && typeElements != null) {
 
-		foreach (XmlNode typeNode in node.ChildNodes) {
+		foreach (XmlNode typeNode in node.SelectNodes("type")) {
 		    if (typeNode.NodeType.Equals(XmlNodeType.Element)) {
 			TypeElement typeElement = new TypeElement();
 
@@ -85,10 +85,10 @@ namespace Spring2.DataTierGenerator.Element {
 	    }
 	}
 
-	public static Hashtable ParseFromXml(Configuration options, XmlDocument doc, ParserValidationDelegate vd) {
+	public static Hashtable ParseFromXml(Configuration options, XmlNode doc, ParserValidationDelegate vd) {
 	    Hashtable types = new Hashtable();
-	    XmlNodeList elements = doc.DocumentElement.GetElementsByTagName("type");
-	    foreach (XmlNode node in elements) {
+	    XmlNodeList nodes = doc.SelectNodes("DataTierGenerator/types/type");
+	    foreach (XmlNode node in nodes) {
 		if (node.NodeType == XmlNodeType.Comment) {
 		    continue;
 		}
@@ -126,108 +126,108 @@ namespace Spring2.DataTierGenerator.Element {
 		}
 	    }
 
-	    // add entities as data objects to types if not already defined
-	    elements = doc.DocumentElement.GetElementsByTagName("entity");
-	    foreach (XmlNode node in elements) {
-		if (node.NodeType == XmlNodeType.Comment) {
-		    continue;
-		}
-		if (!types.Contains(node.Attributes["name"].Value + "Data")) {
-		    TypeElement type = new TypeElement();
-		    type.Name = node.Attributes["name"].Value + "Data";
-		    type.ConcreteType = type.Name;
-		    type.Package = options.GetDONameSpace("");
-		    type.NewInstanceFormat = "new " + type.Name + "()";
-		    types.Add(type.Name, type);
-		}
-
-		// TODO: needs review, hacked for Dave
-		// add interfaces - use new x() for empty instance constructor
-		if (!types.Contains("I" + node.Attributes["name"].Value)) {
-		    TypeElement type = new TypeElement();
-		    type.Name = "I" + node.Attributes["name"].Value;
-		    type.ConcreteType = type.Name;
-		    type.Package = options.GetDONameSpace("");
-		    type.NewInstanceFormat = "new " + node.Attributes["name"].Value + "()";
-		    types.Add(type.Name, type);
-		}
-
-		// TODO: needs review, hacked for Dave
-		// add business entities - use new x() for empty instance constructor
-		if (!types.Contains(node.Attributes["name"].Value)) {
-		    TypeElement type = new TypeElement();
-		    type.Name = node.Attributes["name"].Value;
-		    type.ConcreteType = type.Name;
-		    type.Package = options.GetBusinessLogicNameSpace();
-		    type.NewInstanceFormat = "new " + type.Name + "()";
-		    types.Add(type.Name, type);
-		}
-	    }
-
-
-	    // add enums to types if not already defined
-	    elements = doc.DocumentElement.GetElementsByTagName("enum");
-	    foreach (XmlNode node in elements) {
-		if (node.NodeType == XmlNodeType.Comment) {
-		    continue;
-		}
-		if (!types.Contains(node.Attributes["name"].Value)) {
-		    TypeElement type = new TypeElement();
-		    type.Name = node.Attributes["name"].Value;
-		    type.ConcreteType = type.Name;
-		    type.Package = options.GetTypeNameSpace("");
-		    type.ConvertToSqlTypeFormat = "{1}.DBValue";
-		    type.ConvertFromSqlTypeFormat = type.Name + ".GetInstance({2})";
-		    type.NewInstanceFormat = type.Name + ".DEFAULT";
-		    type.NullInstanceFormat = type.Name + ".UNSET";
-		    types.Add(type.Name, type);
-		}
-	    }
-
-	    // see if we want to generate collections for all entities
-	    XmlNodeList collectionElement = doc.DocumentElement.GetElementsByTagName ("collections");
-	    XmlNode collectionNode = collectionElement[0];
-	    Boolean generateAll = false;
-	    if (collectionNode.Attributes["generateall"] != null) {
-		generateAll = Boolean.Parse (collectionNode.Attributes["generateall"].Value.ToString ());
-	    }
-
-	    if (generateAll) {
-		// add collections for all entities as data objects to types if not already defined
-		elements = doc.DocumentElement.GetElementsByTagName ("entity");
-		foreach (XmlNode node in elements) {
-		    if (node.NodeType == XmlNodeType.Comment) {
-			continue;
-		    }
-		    if (!types.Contains (node.Attributes["name"].Value + "List")) {
-			TypeElement type = new TypeElement ();
-			type.Name = node.Attributes["name"].Value + "List";
-			type.ConcreteType = type.Name;
-			type.Package = options.GetDONameSpace ("");
-			type.NewInstanceFormat = type.Name + ".DEFAULT";
-			type.NullInstanceFormat = type.Name + ".UNSET";
-			types.Add (type.Name, type);
-		    }
-		}
-	    } else {
-		// add collections as data objects to types if not already defined
-		elements = doc.DocumentElement.GetElementsByTagName("collection");
-		foreach (XmlNode node in elements) {
-		    if (node.NodeType == XmlNodeType.Comment) {
-			continue;
-		    }
-		    if (!types.Contains(node.Attributes["name"].Value)) {
-			TypeElement type = new TypeElement();
-			type.Name = node.Attributes["name"].Value;
-			type.ConcreteType = type.Name;
-			type.Package = options.GetDONameSpace("");
-			//type.NewInstanceFormat = "new " + type.Name + "()";
-			type.NewInstanceFormat = type.Name + ".DEFAULT";
-			type.NullInstanceFormat = type.Name + ".UNSET";
-			types.Add(type.Name, type);
-		    }
-		}
-	    }
+//	    // add entities as data objects to types if not already defined
+//	    elements = doc.DocumentElement.GetElementsByTagName("entity");
+//	    foreach (XmlNode node in elements) {
+//		if (node.NodeType == XmlNodeType.Comment) {
+//		    continue;
+//		}
+//		if (!types.Contains(node.Attributes["name"].Value + "Data")) {
+//		    TypeElement type = new TypeElement();
+//		    type.Name = node.Attributes["name"].Value + "Data";
+//		    type.ConcreteType = type.Name;
+//		    type.Package = options.GetDONameSpace("");
+//		    type.NewInstanceFormat = "new " + type.Name + "()";
+//		    types.Add(type.Name, type);
+//		}
+//
+//		// TODO: needs review, hacked for Dave
+//		// add interfaces - use new x() for empty instance constructor
+//		if (!types.Contains("I" + node.Attributes["name"].Value)) {
+//		    TypeElement type = new TypeElement();
+//		    type.Name = "I" + node.Attributes["name"].Value;
+//		    type.ConcreteType = type.Name;
+//		    type.Package = options.GetDONameSpace("");
+//		    type.NewInstanceFormat = "new " + node.Attributes["name"].Value + "()";
+//		    types.Add(type.Name, type);
+//		}
+//
+//		// TODO: needs review, hacked for Dave
+//		// add business entities - use new x() for empty instance constructor
+//		if (!types.Contains(node.Attributes["name"].Value)) {
+//		    TypeElement type = new TypeElement();
+//		    type.Name = node.Attributes["name"].Value;
+//		    type.ConcreteType = type.Name;
+//		    type.Package = options.GetBusinessLogicNameSpace();
+//		    type.NewInstanceFormat = "new " + type.Name + "()";
+//		    types.Add(type.Name, type);
+//		}
+//	    }
+//
+//
+//	    // add enums to types if not already defined
+//	    elements = doc.DocumentElement.GetElementsByTagName("enum");
+//	    foreach (XmlNode node in elements) {
+//		if (node.NodeType == XmlNodeType.Comment) {
+//		    continue;
+//		}
+//		if (!types.Contains(node.Attributes["name"].Value)) {
+//		    TypeElement type = new TypeElement();
+//		    type.Name = node.Attributes["name"].Value;
+//		    type.ConcreteType = type.Name;
+//		    type.Package = options.GetTypeNameSpace("");
+//		    type.ConvertToSqlTypeFormat = "{1}.DBValue";
+//		    type.ConvertFromSqlTypeFormat = type.Name + ".GetInstance({2})";
+//		    type.NewInstanceFormat = type.Name + ".DEFAULT";
+//		    type.NullInstanceFormat = type.Name + ".UNSET";
+//		    types.Add(type.Name, type);
+//		}
+//	    }
+//
+//	    // see if we want to generate collections for all entities
+//	    XmlNodeList collectionElement = doc.DocumentElement.GetElementsByTagName ("collections");
+//	    XmlNode collectionNode = collectionElement[0];
+//	    Boolean generateAll = false;
+//	    if (collectionNode.Attributes["generateall"] != null) {
+//		generateAll = Boolean.Parse (collectionNode.Attributes["generateall"].Value.ToString ());
+//	    }
+//
+//	    if (generateAll) {
+//		// add collections for all entities as data objects to types if not already defined
+//		elements = doc.DocumentElement.GetElementsByTagName ("entity");
+//		foreach (XmlNode node in elements) {
+//		    if (node.NodeType == XmlNodeType.Comment) {
+//			continue;
+//		    }
+//		    if (!types.Contains (node.Attributes["name"].Value + "List")) {
+//			TypeElement type = new TypeElement ();
+//			type.Name = node.Attributes["name"].Value + "List";
+//			type.ConcreteType = type.Name;
+//			type.Package = options.GetDONameSpace ("");
+//			type.NewInstanceFormat = type.Name + ".DEFAULT";
+//			type.NullInstanceFormat = type.Name + ".UNSET";
+//			types.Add (type.Name, type);
+//		    }
+//		}
+//	    } else {
+//		// add collections as data objects to types if not already defined
+//		elements = doc.DocumentElement.GetElementsByTagName("collection");
+//		foreach (XmlNode node in elements) {
+//		    if (node.NodeType == XmlNodeType.Comment) {
+//			continue;
+//		    }
+//		    if (!types.Contains(node.Attributes["name"].Value)) {
+//			TypeElement type = new TypeElement();
+//			type.Name = node.Attributes["name"].Value;
+//			type.ConcreteType = type.Name;
+//			type.Package = options.GetDONameSpace("");
+//			//type.NewInstanceFormat = "new " + type.Name + "()";
+//			type.NewInstanceFormat = type.Name + ".DEFAULT";
+//			type.NullInstanceFormat = type.Name + ".UNSET";
+//			types.Add(type.Name, type);
+//		    }
+//		}
+//	    }
 	    
 	    return types;
 	}

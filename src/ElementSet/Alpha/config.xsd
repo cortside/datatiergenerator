@@ -538,6 +538,18 @@
 					<xs:element name="task" minOccurs="0" maxOccurs="unbounded">
 					    <xs:complexType>
 						<xs:sequence>
+						    <xs:element name="type" minOccurs="0" maxOccurs="unbounded">
+							<xs:complexType>
+							    <xs:attribute name="name" type="xs:string" />
+							    <xs:attribute name="concretetype" type="xs:string" />
+							    <xs:attribute name="newinstanceformat" type="xs:string" />
+							    <xs:attribute name="namespace" type="xs:string" />
+							    <xs:attribute name="converttosqltypeformat" type="xs:string" />
+							    <xs:attribute name="convertfromsqltypeformat" type="xs:string" />
+							    <xs:attribute name="convertforcompare" type="xs:string" />
+							    <xs:attribute name="nullinstanceformat" type="xs:string" />
+							</xs:complexType>
+						    </xs:element>
 						    <xs:element name="includes" minOccurs="0" maxOccurs="1">
 							<xs:complexType>
 							    <xs:sequence>

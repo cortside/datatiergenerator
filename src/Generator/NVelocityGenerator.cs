@@ -70,28 +70,33 @@ namespace Spring2.DataTierGenerator.Generator {
 	    vc.Put("options", parser.Configuration);
 	    vc.Put("element", element);
 	    vc.Put("elements", task.Elements);
+	    vc.Put("task", task);
 
-	    Template template = Velocity.GetTemplate("Template\\dtg_csharp_library.vm");
-	    template = Velocity.GetTemplate("Template\\dtg_java_library.vm");
-	    template = Velocity.GetTemplate(task.Template);
-	    template.Merge(vc, writer);
+	    try {
+		Template template = Velocity.GetTemplate("Template\\dtg_csharp_library.vm");
+		template = Velocity.GetTemplate("Template\\dtg_java_library.vm");
+		template = Velocity.GetTemplate(task.Template);
+		template.Merge(vc, writer);
 
-	    FileInfo file = new FileInfo(task.Directory + "\\" + String.Format(task.FileNameFormat, element.Name));
-	    String content = writer.ToString();
-	    if (content.Length > 0) {
-		IStyler s = parser.GetStyler(task.Styler);
-		if (s == null) {
-		    s = new NoStyler();
+		FileInfo file = new FileInfo(task.Directory + "\\" + task.FileNameFormat.Replace("{element.Name}", element.Name));
+		String content = writer.ToString();
+		if (content.Length > 0) {
+		    IStyler s = parser.GetStyler(task.Styler);
+		    if (s == null) {
+			s = new NoStyler();
+		    }
+		    IWriter w = parser.GetWriter(task.Writer);
+		    try {
+			if (w.Write(file, s.Style(content))) {
+			    WriteToLog(w.Log);
+			    WriteToLog("generating " + file.FullName);
+			} 
+		    } catch(Exception ex) { 
+			WriteToLog("error generating " + file.FullName + " -- " + ex.Message);
+		    }
 		}
-		IWriter w = parser.GetWriter(task.Writer);
-		try {
-		    if (w.Write(file, s.Style(content))) {
-			WriteToLog(w.Log);
-			WriteToLog("generating " + file.FullName);
-		    } 
-		} catch(Exception ex) { 
-		    WriteToLog("error generating " + file.FullName + " -- " + ex.Message);
-		}
+	    } catch (Exception ex) {
+		WriteToLog(ex.Message);                                                                      
 	    }
 	}
 

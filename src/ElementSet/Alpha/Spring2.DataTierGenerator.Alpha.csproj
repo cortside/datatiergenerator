@@ -381,6 +381,10 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "Template\dataobject-collection.vm"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "Template\dtg_csharp_library.vm"
                     BuildAction = "EmbeddedResource"
                 />
@@ -394,6 +398,10 @@
                 />
                 <File
                     RelPath = "Template\enum_sql_data.vm"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Template\enum-collection.vm"
                     BuildAction = "EmbeddedResource"
                 />
                 <File

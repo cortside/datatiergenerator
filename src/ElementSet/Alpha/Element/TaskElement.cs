@@ -25,6 +25,7 @@ namespace Spring2.DataTierGenerator.Element {
 	private IList parameters = new ArrayList();
 	private String writer = String.Empty;
 	private String styler = String.Empty;
+	private IList types = new ArrayList();
 
 	public String Element {
 	    get { return this.element; }
@@ -66,6 +67,11 @@ namespace Spring2.DataTierGenerator.Element {
 	    set { this.styler = value; }
 	}
 
+	public IList Types {
+	    get { return this.types; }
+	    set { this.types = value; }
+	}
+
 	/// <summary>
 	/// Parse only method. Parses and adds all entities found in the given node and adds them to the given
 	/// list.
@@ -73,13 +79,11 @@ namespace Spring2.DataTierGenerator.Element {
 	/// <param name="node"></param>
 	/// <param name="taskElements"></param>
 	public static void ParseFromXml(XmlNode node, IList taskElements) {
-
 	    if (node != null && taskElements != null) {
 
 		XmlNodeList nodes = node.SelectNodes("tasks/task");
 		foreach (XmlNode taskNode in nodes) {
-		    if (node.NodeType == XmlNodeType.Comment)
-		    {
+		    if (node.NodeType == XmlNodeType.Comment) {
 			continue;
 		    }
 		    TaskElement taskElement = new TaskElement();
@@ -101,8 +105,7 @@ namespace Spring2.DataTierGenerator.Element {
 	    ArrayList list = new ArrayList();
 	    XmlNodeList nodes = root.SelectNodes("tasks/task");
 	    foreach (XmlNode node in nodes) {
-		if (node.NodeType == XmlNodeType.Comment)
-		{
+		if (node.NodeType == XmlNodeType.Comment) {
 		    continue;
 		}
 		TaskElement task = new TaskElement();
@@ -119,6 +122,7 @@ namespace Spring2.DataTierGenerator.Element {
 		task.Parameters = ParameterElement.ParseFromXml(options, node, vd);
 		task.Writer = GetAttributeValue(node, WRITER, task.Writer);
 		task.Styler = GetAttributeValue(node, STYLER, task.Styler);
+		TypeElement.ParseFromXml(node, task.Types);
 
 		list.Add(task);
 	    }
@@ -154,6 +158,40 @@ namespace Spring2.DataTierGenerator.Element {
 		return true;
 	    } else {
 		return false;
+	    }
+	}
+
+	public static void RegisterTypes(XmlNode root, Configuration options, IList tasks, Hashtable types) {
+	    foreach(TaskElement task in tasks) {
+		String xpath = String.Empty;
+		if (task.Element.Equals("entity")) {
+		    xpath = "DataTierGenerator/entities/entity";
+		} else if (task.Element.Equals("enum")) {
+		    xpath = "DataTierGenerator/enums/enum";
+		} else if (task.Element.Equals("collection")) {
+		    xpath = "DataTierGenerator/collections/collection";
+		}
+		if (xpath.Length > 0) {
+		    foreach (XmlNode node in root.SelectNodes(xpath)) {
+			foreach (TypeElement type in task.Types) {
+			    TypeElement t = new TypeElement();
+			    t.ConcreteType = type.ConcreteType.Replace("{element.Name}", node.Attributes["name"].Value);
+			    t.ConvertForCompare = type.ConvertForCompare.Replace("{element.Name}", node.Attributes["name"].Value);
+			    t.ConvertFromSqlTypeFormat = type.ConvertFromSqlTypeFormat.Replace("{element.Name}", node.Attributes["name"].Value);
+			    t.ConvertToSqlTypeFormat = type.ConvertToSqlTypeFormat.Replace("{element.Name}", node.Attributes["name"].Value);
+			    t.Name = type.Name.Replace("{element.Name}", node.Attributes["name"].Value);
+			    t.NewInstanceFormat = type.NewInstanceFormat.Replace("{element.Name}", node.Attributes["name"].Value);
+			    t.NullInstanceFormat = type.NullInstanceFormat.Replace("{element.Name}", node.Attributes["name"].Value);
+			    t.Package = options.RootNameSpace + "." + task.Directory.Replace("\\", ".");
+
+			    if (!types.Contains(t.Name)) {{}
+				types.Add(t.Name, t);
+			    } else {
+				throw new Exception(t.Name + " already registered as type :: \n" + node.OuterXml );
+			    }
+			}
+		    }
+		}
 	    }
 	}
 

@@ -20,8 +20,7 @@ namespace Spring2.DataTierGenerator.Element {
 	    if (node != null && elements != null) {
 		XmlNodeList includes = node.SelectNodes("includes/include");
 		foreach (XmlNode include in includes) {
-		    if (include.NodeType == XmlNodeType.Comment)
-		    {
+		    if (include.NodeType == XmlNodeType.Comment) {
 			continue;
 		    }
 		    IncludeElement element = new IncludeElement();
@@ -35,8 +34,7 @@ namespace Spring2.DataTierGenerator.Element {
 	    ArrayList elements = new ArrayList();
 	    XmlNodeList includes = node.SelectNodes("includes/include");
 	    foreach (XmlNode include in includes) {
-		if (include.NodeType == XmlNodeType.Comment)
-		{
+		if (include.NodeType == XmlNodeType.Comment) {
 		    continue;
 		}
 		IncludeElement element = new IncludeElement();

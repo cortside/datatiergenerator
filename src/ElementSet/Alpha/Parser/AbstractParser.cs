@@ -54,6 +54,10 @@ namespace Spring2.DataTierGenerator.Parser {
 	    get { return reportExtractions; }
 	}
 
+	public Hashtable Types {
+	    get { return types; }   
+	}
+
 
 	private IList log = new ArrayList();
 

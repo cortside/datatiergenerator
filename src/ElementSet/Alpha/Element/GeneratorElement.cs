@@ -49,7 +49,6 @@ namespace Spring2.DataTierGenerator.Element {
 	/// <param name="node"></param>
 	/// <param name="generatorElements"></param>
 	public static void ParseFromXml(XmlNode node, IList generatorElements) {
-
 	    if (node != null && generatorElements != null) {
 
 		foreach (XmlNode generatorNode in node.ChildNodes) {

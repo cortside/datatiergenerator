@@ -27,7 +27,7 @@ namespace Spring2.DataTierGenerator.DTGEditor {
 
 	private IList entities = new ArrayList();
 	private IList databases = new ArrayList();
-	private ICollection types = new ArrayList();
+	private Hashtable types = new Hashtable();
 	private ICollection sqltypes = new ArrayList();
 	private IList enums = new ArrayList();
 	private IList collections = new ArrayList();
@@ -386,12 +386,12 @@ namespace Spring2.DataTierGenerator.DTGEditor {
 //	    }
 //	    tree.Nodes.Add(node);
 //
-//	    types = p.Types;
-//	    node = new TreeNode("Types");
-//	    foreach(TypeElement type in types) {
-//		node.Nodes.Add(type.Name);
-//	    }
-//	    tree.Nodes.Add(node);
+	    types = p.Types;
+	    node = new TreeNode("Types");
+	    foreach(TypeElement type in types.Values) {
+		node.Nodes.Add(type.Name);
+	    }
+	    tree.Nodes.Add(node);
 
 	    enums = p.Enums;
 	    node = new TreeNode("Enums");

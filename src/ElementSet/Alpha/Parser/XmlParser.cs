@@ -79,6 +79,13 @@ namespace Spring2.DataTierGenerator.Parser {
 		this.options = new Configuration();
 	    }
 
+	    sqltypes = SqlTypeElement.ParseFromXml(doc, vd);
+	    types = TypeElement.ParseFromXml(options, doc, vd);
+
+	    // parse generate/task information so that type registration will happen before other types are loaded
+	    generator = GeneratorElement.ParseFromXml(options, doc, vd);
+	    TaskElement.RegisterTypes(doc, options, generator.Tasks, types);
+
 	    // see if we want to generate collections for all entities
 	    XmlNodeList collectionElement = doc.DocumentElement.GetElementsByTagName ("collections");
 	    XmlNode collectionNode = collectionElement[0];
@@ -95,10 +102,6 @@ namespace Spring2.DataTierGenerator.Parser {
 	    if (!options.RootDirectory.EndsWith("\\")) {
 		options.RootDirectory += "\\";
 	    }
-
-	    generator = GeneratorElement.ParseFromXml(options, doc, vd);
-	    sqltypes = SqlTypeElement.ParseFromXml(doc, vd);
-	    types = TypeElement.ParseFromXml(options, doc, vd);
 
 	    enumtypes = EnumElement.ParseFromXml(options,doc,sqltypes,types, vd);
 	    databases = DatabaseElement.ParseFromXml(options, doc, sqltypes, types, vd);
