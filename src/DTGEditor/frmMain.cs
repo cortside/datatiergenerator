@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using System.Data;
 using System.Xml;
 using System.Xml.Schema;
+using System.Reflection;
 
 using Spring2.Core.Xml;
 
@@ -69,7 +70,7 @@ namespace Spring2.DataTierGenerator.DTGEditor {
 	    base.Dispose( disposing );
 	}
 
-		#region Windows Form Designer generated code
+	#region Windows Form Designer generated code
 	/// <summary>
 	/// Required method for Designer support - do not modify
 	/// the contents of this method with the code editor.
@@ -255,6 +256,7 @@ namespace Spring2.DataTierGenerator.DTGEditor {
 	}
 		#endregion
 
+
 	/// <summary>
 	/// The main entry point for the application.
 	/// </summary>
@@ -267,7 +269,6 @@ namespace Spring2.DataTierGenerator.DTGEditor {
 		Application.Run(new frmMain());
 	    }
 	}
-
 
 	private static void Generate(String filename) {
 	    try {
@@ -285,8 +286,25 @@ namespace Spring2.DataTierGenerator.DTGEditor {
 
 		XmlParser p = new XmlParser(filename);
 		if (p.IsValid) {
-		    CodeGenerator g = new CodeGenerator(p);
-		    g.Generate();
+		    IGenerator g = null;
+		    try {
+			// locate and instanciate the Generator class specified by the parser
+			System.Type clazz = System.Type.GetType(p.Generator.Class, true);
+			Object[] args = { p };
+			Object o = System.Activator.CreateInstance(clazz, args);
+			if (o is IGenerator) {
+			    g = (IGenerator) o;
+			} else  {
+			    Console.Out.WriteLine("ERROR: class " + p.Generator.Class + " does not support IGenerator interface.\n");
+			}
+		    } catch (Exception ex) {
+			Console.Out.WriteLine("ERROR: could not instanciate generator class " + p.Generator.Class + "\n" + ex);
+		    }
+
+		    // if the generator is not null, generate
+		    if (g != null) {
+			g.Generate();
+		    }
 		} else {
 		    Console.Out.WriteLine("ERROR: Parser found errors:\n" + p.ErrorDescription);
 		}
@@ -299,6 +317,8 @@ namespace Spring2.DataTierGenerator.DTGEditor {
 	    } catch (Exception ex) {
 		MessageBox.Show("An error occcurred while generating.\n\n" + ex.ToString());
 		Console.Out.WriteLine("An error occcurred while generating.\n\n" + ex.ToString());
+	    } finally {
+		//sw.Close();
 	    }
 	}
 
@@ -440,6 +460,8 @@ namespace Spring2.DataTierGenerator.DTGEditor {
 		ShowEntities(level, nodeText, parentNodeText);
 	    } else if (top.Text.Equals("Enums")) {
 		ShowEnums(level, nodeText, parentNodeText);
+	    } else if (top.Text.Equals("Collections")) {
+		ShowCollections(level, nodeText, parentNodeText);
 	    }
 
 	    ResizeListViewColumns(listView1, -2);
@@ -541,6 +563,7 @@ namespace Spring2.DataTierGenerator.DTGEditor {
 		listView1.Columns.Add("Name", -1, HorizontalAlignment.Left);
 		listView1.Columns.Add("Description", -1, HorizontalAlignment.Left);
 		listView1.Columns.Add("IntegerBased", -1, HorizontalAlignment.Left);
+		listView1.Columns.Add("Template", -1, HorizontalAlignment.Left);
 
 		IList list;
 		if (level==0) {
@@ -553,6 +576,7 @@ namespace Spring2.DataTierGenerator.DTGEditor {
 		    ListViewItem lvi = new ListViewItem(e.Name);
 		    lvi.SubItems.Add(e.Description);
 		    lvi.SubItems.Add(e.IntegerBased.ToString());
+		    lvi.SubItems.Add(e.Template);
 		    listView1.Items.Add(lvi);
 		}
 	    }
@@ -570,6 +594,34 @@ namespace Spring2.DataTierGenerator.DTGEditor {
 		    listView1.Items.Add(lvi);
 		}
 
+	    }
+	}
+
+
+	private void ShowCollections(Int32 level, String nodeText, String parentNodeText) {
+	    listView1.Items.Clear();
+	    listView1.Columns.Clear();
+
+	    if (level==0 || level==1) {
+		listView1.Columns.Add("Name", -1, HorizontalAlignment.Left);
+		listView1.Columns.Add("Description", -1, HorizontalAlignment.Left);
+		listView1.Columns.Add("Type", -1, HorizontalAlignment.Left);
+		listView1.Columns.Add("Template", -1, HorizontalAlignment.Left);
+
+		IList list;
+		if (level==0) {
+		    list = collections;
+		} else {
+		    list = new ArrayList();
+		    list.Add(Collection.FindByName((ArrayList)collections, nodeText));
+		}
+		foreach(Collection e in list) {
+		    ListViewItem lvi = new ListViewItem(e.Name);
+		    lvi.SubItems.Add(e.Description);
+		    lvi.SubItems.Add(e.Type);
+		    lvi.SubItems.Add(e.Template);
+		    listView1.Items.Add(lvi);
+		}
 	    }
 	}
 
