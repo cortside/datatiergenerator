@@ -1703,7 +1703,7 @@ namespace DataTierGenerator {
 			String s;
 
 			s = db + ".DataAccess." + table.Replace(" ", "_");
-			s = m_strProjectNameSpace  + ".DataAccessObjects";
+			s = m_strProjectNameSpace  + ".DAO";
 
 			return s;
 		}
@@ -1713,7 +1713,7 @@ namespace DataTierGenerator {
 
 			if (db != null && table != null)
 				s = db + ".DataAccess." + table.Replace(" ", "_");
-			s = m_strProjectNameSpace  + ".DataObjects";
+			s = m_strProjectNameSpace  + ".DataObject";
 
 			return s;
 		}
@@ -1757,7 +1757,7 @@ namespace DataTierGenerator {
 			for (intIndex = 0; intIndex < arrFieldList.Count; intIndex++) {
 				objField = (clsField)arrFieldList[intIndex];
 				//if (objField.IsIdentity == false && objField.IsRowGuidCol == false) {
-					objStringBuilder.Append("\t\tprivate ").Append(objField.ParameterType).Append(" m_").Append(objField.ColumnName).Append(";\n");
+					objStringBuilder.Append("\t\tprivate ").Append(objField.ParameterType).Append(" ").Append(GetFieldFormat(objField.ColumnName)).Append(";\n");
 				//}
 				objField = null;
 			}
@@ -1767,9 +1767,9 @@ namespace DataTierGenerator {
 			for (intIndex = 0; intIndex < arrFieldList.Count; intIndex++) {
 				objField = (clsField)arrFieldList[intIndex];
 				//if (objField.IsIdentity == false && objField.IsRowGuidCol == false) {
-					objStringBuilder.Append("\t\tpublic ").Append(objField.ParameterType).Append(" ").Append(objField.ColumnName).Append(" {\n");
-					objStringBuilder.Append("\t\t\tget { return m_").Append(objField.ColumnName).Append("; }\n");
-					objStringBuilder.Append("\t\t\tset { m_").Append(objField.ColumnName).Append(" = value; }\n");
+					objStringBuilder.Append("\t\tpublic ").Append(objField.ParameterType).Append(" ").Append(GetMethodFormat(objField.ColumnName)).Append(" {\n");
+					objStringBuilder.Append("\t\t\tget { return this.").Append(GetFieldFormat(objField.ColumnName)).Append("; }\n");
+					objStringBuilder.Append("\t\t\tset { this.").Append(GetFieldFormat(objField.ColumnName)).Append(" = value; }\n");
 					objStringBuilder.Append("\t\t}\n\n");
 				//}
 				objField = null;
@@ -1931,6 +1931,15 @@ objStringBuilder.Append("\n");
 			}
 
 			return new clsField();
+		}
+
+
+		private String GetFieldFormat(String s) {
+			return s.Substring(0, 1).ToLower() + s.Substring(1);
+		}
+
+		private String GetMethodFormat(String s) {
+			return s.Substring(0, 1).ToUpper() + s.Substring(1);
 		}
 
 	}
