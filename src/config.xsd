@@ -174,6 +174,7 @@
                                                                                     <xs:attribute name="precision" type="xs:nonNegativeInteger" />
                                                                                     <xs:attribute name="scale" type="xs:nonNegativeInteger" />
                                                                                     <xs:attribute name="expression" type="xs:string" />
+                                                                                    <xs:attribute name="default" type="xs:string" />
                                                                                 </xs:complexType>
                                                                             </xs:element>
                                                                         </xs:sequence>
@@ -310,6 +311,21 @@
                                     <xs:attribute name="element" type="xs:string" />
                                     <xs:attribute name="directory" type="xs:string" />
                                     <xs:attribute name="filenameformat" type="xs:string" />
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                        <xs:attribute name="class" type="xs:string" />
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="parser">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="argument" minOccurs="0" maxOccurs="unbounded">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                    </xs:sequence>
+                                    <xs:attribute name="value" type="xs:string" />
+                                    <xs:attribute name="name" type="xs:string" />
                                 </xs:complexType>
                             </xs:element>
                         </xs:sequence>
