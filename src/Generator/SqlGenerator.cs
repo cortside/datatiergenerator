@@ -18,7 +18,7 @@ namespace Spring2.DataTierGenerator.Generator {
 
 	// sql keywords that need escaping.  all values need to be enclosed in a pair of | characters.  values should be lower case.
 	private static readonly String KEYWORDS = 
-		"|add|except|percent|all|exec|plan|alter|execute|precision|and|exists|primary|any|exit|print|as|fetch" +
+		"|min|max|add|except|percent|all|exec|plan|alter|execute|precision|and|exists|primary|any|exit|print|as|fetch" +
 		"|proc|asc|file|procedure|authorization|fillfactor|public|backup|for|raiserror|begin|foreign" +
 		"|read|between|freetext|readtext|break|freetexttable|reconfigure|browse|from|references|bulk" +
 		"|full|replication|by|function|restore|cascade|goto|restrict|case|grant|return|check|group" +
