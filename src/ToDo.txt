@@ -12,6 +12,7 @@ Todo:
     - define default types and sqltypes so that they don't have to be defined in every config file if they are default.
     - DataObject, DAO, stored proc, view name formats specifiable in config.xml
 	- ident level in generating code
+    - look for read-only files when writing output and change the attribute before proceeding.
 
 Completed:
     - preservation of custom regions (pull code from regions and insert into generated source before overwritting)
