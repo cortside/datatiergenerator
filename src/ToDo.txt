@@ -1,3 +1,5 @@
+how to support read only properties
+
 Generator Todo:
 ---------------
     M remove support for CodeGenerator; make <generator> a required element
@@ -35,7 +37,7 @@ Generator Todo:
     - to support generating business logic entities:
 	- add attribute to entity (
     - check for duplicate defined properties/columns
-
+    - modify schema to ensure that required elements are set (i.e. constraint/@type) or gracefully deal when they are not
 
 Template Todo:
 --------------
