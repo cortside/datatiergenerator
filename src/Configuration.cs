@@ -1,9 +1,11 @@
 using System;
+using System.Collections;
 using System.Reflection;
 using System.Text;
 using System.Xml;
 
 using Spring2.DataTierGenerator.Parser;
+using Spring2.DataTierGenerator.Element;
 
 namespace Spring2.DataTierGenerator {
     public class Configuration : ConfigurationData {
@@ -150,6 +152,85 @@ namespace Spring2.DataTierGenerator {
 	    return s;
 	}
 
+	/// <summary>
+	/// Returns the phrase to use to get the sql format of a type.  Currently
+	/// only used with Velocity generator.
+	/// </summary>
+	/// <param name="field">Field whose sql format is needed.</param>
+	/// <returns>String for converting the field to sql format (like artProjectId.DBValue)</returns>
+	public String GetSqlConversion(Field field) {
+	    return String.Format(field.Type.ConvertToSqlTypeFormat, "", field.GetFieldFormat(), "", "", field.GetFieldFormat());
+	}
 
+	/// <summary>
+	/// Returns the syntax to get the data type of a field from a DataReader object.
+	/// Currently only used with Velocity generator.
+	/// </summary>
+	/// <param name="field">Field whose reader syntax is needed.</param>
+	/// <returns>Reader syntax to use.</returns>
+	public String GetReaderString(Field field) {
+	    String readerMethod = String.Format(field.Column.SqlType.ReaderMethodFormat, "dataReader", field.Column.Name);
+	    if (field.Type.ConvertFromSqlTypeFormat.Length >0) 
+	    {
+		readerMethod = 
+		    String.Format(field.Type.ConvertFromSqlTypeFormat, "data", field.GetMethodFormat(), readerMethod, "dataReader", field.Column.Name);
+	    } 
+	    return readerMethod;
+	}
+
+	/// <summary>
+	/// Returns the syntax to get the data type of a field from a stored procedure 
+	/// return value.  Note it assumes the command used to execute the stored
+	/// procedure is named "cmd".  Currently only used with Velocity generator.
+	/// </summary>
+	/// <param name="field">Field whose reader syntax is needed.</param>
+	/// <returns>Reader syntax to use.</returns>
+	public String GetProcedureReturnString(Field field) 
+	{
+	    String readerMethod = "cmd.Parameters[\"RETURN_VALUE\"].Value";
+	    if (field.Type.ConvertFromSqlTypeFormat.Length >0) 
+	    {
+		readerMethod = 
+		    String.Format(field.Type.ConvertFromSqlTypeFormat, "", "", 
+				  readerMethod, "", "");
+	    } 
+	    return readerMethod;
+	}
+
+	/// <summary>
+	/// Returns sorted list of name spaces needed for the entity.
+	/// </summary>
+	/// <param name="entity">Entity code is being generated for</param>
+	/// <param name="isDaoClass">Indicates if a DAO class is being generated.</param>
+	/// <returns></returns>
+	public ArrayList GetUsingNamespaces(Entity entity, Boolean isDaoClass) 
+	{
+
+	    ArrayList namespaces = new ArrayList();
+	    namespaces.Add("System");
+
+	    if (isDaoClass) 
+	    {
+		namespaces.Add("System.Collections");
+		namespaces.Add("System.Configuration");
+		namespaces.Add("System.Data");
+		namespaces.Add("System.Data.SqlClient");
+		namespaces.Add("Spring2.Core.DAO");
+		namespaces.Add(GetDONameSpace(null));
+	    }
+
+	    foreach (Field field in entity.Fields) 
+	    {
+		if (!field.Type.Package.Equals(String.Empty) && !namespaces.Contains(field.Type.Package)) 
+		{
+		    namespaces.Add(field.Type.Package);
+		}
+	    }
+
+	    Array names = namespaces.ToArray(typeof(String));
+	    Array.Sort(names);
+
+	    return new ArrayList(names);
+	}
     }
 }
