@@ -124,6 +124,11 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "Generator\ElementList.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Generator\IElement.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
