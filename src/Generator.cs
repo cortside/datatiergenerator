@@ -78,6 +78,12 @@ namespace Spring2.DataTierGenerator {
 		EnumGenerator eg = new EnumGenerator(options, type);
 		eg.Generate();
 	    }
+
+	    ArrayList collections = Collection.ParseFromXml(options,doc,sqltypes,types);
+	    foreach (Collection collection in collections) {
+		CollectionGenerator cg = new CollectionGenerator(options, collection);
+		cg.Generate();
+	    }
 			
 	    Console.Out.WriteLine(String.Empty.PadLeft(20,'='));
 	}
@@ -307,9 +313,8 @@ namespace Spring2.DataTierGenerator {
 
 	    // Get a list of the entities in the database
 	    DataTable table = new DataTable();
-	    //SqlDataAdapter adapter = new SqlDataAdapter("SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_CATALOG = '" + connection.Database + "'", connection);
-	    //SqlDataAdapter adapter = new SqlDataAdapter("SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_CATALOG = '" + connection.Database + "' and TABLE_NAME in ('ServiceArea', 'Users', 'SecurityGroupFunction', 'SecurityGroup', 'Function', 'Firm','OrderAllocation','OrderDelivery','OrderDetail','OrderDetailOption','Orders','OrderVendor','OrdPmt','Pmt_Type','GroupOrders','GroupOrderDetail','GroupOrderVendors','ErrorLog', 'FirmLocation', 'FirmRule', 'FirmLocRule')", connection);
-	    SqlDataAdapter adapter = new SqlDataAdapter("SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_CATALOG = '" + connection.Database + "' and TABLE_NAME in ('Address')", connection);
+	    SqlDataAdapter adapter = new SqlDataAdapter("SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_CATALOG = '" + connection.Database + "'", connection);
+	    //SqlDataAdapter adapter = new SqlDataAdapter("SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_CATALOG = '" + connection.Database + "' and TABLE_NAME in ('Address')", connection);
 	    adapter.Fill(table);
 	    
 	    form.Maximum= table.Rows.Count +1;
