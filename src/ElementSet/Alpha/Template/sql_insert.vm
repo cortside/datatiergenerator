@@ -48,7 +48,7 @@ if @@rowcount <> 1 or @@error!=0
         RETURN(-1)
     END
 
-return @@IDENTITY
+return SCOPE_IDENTITY()
 GO
 
 #if ($element.User.Length > 0)
