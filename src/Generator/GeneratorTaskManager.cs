@@ -6,22 +6,52 @@ using System.IO;
 using System.Text;
 using System.Xml;
 
+using NVelocity;
+using NVelocity.App;
+
 using Spring2.DataTierGenerator;
 using Spring2.DataTierGenerator.Element;
+using Spring2.DataTierGenerator.Generator.Writer;
 using Spring2.DataTierGenerator.Parser;
 using Spring2.DataTierGenerator.Util;
-using Spring2.DataTierGenerator.Generator.Task;
 
 namespace Spring2.DataTierGenerator.Generator {
 
     public class GeneratorTaskManager : GeneratorSkeleton, IGenerator {
 	private IParser parser;
+	private Hashtable tools = new Hashtable();
 
 	public GeneratorTaskManager(IParser parser) {
 	    this.parser = parser;
 	    this.options = parser.Configuration;
+
+	    InitNVelocity();
+
+	    foreach(ToolElement tool in parser.Generator.Tools) {
+		try {
+		    Type clazz = System.Type.GetType(tool.Class);
+		    if (clazz != null) {
+			Object o = System.Activator.CreateInstance(clazz);
+			tools.Add(tool.Name, o);
+		    } else {
+			WriteToLog("Could not find class '" + tool.Class + "', '" + tool.Name + "' will not be added to toolbox.");
+		    }
+		} catch (Exception ex) {
+		    WriteToLog("Error trying to create tool '" + tool.Name + "': " + ex.Message);
+		}
+	    }
 	}
 
+
+	/// <summary>
+	/// Init the NVelocity singleton
+	/// </summary>
+	private void InitNVelocity() {
+	    Velocity.SetProperty(NVelocity.Runtime.RuntimeConstants_Fields.FILE_RESOURCE_LOADER_CACHE, true);
+	    Velocity.Init();
+	}
+
+	
 	public override void Generate() {
 	    if (parser.IsValid) {
 
@@ -29,21 +59,6 @@ namespace Spring2.DataTierGenerator.Generator {
 		    WriteToLog("The parser is in a valid state, but reported the following issues:");
 		    foreach(String s in parser.Log) {
 			WriteToLog(s);
-		    }
-		}
-
-		Hashtable tools = new Hashtable();
-		foreach(ToolElement tool in parser.Generator.Tools) {
-		    try {
-			Type clazz = System.Type.GetType(tool.Class);
-			if (clazz != null) {
-			    Object o = System.Activator.CreateInstance(clazz);
-			    tools.Add(tool.Name, o);
-			} else {
-			    WriteToLog("Could not find class '" + tool.Class + "', '" + tool.Name + "' will not be added to toolbox.");
-			}
-		    } catch (Exception ex) {
-			WriteToLog("Error trying to create tool '" + tool.Name + "': " + ex.Message);
 		    }
 		}
 
@@ -58,9 +73,7 @@ namespace Spring2.DataTierGenerator.Generator {
 					parameters.Add(parameter.Name, parameter.Value);
 				    }
 
-				    IGenerator g = new VelocityTask(options, database.SqlEntities, sqlentity, task, sqlentity.Name, tools, parameters);
-				    g.Generate();
-				    ((ArrayList)Log).AddRange(g.Log);
+				    GenerateFile(database.SqlEntities, sqlentity, task, parameters);
 				}
 			    }
 
@@ -81,9 +94,7 @@ namespace Spring2.DataTierGenerator.Generator {
 				    parameters.Add(parameter.Name, parameter.Value);
 				}
 
-				IGenerator g = new VelocityTask(options, parser.Entities, entity, task, entity.Name, tools, parameters);
-				g.Generate();
-				((ArrayList)Log).AddRange(g.Log);
+				GenerateFile(parser.Entities, entity, task, parameters);
 			    }
 			}
 
@@ -101,9 +112,7 @@ namespace Spring2.DataTierGenerator.Generator {
 				    parameters.Add(parameter.Name, parameter.Value);
 				}
 
-				IGenerator g = new VelocityTask(options, parser.Enums, type, task, type.Name, tools, parameters);
-				g.Generate();
-				((ArrayList)Log).AddRange(g.Log);
+				GenerateFile(parser.Enums, type, task, parameters);
 			    }
 			}
 		    }
@@ -119,9 +128,7 @@ namespace Spring2.DataTierGenerator.Generator {
 				    parameters.Add(parameter.Name, parameter.Value);
 				}
 
-				IGenerator g = new VelocityTask(options, parser.Collections, collection, task, collection.Name, tools, parameters);
-				g.Generate();
-				((ArrayList)Log).AddRange(g.Log);
+				GenerateFile(parser.Collections, collection, task, parameters);
 			    }
 			}
 		    }
@@ -134,9 +141,7 @@ namespace Spring2.DataTierGenerator.Generator {
 			parameters.Add(parameter.Name, parameter.Value);
 		    }
 
-		    IGenerator g = new VelocityTask(options, DatabaseElement.GetAllSqlEntities(parser.Databases), null, task, "sqlentities", tools, parameters);;
-		    g.Generate();
-		    ((ArrayList)Log).AddRange(g.Log);
+		    GenerateFile(DatabaseElement.GetAllSqlEntities(parser.Databases), null, task, parameters);;
 		}
 
 		tasks = parser.Generator.FindTasksByElement("entities");
@@ -146,18 +151,46 @@ namespace Spring2.DataTierGenerator.Generator {
 			parameters.Add(parameter.Name, parameter.Value);
 		    }
 
-		    IGenerator g = new VelocityTask(options, parser.Entities, null, task, "entities", tools, parameters);
-		    g.Generate();
-		    ((ArrayList)Log).AddRange(g.Log);
+		    GenerateFile(parser.Entities, null, task, parameters);
 		}
-
 	    } else {
 		WriteToLog("Parser was not in a valid state and reported the following errors:");
 		foreach(String s in parser.Log) {
 		    WriteToLog(s);
 		}
 	    }
-			
+	}
+
+
+	private void GenerateFile(IList elements, ElementSkeleton element, TaskElement task, Hashtable parameters) {
+	    IndentableStringWriter writer = new IndentableStringWriter();
+
+	    VelocityContext vc = new VelocityContext();
+	    foreach(Object key in tools.Keys) {
+		vc.Put(key.ToString(), tools[key]);
+	    }
+	    foreach(Object key in parameters.Keys) {
+		vc.Put(key.ToString(), parameters[key]);
+	    }
+	    vc.Put("dtgversion", this.GetType().Assembly.FullName);
+	    vc.Put("options", options);
+	    vc.Put("element", element);
+	    vc.Put("elements", elements);
+
+	    Template template = Velocity.GetTemplate("Template\\dtg_csharp_library.vm");
+	    template = Velocity.GetTemplate("Template\\dtg_java_library.vm");
+	    template = Velocity.GetTemplate(task.Template);
+	    template.Merge(vc, writer);
+
+	    FileInfo file = new FileInfo(options.RootDirectory + task.Directory + "\\" + String.Format(task.FileNameFormat, element.Name));
+	    String content = writer.ToString();
+	    if (content.Length > 0) {
+		IWriter w = WriterFactory.GetWriter(task.Writer);
+		if (w.Write(file, content)) {
+		    WriteToLog(w.Log);
+		    WriteToLog("generating " + file.FullName);
+		}
+	    }
 	}
 
     }
