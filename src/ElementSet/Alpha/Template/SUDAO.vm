@@ -44,6 +44,7 @@ namespace $options.GetDAONameSpace($element.Name)
         /// <summary>
         /// Initializes the static map of property names to sql expressions.
         /// </summary>
+        [Generate]
         static ${options.GetDAOClassName($element.Name)}() 
         {
 #foreach($field in $element.fields)
@@ -486,11 +487,11 @@ namespace $options.GetDAONameSpace($element.Name)
 #end
 #else
         WhereClause filter = new WhereClause("$finder.Expression");
-        SqlCommand cmd = GetSqlCommand(CONNECTION_STRING_KEY, "Select * from " +#if($element.SqlEnity.UseView) [VIEW]#else [TABLE]#end#if($element.SqlEntity.DefaultDirtyRead) + "(nolock)"#end + filter.FormatSql(), CommandType.Text);
+        SqlCommand cmd = GetSqlCommand($element.SqlEntity.Key, "Select * from " +#if($element.SqlEnity.UseView) VIEW#else TABLE#end#if($element.SqlEntity.DefaultDirtyRead) + "(nolock)"#end + filter.FormatSql(), CommandType.Text);
 #foreach($field in $finder.Fields)
         cmd.Parameters.Add(new SqlParameter("@$field.GetPropertyName()", SqlDbType.$field.GetSqlType().SqlDbType, $field.GetSqlType.Length, ParameterDirection.Input, false, 0, 0, "$field.GetPropertyName()", DataRowVersion.Proposed, $options.GetSqlConversion($field)));
 #end
-        SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+        SqlDataReader dataReader = cmd.ExecuteReader();
 #if($finder.Unique)
         if (!dataReader.Read()) {
             dataReader.Close();

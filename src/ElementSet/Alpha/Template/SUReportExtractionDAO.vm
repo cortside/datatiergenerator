@@ -107,17 +107,6 @@ namespace $options.GetReportExtractionDAONameSpace($element.Name)
         }
 
         /// <summary>
-        /// Returns a list of all $element.Name rows.
-        /// </summary>
-        /// <returns>List of $options.GetDOClassName($element.Name) objects.</returns>
-        /// <exception cref="Spring2.Core.DAO.FinderException">Thrown when no rows are found.</exception>
-        [Generate]
-        public static $listtype GetList ()
-        {   
-            return GetList(null, null);
-        }
-
-        /// <summary>
         /// Returns a filtered list of $element.Name rows.
         /// </summary>
         /// <param name="whereClause">Filtering criteria.</param>
@@ -153,7 +142,7 @@ namespace $options.GetReportExtractionDAONameSpace($element.Name)
         { 
            string sqlStatement = GetSqlStatement(whereClause, orderByClause);
            
-           SqlDataReader dataReader = ExecuteReader("$element.GetFirstEntityReference().Entity.SqlEntity.Key", sqlStatement);
+           SqlDataReader dataReader = ExecuteReader($element.GetFirstEntityReference().Entity.SqlEntity.Key, sqlStatement);
            
            $listtype list = new $listtype(); 
 
@@ -271,11 +260,11 @@ namespace $options.GetReportExtractionDAONameSpace($element.Name)
             $listtype list = GetList(filter, null);
 #else
             WhereClause filter = new WhereClause("$finder.Expression()");
-            SqlCommand cmd = GetSqlCommand("$element.GetFirstEntityReference().Entity.SqlEntity.Key", GetSqlStatement(filter, null), CommandType.Text);
+            SqlCommand cmd = GetSqlCommand($element.GetFirstEntityReference().Entity.SqlEntity.Key, GetSqlStatement(filter, null), CommandType.Text);
 #foreach($field in $finder.Fields)
             cmd.Parameters.Add(new SqlParameter("@$field.GetPropertyName()", SqlDbType.$field.GetSqlType().SqlDbType, $field.GetSqlType.Length, ParameterDirection.Input, false, 0, 0, "$field.GetPropertyName()", DataRowVersion.Proposed, $options.GetSqlConversion($field)));
 #end
-            SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+            SqlDataReader dataReader = cmd.ExecuteReader();
             $listtype list = new $listtype(); 
 
             while (dataReader.Read()) 
