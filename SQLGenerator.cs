@@ -141,8 +141,8 @@ namespace Spring2.DataTierGenerator {
 	/// <param name="fields">ArrayList object containing one or more Field objects as defined in the table.</param>
 	public void CreateUpdateStoredProcedure() {
 	    Field field;
-	    Field objOldField;
-	    Field objNewField;
+//	    Field objOldField;
+//	    Field objNewField;
 	    int i;
 	    StringBuilder sb = new StringBuilder(1024);
 	    int intWhereClauseCount;
@@ -597,8 +597,8 @@ namespace Spring2.DataTierGenerator {
 	    sb.Append("]\n");
 
 	    // Write out the stored procedure
-	    String fileName = options.RootDirectory + options.SqlScriptDirectory + "\\view\\" + strProcName + ".view.sql";
-	    WriteToFile(fileName, sb.ToString() + "\nGO\n\n", options.SingleFile);
+	    FileInfo file = new FileInfo(options.RootDirectory + options.SqlScriptDirectory + "\\view\\" + strProcName + ".view.sql");
+	    WriteToFile(file, sb.ToString() + "\nGO\n\n", options.SingleFile);
 	    sb = null;
 	}
 
@@ -625,8 +625,8 @@ namespace Spring2.DataTierGenerator {
 
 	    sb.Append(strStoredProcText);
 
-	    String fileName = options.RootDirectory + options.SqlScriptDirectory + "\\proc\\" + strStoredProcName + ".proc.sql";
-	    WriteToFile(fileName, sb.ToString(), options.SingleFile);
+	    FileInfo file = new FileInfo(options.RootDirectory + options.SqlScriptDirectory + "\\proc\\" + strStoredProcName + ".proc.sql");
+	    WriteToFile(file, sb.ToString(), options.SingleFile);
 	}
 
     }

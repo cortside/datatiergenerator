@@ -86,7 +86,8 @@ namespace Spring2.DataTierGenerator {
 		sb.Append("\t\t</entity>\n");
 	    }
 	    sb.Append("\t</entities>\n");
-	    WriteToFile(options.XmlConfigFilename + ".generated.xml", sb.ToString(), false);
+	    FileInfo file = new FileInfo(options.XmlConfigFilename + ".generated.xml");
+	    WriteToFile(file, sb.ToString(), false);
 	}
 
 
@@ -121,7 +122,7 @@ namespace Spring2.DataTierGenerator {
 			    entities.Add(entity);
 			}
 		    }
-		}
+		}	    
 	    }
 
 	    return entities;

@@ -65,7 +65,8 @@ namespace Spring2.DataTierGenerator {
 	    sb.Append("\t}\n");
 	    sb.Append("}\n");
 
-	    WriteToFile(options.RootDirectory + options.TypesClassDirectory + "\\" + options.GetTypeClassName(type.Name) + ".cs", sb.ToString(), false);
+	    FileInfo file = new FileInfo(options.RootDirectory + options.TypesClassDirectory + "\\" + options.GetTypeClassName(type.Name) + ".cs");
+	    WriteToFile(file, sb.ToString(), false);
 	}
 
     }
