@@ -22,6 +22,13 @@ namespace Golf.Tournament.DataObject {
 	// Indexer implementation.
 	public ParticipantData this[int index] {
 	    get { return (ParticipantData) List[index]; }
+	    set { 
+		if (!immutable) {
+		    List[index] = value;
+		} else {
+		    throw new System.Data.ReadOnlyException();
+		}
+	    }
 	}
 
 	public void Add(ParticipantData value) {
