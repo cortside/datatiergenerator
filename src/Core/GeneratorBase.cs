@@ -114,10 +114,8 @@ namespace Spring2.DataTierGenerator.Core {
 	    }
 
 	    foreach (Field field in fields) {
-		if (field.Name.IndexOf('.') < 0) {
-		    if (!field.Type.Package.Equals(String.Empty) && !namespaces.Contains(field.Type.Package)) {
-			namespaces.Add(field.Type.Package);
-		    }
+		if (!field.Type.Package.Equals(String.Empty) && !namespaces.Contains(field.Type.Package)) {
+		    namespaces.Add(field.Type.Package);
 		}
 	    }
 
