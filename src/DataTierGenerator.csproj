@@ -31,7 +31,7 @@
                     FileAlignment = "4096"
                     IncrementalBuild = "true"
                     Optimize = "false"
-                    OutputPath = "bin\Debug\"
+                    OutputPath = "bin\"
                     RegisterForComInterop = "false"
                     RemoveIntegerChecks = "false"
                     TreatWarningsAsErrors = "false"
@@ -49,7 +49,7 @@
                     FileAlignment = "4096"
                     IncrementalBuild = "false"
                     Optimize = "true"
-                    OutputPath = "bin\Release\"
+                    OutputPath = "bin\"
                     RegisterForComInterop = "false"
                     RemoveIntegerChecks = "false"
                     TreatWarningsAsErrors = "false"
@@ -82,7 +82,7 @@
                 <Reference
                     Name = "Spring2.Core"
                     AssemblyName = "Spring2.Core"
-                    HintPath = "..\Core\src\bin\Debug\Spring2.Core.dll"
+                    HintPath = "..\lib\Spring2.Core.dll"
                 />
             </References>
         </Build>
