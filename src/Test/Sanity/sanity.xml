@@ -1,22 +1,45 @@
 <?xml version="1.0" ?>
 <DataTierGenerator>
-
-    <generator class="Spring2.DataTierGenerator.Generator.GeneratorTaskManager,Spring2.DataTierGenerator">
-	<task name="dataobject" element="entity" template="Template\DataObject.vm" directory="DataObject" filenameformat="{0}Data.cs" />
-	<task name="dao" element="entity" template="Template\DAO.vm" directory="DAO" filenameformat="{0}DAO.cs" />
-	<task name="enum" element="enum" template="Template\enum.vm" directory="Types" filenameformat="{0}.cs" />
-	<task name="enum" element="enum" template="Template\EnumTest.vm" directory="Test" filenameformat="{0}Test.cs" />
-	<task name="collection" element="collection" template="Template\collection.vm" directory="DataObject" filenameformat="{0}.cs" />
-	<task name="table" element="sqlentity" template="Template\sql_table.vm" directory="sql\table" filenameformat="{0}.table.sql" />
-	<task name="view" element="sqlentity" template="Template\sql_view.vm" directory="sql\view" filenameformat="vw{0}.view.sql" />
-
-	<task name="delete procs" element="sqlentity" template="Template\sql_delete.vm" directory="sql\proc" filenameformat="sp{0}_Delete.proc.sql" />
-	<task name="insert procs" element="sqlentity" template="Template\sql_insert.vm" directory="sql\proc" filenameformat="sp{0}_Insert.proc.sql" />
-	<task name="update procs" element="sqlentity" template="Template\sql_update.vm" directory="sql\proc" filenameformat="sp{0}_Update.proc.sql" />
-    </generator>
-
+  <generator class="Spring2.DataTierGenerator.Generator.GeneratorTaskManager,Spring2.DataTierGenerator">
+    <tasks>
+      <task name="dataobject" element="entity" template="Template\DataObject.vm" directory="DataObject" filenameformat="{0}Data.cs" />
+      <task name="dao" element="entity" template="Template\DAO.vm" directory="DAO" filenameformat="{0}DAO.cs" />
+      <task name="enum" element="enum" template="Template\enum.vm" directory="Types" filenameformat="{0}.cs" />
+      <task name="enum" element="enum" template="Template\EnumTest.vm" directory="Test" filenameformat="{0}Test.cs" />
+      <task name="collection" element="collection" template="Template\collection.vm" directory="DataObject" filenameformat="{0}.cs" />
+      <task name="table" element="sqlentity" template="Template\sql_table.vm" directory="sql\table" filenameformat="{0}.table.sql" />
+      <task name="view" element="sqlentity" template="Template\sql_view.vm" directory="sql\view" filenameformat="vw{0}.view.sql" />
+      <task name="delete procs" element="sqlentity" template="Template\sql_delete.vm" directory="sql\proc" filenameformat="sp{0}_Delete.proc.sql" />
+      <task name="insert procs" element="sqlentity" template="Template\sql_insert.vm" directory="sql\proc" filenameformat="sp{0}_Insert.proc.sql" />
+      <task name="update procs" element="sqlentity" template="Template\sql_update.vm" directory="sql\proc" filenameformat="sp{0}_Update.proc.sql" />
+      <task name="enum table data scripts" element="enum" template="Template\enum_sql_data.vm" directory="sql\data" filenameformat="{0}.data.sql">
+	<includes>
+	  <include name="GolferStatusEnum" />
+	</includes>
+	<parameters>
+	  <parameter name="table" value="GolferStatus" />
+	  <parameter name="codeColumn" value="Code" />
+	  <parameter name="nameColumn" value="Name" />
+	</parameters>
+      </task>
+      <task name="enum table data scripts" element="enum" template="Template\enum_sql_data.vm" directory="sql\data" filenameformat="{0}.data.sql">
+	<includes>
+	  <include name="FunctionEnum" />
+	</includes>
+	<parameters>
+	  <parameter name="table" value="Function" />
+	  <parameter name="codeColumn" value="FunctionID" />
+	  <parameter name="nameColumn" value="FunctionName" />
+	  <parameter name="descriptionColumn" value="Description" />
+	</parameters>
+      </task>
+    </tasks>
+    <tools>
+      <tool name="sql" class="Spring2.DataTierGenerator.Tool.MSSqlServerTool,Spring2.DataTierGenerator.Tool" />
+    </tools>
+  </generator>
   <config>
-    <setting name="RootDirectory" value=".\" />
+    <setting name="RootDirectory" value=".\SanityTest\" />
     <setting name="DaoClassDirectory" value="DAO" />
     <setting name="DoClassDirectory" value="DataObject" />
     <setting name="CollectionClassDirectory" value="DataObject" />
@@ -409,6 +432,12 @@
       <value name="Wisconsin" code="WI" />
       <value name="Wyoming" code="WY" />
     </enum>
+    <enum name="FunctionEnum" integerbased="true">
+      <value name="Order" code="1">Place an Order</value>
+      <value name="Vendor Monitor Orders" code="2">Monitor/Acknowledge New Vendor Orders</value>
+      <value name="Vendor Edit" code="3">Edit Vendor Information</value>
+      <value name="Vendor View Invoices" code="4">View a vendor's invoices</value>
+    </enum>
   </enums>
   <!-- 
     
@@ -681,7 +710,7 @@
 	  </constraints>
 	  <indexes>
 	    <index name="IX_Payment_ConfirmationCode" unique="true">
-		<column name="ConfirmationCode" />
+	      <column name="ConfirmationCode" />
 	    </index>
 	  </indexes>
 	</sqlentity>
