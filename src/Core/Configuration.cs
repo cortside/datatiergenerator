@@ -3,7 +3,7 @@ using System.Reflection;
 using System.Text;
 using System.Xml;
 
-namespace Spring2.DataTierGenerator {
+namespace Spring2.DataTierGenerator.Core {
     public class Configuration : ConfigurationData {
 
 	public Configuration () {
@@ -18,26 +18,11 @@ namespace Spring2.DataTierGenerator {
 			    case "rootnamespace":
 				this.rootNameSpace = node.Attributes["value"].Value;
 				break;
-			    case "server":
-				this.server = node.Attributes["value"].Value;
-				break;
-			    case "database":
-				this.database = node.Attributes["value"].Value;
-				break;
-			    case "user":
-				this.user = node.Attributes["value"].Value;
-				break;
-			    case "password":
-				this.password = node.Attributes["value"].Value;
-				break;
 			    case "rootdirectory":
 				this.rootDirectory = node.Attributes["value"].Value;
 				break;
 			    case "typesclassdirectory":
 				this.typesClassDirectory = node.Attributes["value"].Value;
-				break;
-			    case "sqlscriptdirectory":
-				this.sqlScriptDirectory = node.Attributes["value"].Value;
 				break;
 			    case "daoclassdirectory":
 				this.daoClassDirectory = node.Attributes["value"].Value;
@@ -48,47 +33,8 @@ namespace Spring2.DataTierGenerator {
 			    case "collectionclassdirectory":
 				this.collectionClassDirectory = node.Attributes["value"].Value;
 				break;
-			    case "singlefile":
-				this.singleFile = Boolean.Parse(node.Attributes["value"].Value);
-				break;
-			    case "generatesqlviewscripts":
-				this.generateSqlViewScripts = Boolean.Parse(node.Attributes["value"].Value);
-				break;
-			    case "generatesqltablescripts":
-				this.generateSqlTableScripts = Boolean.Parse(node.Attributes["value"].Value);
-				break;
 			    case "generatedataobjectclasses":
 				this.generateDataObjectClasses = Boolean.Parse(node.Attributes["value"].Value);
-				break;
-			    case "scriptdropstatement":
-				this.scriptDropStatement = Boolean.Parse(node.Attributes["value"].Value);
-				break;
-			    case "storedprocnameformat":
-				this.storedProcNameFormat = node.Attributes["value"].Value;
-				break;
-			    case "generateprocsforforeignkey":
-				this.generateProcsForForeignKey = Boolean.Parse(node.Attributes["value"].Value);
-				break;
-			    case "generateselectstoredprocs":
-				this.generateSelectStoredProcs= Boolean.Parse(node.Attributes["value"].Value);
-				break;
-			    case "generateonlyprimarydeletestoredproc":
-				this.generateOnlyPrimaryDeleteStoredProc= Boolean.Parse(node.Attributes["value"].Value);
-				break;
-			    case "allowupdateofprimarykey":
-				this.allowUpdateOfPrimaryKey = Boolean.Parse(node.Attributes["value"].Value);
-				break;
-			    case "useviews":
-				this.allowUpdateOfPrimaryKey = Boolean.Parse(node.Attributes["value"].Value);
-				break;
-			    case "autodiscoverentities":
-				this.autoDiscoverEntities = Boolean.Parse(node.Attributes["value"].Value);
-				break;
-			    case "autodiscoverproperties":
-				this.autoDiscoverProperties = Boolean.Parse(node.Attributes["value"].Value);
-				break;
-			    case "autodiscoverattributes":
-				this.autoDiscoverAttributes = Boolean.Parse(node.Attributes["value"].Value);
 				break;
 			    case "dataobjectbaseclass":
 				this.dataObjectBaseClass= node.Attributes["value"].Value;
@@ -114,18 +60,6 @@ namespace Spring2.DataTierGenerator {
 	    Console.Out.WriteLine(String.Empty.PadLeft(20,'='));
 	}
 
-	public String ConnectionString {
-	    get { 			
-		StringBuilder objStringBuilder = new StringBuilder(255);
-		objStringBuilder.Append("Data Source = " + server + ";");
-		objStringBuilder.Append("Initial Catalog = " + database + ";");
-		objStringBuilder.Append("User ID = " + user + ";");
-		objStringBuilder.Append("Password = " + password + ";");
-		return objStringBuilder.ToString();
-	    }
-	}
-
-	
 	// methods
 	public String GetProcName(String table, String type) {
 	    String s;
@@ -139,7 +73,6 @@ namespace Spring2.DataTierGenerator {
 	public String GetDAONameSpace(String table) {
 	    String s;
 
-	    s = this.Database + ".DataAccess." + table.Replace(" ", "_");
 	    s = this.rootNameSpace;
 	    if (daoClassDirectory.Length>0) {
 		s += "." + daoClassDirectory;
@@ -151,9 +84,6 @@ namespace Spring2.DataTierGenerator {
 	public String GetDONameSpace(String table) {
 	    String s;
 
-	    if (this.Database != null && table != null) {
-		s = this.Database + ".DataAccess." + table.Replace(" ", "_");
-	    }
 	    s = this.rootNameSpace;
 	    if (doClassDirectory.Length>0) {
 		s += "." + doClassDirectory;
