@@ -15,6 +15,24 @@ namespace Spring2.DataTierGenerator.Generator {
     /// Generates stored procedures and associated data access code for the specified database.
     /// </summary>
     internal class SqlGenerator : GeneratorSkeleton, IGenerator {
+
+	// sql keywords that need escaping.  all values need to be enclosed in a pair of | characters.  values should be lower case.
+	private static readonly String KEYWORDS = 
+		"|add|except|percent|all|exec|plan|alter|execute|precision|and|exists|primary|any|exit|print|as|fetch" +
+		"|proc|asc|file|procedure|authorization|fillfactor|public|backup|for|raiserror|begin|foreign" +
+		"|read|between|freetext|readtext|break|freetexttable|reconfigure|browse|from|references|bulk" +
+		"|full|replication|by|function|restore|cascade|goto|restrict|case|grant|return|check|group" +
+		"|revoke|checkpoint|having|right|close|holdlock|rollback|clustered|identity|rowcount|coalesce" +
+		"|identity_insert|rowguidcol|collate|identitycol|rule|column|if|save|commit|in|schema|compute" +
+		"|index|select|constraint|inner|session_user|contains|insert|set|containstable|intersect" +
+		"|setuser|continue|into|shutdown|convert|is|some|create|join|statistics|cross|key|system_user" +
+		"|current|kill|table|current_date|left|textsize|current_time|like|then|current_timestamp" +
+		"|lineno|to|current_user|load|top|cursor|national||tran|database|nocheck|transaction|dbcc" +
+		"|nonclustered|trigger|deallocate|not|truncate|declare|null|tsequal|default|nullif|union" +
+		"|delete|of|unique|deny|off|update|desc|offsets|updatetext|disk|on|use|distinct|open|user" +
+		"|distributed|opendatasource|values|double|openquery|varying|drop|openrowset|view|dummy" +
+		"|openxml|waitfor|dump|option|when|else|or|where|end|order|while|errlvl|outer|with|escape|over|writetext|";
+
 	private SqlEntity sqlentity;
 
 	/// <summary>
@@ -73,7 +91,7 @@ namespace Spring2.DataTierGenerator.Generator {
 		}
 	    }
 				
-	    sb.Append("INSERT INTO [" + sqlentity.Name + "] (\n");
+	    sb.Append("INSERT INTO " + EscapeSqlName(sqlentity.Name) + " (\n");
 				
 	    // Create the parameter list
 	    first = true;
@@ -86,7 +104,7 @@ namespace Spring2.DataTierGenerator.Generator {
 			} else {
 			    first=false;
 			}
-			sb.Append("\t[" + column.Name + "]");
+			sb.Append("\t" + EscapeSqlName(column.Name) );
 		    }
 		}
 	    }
@@ -145,7 +163,7 @@ namespace Spring2.DataTierGenerator.Generator {
 		}
 	    }
 	    sb.Append("\n\nAS\n\n");
-	    sb.Append("\nUPDATE\n\t[" + sqlentity.Name + "]\n");
+	    sb.Append("\nUPDATE\n\t" + EscapeSqlName(sqlentity.Name) + "\n");
 	    sb.Append("SET\n");
 				
 	    // Create the set statement
@@ -159,7 +177,7 @@ namespace Spring2.DataTierGenerator.Generator {
 			    } else {
 				first=false;
 			    }
-			    sb.Append("\t[" + column.Name + "] = @" + column.Name);
+			    sb.Append("\t" + EscapeSqlName(column.Name) + " = @" + EscapeSqlName(column.Name));
 			}
 		    }
 		}
@@ -177,7 +195,7 @@ namespace Spring2.DataTierGenerator.Generator {
 			} else {
 			    first=false;
 			}
-			sb.Append("[" + column.Name + "] = @" + column.Name + "\n");
+			sb.Append("" + EscapeSqlName(column.Name) + " = @" + EscapeSqlName(column.Name) + "\n");
 		    }
 		}
 	    }
@@ -222,10 +240,10 @@ namespace Spring2.DataTierGenerator.Generator {
 		} else {
 		    first = false;
 		}
-		where.Append("\t[" + column.Name + "] = @" + column.Name);
+		where.Append("\t" + EscapeSqlName(column.Name) + " = @" + EscapeSqlName(column.Name));
 	    }
 	
-	    sb.Append("if not exists(SELECT ").Append("*").Append(" FROM [").Append(sqlentity.Name).Append("] WHERE (").Append(where.ToString()).Append("))\n");
+	    sb.Append("if not exists(SELECT ").Append("*").Append(" FROM ").Append(EscapeSqlName(sqlentity.Name)).Append(" WHERE (").Append(where.ToString()).Append("))\n");
 	    sb.Append("    BEGIN\n");
 	    sb.Append("        RAISERROR  ('").Append(strProcName).Append(": ").Append("record").Append(" not found to delete', 16,1)\n");
 	    sb.Append("        RETURN(-1)\n");
@@ -233,7 +251,7 @@ namespace Spring2.DataTierGenerator.Generator {
 	
 	
 	    sb.Append("DELETE\n");
-	    sb.Append("FROM\n\t[" + sqlentity.Name + "]\n");
+	    sb.Append("FROM\n\t" + EscapeSqlName(sqlentity.Name) + "\n");
 	    sb.Append("WHERE \n");
 	
 	    sb.Append(where.ToString());
@@ -408,12 +426,12 @@ namespace Spring2.DataTierGenerator.Generator {
 		} else {
 		    first=false;
 		}
-		sb.Append("\t[" + column.Name + "]");
+		sb.Append("\t" + EscapeSqlName(column.Name) + "");
 	    }
 	    sb.Append("\n");			
-	    sb.Append("FROM\n\t[");
-	    sb.Append(sqlentity.Name);
-	    sb.Append("]\n");
+	    sb.Append("FROM\n\t");
+	    sb.Append(EscapeSqlName(sqlentity.Name));
+	    sb.Append("\n");
 	
 	    // Write out the stored procedure
 	    FileInfo file = new FileInfo(options.RootDirectory + sqlentity.SqlScriptDirectory + "\\view\\" + strProcName + ".view.sql");
@@ -459,7 +477,7 @@ namespace Spring2.DataTierGenerator.Generator {
 
 	    // initial table script - if table does not already exist
 	    sb.Append("if not exists (select * from dbo.sysobjects where id = object_id(N'[").Append(sqlentity.Name).Append("]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)\n");
-	    sb.Append("CREATE TABLE [").Append(sqlentity.Name).Append("] (\n");
+	    sb.Append("CREATE TABLE ").Append(EscapeSqlName(sqlentity.Name)).Append(" (\n");
 
 	    Boolean first = true;
 	    foreach (Column column in sqlentity.Columns) {
@@ -469,7 +487,7 @@ namespace Spring2.DataTierGenerator.Generator {
 		    } else {
 			first=false;
 		    }
-		    sb.Append("\t[").Append(column.Name).Append("] ").Append(column.SqlType.Declaration);
+		    sb.Append("\t").Append(EscapeSqlName(column.Name)).Append(" ").Append(column.SqlType.Declaration);
 		    if (column.Identity) {
 			sb.Append(" IDENTITY(").Append(column.Seed).Append(",").Append(column.Increment).Append(")");
 		    }
@@ -494,10 +512,10 @@ namespace Spring2.DataTierGenerator.Generator {
 		    if (column.Required && column.Default.Length==0) {
 			sb.Append("/* -- commented out because column does not have default value and is required\n");
 		    }
-		    sb.Append("if not exists(select * from syscolumns where id=object_id('[").Append(sqlentity.Name).Append("]') and name = '").Append(column.Name).Append("')\n");
+		    sb.Append("if not exists(select * from syscolumns where id=object_id('").Append(EscapeSqlName(sqlentity.Name)).Append("') and name = '").Append(column.Name).Append("')\n");
 		    sb.Append("  BEGIN\n");
-		    sb.Append("	ALTER TABLE [").Append(sqlentity.Name).Append("] ADD\n");
-		    sb.Append("	    [").Append(column.Name).Append("] ").Append(column.SqlType.Declaration);
+		    sb.Append("	ALTER TABLE ").Append(EscapeSqlName(sqlentity.Name)).Append(" ADD\n");
+		    sb.Append("	    ").Append(EscapeSqlName(column.Name)).Append(" ").Append(column.SqlType.Declaration);
 		    if (column.Identity) {
 			sb.Append(" IDENTITY(").Append(column.Seed).Append(",").Append(column.Increment).Append(")");
 		    }
@@ -523,7 +541,7 @@ namespace Spring2.DataTierGenerator.Generator {
 	    // create constraints, checking for existance
 	    foreach (Constraint constraint in sqlentity.Constraints) {
 		if (!constraint.Type.ToUpper().Equals("CHECK")) {
-		    sb.Append("if not exists (select * from dbo.sysobjects where id = object_id(N'[").Append(constraint.Name).Append("]') and OBJECTPROPERTY(id, N'");
+		    sb.Append("if not exists (select * from dbo.sysobjects where id = object_id(N'").Append(EscapeSqlName(constraint.Name)).Append("') and OBJECTPROPERTY(id, N'");
 		    if (constraint.Type.ToUpper().Equals("PRIMARY KEY")) {
 			sb.Append("IsPrimaryKey");
 		    } else if (constraint.Type.ToUpper().Equals("FOREIGN KEY")) {
@@ -533,12 +551,12 @@ namespace Spring2.DataTierGenerator.Generator {
 		    }
 		    sb.Append("') = 1)\n");
 
-		    sb.Append("ALTER TABLE [").Append(sqlentity.Name).Append("] ");
+		    sb.Append("ALTER TABLE ").Append(EscapeSqlName(sqlentity.Name)).Append(" ");
 		    if (constraint.Type.ToUpper().Equals("PRIMARY KEY")) {
 			sb.Append("WITH NOCHECK ");
 		    }
 		    sb.Append("ADD \n");
-		    sb.Append("	CONSTRAINT [").Append(constraint.Name).Append("] ").Append(constraint.Type).Append(" ");
+		    sb.Append("	CONSTRAINT ").Append(EscapeSqlName(constraint.Name)).Append(" ").Append(constraint.Type).Append(" ");
 		    if (constraint.Type.ToUpper().Equals("PRIMARY KEY")) {
 			if (constraint.Clustered) {
 			    sb.Append("CLUSTERED ");
@@ -556,11 +574,11 @@ namespace Spring2.DataTierGenerator.Generator {
 			} else {
 			    first=false;
 			}
-			sb.Append("		[").Append(column.Name).Append("]");
+			sb.Append("		").Append(EscapeSqlName(column.Name)).Append("");
 		    }
 		    sb.Append("\n	)");
 		    if (constraint.Type.ToUpper().Equals("FOREIGN KEY")) {
-			sb.Append(" REFERENCES [").Append(constraint.ForeignEntity).Append("] (\n");
+			sb.Append(" REFERENCES ").Append(EscapeSqlName(constraint.ForeignEntity)).Append(" (\n");
 			first=true;
 			foreach (Column column in constraint.Columns) {
 			    if (!first) {
@@ -568,7 +586,7 @@ namespace Spring2.DataTierGenerator.Generator {
 			    } else {
 				first=false;
 			    }
-			    sb.Append("		[").Append(column.ForeignColumn).Append("]");
+			    sb.Append("		").Append(EscapeSqlName(column.ForeignColumn)).Append("");
 			}
 			sb.Append("\n	)");
 		    }
@@ -584,7 +602,7 @@ namespace Spring2.DataTierGenerator.Generator {
 		if (index.Unique) {
 		    sb.Append(" UNIQUE");
 		}
-		sb.Append(" INDEX [").Append(index.Name).Append("] ON [").Append(sqlentity.Name).Append("]\n");
+		sb.Append(" INDEX ").Append(EscapeSqlName(index.Name)).Append(" ON ").Append(EscapeSqlName(sqlentity.Name)).Append("\n");
 		sb.Append("    (\n");
 		first = true;
 		foreach (Column column in index.Columns) {
@@ -593,7 +611,7 @@ namespace Spring2.DataTierGenerator.Generator {
 		    } else {
 			first=false;
 		    }
-		    sb.Append("		[").Append(column.Name).Append("] ").Append(column.SortDirection);
+		    sb.Append("		").Append(EscapeSqlName(column.Name)).Append(" ").Append(column.SortDirection);
 		}
 		sb.Append("\n    )\n");
 		sb.Append("GO\n");
@@ -616,6 +634,25 @@ namespace Spring2.DataTierGenerator.Generator {
 	protected override String EndRegionTag {
 	    get { return "-- #endregion"; }
 	}
+
+
+	private String EscapeSqlName(String s) {
+	    Boolean needsEscaping = false;
+
+	    if (s.IndexOf(" ")>=0) {
+		needsEscaping = true;
+	    }
+	    if (KEYWORDS.IndexOf("|"+s.ToLower()+"|")>=0) {
+		needsEscaping = true;
+	    }
+	    
+	    if (needsEscaping) {
+		return "[" + s + "]";
+	    } else {
+		return s;
+	    }
+	}
+
     }
 }
 
