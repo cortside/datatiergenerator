@@ -233,6 +233,7 @@ Collections (extending CollectionBase)
 		<property name="Address.City" column="city" type="StringType" />
 		<property name="Address.State" column="state" type="StringType" />
 		<property name="Address.PostalCode" column="zip" type="StringType" />
+		<property name="DerivedProperty" type="StringType" derived="True" />
 	    </properties>
 	    <finders>
 		<finder name="FindByPostalCode" sort="Int32Column, StringColumn">

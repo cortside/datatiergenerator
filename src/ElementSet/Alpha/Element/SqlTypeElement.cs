@@ -13,6 +13,7 @@ namespace Spring2.DataTierGenerator.Element {
 	private static readonly String READER_METHOD_FORMAT = "readermethodformat";
 	private static readonly String DECLARATION_FORMAT = "declarationformat";
 	private static readonly String SQL_DB_TYPE = "sqldbtype";
+	private static readonly String DB_TYPE = "dbtype";
 	private static readonly String LENGTH = "length";
 	private static readonly String SCALE = "scale";
 	private static readonly String PRECISION = "precision";
@@ -21,6 +22,7 @@ namespace Spring2.DataTierGenerator.Element {
 	private String readerMethodFormat = String.Empty;
 	private String declarationFormat = "{0}";
 	private String sqlDbType = String.Empty;
+	private String dbType = String.Empty;
 	private Int32 length = 0;
 	private Int32 scale = 0;
 	private Int32 precision = 0;
@@ -43,6 +45,11 @@ namespace Spring2.DataTierGenerator.Element {
 	public String SqlDbType {
 	    get { return this.sqlDbType; }
 	    set { this.sqlDbType = value; }
+	}
+
+	public String DbType {
+	    get { return this.dbType; }
+	    set { this.dbType = value; }
 	}
 
 	public Int32 Length {
@@ -83,6 +90,7 @@ namespace Spring2.DataTierGenerator.Element {
 			sqlTypeElement.ReaderMethodFormat = GetAttributeValue(sqlTypeNode, READER_METHOD_FORMAT, sqlTypeElement.ReaderMethodFormat);
 			sqlTypeElement.DeclarationFormat = GetAttributeValue(sqlTypeNode, DECLARATION_FORMAT, sqlTypeElement.DeclarationFormat);
 			sqlTypeElement.SqlDbType = GetAttributeValue(sqlTypeNode, SQL_DB_TYPE, sqlTypeElement.SqlDbType);
+			sqlTypeElement.DbType = GetAttributeValue(sqlTypeNode, DB_TYPE, sqlTypeElement.DbType);
 			sqlTypeElement.Length = Int32.Parse(GetAttributeValue(sqlTypeNode, LENGTH, sqlTypeElement.Length.ToString()));
 			sqlTypeElement.Scale = Int32.Parse(GetAttributeValue(sqlTypeNode, SCALE, sqlTypeElement.Scale.ToString()));
 			sqlTypeElement.Precision = Int32.Parse(GetAttributeValue(sqlTypeNode, PRECISION, sqlTypeElement.Precision.ToString()));
@@ -123,6 +131,9 @@ namespace Spring2.DataTierGenerator.Element {
 		}
 		if (node.Attributes["sqldbtype"] != null) {
 		    sqltype.SqlDbType = node.Attributes["sqldbtype"].Value;
+		}
+		if (node.Attributes["dbtype"] != null) {
+		    sqltype.DbType = node.Attributes["dbtype"].Value;
 		}
 		if (node.Attributes["declarationformat"] != null) {
 		    sqltype.DeclarationFormat = node.Attributes["declarationformat"].Value;

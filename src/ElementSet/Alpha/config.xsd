@@ -171,6 +171,7 @@
 								    <xs:attribute name="prefix" type="xs:string" />
 								    <xs:attribute name="readable" type="BooleanEnum" />
 								    <xs:attribute name="writable" type="BooleanEnum" />
+								    <xs:attribute name="derived" type="BooleanEnum" />
 								    <xs:attribute name="log" type="BooleanEnum" />
 								    <xs:attribute name="returnasidentity" type="BooleanEnum" />
 								</xs:extension>
@@ -317,6 +318,7 @@
 				    <xs:attribute name="type" type="xs:string" />
 				    <xs:attribute name="readermethodformat" type="xs:string" />
 				    <xs:attribute name="declarationformat" type="xs:string" />
+				    <xs:attribute name="dbtype" type="xs:string" />
 				    <xs:attribute name="sqldbtype" type="xs:string" />
 				    <xs:attribute name="length" type="xs:nonNegativeInteger" />
 				    <xs:attribute name="scale" type="xs:nonNegativeInteger" />

@@ -27,6 +27,7 @@ namespace Spring2.DataTierGenerator.Element {
 	private static readonly String ALIAS = "alias";
 	protected static readonly String READABLE = "readable";
 	protected static readonly String WRITABLE = "writable";
+	protected static readonly String DERIVED = "derived";
 	protected static readonly String LOG = "log";
 	protected static readonly String RETURNASIDENTITY = "returnasidentity";
 	protected static readonly String DIRECTION = "direction";
@@ -53,6 +54,7 @@ namespace Spring2.DataTierGenerator.Element {
 	protected String prefix = String.Empty;
 	protected Boolean readable = true;
 	protected Boolean writable = true;
+	protected Boolean derived = false;
 
 	protected String accessModifier = "private";
 
@@ -109,6 +111,11 @@ namespace Spring2.DataTierGenerator.Element {
 	public Boolean Writable {
 	    get { return this.writable; }
 	    set { this.writable = value; }
+	}
+
+	public Boolean Derived {
+	    get { return this.derived; }
+	    set { this.derived = value; }
 	}
 
 	public String ParameterName {
@@ -223,6 +230,7 @@ namespace Spring2.DataTierGenerator.Element {
 	    propertyElement.ReturnAsIdentity = Boolean.Parse (GetAttributeValue (propertyNode, RETURNASIDENTITY, propertyElement.ReturnAsIdentity.ToString ()));
 	    propertyElement.Readable = Boolean.Parse(GetAttributeValue(propertyNode, READABLE, propertyElement.Readable.ToString()));
 	    propertyElement.Writable = Boolean.Parse(GetAttributeValue(propertyNode, WRITABLE, propertyElement.Writable.ToString()));
+	    propertyElement.Derived = Boolean.Parse(GetAttributeValue(propertyNode, DERIVED, propertyElement.Derived.ToString()));
 	    propertyElement.Direction = GetAttributeValue (propertyNode, DIRECTION, propertyElement.Direction.ToString ());
 	    propertyElement.Type.ConvertForCompare = GetAttributeValue (propertyNode, CONVERT_FOR_COMPARE, propertyElement.Type.ConvertForCompare);
 	}
@@ -424,6 +432,9 @@ namespace Spring2.DataTierGenerator.Element {
 	    if (node.Attributes["writable"] != null) {
 		field.Writable = Boolean.Parse(node.Attributes["writable"].Value);
 	    }
+	    if (node.Attributes["derived"] != null) {
+		field.Derived = Boolean.Parse(node.Attributes["derived"].Value);
+	    }
 
 	    if (node.Attributes["log"] != null) {
 		field.DoLog = Boolean.Parse (node.Attributes["log"].Value);
@@ -486,6 +497,18 @@ namespace Spring2.DataTierGenerator.Element {
 	    return buffer.ToString();
 	}
 
+	public String CreateDbDataParameter(Boolean blnOutput, Boolean useDataObject) {
+	    StringBuilder buffer = new StringBuilder();
+	    buffer.Append("cmd.Parameters.Add(CreateDataParameter(\"@" + GetSqlAlias() + "\", DbType." + this.Column.SqlType.DbType + ", ParameterDirection.");
+	    buffer.Append(blnOutput ? "Output, " : "Input, ");
+	    if (useDataObject) {
+		buffer.Append(String.Format(type.ConvertToSqlTypeFormat, "data", "data."+GetMethodFormat(), "", "", GetMethodFormat()));
+	    } else {
+		buffer.Append(String.Format(type.ConvertToSqlTypeFormat, "", GetFieldFormat(), "", "", GetFieldFormat()));
+	    }
+	    buffer.Append("));" + Environment.NewLine);
+	    return buffer.ToString();
+	}
 
 	/// <summary>
 	/// Returns string that compares two objects for the type of this property.
@@ -578,6 +601,7 @@ namespace Spring2.DataTierGenerator.Element {
 	    this.Readable = element.Readable;
 	    this.Type = (TypeElement)element.Type.Clone();
 	    this.Writable = element.Writable;
+	    this.Derived = element.Derived;
 	}
 
     }
