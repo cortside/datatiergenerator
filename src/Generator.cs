@@ -11,6 +11,7 @@ namespace Spring2.DataTierGenerator {
 
     public class Generator : GeneratorBase {
 	private ArrayList entities = new ArrayList();
+	private ArrayList sqlentities = new ArrayList();
 	private Hashtable types = new Hashtable();
 	private Hashtable sqltypes = new Hashtable();
 
@@ -40,18 +41,22 @@ namespace Spring2.DataTierGenerator {
 	    sqltypes = SqlType.ParseFromXml(doc);
 	    types = Type.ParseFromXml(options, doc);
 	    entities = GetEntities(doc, connection);
+	    sqlentities = GetSqlEntities(doc, connection);
+
+	    foreach (SqlEntity sqlentity in sqlentities) {
+		SQLGenerator sqlgen = new SQLGenerator(options, sqlentity);
+		sqlgen.CreateTable();
+		if (options.GenerateSqlViewScripts) sqlgen.CreateView();
+		sqlgen.CreateInsertStoredProcedure();
+		if (sqlentity.HasUpdatableColumns()) sqlgen.CreateUpdateStoredProcedure();
+		sqlgen.CreateDeleteStoredProcedures();
+//		if (options.GenerateSelectStoredProcs) sqlgen.CreateSelectStoredProcedures();
+	    }
+
 	    foreach (Entity entity in entities) {
 		if (!entity.HasUpdatableFields()) {
 		    Console.Out.WriteLine("WARNING: entity " + entity.Name + " does not have any editable fields and does not have x specified.  No update stored procedures or update DAO methods will be generated.");
 		}
-
-		SQLGenerator sqlgen = new SQLGenerator(options, entity);
-		if (!String.Empty.Equals(entity.SqlObject) && options.GenerateSqlViewScripts) sqlgen.CreateView();
-		if (!String.Empty.Equals(entity.SqlObject)) sqlgen.CreateInsertStoredProcedure();
-		if (!String.Empty.Equals(entity.SqlObject) && entity.HasUpdatableFields()) sqlgen.CreateUpdateStoredProcedure();
-		if (!String.Empty.Equals(entity.SqlObject)) sqlgen.CreateDeleteStoredProcedures();
-		if (options.GenerateSelectStoredProcs && !String.Empty.Equals(entity.SqlObject)) sqlgen.CreateSelectStoredProcedures();
-
 		// create classes
 		DAOGenerator daogen = new DAOGenerator(options, entity);
 		DOGenerator dogen = new DOGenerator(options, entity);
@@ -127,6 +132,23 @@ namespace Spring2.DataTierGenerator {
 
 	    return entities;
 	}
+
+
+	private ArrayList GetSqlEntities(XmlDocument doc, SqlConnection connection) {
+	    ArrayList entities = new ArrayList();
+
+	    if (doc != null) {
+		entities.AddRange(SqlEntity.ParseFromXml(options, doc, sqltypes, types));
+
+		if (options.AutoDiscoverProperties) {
+		    foreach (Entity entity in entities) {
+			entity.Fields = GetFields(entity, connection, doc, sqltypes, types);
+		    }
+		}
+	    }
+	    return entities;
+	}
+
 
 	private ArrayList GetFields(Entity entity, SqlConnection connection, XmlDocument doc, Hashtable sqltypes, Hashtable types) {
 	    ArrayList fields = entity.Fields;
