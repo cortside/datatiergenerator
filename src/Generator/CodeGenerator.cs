@@ -30,8 +30,7 @@ namespace Spring2.DataTierGenerator.Generator {
 	    Console.Out.WriteLine(String.Empty.PadLeft(20,'='));
 
 	    if (parser.Generator.Tasks.Count > 0) {
-		Console.Out.WriteLine("ERROR: this generator does not support tasks.");
-		return;
+		Console.Out.WriteLine("WARNING: this generator does not support tasks.");
 	    }
 
 	    if (parser.IsValid) {
