@@ -77,6 +77,13 @@ if exists(select * from syscolumns where id=object_id('$sql.Escape($element.Name
 	if @cdefault is not null
 		exec('alter table $sql.Escape($element.Name) DROP CONSTRAINT ' + @cdefault)
 		
+	if exists(select * from sysobjects where name = 'DF_${element.Name}_$column.Name' and xtype='D')
+          begin
+            declare @table sysname
+            select @table=object_name(parent_obj) from  sysobjects where (name = 'DF_${element.Name}_$column.Name' and xtype='D')
+            exec('alter table ' + @table + ' DROP CONSTRAINT [DF_${element.Name}_$column.Name]')
+          end
+	
 #if($column.Required)
 	update $sql.Escape($element.Name) set $sql.Escape($column.Name) = $column.Default where $sql.Escape($column.Name) IS NULL
 #end
