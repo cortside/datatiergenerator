@@ -4,19 +4,22 @@ using System.IO;
 using System.Collections;
 using System.Text;
 
-namespace Spring2.DataTierGenerator.Core {
+using Spring2.DataTierGenerator.Element;
+using Spring2.DataTierGenerator.Util;
+
+namespace Spring2.DataTierGenerator.Generator {
 
     /// <summary>
     /// Generates the data object for an entity.
     /// </summary>
-    public class DOGenerator : GeneratorBase {
+    public class DataObjectGenerator : GeneratorSkeleton, IGenerator {
+
 	/// <summary>
 	/// Handles creation of the static readonly property names and values.  Creates
 	/// enttries of the form
 	/// public static readonly string PROPERTY_NAME="Property.Name";
 	/// </summary>
-	private class PropertyName
-	{
+	private class PropertyName {
 	    public String fieldName = "";
 	    public String fieldValue = "";
 
@@ -28,28 +31,23 @@ namespace Spring2.DataTierGenerator.Core {
 	    /// </summary>
 	    /// <param name="prefix">Prefix for the property name/value.  Prefix separates classes with ~.  Like Property~Name</param>
 	    /// <param name="propertyName">Property name</param>
-	    public PropertyName(String prefix, String propertyName)
-	    {
+	    public PropertyName(String prefix, String propertyName) {
 		fieldName = prefix.Replace(PREFIX_SEPARATOR,"_").ToUpper() + "_" + propertyName.ToUpper();
 
 		// Keeping names a reasonable length.  This might not be the best
 		// shortening algorithm but we can try it for a while.
-		if (fieldName.Length > MAX_FIELD_NAME_LENGTH)
-		{
+		if (fieldName.Length > MAX_FIELD_NAME_LENGTH) {
 		    fieldName = fieldName.Substring(fieldName.Length - MAX_FIELD_NAME_LENGTH);
 		}
-		if (fieldName.StartsWith("_"))
-		{
+		if (fieldName.StartsWith("_")) {
 		    fieldName = fieldName.Substring(1);
 		}
 
-		if (prefix.Length > 0)
-		{
+		if (prefix.Length > 0) {
 		    fieldValue = "\"" + prefix.Replace(PREFIX_SEPARATOR,".")
 			+ "." +  propertyName + "\"";
 		}
-		else
-		{
+		else {
 		    fieldValue = "\"" + propertyName + "\"";
 		}
 	    }
@@ -61,14 +59,11 @@ namespace Spring2.DataTierGenerator.Core {
 	    /// <param name="prefix">Old prefix in the form Property~Property...</param>
 	    /// <param name="propertyName">New property to append</param>
 	    /// <returns>New prefix in the same format.</returns>
-	    public static String AppendPrefix(String prefix, String propertyName)
-	    {
-		if (prefix.Length > 0)
-		{
+	    public static String AppendPrefix(String prefix, String propertyName) {
+		if (prefix.Length > 0) {
 		    return prefix + PREFIX_SEPARATOR + propertyName;
 		}
-		else
-		{
+		else {
 		    return propertyName;
 		}
 	    }
@@ -84,7 +79,7 @@ namespace Spring2.DataTierGenerator.Core {
 	/// </summary>
 	private ArrayList entities;
 
-	public DOGenerator(Configuration options, Entity entity, ArrayList entities) : base(options) {
+	public DataObjectGenerator(Configuration options, Entity entity, ArrayList entities) : base(options) {
 	    this.entity = entity;
 	    this.entities = entities;
 	}
@@ -92,7 +87,7 @@ namespace Spring2.DataTierGenerator.Core {
 	/// <summary>
 	/// Creates the data object class for this entity.
 	/// </summary>
-	public void CreateDataObjectClass() {
+	public override void Generate() {
 	    
 	    IndentableStringWriter writer = new IndentableStringWriter();
 			
@@ -120,8 +115,7 @@ namespace Spring2.DataTierGenerator.Core {
 
 	    // Property Names
 	    writer.WriteLine();
-	    foreach (PropertyName propertyName in GetPropertyNames("", new Stack()))
-	    {
+	    foreach (PropertyName propertyName in GetPropertyNames("", new Stack())) {
 		writer.WriteLine(2, 
 		    "public static readonly String " + propertyName.fieldName
 		    + " = " + propertyName.fieldValue + ";");
@@ -163,16 +157,13 @@ namespace Spring2.DataTierGenerator.Core {
 	/// <param name="entities">List of all entities in system.  Used to determine if property is a DataObject entity type</param>
 	/// <param name="parentEntities">Stack of all parent entities.  Used to avoid loops.</param>
 	/// <returns></returns>
-	public ArrayList GetPropertyNames(String prefix, System.Collections.Stack parentEntities)
-	{
+	public ArrayList GetPropertyNames(String prefix, System.Collections.Stack parentEntities) {
 	    ArrayList propertyNames = new ArrayList();
 
 	    // avoid loops
 	    bool matchedParent = false;
-	    foreach (Entity searchEntity in parentEntities)
-	    {
-		if (searchEntity.Equals(entity))
-		{
+	    foreach (Entity searchEntity in parentEntities) {
+		if (searchEntity.Equals(entity)) {
 		    matchedParent = true;
 		    break;
 		}
@@ -181,27 +172,21 @@ namespace Spring2.DataTierGenerator.Core {
 	    // Add current entity to parent stack
 	    parentEntities.Push(entity);
 
-	    if (!matchedParent)
-	    {
-		foreach (Field field in entity.Fields) 
-		{
-		    if (field.Name.IndexOf(".") < 0)
-		    {
+	    if (!matchedParent) {
+		foreach (Field field in entity.Fields) {
+		    if (field.Name.IndexOf(".") < 0) {
 			PropertyName propertyName = new PropertyName(prefix, field.Name);
 			propertyNames.Add(propertyName);
 
 			// Determine if this is a data object and if so append it's members.
-			foreach (Entity subEntity in entities)
-			{
-			    if (field.Type.Name.Equals(options.GetDOClassName(subEntity.Name)))
-			    {
-				DOGenerator propertyGenerator = new DOGenerator(options, subEntity, entities);
+			foreach (Entity subEntity in entities) {
+			    if (field.Type.Name.Equals(options.GetDOClassName(subEntity.Name))) {
+				DataObjectGenerator propertyGenerator = new DataObjectGenerator(options, subEntity, entities);
 				ArrayList subProperties = 
 				    propertyGenerator.GetPropertyNames(
 				    PropertyName.AppendPrefix(prefix, field.Name), 
 				    parentEntities);
-				foreach (PropertyName subProperty in subProperties)
-				{
+				foreach (PropertyName subProperty in subProperties) {
 				    propertyNames.Add(subProperty);
 				}
 				break;
