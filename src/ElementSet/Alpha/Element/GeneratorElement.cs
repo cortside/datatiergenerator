@@ -67,15 +67,5 @@ namespace Spring2.DataTierGenerator.Element {
 	    return generator;
 	}
 
-	public IList FindTasksByElement(String element) {
-	    IList list = new ArrayList();
-	    foreach (TaskElement task in tasks) {
-		if (task.Element.ToLower().Equals(element.ToLower())) {
-		    list.Add(task);
-		}
-	    }
-	    return list;
-	}
-
     }
 }
