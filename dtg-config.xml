@@ -27,6 +27,7 @@
 		<setting name="AutoDiscoverAttributes" value="False" />
 		<setting name="DataObjectBaseClass" value="Spring2.Core.DataObject.DataObject" />
 		<setting name="DAOBaseClass" value="Spring2.Core.DAO.EntityDAO" />
+		<setting name="EnumBaseClass" value="Spring2.Core.Types.EnumDataType" />
 		<setting name="DataObjectNameFormat" value="{0}Data" />
 		<setting name="DaoNameFormat" value="{0}Dao" />
 	</config>
@@ -104,14 +105,17 @@
 			<property name="Country" sqlname="" type="StringType" />
 		</entity>
 		<entity name="TestSqlObject" sqlobject="TestSqlObject">
-			<property name="StringColumn" sqltype="varchar" />
-			<property name="Int32Column" sqltype="int" type="IdType" isidentity="True" />
+			<property name="StringColumn" sqlname="sqlstringcolumn" sqltype="varchar" isprimarykey="True" />
+			<property name="Int32Column" sqlname="sqlintcolumn" sqltype="int" type="IdType" isprimarykey="True" />
 			<property name="Address" sqlname="" type="AddressData" />
 			<property name="Address.Address1" sqlname="addr1" sqltype="varchar" type="StringType" />
 			<property name="Address.Address2" sqlname="addr2" sqltype="varchar" type="StringType" />
 			<property name="Address.City" sqlname="city" sqltype="varchar" type="StringType" />
 			<property name="Address.State" sqlname="state" sqltype="varchar" type="StringType" />
 			<property name="Address.PostalCode" sqlname="zip" sqltype="varchar" type="StringType" />
+		</entity>
+		<entity name="TestSqlObject2" sqlobject="TestSqlObject2">
+			<property name="Id" sqltype="int" type="IdType" isidentity="True" />
 		</entity>
 	</entities>
 	<enums>
@@ -199,8 +203,8 @@
 		<type name="IList" namespace="System.Collections" />
 		<type name="ArrayList" namespace="System.Collections" newinstanceformat="new ArrayList()" />
 		<type name="Hashtable" namespace="System.Collections" newinstanceformat="new Hashtable()" />
-		<type name="StringType" namespace="Spring2.Core.Types" converttosqltypeformat="{0}.{1}.DBValue" convertfromsqltypeformat="StringType.NewInstance({2})" newinstanceformat="StringType.DEFAULT" nullinstanceformat="StringType.UNSET" />
-		<type name="IdType" namespace="Spring2.Core.Types" converttosqltypeformat="{0}.{1}.DBValue" convertfromsqltypeformat="IdType.NewInstance({2})" newinstanceformat="IdType.DEFAULT" nullinstanceformat="IdType.UNSET" >
+		<type name="StringType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="StringType.NewInstance({2})" newinstanceformat="StringType.DEFAULT" nullinstanceformat="StringType.UNSET" />
+		<type name="IdType" namespace="Spring2.Core.Types" converttosqltypeformat="{1}.DBValue" convertfromsqltypeformat="IdType.NewInstance({2})" newinstanceformat="IdType.DEFAULT" nullinstanceformat="IdType.UNSET" >
 			0=data object variable name
 			1=Property name (properly cased)
 			2=sqltype's readermethod (formatted by readermethodformat) (for convert from sql type, otherwise blank)
