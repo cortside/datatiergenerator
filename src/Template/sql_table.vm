@@ -27,7 +27,7 @@ GO
 ## create alter table scripts for each column - don't know when they got added
 #foreach ($column in $element.Columns)
 #if (!$column.ViewColumn)
-#if ($column.Required && $column.Default.Length==0)
+#if ($column.Required && $column.Default.Length==0 && !$column.Identity)
 /* -- commented out because column does not have default value and is required
 #end
 if not exists(select * from syscolumns where id=object_id('$element.EscapedName') and name = '$column.Name')
@@ -39,7 +39,7 @@ if not exists(select * from syscolumns where id=object_id('$element.EscapedName'
 	    DF_${element.Name}_$column.Name DEFAULT $column.Default WITH VALUES
 #end
   END
-#if ($column.Required && $column.Default.Length==0)
+#if ($column.Required && $column.Default.Length==0 && !$column.Identity)
 */
 #end
 GO
