@@ -318,7 +318,7 @@ namespace Spring2.DataTierGenerator {
 
 		    sb.Append("CREATE PROCEDURE " + strProcName + "\n\n");
 
-		    sb.Append("@" + field.SqlName.Replace(" ", "_") + " " + field.SqlType);
+		    sb.Append("@" + field.SqlName.Replace(" ", "_") + " " + field.SqlType.Name);
 		    sb.Append("\n\nAS\n\n");
 
 		    sb.Append("if not exists(SELECT ").Append(field.SqlName).Append(" FROM [").Append(entity.SqlObject).Append("] WHERE ([").Append(field.SqlName).Append("] = @").Append(field.SqlName).Append("))\n");
@@ -362,7 +362,7 @@ namespace Spring2.DataTierGenerator {
 		// Create the parameter list
 		for (i = 0; i < arrKeyList.Count; i++) {
 		    field = (Field)arrKeyList[i];
-		    sb.Append("@" + field.SqlName.Replace(" ", "_") + "\t" + field.SqlType);
+		    sb.Append("@" + field.SqlName.Replace(" ", "_") + "\t" + field.SqlType.Name);
 		    field = null;
 					
 		    if (i == arrKeyList.Count-1)
@@ -486,7 +486,7 @@ namespace Spring2.DataTierGenerator {
 		    strProcName = options.GetProcName(entity.SqlObject, "SelectBy" + strColumnName.Replace(" ", "_"));
 		    sb.Append("CREATE PROCEDURE " + strProcName + "\n\n");
 
-		    sb.Append("@" + field.SqlName.Replace(" ", "_") + "\t" + field.SqlType);
+		    sb.Append("@" + field.SqlName.Replace(" ", "_") + "\t" + field.SqlType.Name);
 		    sb.Append("\n\nAS\n\n");
 		    sb.Append("SELECT\n\t*\n");
 		    sb.Append("FROM\n\t[");
@@ -519,7 +519,7 @@ namespace Spring2.DataTierGenerator {
 		// Create the parameter list
 		for (i = 0; i < arrKeyList.Count; i++) {
 		    field = (Field)arrKeyList[i];
-		    sb.Append("@" + field.SqlName.Replace(" ", "_") + "\t" + field.SqlType);
+		    sb.Append("@" + field.SqlName.Replace(" ", "_") + "\t" + field.SqlType.Name);
 		    field = null;
 					
 		    if (i == arrKeyList.Count)
@@ -581,9 +581,11 @@ namespace Spring2.DataTierGenerator {
 	    // Create the parameter list
 	    for (i = 0; i < entity.Fields.Count; i++) {
 		field = (Field)entity.Fields[i];
+		Boolean first = true;
 		if (!field.IsViewColumn && !field.SqlName.Equals(String.Empty)) {
-		    if (i>0) {
-			sb.Append(",\n");
+		    if (first) {
+				sb.Append(",\n");
+				first=false;
 		    }
 		    sb.Append("\t[" + field.SqlName + "]");
 		}
