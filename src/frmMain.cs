@@ -30,6 +30,8 @@ namespace Spring2.DataTierGenerator {
 
 	private Configuration config;
 	private System.Windows.Forms.Button generateEntitesXML;
+        private System.Windows.Forms.OpenFileDialog openFileDialog;
+
 
 	#region stuff that cort does not want to see
 	/// <summary>
@@ -80,6 +82,7 @@ namespace Spring2.DataTierGenerator {
 	    this.loadXml = new System.Windows.Forms.Button();
 	    this.xmlConfigFilename = new System.Windows.Forms.TextBox();
 	    this.generateEntitesXML = new System.Windows.Forms.Button();
+	    this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
 	    this.groupBox2.SuspendLayout();
 	    this.SuspendLayout();
 	    // 
@@ -87,7 +90,7 @@ namespace Spring2.DataTierGenerator {
 	    // 
 	    this.btnOK.Anchor = (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right);
 	    this.btnOK.Enabled = false;
-	    this.btnOK.Location = new System.Drawing.Point(232, 168);
+	    this.btnOK.Location = new System.Drawing.Point(216, 40);
 	    this.btnOK.Name = "btnOK";
 	    this.btnOK.Size = new System.Drawing.Size(64, 23);
 	    this.btnOK.TabIndex = 15;
@@ -97,7 +100,7 @@ namespace Spring2.DataTierGenerator {
 	    // btnClose
 	    // 
 	    this.btnClose.Anchor = (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right);
-	    this.btnClose.Location = new System.Drawing.Point(304, 168);
+	    this.btnClose.Location = new System.Drawing.Point(288, 40);
 	    this.btnClose.Name = "btnClose";
 	    this.btnClose.Size = new System.Drawing.Size(64, 23);
 	    this.btnClose.TabIndex = 16;
@@ -106,10 +109,12 @@ namespace Spring2.DataTierGenerator {
 	    // 
 	    // lnkEverythingSQL
 	    // 
+	    this.lnkEverythingSQL.Anchor = ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+		| System.Windows.Forms.AnchorStyles.Right);
 	    this.lnkEverythingSQL.LinkBehavior = System.Windows.Forms.LinkBehavior.HoverUnderline;
-	    this.lnkEverythingSQL.Location = new System.Drawing.Point(8, 200);
+	    this.lnkEverythingSQL.Location = new System.Drawing.Point(8, 194);
 	    this.lnkEverythingSQL.Name = "lnkEverythingSQL";
-	    this.lnkEverythingSQL.Size = new System.Drawing.Size(360, 23);
+	    this.lnkEverythingSQL.Size = new System.Drawing.Size(344, 23);
 	    this.lnkEverythingSQL.TabIndex = 20;
 	    this.lnkEverythingSQL.TabStop = true;
 	    this.lnkEverythingSQL.Text = "By Adrian, Cort and Dave.  (Help, and your name could be here too)";
@@ -129,9 +134,9 @@ namespace Spring2.DataTierGenerator {
 										    this.txtDatabaseName,
 										    this.lblServerName,
 										    this.txtServerName});
-	    this.groupBox2.Location = new System.Drawing.Point(8, 8);
+	    this.groupBox2.Location = new System.Drawing.Point(8, 280);
 	    this.groupBox2.Name = "groupBox2";
-	    this.groupBox2.Size = new System.Drawing.Size(362, 120);
+	    this.groupBox2.Size = new System.Drawing.Size(346, 120);
 	    this.groupBox2.TabIndex = 30;
 	    this.groupBox2.TabStop = false;
 	    this.groupBox2.Text = "Connection Information";
@@ -152,7 +157,7 @@ namespace Spring2.DataTierGenerator {
 	    this.txtPassword.Location = new System.Drawing.Point(104, 88);
 	    this.txtPassword.Name = "txtPassword";
 	    this.txtPassword.PasswordChar = '*';
-	    this.txtPassword.Size = new System.Drawing.Size(250, 22);
+	    this.txtPassword.Size = new System.Drawing.Size(234, 22);
 	    this.txtPassword.TabIndex = 26;
 	    this.txtPassword.Text = "";
 	    this.txtPassword.TextChanged += new System.EventHandler(this.txtPassword_TextChanged);
@@ -172,7 +177,7 @@ namespace Spring2.DataTierGenerator {
 	    this.txtUserID.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
 	    this.txtUserID.Location = new System.Drawing.Point(104, 64);
 	    this.txtUserID.Name = "txtUserID";
-	    this.txtUserID.Size = new System.Drawing.Size(250, 22);
+	    this.txtUserID.Size = new System.Drawing.Size(234, 22);
 	    this.txtUserID.TabIndex = 25;
 	    this.txtUserID.Text = "";
 	    this.txtUserID.TextChanged += new System.EventHandler(this.txtUserID_TextChanged);
@@ -192,7 +197,7 @@ namespace Spring2.DataTierGenerator {
 	    this.txtDatabaseName.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
 	    this.txtDatabaseName.Location = new System.Drawing.Point(104, 40);
 	    this.txtDatabaseName.Name = "txtDatabaseName";
-	    this.txtDatabaseName.Size = new System.Drawing.Size(250, 22);
+	    this.txtDatabaseName.Size = new System.Drawing.Size(234, 22);
 	    this.txtDatabaseName.TabIndex = 24;
 	    this.txtDatabaseName.Text = "";
 	    this.txtDatabaseName.TextChanged += new System.EventHandler(this.txtDatabaseName_TextChanged);
@@ -212,41 +217,48 @@ namespace Spring2.DataTierGenerator {
 	    this.txtServerName.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
 	    this.txtServerName.Location = new System.Drawing.Point(104, 16);
 	    this.txtServerName.Name = "txtServerName";
-	    this.txtServerName.Size = new System.Drawing.Size(250, 22);
+	    this.txtServerName.Size = new System.Drawing.Size(234, 22);
 	    this.txtServerName.TabIndex = 22;
 	    this.txtServerName.Text = "";
 	    this.txtServerName.TextChanged += new System.EventHandler(this.txtServerName_TextChanged);
 	    // 
 	    // loadXml
 	    // 
-	    this.loadXml.Location = new System.Drawing.Point(304, 136);
+	    this.loadXml.Anchor = (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right);
+	    this.loadXml.Location = new System.Drawing.Point(328, 8);
 	    this.loadXml.Name = "loadXml";
-	    this.loadXml.Size = new System.Drawing.Size(64, 24);
+	    this.loadXml.Size = new System.Drawing.Size(24, 24);
 	    this.loadXml.TabIndex = 31;
-	    this.loadXml.Text = "Load XML";
+	    this.loadXml.Text = "...";
 	    this.loadXml.Click += new System.EventHandler(this.loadXml_Click);
 	    // 
 	    // xmlConfigFilename
 	    // 
-	    this.xmlConfigFilename.Location = new System.Drawing.Point(8, 136);
+	    this.xmlConfigFilename.Anchor = ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+		| System.Windows.Forms.AnchorStyles.Right);
+	    this.xmlConfigFilename.Location = new System.Drawing.Point(8, 8);
 	    this.xmlConfigFilename.Name = "xmlConfigFilename";
-	    this.xmlConfigFilename.Size = new System.Drawing.Size(288, 20);
+	    this.xmlConfigFilename.Size = new System.Drawing.Size(312, 20);
 	    this.xmlConfigFilename.TabIndex = 32;
 	    this.xmlConfigFilename.Text = "";
 	    // 
 	    // generateEntitesXML
 	    // 
-	    this.generateEntitesXML.Location = new System.Drawing.Point(8, 168);
+	    this.generateEntitesXML.Location = new System.Drawing.Point(8, 40);
 	    this.generateEntitesXML.Name = "generateEntitesXML";
 	    this.generateEntitesXML.Size = new System.Drawing.Size(88, 23);
 	    this.generateEntitesXML.TabIndex = 33;
 	    this.generateEntitesXML.Text = "Generate XML";
 	    this.generateEntitesXML.Click += new System.EventHandler(this.generateEntitesXML_Click);
 	    // 
+	    // openFileDialog
+	    // 
+	    this.openFileDialog.FileOk += new System.ComponentModel.CancelEventHandler(this.BrowserSelection);
+	    // 
 	    // frmMain
 	    // 
 	    this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-	    this.ClientSize = new System.Drawing.Size(376, 222);
+	    this.ClientSize = new System.Drawing.Size(360, 216);
 	    this.Controls.AddRange(new System.Windows.Forms.Control[] {
 									  this.generateEntitesXML,
 									  this.xmlConfigFilename,
@@ -294,9 +306,8 @@ namespace Spring2.DataTierGenerator {
 	private void btnOK_Click(object sender, System.EventArgs e) {
 	    try {
 		GetDataFromForm();
-		Generator objGenerator = new Generator(config);
-		objGenerator.GenerateSource();
-		objGenerator = null;
+		Generator g = new Generator(xmlConfigFilename.Text);
+		g.GenerateSource();
 
 		// Alert the user everything went ok
 		MessageBox.Show("Data tier generated successfully.");
@@ -315,28 +326,29 @@ namespace Spring2.DataTierGenerator {
 	}
 
 	private void loadXml_Click(object sender, System.EventArgs e) {
-	    XmlDocument doc = new XmlDocument();
-			
-	    try {
-		doc.Load(xmlConfigFilename.Text);
-		XmlNode root = doc.DocumentElement["config"];
-		if (root != null) {
-		    config = new Configuration(root);
-		    config.XmlConfigFilename = xmlConfigFilename.Text;
-		    PopulateForm();
-		}
-	    } catch (Exception objException) {
-		MessageBox.Show("An error occcurred while generating.\n\n" + objException.ToString());
-		Console.Out.WriteLine("An error occcurred while generating.\n\n" + objException.ToString());
-	    }
+	    fileBrowse_Click(sender, e);
+//	    XmlDocument doc = new XmlDocument();
+//			
+//	    try {
+//		doc.Load(xmlConfigFilename.Text);
+//		XmlNode root = doc.DocumentElement["config"];
+//		if (root != null) {
+//		    config = new Configuration(root);
+//		    config.XmlConfigFilename = xmlConfigFilename.Text;
+//		    PopulateForm();
+//		}
+//	    } catch (Exception objException) {
+//		MessageBox.Show("An error occcurred while generating.\n\n" + objException.ToString());
+//		Console.Out.WriteLine("An error occcurred while generating.\n\n" + objException.ToString());
+//	    }
 	}
 
 	private void generateEntitesXML_Click(object sender, System.EventArgs e) {
 	    try {
 		GetDataFromForm();
-		Generator objGenerator = new Generator(config);
-		objGenerator.GenerateXML();
-		objGenerator = null;
+		Generator g = new Generator(xmlConfigFilename.Text);
+		g.GenerateXML();
+
 		MessageBox.Show("Xml generated successfully.");
 	    } catch (Exception objException) {
 		MessageBox.Show("An error occcurred while generating.\n\n" + objException.ToString());
@@ -367,19 +379,8 @@ namespace Spring2.DataTierGenerator {
 
 	    // decide whether to parse XML file and go or bring up form
 	    if (args.Length==1) {
-		XmlDocument doc = new XmlDocument();
-			
-		doc.Load(args[0]);
-		XmlNode root = doc.DocumentElement["config"];
-		Configuration config;
-		if (root != null) {
-		    config = new Configuration(root);
-		    config.XmlConfigFilename = args[0];
-		    Generator generator = new Generator(config);
-		    generator.GenerateSource();
-		} else {
-		    Console.Out.WriteLine("No configuration section found in config file.");
-		}
+		Generator g = new Generator(args[0]);
+		g.GenerateSource();
 	    } else {
 		Application.Run(new frmMain());
 	    }
@@ -411,21 +412,37 @@ namespace Spring2.DataTierGenerator {
 	}
 
 	private void frmMain_Load(object sender, System.EventArgs e) {
-	    config = new Configuration();
-	    try {
-		//config.XmlConfigFilename = "..\\dtg-config.xml";
-		//config.XmlConfigFilename = "C:\\Data\\work\\seamlessweb\\manhattan\\src\\DataTierGenerator.config.xml";
-	    } catch (Exception objException) {
-		MessageBox.Show("An error occcurred while generating.\n\n" + objException.ToString());
-		Console.Out.WriteLine("An error occcurred while generating.\n\n" + objException.ToString());
-	    }
-
-	    PopulateForm();
-
-	    if (config.XmlConfigFilename.Length>0) {
-		loadXml_Click(null, null);
-	    }
+	    xmlConfigFilename.Text = System.Environment.CurrentDirectory;
+//	    
+//	    try {
+//		config = new Configuration();
+//		//config.XmlConfigFilename = "..\\dtg-config.xml";
+//		//config.XmlConfigFilename = "C:\\Data\\work\\seamlessweb\\manhattan\\src\\DataTierGenerator.config.xml";
+//		//config.XmlConfigFilename = "C:\\Data\\work\\Golf\\Tournament\\src\\DataTierGenerator.config.xml";
+//		PopulateForm();
+//		if (config.XmlConfigFilename.Length>0) {
+//		    loadXml_Click(null, null);
+//		}
+//	    } catch (Exception objException) {
+//		MessageBox.Show("An error occcurred while generating.\n\n" + objException.ToString());
+//		Console.Out.WriteLine("An error occcurred while generating.\n\n" + objException.ToString());
+//	    }
 	}
+
+	//start file browser 
+	private void fileBrowse_Click(object sender, System.EventArgs e) {
+	    openFileDialog.Multiselect = false;
+	    openFileDialog.Filter = "XML(*.xml)|*.xml";
+	    openFileDialog.InitialDirectory = xmlConfigFilename.Text;
+	    openFileDialog.ShowDialog(this);
+	}
+
+	//clicked on from file browser, clicking cancel wil return from the showDialog
+	private void BrowserSelection(object sender, System.ComponentModel.CancelEventArgs e) {			
+	    xmlConfigFilename.Text = openFileDialog.FileName;
+	    openFileDialog.Dispose();
+	}
+
 
     }
 }
