@@ -15,6 +15,7 @@ namespace Spring2.DataTierGenerator.Element {
 	private static readonly String DIRECTORY = "directory";
 	private static readonly String FILENAME_FORMAT = "filenameformat";
 	private static readonly String WRITER = "writer";
+	private static readonly String STYLER = "styler";
 
 	protected String element = String.Empty;
 	protected String directory = String.Empty;
@@ -22,7 +23,8 @@ namespace Spring2.DataTierGenerator.Element {
 	private IList includes = new ArrayList();
 	private IList excludes = new ArrayList();
 	private IList parameters = new ArrayList();
-	private String writer = "region";
+	private String writer = String.Empty;
+	private String styler = String.Empty;
 
 	public String Element {
 	    get { return this.element; }
@@ -59,6 +61,11 @@ namespace Spring2.DataTierGenerator.Element {
 	    set { this.writer = value; }
 	}
 
+	public String Styler {
+	    get { return this.styler; }
+	    set { this.styler = value; }
+	}
+
 	/// <summary>
 	/// Parse only method. Parses and adds all entities found in the given node and adds them to the given
 	/// list.
@@ -71,6 +78,10 @@ namespace Spring2.DataTierGenerator.Element {
 
 		XmlNodeList nodes = node.SelectNodes("tasks/task");
 		foreach (XmlNode taskNode in nodes) {
+		    if (node.NodeType == XmlNodeType.Comment)
+		    {
+			continue;
+		    }
 		    TaskElement taskElement = new TaskElement();
 
 		    taskElement.Name = GetAttributeValue(taskNode, NAME, taskElement.Name);
@@ -79,6 +90,7 @@ namespace Spring2.DataTierGenerator.Element {
 		    taskElement.Directory = GetAttributeValue(taskNode, DIRECTORY, taskElement.Directory);
 		    taskElement.FileNameFormat = GetAttributeValue(taskNode, FILENAME_FORMAT, taskElement.FileNameFormat);
 		    taskElement.Writer = GetAttributeValue(taskNode, WRITER, taskElement.Writer);
+		    taskElement.Styler = GetAttributeValue(taskNode, STYLER, taskElement.Styler);
 		
 		    taskElements.Add(taskElement);
 		}
@@ -89,6 +101,10 @@ namespace Spring2.DataTierGenerator.Element {
 	    ArrayList list = new ArrayList();
 	    XmlNodeList nodes = root.SelectNodes("tasks/task");
 	    foreach (XmlNode node in nodes) {
+		if (node.NodeType == XmlNodeType.Comment)
+		{
+		    continue;
+		}
 		TaskElement task = new TaskElement();
 		task.Name = node.Attributes["name"].Value;
 		task.Element = node.Attributes["element"].Value;
@@ -102,6 +118,7 @@ namespace Spring2.DataTierGenerator.Element {
 		task.Excludes = ExcludeElement.ParseFromXml(options, node, vd);
 		task.Parameters = ParameterElement.ParseFromXml(options, node, vd);
 		task.Writer = GetAttributeValue(node, WRITER, task.Writer);
+		task.Styler = GetAttributeValue(node, STYLER, task.Styler);
 
 		list.Add(task);
 	    }

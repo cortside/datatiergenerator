@@ -54,6 +54,18 @@ namespace Spring2.DataTierGenerator.Parser {
 		    }
 		}
 
+		if (task.Element.Equals("reportextraction")) 
+		{
+		    foreach (ReportExtractionElement reportExtraction in parser.ReportExtractions) 
+		    {
+			if (task.IsIncluded(reportExtraction.Name)) 
+			{
+			    list.Add(reportExtraction);
+			}
+		    }
+		}
+
+
 		// the entire list of entities as a list
 		if (task.Element.Equals("entities")) {
 		    ListElement element = new ListElement();
@@ -115,6 +127,10 @@ namespace Spring2.DataTierGenerator.Parser {
 
 	public String Writer {
 	    get { return task.Writer; }
+	}
+
+	public String Styler {
+	    get { return task.Styler; }
 	}
 
 	public String Template {

@@ -167,6 +167,26 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Generator\Styler\BaseStyler.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Generator\Styler\CSharpStyler.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Generator\Styler\IStyler.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Generator\Styler\NoStyle.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Generator\Writer\AbstractWriter.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -193,11 +213,6 @@
                 />
                 <File
                     RelPath = "Generator\Writer\TextWriter.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Generator\Writer\WriterFactory.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

@@ -46,4 +46,9 @@ if @@rowcount <> 1 or @@error!=0
 return @@IDENTITY
 GO
 
+#if ($element.User.Length > 0)
+grant execute on [sp${element.Name}_Insert] to [$element.User]
+GO
+
+#end
 #end

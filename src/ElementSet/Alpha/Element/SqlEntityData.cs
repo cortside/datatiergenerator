@@ -25,6 +25,11 @@ namespace Spring2.DataTierGenerator.Element {
 	protected static readonly String GENERATE_UPDATE_STORED_PROC_SCRIPT = "generateupdatestoredprocscript";
 	protected static readonly String GENERATE_DELETE_STORED_PROC_SCRIPT = "generatedeletestoredprocscript";
 	protected static readonly String GENERATE_SELECT_STORED_PROC_SCRIPT = "generateselectstoredprocscript";
+	protected static readonly String ALLOW_INSERT = "allowinsert";
+	protected static readonly String ALLOW_UPDATE = "allowupdate";
+	protected static readonly String ALLOW_DELETE = "allowdelete";
+	protected static readonly String DEFAULT_DIRTY_READ = "defaultdirtyread";
+	protected static readonly String UPDATE_CHANGED_ONLY = "updatechangedonly";
 	protected static readonly String SCRIPT_DROP_STATEMENT = "scriptdropstatement";
 	protected static readonly String USE_VIEW = "useview";
 	protected static readonly String GENERATE_PROCS_FOR_FOREIGN_KEYS = "generateprocsforforeignkeys";
@@ -43,13 +48,18 @@ namespace Spring2.DataTierGenerator.Element {
 	protected Boolean singleFile = false;
 	protected Boolean generateSqlViewScripts = false;
 	protected Boolean generateSqlTableScripts = false;
-	protected Boolean useViews = true;
+	protected Boolean useView = true;
 	protected Boolean scriptDropStatement = true;
 	protected Boolean generateProcsForForeignKey = false;
 	protected Boolean generateInsertStoredProcScript = false;
 	protected Boolean generateUpdateStoredProcScript = false;
 	protected Boolean generateDeleteStoredProcScript = false;
 	protected Boolean generateSelectStoredProcScript = false;
+	protected Boolean allowInsert = false;
+	protected Boolean allowUpdate = false;
+	protected Boolean allowDelete = false;
+	protected Boolean defaultDirtyRead = false;
+	protected Boolean updateChangedOnly = false;
 	protected Boolean generateOnlyPrimaryDeleteStoredProc = true;
 	protected Boolean allowUpdateOfPrimaryKey = false;
 	protected Boolean autoDiscoverEntities = true;
@@ -108,9 +118,9 @@ namespace Spring2.DataTierGenerator.Element {
 	    set { this.generateSqlTableScripts = value; }
 	}
 
-	public Boolean UseViews {
-	    get { return this.useViews; }
-	    set { this.useViews = value; }
+	public Boolean UseView {
+	    get { return this.useView; }
+	    set { this.useView = value; }
 	}
 
 	public Boolean ScriptDropStatement {
@@ -138,6 +148,32 @@ namespace Spring2.DataTierGenerator.Element {
 	public Boolean GenerateSelectStoredProcScript {
 	    get { return this.generateSelectStoredProcScript; }
 	    set { this.generateSelectStoredProcScript = value; }
+	}
+
+	public Boolean AllowInsert 
+	{
+	    get { return this.allowInsert; }
+	    set { this.allowInsert = value; }
+	}
+	public Boolean AllowUpdate 
+	{
+	    get { return this.allowUpdate; }
+	    set { this.allowUpdate = value; }
+	}
+	public Boolean AllowDelete 
+	{
+	    get { return this.allowDelete; }
+	    set { this.allowDelete = value; }
+	}
+	public Boolean DefaultDirtyRead
+	{
+	    get { return this.defaultDirtyRead; }
+	    set { this.defaultDirtyRead = value; }
+	}
+	public Boolean UpdateChangedOnly
+	{
+	    get { return this.updateChangedOnly; }
+	    set { this.updateChangedOnly = value; }
 	}
 
 	public Boolean GenerateOnlyPrimaryDeleteStoredProc {

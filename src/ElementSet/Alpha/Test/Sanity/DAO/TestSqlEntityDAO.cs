@@ -11,7 +11,7 @@ using Golf.Tournament.DataObject;
 
 
 namespace Golf.Tournament.DAO {
-    public class TestSqlEntitiesDAO : Spring2.Core.DAO.EntityDAO {
+    public class TestSqlEntityDAO : Spring2.Core.DAO.EntityDAO {
 
 	private static readonly String VIEW = "vwTestSqlEntities";
 	private static readonly String CONNECTION_STRING_KEY = "ConnectionString";
@@ -25,7 +25,7 @@ namespace Golf.Tournament.DAO {
 	/// <summary>
 	/// Initializes the static map of property names to sql expressions.
 	/// </summary>
-	static TestSqlEntitiesDAO() {
+	static TestSqlEntityDAO() {
 	    if (!propertyToSqlMap.Contains("FloatProperty")) {
 		propertyToSqlMap.Add("FloatProperty",@"float");
 	    }
@@ -139,40 +139,40 @@ namespace Golf.Tournament.DAO {
 	}
 
 	/// <summary>
-	/// Returns a list of all TestSqlEntities rows.
+	/// Returns a list of all TestSqlEntity rows.
 	/// </summary>
-	/// <returns>List of TestSqlEntitiesData objects.</returns>
+	/// <returns>List of TestSqlEntityData objects.</returns>
 	/// <exception cref="Spring2.Core.DAO.FinderException">Thrown when no rows are found.</exception>
 	public static IList GetList() {
 	    return GetList(null, null);
 	}
 
 	/// <summary>
-	/// Returns a filtered list of TestSqlEntities rows.
+	/// Returns a filtered list of TestSqlEntity rows.
 	/// </summary>
 	/// <param name="whereClause">Filtering criteria.</param>
-	/// <returns>List of TestSqlEntitiesData objects.</returns>
+	/// <returns>List of TestSqlEntityData objects.</returns>
 	/// <exception cref="Spring2.Core.DAO.FinderException">Thrown when no rows are found matching the where criteria.</exception>
 	public static IList GetList(IWhere whereClause) {
 	    return GetList(whereClause, null);
 	}
 
 	/// <summary>
-	/// Returns an ordered list of TestSqlEntities rows.  All rows in the database are returned
+	/// Returns an ordered list of TestSqlEntity rows.  All rows in the database are returned
 	/// </summary>
 	/// <param name="orderByClause">Ordering criteria.</param>
-	/// <returns>List of TestSqlEntitiesData objects.</returns>
+	/// <returns>List of TestSqlEntityData objects.</returns>
 	/// <exception cref="Spring2.Core.DAO.FinderException">Thrown when no rows are found.</exception>
 	public static IList GetList(IOrderBy orderByClause) {
 	    return GetList(null, orderByClause);
 	}
 
 	/// <summary>
-	/// Returns an ordered and filtered list of TestSqlEntities rows.
+	/// Returns an ordered and filtered list of TestSqlEntity rows.
 	/// </summary>
 	/// <param name="whereClause">Filtering criteria.</param>
 	/// <param name="orderByClause">Ordering criteria.</param>
-	/// <returns>List of TestSqlEntitiesData objects.</returns>
+	/// <returns>List of TestSqlEntityData objects.</returns>
 	/// <exception cref="Spring2.Core.DAO.FinderException">Thrown when no rows are found matching the where criteria.</exception>
 	public static IList GetList(IWhere whereClause, IOrderBy orderByClause) {
 	    SqlDataReader dataReader = GetListReader(CONNECTION_STRING_KEY, VIEW, whereClause, orderByClause);
@@ -186,40 +186,40 @@ namespace Golf.Tournament.DAO {
 	}
 
 	/// <summary>
-	/// Returns a list of all TestSqlEntities rows.
+	/// Returns a list of all TestSqlEntity rows.
 	/// </summary>
-	/// <returns>List of TestSqlEntitiesData objects.</returns>
+	/// <returns>List of TestSqlEntityData objects.</returns>
 	/// <exception cref="Spring2.Core.DAO.FinderException">Thrown when no rows are found.</exception>
 	public static IList GetList(Int32 maxRows) {
 	    return GetList(null, null, maxRows);
 	}
 
 	/// <summary>
-	/// Returns a filtered list of TestSqlEntities rows.
+	/// Returns a filtered list of TestSqlEntity rows.
 	/// </summary>
 	/// <param name="whereClause">Filtering criteria.</param>
-	/// <returns>List of TestSqlEntitiesData objects.</returns>
+	/// <returns>List of TestSqlEntityData objects.</returns>
 	/// <exception cref="Spring2.Core.DAO.FinderException">Thrown when no rows are found matching the where criteria.</exception>
 	public static IList GetList(IWhere whereClause, Int32 maxRows) {
 	    return GetList(whereClause, null, maxRows);
 	}
 
 	/// <summary>
-	/// Returns an ordered list of TestSqlEntities rows.  All rows in the database are returned
+	/// Returns an ordered list of TestSqlEntity rows.  All rows in the database are returned
 	/// </summary>
 	/// <param name="orderByClause">Ordering criteria.</param>
-	/// <returns>List of TestSqlEntitiesData objects.</returns>
+	/// <returns>List of TestSqlEntityData objects.</returns>
 	/// <exception cref="Spring2.Core.DAO.FinderException">Thrown when no rows are found.</exception>
 	public static IList GetList(IOrderBy orderByClause, Int32 maxRows) {
 	    return GetList(null, orderByClause, maxRows);
 	}
 
 	/// <summary>
-	/// Returns an ordered and filtered list of TestSqlEntities rows.
+	/// Returns an ordered and filtered list of TestSqlEntity rows.
 	/// </summary>
 	/// <param name="whereClause">Filtering criteria.</param>
 	/// <param name="orderByClause">Ordering criteria.</param>
-	/// <returns>List of TestSqlEntitiesData objects.</returns>
+	/// <returns>List of TestSqlEntityData objects.</returns>
 	/// <exception cref="Spring2.Core.DAO.FinderException">Thrown when no rows are found matching the where criteria.</exception>
 	public static IList GetList(IWhere whereClause, IOrderBy orderByClause, Int32 maxRows) {
 	    SqlDataReader dataReader = GetListReader(CONNECTION_STRING_KEY, VIEW, whereClause, orderByClause, maxRows);
@@ -233,19 +233,19 @@ namespace Golf.Tournament.DAO {
 	}
 
 	/// <summary>
-	/// Finds a TestSqlEntities entity using it's primary key.
+	/// Finds a TestSqlEntity entity using it's primary key.
 	/// </summary>
-	/// <returns>A TestSqlEntitiesData object.</returns>
+	/// <returns>A TestSqlEntityData object.</returns>
 	/// <exception cref="Spring2.Core.DAO.FinderException">Thrown when no entity exists witht he specified primary key..</exception>
-	public static TestSqlEntitiesData Load() {
+	public static TestSqlEntityData Load() {
 	    WhereClause w = new WhereClause();
 	    SqlDataReader dataReader = GetListReader(CONNECTION_STRING_KEY, VIEW, w, null);
 
 	    if (!dataReader.Read()) {
 		dataReader.Close();
-		throw new FinderException("Load found no rows for TestSqlEntities.");
+		throw new FinderException("Load found no rows for TestSqlEntity.");
 	    }
-	    TestSqlEntitiesData data = GetDataObjectFromReader(dataReader);
+	    TestSqlEntityData data = GetDataObjectFromReader(dataReader);
 	    dataReader.Close();
 	    return data;
 	}
@@ -255,8 +255,8 @@ namespace Golf.Tournament.DAO {
 	/// </summary>
 	/// <param name="dataReader">Container for database row.</param>
 	/// <returns>Data object built from current row.</returns>
-	private static TestSqlEntitiesData GetDataObjectFromReader(SqlDataReader dataReader) {
-	    TestSqlEntitiesData data = new TestSqlEntitiesData();
+	private static TestSqlEntityData GetDataObjectFromReader(SqlDataReader dataReader) {
+	    TestSqlEntityData data = new TestSqlEntityData();
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("float"))) {
 		data.FloatProperty = DecimalType.UNSET;
 	    } else {
@@ -365,7 +365,7 @@ namespace Golf.Tournament.DAO {
 	/// Inserts a record into the TestSqlEntities table.
 	/// </summary>
 	/// <param name=""></param>
-	public static void Insert(TestSqlEntitiesData data) {
+	public static void Insert(TestSqlEntityData data) {
 	    Insert(data, null);
 	}
 
@@ -373,7 +373,7 @@ namespace Golf.Tournament.DAO {
 	/// Inserts a record into the TestSqlEntities table.
 	/// </summary>
 	/// <param name=""></param>
-	public static void Insert(TestSqlEntitiesData data, SqlTransaction transaction) {
+	public static void Insert(TestSqlEntityData data, SqlTransaction transaction) {
 	    // Create and execute the command
 	    SqlCommand cmd = GetSqlCommand(CONNECTION_STRING_KEY, "spTestSqlEntities_Insert", CommandType.StoredProcedure, COMMAND_TIMEOUT, transaction);
 
@@ -413,7 +413,7 @@ namespace Golf.Tournament.DAO {
 	/// Updates a record in the TestSqlEntities table.
 	/// </summary>
 	/// <param name=""></param>
-	public static void Update(TestSqlEntitiesData data) {
+	public static void Update(TestSqlEntityData data) {
 	    Update(data, null);
 	}
 
@@ -421,7 +421,7 @@ namespace Golf.Tournament.DAO {
 	/// Updates a record in the TestSqlEntities table.
 	/// </summary>
 	/// <param name=""></param>
-	public static void Update(TestSqlEntitiesData data, SqlTransaction transaction) {
+	public static void Update(TestSqlEntityData data, SqlTransaction transaction) {
 	    // Create and execute the command
 	    SqlCommand cmd = GetSqlCommand(CONNECTION_STRING_KEY, "spTestSqlEntities_Update", CommandType.StoredProcedure, COMMAND_TIMEOUT, transaction);
 

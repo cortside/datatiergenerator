@@ -32,6 +32,11 @@ namespace Spring2.DataTierGenerator.Element {
 	    this.GenerateSqlTableScripts = data.GenerateSqlTableScripts;
 	    this.GenerateSqlViewScripts = data.GenerateSqlViewScripts;
 	    this.GenerateUpdateStoredProcScript = data.GenerateUpdateStoredProcScript;
+	    this.AllowInsert = data.AllowInsert || data.GenerateInsertStoredProcScript;
+	    this.AllowUpdate = data.AllowUpdate || data.GenerateUpdateStoredProcScript;
+	    this.AllowDelete = data.AllowDelete || data.GenerateDeleteStoredProcScript;
+	    this.DefaultDirtyRead = data.DefaultDirtyRead;
+	    this.UpdateChangedOnly = data.UpdateChangedOnly && this.AllowUpdate;
 	    this.Name = data.Name;
 	    this.Password = data.Password;
 	    this.ScriptDropStatement = data.ScriptDropStatement;
@@ -40,7 +45,7 @@ namespace Spring2.DataTierGenerator.Element {
 	    this.SqlScriptDirectory = data.SqlScriptDirectory;
 	    this.StoredProcNameFormat = data.StoredProcNameFormat;
 	    this.User = data.User;
-	    this.UseViews = data.UseViews;
+	    this.UseView = data.UseView;
 	    this.CommandTimeout = data.CommandTimeout;
 	    this.ScriptForIndexedViews = data.ScriptForIndexedViews;
 	}
@@ -95,8 +100,17 @@ namespace Spring2.DataTierGenerator.Element {
 			databaseElement.GenerateUpdateStoredProcScript = Boolean.Parse(GetAttributeValue(databaseNode, GENERATE_UPDATE_STORED_PROC_SCRIPT, databaseElement.GenerateUpdateStoredProcScript.ToString()));
 			databaseElement.GenerateDeleteStoredProcScript = Boolean.Parse(GetAttributeValue(databaseNode, GENERATE_DELETE_STORED_PROC_SCRIPT, databaseElement.GenerateDeleteStoredProcScript.ToString()));
 			databaseElement.GenerateSelectStoredProcScript = Boolean.Parse(GetAttributeValue(databaseNode, GENERATE_SELECT_STORED_PROC_SCRIPT, databaseElement.GenerateSelectStoredProcScript.ToString()));
+			databaseElement.AllowInsert = Boolean.Parse(GetAttributeValue(databaseNode, ALLOW_INSERT, databaseElement.AllowInsert.ToString()))
+							|| databaseElement.GenerateInsertStoredProcScript;
+			databaseElement.AllowUpdate = Boolean.Parse(GetAttributeValue(databaseNode, ALLOW_UPDATE, databaseElement.AllowUpdate.ToString()))
+							|| databaseElement.GenerateUpdateStoredProcScript;
+			databaseElement.AllowDelete = Boolean.Parse(GetAttributeValue(databaseNode, ALLOW_DELETE, databaseElement.AllowDelete.ToString()))
+							|| databaseElement.GenerateDeleteStoredProcScript;
+			databaseElement.DefaultDirtyRead = Boolean.Parse(GetAttributeValue(databaseNode, DEFAULT_DIRTY_READ, databaseElement.DefaultDirtyRead.ToString()));
+			databaseElement.UpdateChangedOnly = Boolean.Parse(GetAttributeValue(databaseNode, UPDATE_CHANGED_ONLY, databaseElement.UpdateChangedOnly.ToString()))
+							    && databaseElement.AllowUpdate;
 			databaseElement.ScriptDropStatement = Boolean.Parse(GetAttributeValue(databaseNode, SCRIPT_DROP_STATEMENT, databaseElement.ScriptDropStatement.ToString()));
-			databaseElement.UseViews = Boolean.Parse(GetAttributeValue(databaseNode, USE_VIEW, databaseElement.UseViews.ToString()));
+			databaseElement.UseView = Boolean.Parse(GetAttributeValue(databaseNode, USE_VIEW, databaseElement.UseView.ToString()));
 			databaseElement.GenerateProcsForForeignKey = Boolean.Parse(GetAttributeValue(databaseNode, GENERATE_PROCS_FOR_FOREIGN_KEYS, databaseElement.GenerateProcsForForeignKey.ToString()));
 			databaseElement.GenerateOnlyPrimaryDeleteStoredProc = Boolean.Parse(GetAttributeValue(databaseNode, GENERATE_ONLY_PRIMARY_DELETE_STORED_PROC, databaseElement.GenerateOnlyPrimaryDeleteStoredProc.ToString()));
 			databaseElement.AllowUpdateOfPrimaryKey = Boolean.Parse(GetAttributeValue(databaseNode, ALLOW_UPDATE_OF_PRIMARY_KEY, databaseElement.AllowUpdateOfPrimaryKey.ToString()));
@@ -126,6 +140,10 @@ namespace Spring2.DataTierGenerator.Element {
 	    ArrayList list = new ArrayList();
 	    elements = doc.DocumentElement.GetElementsByTagName("database");
 	    foreach (XmlNode node in elements) {
+		if (node.NodeType == XmlNodeType.Comment)
+		{
+		    continue;
+		}
 		DatabaseElement database = new DatabaseElement(defaults);
 		SqlEntityElement.ParseNodeAttributes(node, database);
 		if (node.Attributes["key"] != null) {

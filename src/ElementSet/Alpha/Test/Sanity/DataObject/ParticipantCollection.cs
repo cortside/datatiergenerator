@@ -6,6 +6,7 @@ using System.Collections;
 using Spring2.Core.Types;
 
 using Golf.Tournament.DataObject;
+using Golf.Tournament.Types;
 
 
 namespace Golf.Tournament.DataObject {

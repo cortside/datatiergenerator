@@ -8,13 +8,17 @@ using Spring2.DataTierGenerator.Parser;
 
 namespace Spring2.DataTierGenerator.Element {
 
-    public class EntityElement : ElementSkeleton {
+    public class EntityElement : ElementSkeleton, IPropertyContainer, ICollectable {
 
 	private static readonly String PROPERTIES = "properties";
 	private static readonly String FINDERS = "finders";
+	private static readonly String COMPARERS = "comparers";
 	private static readonly String SQLENTITY = "sqlentity";
 	private static readonly String BASE_ENTITY = "baseentity";
 	private static readonly String ABSTRACT = "abstract";
+	private static readonly String LOG = "log";
+	private static readonly String RETURNWHOLEOBJECT = "returnwholeobject";
+	private static readonly String PREPAREFORINSERT = "prepareforinsert";
 
 	/// <summary>
 	/// Handles creation of the static readonly property names and values.  Creates
@@ -75,8 +79,12 @@ namespace Spring2.DataTierGenerator.Element {
 	private SqlEntityElement sqlEntity = new SqlEntityElement();
 	private ArrayList fields = new ArrayList();
 	private ArrayList finders = new ArrayList();
+	private ArrayList comparers = new ArrayList();
 	private EntityElement baseEntity = EntityElement.EMPTY;
 	private Boolean isAbstract = false;
+	private Boolean doLog = false;
+	private Boolean returnWholeObject = false;
+	private Boolean prepareForInsert = false;
 
 	public SqlEntityElement SqlEntity {
 	    get { return this.sqlEntity; }
@@ -93,6 +101,21 @@ namespace Spring2.DataTierGenerator.Element {
 	    set { this.isAbstract = value; }
 	}
 
+	public Boolean DoLog {
+	    get { return this.doLog; }
+	    set { this.doLog = value; }
+	}
+        
+	public Boolean ReturnWholeObject {
+	    get { return this.returnWholeObject; }
+	    set { this.returnWholeObject = value; }
+	}
+
+	public Boolean PrepareForInsert {
+	    get { return this.prepareForInsert; }
+	    set { this.prepareForInsert = value; }
+	}
+
 	public ArrayList Fields {
 	    get { return this.fields; }
 	    set { this.fields = value; }
@@ -101,6 +124,11 @@ namespace Spring2.DataTierGenerator.Element {
 	public ArrayList Finders {
 	    get { return this.finders; }
 	    set { this.finders = value; }
+	}
+
+	public ArrayList Comparers {
+	    get { return this.comparers; }
+	    set { this.comparers = value; }
 	}
 
 	public String ToXml() {
@@ -122,7 +150,7 @@ namespace Spring2.DataTierGenerator.Element {
 	    return null;
 	}
 
-	public static EntityElement FindEntityByName(ArrayList entities, String name) {
+	public static EntityElement FindEntityByName(IList entities, String name) {
 	    foreach (EntityElement entity in entities) {
 		if (entity.Name.Equals(name)) {
 		    return entity;
@@ -149,10 +177,13 @@ namespace Spring2.DataTierGenerator.Element {
 			entityElement.BaseEntity.Name = GetAttributeValue(entityNode, BASE_ENTITY, entityElement.BaseEntity.Name);
 			entityElement.SqlEntity.Name = GetAttributeValue(entityNode, SQLENTITY, entityElement.SqlEntity.Name);
 			entityElement.IsAbstract = Boolean.Parse(GetAttributeValue(entityNode, ABSTRACT, entityElement.IsAbstract.ToString()));
+			entityElement.DoLog = Boolean.Parse (GetAttributeValue (entityNode, LOG, entityElement.DoLog.ToString ()));
+			entityElement.ReturnWholeObject = Boolean.Parse (GetAttributeValue (entityNode, RETURNWHOLEOBJECT, entityElement.ReturnWholeObject.ToString ()));
+			entityElement.PrepareForInsert = Boolean.Parse (GetAttributeValue (entityNode, PREPAREFORINSERT, entityElement.PrepareForInsert.ToString ()));
 
 			PropertyElement.ParseFromXml(GetChildNodeByName(entityNode, PROPERTIES), entityElement.Fields);
 			FinderElement.ParseFromXml(GetChildNodeByName(entityNode, FINDERS), entityElement.Finders);
-		
+			ComparerElement.ParseFromXml(GetChildNodeByName(entityNode, COMPARERS), entityElement.Comparers);
 			entityElements.Add(entityElement);
 		    }
 		}
@@ -163,6 +194,9 @@ namespace Spring2.DataTierGenerator.Element {
 	    ArrayList entities = new ArrayList();
 	    XmlNodeList elements = doc.DocumentElement.GetElementsByTagName("entity");
 	    foreach (XmlNode node in elements) {
+		if (node.NodeType == XmlNodeType.Comment) {
+		    continue;
+		}
 		EntityElement entity = new EntityElement();
 		entity.Name = node.Attributes["name"].Value;
 		if (node.Attributes["sqlentity"] != null) {
@@ -189,8 +223,21 @@ namespace Spring2.DataTierGenerator.Element {
 		    entity.IsAbstract = Boolean.Parse(node.Attributes["abstract"].Value);
 		}
 
+		if (node.Attributes["log"] != null) {
+		    entity.DoLog = Boolean.Parse (node.Attributes["log"].Value);
+		}
+
+		if (node.Attributes["returnwholeobject"] != null) {
+		    entity.ReturnWholeObject = Boolean.Parse (node.Attributes["returnwholeobject"].Value);
+		}
+
+		if (node.Attributes["prepareforinsert"] != null) {
+		    entity.PrepareForInsert = Boolean.Parse (node.Attributes["prepareforinsert"].Value);
+		}
+
 		entity.Fields = PropertyElement.ParseFromXml(doc, entities, entity, sqltypes, types, vd);
-		entity.Finders = FinderElement.ParseFromXml(node, entity, vd);
+		entity.Finders = FinderElement.ParseFromXml(doc, node, entities, entity, sqltypes, types, vd);
+		entity.Comparers = ComparerElement.ParseFromXml(node, entities, entity, sqltypes, types, vd);
 		entities.Add(entity);
 	    }
 	    return entities;
@@ -199,6 +246,15 @@ namespace Spring2.DataTierGenerator.Element {
 	public PropertyElement GetIdentityField() {
 	    foreach (PropertyElement field in fields) {
 		if (field.Column.Identity && !field.Column.ViewColumn) {
+		    return field;
+		}
+	    }
+	    return null;
+	}
+
+	public PropertyElement GetInsertReturnField() {
+	    foreach (PropertyElement field in fields) {
+		if (field.Column.Identity || field.ReturnAsIdentity) {
 		    return field;
 		}
 	    }
@@ -244,6 +300,15 @@ namespace Spring2.DataTierGenerator.Element {
 	    foreach (FinderElement finder in finders) {
 		if (finder.Name == name) {
 		    return finder;
+		}
+	    }
+	    return null;
+	}
+
+	public ComparerElement FindComparerByName(String name)	{
+	    foreach (ComparerElement comparer in comparers)	    {
+		if (comparer.Name == name)		{
+		    return comparer;
 		}
 	    }
 	    return null;

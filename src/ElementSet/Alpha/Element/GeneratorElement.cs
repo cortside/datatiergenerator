@@ -14,6 +14,8 @@ namespace Spring2.DataTierGenerator.Element {
 	private String className = String.Empty;
 	private IList tasks = new ArrayList();
 	private IList tools = new ArrayList();
+	private IList writers = new ArrayList();
+	private IList stylers = new ArrayList();
 
 	public String Class {
 	    get { return this.className; }
@@ -28,6 +30,16 @@ namespace Spring2.DataTierGenerator.Element {
 	public IList Tools {
 	    get { return tools; }
 	    set { tools = value; }
+	}
+
+	public IList Writers {
+	    get { return writers; }
+	    set { writers = value; }
+	}
+
+	public IList Stylers {
+	    get { return stylers; }
+	    set { stylers = value; }
 	}
 
 	/// <summary>
@@ -46,7 +58,13 @@ namespace Spring2.DataTierGenerator.Element {
 
 			generatorElement.Class = GetAttributeValue(generatorNode, CLASS, generatorElement.Class);
 			TaskElement.ParseFromXml(generatorNode, generatorElement.Tasks);
-			TaskElement.ParseFromXml(generatorNode, generatorElement.Tools);
+			ToolElement.ParseFromXml(generatorNode, generatorElement.Tools);
+			foreach(XmlNode writer in GetChildNodes(generatorNode, WriterElement.WRITER)) {
+			    generatorElement.Writers.Add(new WriterElement(writer));
+			}
+			foreach(XmlNode styler in GetChildNodes(generatorNode, StylerElement.STYLER)) {
+			    generatorElement.Stylers.Add(new StylerElement(styler));
+			}
 		
 			generatorElements.Add(generatorElement);
 		    }
@@ -63,6 +81,12 @@ namespace Spring2.DataTierGenerator.Element {
 		generator.Class = elements[0].Attributes["class"].Value;
 		generator.Tasks = TaskElement.ParseFromXml(options, elements[0], vd);
 		generator.Tools = ToolElement.ParseFromXml(options, elements[0], vd);
+		foreach(XmlNode node in GetChildNodes(elements[0], WriterElement.WRITER)) {
+		    generator.Writers.Add(new WriterElement(node));
+		}
+		foreach(XmlNode node in GetChildNodes(elements[0], StylerElement.STYLER)) {
+		    generator.Stylers.Add(new StylerElement(node));
+		}
 	    }
 	    return generator;
 	}

@@ -17,6 +17,17 @@ namespace Spring2.DataTierGenerator.Element {
 	protected String description = String.Empty;
 	protected String template = String.Empty;
 
+	public ElementSkeleton() {}
+
+	public ElementSkeleton(XmlNode node) {
+	    if (node == null) {
+		throw new ArgumentException("The XmlNode argument cannot be null.");
+	    } else {
+		name = GetAttributeValue(node, NAME, name);
+		description = node.InnerText.Trim();
+	    }
+	}
+
 	public String Name {
 	    get { return this.name; }
 	    set { this.name = value; }
@@ -67,5 +78,31 @@ namespace Spring2.DataTierGenerator.Element {
 	    }
 	    return null;
 	}
+
+	public static ArrayList GetChildNodes(XmlNode node, String name, String childNodeName) {
+	    ArrayList childNodes = new ArrayList();
+	    XmlNode childNode = GetChildNodeByName(node, name);
+	    if (childNode != null) {
+		foreach (XmlNode grandchildNode in childNode.ChildNodes) {
+		    if (grandchildNode.NodeType.Equals(XmlNodeType.Element) && grandchildNode.Name.Equals(childNodeName)) {
+			childNodes.Add(grandchildNode);
+		    }
+		}
+	    }
+
+	    return childNodes;
+	}
+
+	public static ArrayList GetChildNodes(XmlNode node, String name) {
+	    ArrayList childNodes = new ArrayList();
+	    foreach (XmlNode childNode in node.ChildNodes) {
+		if (childNode.NodeType.Equals(XmlNodeType.Element) && childNode.Name.Equals(name)) {
+		    childNodes.Add(childNode);
+		}
+	    }
+
+	    return childNodes;
+	}
+
     }
 }

@@ -29,7 +29,7 @@ if exists (select * from syscolumns where name=@column and id=object_id(@table))
 begin
 	declare @nullstring varchar(8)
 	set @nullstring = case when @required=0 then 'null' else 'not null' end
-	exec('alter table ' + @table + ' alter column ' + @column + ' ' + @type + ' ' + @nullstring)
+	exec('alter table [' + @table + '] alter column [' + @column + '] ' + @type + ' ' + @nullstring)
 end
 GO
 
@@ -52,7 +52,7 @@ GO
 if not exists(select * from syscolumns where id=object_id('$sql.Escape($element.Name)') and name = '$column.Name')
   BEGIN
 #if ($column.Required && $column.Default.Length==0 && !$column.Identity)
-	select '$column.Name will not be added becuase it has not default and is required'
+	select '$column.Name will not be added becuase it has no default and is required'
 	/* -- commented out because column does not have default value and is required
 #end
 	ALTER TABLE $sql.Escape($element.Name) ADD
@@ -65,10 +65,27 @@ if not exists(select * from syscolumns where id=object_id('$sql.Escape($element.
 	*/
 #end
   END
+GO
 #if (!$column.SqlType.Declaration.Equals("text") && !$column.SqlType.Declaration.Equals("timestamp"))
-else
+
+if exists(select * from syscolumns where id=object_id('$sql.Escape($element.Name)') and name = '$column.Name')
   BEGIN
-	exec #spAlterColumn '$sql.Escape($element.Name)', '$sql.Escape($column.Name)', '$column.SqlType.Declaration',#if ($column.Required) 1#else 0#end
+#if($column.Default.Length>0)
+	declare @cdefault varchar(1000)
+	select @cdefault = object_name(cdefault) from syscolumns where id=object_id('${element.Name}') and name = '$column.Name'
+
+	if @cdefault is not null
+		exec('alter table $sql.Escape($element.Name) DROP CONSTRAINT ' + @cdefault)
+		
+#if($column.Required)
+	update $sql.Escape($element.Name) set $column.Name = $column.Default where $column.Name IS NULL
+#end
+
+	if not exists(select * from sysobjects where name = 'DF_${element.Name}_$column.Name' and xtype='D')
+		alter table $sql.Escape($element.Name)
+			ADD CONSTRAINT DF_${element.Name}_$column.Name DEFAULT $column.Default FOR $column.Name WITH VALUES
+#end  
+	exec #spAlterColumn '$element.Name', '$column.Name', '$column.SqlType.Declaration',#if ($column.Required) 1#else 0#end
 
   END
 #end
@@ -78,9 +95,9 @@ GO
 #end
 ## create constraints, checking for existance
 #foreach ($constraint in $element.Constraints)
-#if (!$constraint.Type.ToUpper().Equals("CHECK"))
-if not exists (select * from dbo.sysobjects where id = object_id(N'$sql.Escape($constraint.Name)') and OBJECTPROPERTY(id, N'#if ($constraint.Type.ToUpper().Equals("PRIMARY KEY"))IsPrimaryKey#elseif($constraint.Type.ToUpper().Equals("FOREIGN KEY"))IsForeignKey#elseif($constraint.Type.ToUpper().Equals("UNIQUE"))IsUniqueCnst#end') = 1)
+if not exists (select * from dbo.sysobjects where id = object_id(N'$sql.Escape($constraint.Name)') and OBJECTPROPERTY(id, N'#if ($constraint.Type.ToUpper().Equals("PRIMARY KEY"))IsPrimaryKey#elseif($constraint.Type.ToUpper().Equals("FOREIGN KEY"))IsForeignKey#elseif($constraint.Type.ToUpper().Equals("UNIQUE"))IsUniqueCnst#elseif($constraint.Type.ToUpper().Equals("CHECK"))IsCheckCnst#end') = 1)
 ALTER TABLE $sql.Escape($element.Name)#if ($constraint.Type.ToUpper().Equals("PRIMARY KEY")) WITH NOCHECK#end ADD
+#if (!$constraint.Type.ToUpper().Equals("CHECK"))
 	CONSTRAINT $sql.Escape($constraint.Name) $constraint.Type#if($constraint.Type.ToUpper().Equals("PRIMARY KEY"))#if($constraint.Clustered) CLUSTERED#else NONCLUSTERED#end#end
 
 	(
@@ -91,7 +108,7 @@ ALTER TABLE $sql.Escape($element.Name)#if ($constraint.Type.ToUpper().Equals("PR
 #end
 	)
 #if ($constraint.Type.ToUpper().Equals("FOREIGN KEY"))
-	REFERENCES $sql.Escape($constraint.ForeignEntity)
+	REFERENCES $sql.Escape($constraint.ForeignEntity.Name)
 	(
 #foreach ($column in $constraint.Columns)
 #if ($velocityCount>1),
@@ -100,20 +117,27 @@ ALTER TABLE $sql.Escape($element.Name)#if ($constraint.Type.ToUpper().Equals("PR
 #end
 	)
 #end
+#else
+	CONSTRAINT $sql.Escape($constraint.Name) CHECK $constraint.CheckClause
+#end
 GO
 
-#end
 #end
 ## create indexes, checking for existance
 #foreach ($index in $element.Indexes)
 if not exists (select * from sysindexes where name='$index.Name' and id=object_id(N'[$element.Name]'))
-	CREATE#if ($index.Unique) UNIQUE#end INDEX $sql.Escape($index.Name) ON $sql.Escape($element.Name)
+	CREATE#if ($index.Unique) UNIQUE#end#if($index.Clustered) CLUSTERED#end INDEX $sql.Escape($index.Name) ON $sql.Escape($element.Name)
 	(
 #foreach ($column in $index.Columns)
         	$sql.Escape($column.Name)#if($column.SortDirection.Length>0)$column.SortDirection#end#if($velocityCount!=$index.Columns.Count),#end
 #end
 
 	)
+GO
+#end
+#if ($element.User.Length > 0)
+
+grant all on $sql.Escape($element.Name) to [$element.User]
 GO
 #end
 #end

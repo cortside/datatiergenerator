@@ -53,4 +53,9 @@ if @@ROWCOUNT <> 1
     END
 GO
 
+#if ($element.User.Length > 0)
+grant execute on [sp${element.Name}_Update] to [$element.User]
+GO
+
+#end
 #end

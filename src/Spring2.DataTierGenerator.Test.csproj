@@ -104,6 +104,16 @@
                     Project = "{0AFCF054-A3E0-4502-B41C-347AD69DBFA5}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
+                <Reference
+                    Name = "Spring2.DataTierGenerator.Alpha"
+                    Project = "{069AFE42-50D3-48D3-A12B-FAE1D8A2A44A}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+                />
+                <Reference
+                    Name = "Spring2.DataTierGenerator.Attribute"
+                    Project = "{3131371A-6B4B-4B39-9DB0-18B9F955E0BD}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+                />
             </References>
         </Build>
         <Files>

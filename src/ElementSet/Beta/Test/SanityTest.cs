@@ -150,7 +150,7 @@ namespace Spring2.DataTierGenerator.Test {
 
 
 	private Boolean CompareFile(String compareRoot, String directory, String filename) {
-	    if (!isMatch("SanityTest\\" + directory, compareRoot + "\\" +directory, filename, "", "cmp")) {
+	    if (!isMatch("SanityTest\\" + directory, compareRoot + "\\" +directory, filename, "", "")) {
 		Console.Out.WriteLine(directory + "\\" + filename + "...FAIL");
 		return false;
 	    }

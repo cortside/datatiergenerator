@@ -3,7 +3,7 @@ using System;
 using Spring2.Core.Types;
 
 namespace Golf.Tournament.DataObject {
-    public class TestSqlEntitiesData : Spring2.Core.DataObject.DataObject {
+    public class TestSqlEntityData : Spring2.Core.DataObject.DataObject {
 
 	private DecimalType floatProperty = DecimalType.DEFAULT;
 	private DateType dateTimeProperty = DateType.DEFAULT;

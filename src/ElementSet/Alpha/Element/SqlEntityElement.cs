@@ -32,6 +32,11 @@ namespace Spring2.DataTierGenerator.Element {
 	    this.AutoDiscoverProperties = data.AutoDiscoverProperties;
 	    this.GenerateDeleteStoredProcScript = data.GenerateDeleteStoredProcScript;
 	    this.GenerateInsertStoredProcScript = data.GenerateInsertStoredProcScript;
+	    this.AllowInsert = data.AllowInsert || this.GenerateInsertStoredProcScript;
+	    this.AllowUpdate = data.AllowUpdate || this.GenerateUpdateStoredProcScript;
+	    this.AllowDelete = data.AllowDelete || this.GenerateDeleteStoredProcScript;
+	    this.DefaultDirtyRead = data.DefaultDirtyRead;
+	    this.UpdateChangedOnly = data.UpdateChangedOnly && this.AllowUpdate;
 	    this.GenerateOnlyPrimaryDeleteStoredProc = data.GenerateOnlyPrimaryDeleteStoredProc;
 	    this.GenerateProcsForForeignKey = data.GenerateProcsForForeignKey;
 	    this.GenerateSelectStoredProcScript = data.GenerateSelectStoredProcScript;
@@ -45,7 +50,7 @@ namespace Spring2.DataTierGenerator.Element {
 	    this.SqlScriptDirectory = data.SqlScriptDirectory;
 	    this.StoredProcNameFormat = data.StoredProcNameFormat;
 	    this.User = data.User;
-	    this.UseViews = data.UseViews;
+	    this.UseView = data.UseView;
 	    this.CommandTimeout = data.CommandTimeout;
 	    this.ScriptForIndexedViews = data.ScriptForIndexedViews;
 	}
@@ -141,8 +146,17 @@ namespace Spring2.DataTierGenerator.Element {
 			sqlEntityElement.GenerateUpdateStoredProcScript = Boolean.Parse(GetAttributeValue(sqlEntityNode, GENERATE_UPDATE_STORED_PROC_SCRIPT, sqlEntityElement.GenerateUpdateStoredProcScript.ToString()));
 			sqlEntityElement.GenerateDeleteStoredProcScript = Boolean.Parse(GetAttributeValue(sqlEntityNode, GENERATE_DELETE_STORED_PROC_SCRIPT, sqlEntityElement.GenerateDeleteStoredProcScript.ToString()));
 			sqlEntityElement.GenerateSelectStoredProcScript = Boolean.Parse(GetAttributeValue(sqlEntityNode, GENERATE_SELECT_STORED_PROC_SCRIPT, sqlEntityElement.GenerateSelectStoredProcScript.ToString()));
+			sqlEntityElement.AllowInsert = Boolean.Parse(GetAttributeValue(sqlEntityNode, ALLOW_INSERT, sqlEntityElement.AllowInsert.ToString()))
+							|| sqlEntityElement.GenerateInsertStoredProcScript;
+			sqlEntityElement.AllowUpdate = Boolean.Parse(GetAttributeValue(sqlEntityNode, ALLOW_UPDATE, sqlEntityElement.AllowUpdate.ToString()))
+							|| sqlEntityElement.GenerateUpdateStoredProcScript;
+			sqlEntityElement.AllowDelete = Boolean.Parse(GetAttributeValue(sqlEntityNode, ALLOW_DELETE, sqlEntityElement.AllowDelete.ToString()))
+							|| sqlEntityElement.GenerateDeleteStoredProcScript;
+			sqlEntityElement.DefaultDirtyRead = Boolean.Parse(GetAttributeValue(sqlEntityNode, DEFAULT_DIRTY_READ, sqlEntityElement.DefaultDirtyRead.ToString()));
+			sqlEntityElement.UpdateChangedOnly = Boolean.Parse(GetAttributeValue(sqlEntityNode, UPDATE_CHANGED_ONLY, sqlEntityElement.UpdateChangedOnly.ToString()))
+								&& sqlEntityElement.AllowUpdate;
 			sqlEntityElement.ScriptDropStatement = Boolean.Parse(GetAttributeValue(sqlEntityNode, SCRIPT_DROP_STATEMENT, sqlEntityElement.ScriptDropStatement.ToString()));
-			sqlEntityElement.UseViews = Boolean.Parse(GetAttributeValue(sqlEntityNode, USE_VIEW, sqlEntityElement.UseViews.ToString()));
+			sqlEntityElement.UseView = Boolean.Parse(GetAttributeValue(sqlEntityNode, USE_VIEW, sqlEntityElement.UseView.ToString()));
 			sqlEntityElement.GenerateProcsForForeignKey = Boolean.Parse(GetAttributeValue(sqlEntityNode, GENERATE_PROCS_FOR_FOREIGN_KEYS, sqlEntityElement.GenerateProcsForForeignKey.ToString()));
 			sqlEntityElement.GenerateOnlyPrimaryDeleteStoredProc = Boolean.Parse(GetAttributeValue(sqlEntityNode, GENERATE_ONLY_PRIMARY_DELETE_STORED_PROC, sqlEntityElement.GenerateOnlyPrimaryDeleteStoredProc.ToString()));
 			sqlEntityElement.AllowUpdateOfPrimaryKey = Boolean.Parse(GetAttributeValue(sqlEntityNode, ALLOW_UPDATE_OF_PRIMARY_KEY, sqlEntityElement.AllowUpdateOfPrimaryKey.ToString()));
@@ -314,11 +328,35 @@ namespace Spring2.DataTierGenerator.Element {
 	    if (node.Attributes["generateselectstoredprocscript"] != null) {
 		data.GenerateSelectStoredProcScript = Boolean.Parse(node.Attributes["generateselectstoredprocscript"].Value);
 	    }
+	    if (node.Attributes["allowinsert"] != null) 
+	    {
+		data.AllowInsert = Boolean.Parse(node.Attributes["allowinsert"].Value)
+				    || data.GenerateInsertStoredProcScript;
+	    }
+	    if (node.Attributes["allowupdate"] != null) 
+	    {
+		data.AllowUpdate = Boolean.Parse(node.Attributes["allowupdate"].Value)
+				    || data.GenerateUpdateStoredProcScript;
+	    }
+	    if (node.Attributes["allowdelete"] != null) 
+	    {
+		data.AllowDelete = Boolean.Parse(node.Attributes["allowdelete"].Value)
+				    || data.GenerateDeleteStoredProcScript;
+	    }
+	    if (node.Attributes["defaultdirtyread"] != null) 
+	    {
+		data.DefaultDirtyRead = Boolean.Parse(node.Attributes["defaultdirtyread"].Value);
+	    }
+	    if (node.Attributes["updatechangedonly"] != null) 
+	    {
+		data.UpdateChangedOnly = Boolean.Parse(node.Attributes["updatechangedonly"].Value)
+					    && data.AllowUpdate;
+	    }
 	    if (node.Attributes["scriptdropstatement"] != null) {
 		data.ScriptDropStatement = Boolean.Parse(node.Attributes["scriptdropstatement"].Value);
 	    }
 	    if (node.Attributes["useview"] != null) {
-		data.UseViews = Boolean.Parse(node.Attributes["useview"].Value);
+		data.UseView = Boolean.Parse(node.Attributes["useview"].Value);
 	    }
 	    if (node.Attributes["generateprocsforforeignkeys"] != null) {
 		data.GenerateProcsForForeignKey = Boolean.Parse(node.Attributes["generateprocsforforeignkeys"].Value);

@@ -72,6 +72,11 @@ namespace Spring2.DataTierGenerator.Element {
 		    foreach (XmlNode node in element.ChildNodes) {
 			if (node.Name.Equals("value")) {
 			    EnumValueElement value = new EnumValueElement();
+			    if (node.Attributes["name"] == null ||
+				node.Attributes["code"] == null)
+			    {
+				throw new ApplicationException("Enum " + name + " must have name and code properties for each value element");
+			    }
 			    value.Name = node.Attributes["name"].Value;
 			    value.Code = node.Attributes["code"].Value;
 			    if (!node.InnerText.Equals(String.Empty)) {

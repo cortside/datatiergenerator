@@ -23,7 +23,12 @@ SELECT
 #set($length = $column.Prefix.Length - 1)
 #set($table = $column.Prefix.Substring(0,$length))
 #end
+#if($column.Expression.Length > 0)
+	(${column.Expression}) $sql.Escape($column.Name)#if($velocityCount!=$element.Columns.Count),
+#end	
+#else
 	$sql.Escape($table).#if($column.Prefix.Length==0)$sql.Escape($column.Name)#else$column.Name.Substring($column.Prefix.Length) $column.Name#end#if($velocityCount!=$element.Columns.Count),
+#end
 #end
 #end
 
@@ -32,9 +37,12 @@ FROM
 #if ($element.Views.Count==1)
 #foreach($constraint in $element.Views.get_Item(0).Constraints)
 #set($length = $constraint.Prefix.Length - 1)
-LEFT JOIN $sql.Escape($constraint.ForeignEntity) $sql.Escape($constraint.Prefix.Substring(0,$length)) on #foreach($column in $constraint.Columns)#if ($velocityCount >1) and #end${element.Name}.$column.Name = $sql.Escape(${constraint.ForeignEntity}).$column.ForeignColumn#end
+LEFT JOIN $sql.Escape($constraint.ForeignEntity.View) $sql.Escape($constraint.Prefix.Substring(0,$length)) on #foreach($column in $constraint.Columns)#if ($velocityCount >1) and #end${element.Name}.$column.Name = $sql.Escape($constraint.Prefix.Substring(0,$length)).$column.ForeignColumn#end
 
 #end
 #end
 GO
+##
+##grant all on vw$element.Name to [public]
+##GO
 #end

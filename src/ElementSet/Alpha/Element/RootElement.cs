@@ -17,6 +17,7 @@ namespace Spring2.DataTierGenerator.Element {
 	private IList databaseElements = new ArrayList();
 	private IList generatorElements = new ArrayList();
 	private IList parserElements = new ArrayList();
+	private IList reportExtractions = new ArrayList();
 
 	public IList ConfigElements {
 	    get { return configElements; }
@@ -54,6 +55,11 @@ namespace Spring2.DataTierGenerator.Element {
 	    get { return parserElements; }
 	}
 
+	public IList ReportExtractions 
+	{
+	    get { return reportExtractions; }
+	}
+
 	/// <summary>
 	/// Parse only method. Parses and adds all entities found in the given node and adds them to the given
 	/// list.
@@ -66,6 +72,7 @@ namespace Spring2.DataTierGenerator.Element {
 		RootElement rootElement = new RootElement();
 
 //		ConfigElement.ParseFromXml(GetChildNodeByName(rootNode, "config"), rootElement.ConfigElements);
+		ReportExtractionElement.ParseFromXml(GetChildNodeByName(rootNode, "reportextractions"), rootElement.ReportExtractions);
 		EntityElement.ParseFromXml(GetChildNodeByName(rootNode, "entities"), rootElement.EntityElements);
 		CollectionElement.ParseFromXml(GetChildNodeByName(rootNode, "collections"), rootElement.CollectionElements);
 		EnumElement.ParseFromXml(GetChildNodeByName(rootNode, "enums"), rootElement.EnumElements);

@@ -29,6 +29,10 @@ namespace Spring2.DataTierGenerator.Element {
 	    if (root != null && elements != null) {
 		XmlNodeList nodes = root.SelectNodes("tools/tool");
 		foreach (XmlNode node in nodes) {
+		    if (node.NodeType == XmlNodeType.Comment)
+		    {
+			continue;
+		    }
 		    ToolElement element = new ToolElement();
 		    element.Name = GetAttributeValue(node, NAME, element.Name);
 		    element.Class = GetAttributeValue(node, CLASS, element.Class);
@@ -41,6 +45,10 @@ namespace Spring2.DataTierGenerator.Element {
 	    ArrayList elements = new ArrayList();
 	    XmlNodeList nodes = root.SelectNodes("tools/tool");
 	    foreach (XmlNode node in nodes) {
+		if (node.NodeType == XmlNodeType.Comment)
+		{
+		    continue;
+		}
 		ToolElement element = new ToolElement();
 		element.Name = GetAttributeValue(node, NAME, element.Name);
 		element.Class = GetAttributeValue(node, CLASS, element.Class);

@@ -20,7 +20,7 @@ namespace Spring2.DataTierGenerator.Element {
 	private static readonly String PREFIX = "prefix";
 
 	private String type = String.Empty;
-	private String foreignEntity = String.Empty;
+	private SqlEntityElement foreignEntity = new SqlEntityElement();
 	private Boolean clustered = false;
 	private String checkClause = String.Empty;
 	private ArrayList columns = new ArrayList();
@@ -31,13 +31,9 @@ namespace Spring2.DataTierGenerator.Element {
 	    set { this.type = value; }
 	}
 
-	public String ForeignEntity {
+	public SqlEntityElement ForeignEntity {
 	    get { return this.foreignEntity; }
 	    set { this.foreignEntity = value; }
-	}
-
-	public String EscapedForeignEntity {
-	    get { return EscapeSqlName(this.foreignEntity); }
 	}
 
 	public Boolean Clustered {
@@ -77,7 +73,7 @@ namespace Spring2.DataTierGenerator.Element {
 			constraintElement.Name = GetAttributeValue(constraintNode, NAME, constraintElement.Name);
 			constraintElement.Type = GetAttributeValue(constraintNode, TYPE, constraintElement.Type);
 			constraintElement.Clustered = Boolean.Parse(GetAttributeValue(constraintNode, CLUSTERED, constraintElement.Clustered.ToString()));
-			constraintElement.ForeignEntity = GetAttributeValue(constraintNode, FOREIGN_ENTITY, constraintElement.ForeignEntity);
+			constraintElement.ForeignEntity.Name = GetAttributeValue(constraintNode, FOREIGN_ENTITY, constraintElement.ForeignEntity.Name);
 			constraintElement.CheckClause = GetAttributeValue(constraintNode, CHECK_CLAUSE, constraintElement.CheckClause);
 			constraintElement.Prefix = GetAttributeValue(constraintNode, PREFIX, constraintElement.Prefix);
 
@@ -100,6 +96,10 @@ namespace Spring2.DataTierGenerator.Element {
 	    }
 	    if (elements != null) {
 		foreach (XmlNode node in elements) {
+		    if (node.NodeType == XmlNodeType.Comment)
+		    {
+			continue;
+		    }
 		    ConstraintElement constraint = new ConstraintElement();
 		    constraint.Name = node.Attributes["name"].Value;
 		    constraint.Type = node.Attributes["type"].Value;
@@ -108,12 +108,16 @@ namespace Spring2.DataTierGenerator.Element {
 			constraint.Clustered = Boolean.Parse(node.Attributes["clustered"].Value);
 		    }
 		    if (node.Attributes["foreignentity"] != null) {
-			constraint.ForeignEntity = node.Attributes["foreignentity"].Value;
+			constraint.ForeignEntity.Name = node.Attributes["foreignentity"].Value;
 		    }
 		    if (node.Attributes["checkclause"] != null) {
 			constraint.CheckClause = node.Attributes["checkclause"].Value;
 		    }
 		    foreach (XmlNode n in node.ChildNodes) {
+			if (n.NodeType == XmlNodeType.Comment)
+			{
+			    continue;
+			}
 			ColumnElement column = sqlentity.FindColumnByName(n.Attributes["name"].Value);
 			if (column == null) {
 			    vd(ParserValidationArgs.NewError("column specified (" + n.Attributes["name"].Value + ") in constraint (" + constraint.Name + ") not found as column."));
@@ -141,7 +145,7 @@ namespace Spring2.DataTierGenerator.Element {
 		sb.Append(" clustered=\"True\"");
 	    }
 
-	    if (foreignEntity.Length!=0) {
+	    if (foreignEntity.Name.Length!=0) {
 		sb.Append(" foreignentity=\"").Append(foreignEntity).Append("\"");
 	    }
 	    if (checkClause.Length!=0) {

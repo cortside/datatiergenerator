@@ -129,6 +129,18 @@ ALTER TABLE Participant ADD
 	)
 GO
 
+if not exists (select * from dbo.sysobjects where id = object_id(N'FK_Participant_Team') and OBJECTPROPERTY(id, N'IsForeignKey') = 1)
+ALTER TABLE Participant ADD
+	CONSTRAINT FK_Participant_Team FOREIGN KEY
+	(
+		TeamId
+	)
+	REFERENCES Team
+	(
+		TeamId
+	)
+GO
+
 if not exists (select * from dbo.sysobjects where id = object_id(N'FK_Participant_Golfer') and OBJECTPROPERTY(id, N'IsForeignKey') = 1)
 ALTER TABLE Participant ADD
 	CONSTRAINT FK_Participant_Golfer FOREIGN KEY

@@ -10,9 +10,9 @@ namespace Spring2.DataTierGenerator.Element {
     public class FinderElement : ElementSkeleton {
 
 	public static readonly String FINDER = "finder";
-	private static readonly String PROPERTIES = "properties";
-	private static readonly String SORT = "sort";
-	private static readonly String UNIQUE = "unique";
+	public static readonly String PROPERTIES = "properties";
+	public static readonly String SORT = "sort";
+	public static readonly String UNIQUE = "unique";
 
 	private EntityElement entity = null;
 	private String sort = String.Empty;

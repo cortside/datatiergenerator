@@ -79,6 +79,18 @@ namespace Spring2.DataTierGenerator.Parser {
 		this.options = new Configuration();
 	    }
 
+            // see if we want to generate collections for all entities
+            XmlNodeList collectionElement = doc.DocumentElement.GetElementsByTagName ("collections");
+            XmlNode collectionNode = collectionElement[0];
+	    if (collectionNode.Attributes["generateall"] == null)
+	    {
+		options.GenerateAllCollections = false;
+	    }
+	    else
+	    {
+		options.GenerateAllCollections = Boolean.Parse (collectionNode.Attributes["generateall"].Value.ToString ());
+	    }
+
 	    // if the root directory is not specified, make it the directory the config file is loaded from
 	    if (options.RootDirectory.Equals(String.Empty)) {
 		options.RootDirectory = file.DirectoryName + "\\";
@@ -94,7 +106,30 @@ namespace Spring2.DataTierGenerator.Parser {
 	    enumtypes = EnumElement.ParseFromXml(options,doc,sqltypes,types, vd);
 	    databases = DatabaseElement.ParseFromXml(options, doc, sqltypes, types, vd);
 	    entities = EntityElement.ParseFromXml(options, doc, sqltypes, types, DatabaseElement.GetAllSqlEntities(databases), vd);
-	    collections = CollectionElement.ParseFromXml(options,doc,sqltypes,types, vd, (ArrayList)entities);
+	    reportExtractions = ReportExtractionElement.ParseFromXml(options, doc, sqltypes, types, entities, vd);
+	    ArrayList collectableClasses = new ArrayList();
+	    ArrayList autoGenerateClasses = new ArrayList();
+	    collectableClasses.AddRange(entities);
+	    collectableClasses.AddRange(reportExtractions);
+	    autoGenerateClasses.AddRange(entities);
+	    autoGenerateClasses.AddRange(reportExtractions);
+	    collections = CollectionElement.ParseFromXml(options,doc,sqltypes,types, vd, collectableClasses, autoGenerateClasses, (ArrayList)entities);
+
+	    // find and assign the foreign entity now that they are parsed
+	    foreach(DatabaseElement database in databases) {
+		foreach(SqlEntityElement sqlEntity in database.SqlEntities) {
+		    foreach(ConstraintElement constraint in sqlEntity.Constraints) {
+			if (constraint.ForeignEntity.Name.Length > 0) {
+			    SqlEntityElement entity = SqlEntityElement.FindByName(DatabaseElement.GetAllSqlEntities(databases), constraint.ForeignEntity.Name);
+			    if (entity!=null) {
+				constraint.ForeignEntity = (SqlEntityElement)entity.Clone();
+			    } else {
+				vd(ParserValidationArgs.NewError("ForeignEntity (" + constraint.ForeignEntity.Name + ") specified in constraint " + constraint.Name + " could not be found as an defined entity"));
+			    }		    
+			}
+		    }
+		}
+	    }
 
 	    Validate(vd);
 	}

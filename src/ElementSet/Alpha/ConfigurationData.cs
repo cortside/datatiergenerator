@@ -5,6 +5,7 @@ namespace Spring2.DataTierGenerator {
 
 	protected String rootDirectory = String.Empty;
 	protected String daoClassDirectory = "Dao";
+	protected String reportExtractionDaoClassDirectory = String.Empty;
 	protected String doClassDirectory = "DataObject";
 	protected String collectionClassDirectory = "DataObject";
 	protected String typesClassDirectory = "Types";
@@ -13,9 +14,12 @@ namespace Spring2.DataTierGenerator {
 	protected String xmlConfigFilename = String.Empty;
 	protected Boolean generateDataObjectClasses = true;
 	protected Boolean generateDaoClasses = true;
+	protected Boolean generateReportExtractionDaoClasses = true;
 	protected String dataObjectBaseClass = "Spring2.Core.DataObject.DataObject";
 	protected String daoBaseClass = "Spring2.Core.DAO.EntityDAO";
+	protected String reportExtractionDaoBaseClass = String.Empty;
 	protected String enumBaseClass = "Spring2.Core.Types.EnumDataType";
+        protected Boolean generateAllCollections = false;
 
 	/// <summary>		
 	/// Name of database server.		
@@ -34,6 +38,12 @@ namespace Spring2.DataTierGenerator {
 	public String DaoClassDirectory {
 	    get { return this.daoClassDirectory; }
 	    set { this.daoClassDirectory = value; }
+	}
+
+	public String ReportExtractionDaoClassDirectory 
+	{
+	    get { return this.reportExtractionDaoClassDirectory; }
+	    set { this.reportExtractionDaoClassDirectory = value; }
 	}
 
 	public String DoClassDirectory {
@@ -66,6 +76,12 @@ namespace Spring2.DataTierGenerator {
 	    set { this.generateDaoClasses = value; }
 	}
 
+	public Boolean GenerateReportExtractionDaoClasses 
+	{
+	    get { return this.generateReportExtractionDaoClasses; }
+	    set { this.generateReportExtractionDaoClasses = value; }
+	}
+
 	public String DataObjectBaseClass {
 	    get { return this.dataObjectBaseClass; }
 	    set { this.dataObjectBaseClass = value; }
@@ -74,6 +90,12 @@ namespace Spring2.DataTierGenerator {
 	public String DaoBaseClass {
 	    get { return this.daoBaseClass; }
 	    set { this.daoBaseClass = value; }
+	}
+
+	public String ReportExtractionDaoBaseClass 
+	{
+	    get { return this.reportExtractionDaoBaseClass; }
+	    set { this.reportExtractionDaoBaseClass = value; }
 	}
 
 	public String EnumBaseClass {
@@ -86,6 +108,10 @@ namespace Spring2.DataTierGenerator {
 	    set { this.testClassDirectory = value; }
 	}
 
+        public Boolean GenerateAllCollections {
+            get { return this.generateAllCollections; }
+            set { this.generateAllCollections = value; }
+        }
 
     }
 }

@@ -12,6 +12,8 @@ using Spring2.Core.Xml;
 
 using Spring2.DataTierGenerator;
 using Spring2.DataTierGenerator.Element;
+using Spring2.DataTierGenerator.Generator.Styler;
+using Spring2.DataTierGenerator.Generator.Writer;
 
 namespace Spring2.DataTierGenerator.Parser {
 
@@ -26,9 +28,13 @@ namespace Spring2.DataTierGenerator.Parser {
 	protected IList enumtypes = new ArrayList();
 	protected IList collections = new ArrayList();
 	protected IList databases = new ArrayList();
+	protected IList reportExtractions = new ArrayList();
 	protected Hashtable types = new Hashtable();
 	protected Hashtable sqltypes = new Hashtable();
 	protected GeneratorElement generator = new GeneratorElement();
+
+	private Hashtable writers = new Hashtable();
+	private Hashtable stylers = new Hashtable();
 
 	protected Boolean isValid = false;
 
@@ -44,6 +50,10 @@ namespace Spring2.DataTierGenerator.Parser {
 	public IList Databases {
 	    get { return databases; }
 	}
+	public IList ReportExtractions {
+	    get { return reportExtractions; }
+	}
+
 
 	private IList log = new ArrayList();
 
@@ -89,7 +99,7 @@ namespace Spring2.DataTierGenerator.Parser {
 
 	    foreach (DatabaseElement database in databases) {
 		foreach(SqlEntityElement sqlentity in database.SqlEntities) {
-		    if (sqlentity.GetPrimaryKeyColumns().Count==0 && (sqlentity.GenerateDeleteStoredProcScript || sqlentity.GenerateUpdateStoredProcScript || sqlentity.GenerateInsertStoredProcScript)) {
+		    if (sqlentity.GetPrimaryKeyColumns().Count==0 && (sqlentity.AllowDelete || sqlentity.AllowInsert || sqlentity.AllowUpdate)) {
 			vd(ParserValidationArgs.NewWarning("SqlEntity " + sqlentity.Name + " does not have any primary key columns defined."));
 		    }
 
@@ -104,9 +114,16 @@ namespace Spring2.DataTierGenerator.Parser {
 	    foreach(EntityElement entity in entities) {
 		if (entity.SqlEntity.Name.Length>0) {
 		    foreach(ColumnElement column in entity.SqlEntity.Columns) {
-			if (entity.FindFieldByColumnName(column.Name)==null) {
-			    vd(ParserValidationArgs.NewWarning("could not find field representing column " + column.Name + " in entity " + entity.Name + "."));
+			if (!column.Obsolete && entity.FindFieldByColumnName(column.Name)==null) {
+			    vd(ParserValidationArgs.NewWarning("could not find property representing column " + column.Name + " in entity " + entity.Name + "."));
 			}
+		    }
+		}
+
+		// make sure that obsolete columns are not mapped to properties
+		foreach(PropertyElement property in entity.Fields) {
+		    if (property.Column.Obsolete && property.Column.Name.Length > 0) {
+			vd(ParserValidationArgs.NewWarning("property " + property.Name + " in entity " + entity.Name + " is mapped to column " + property.Column.Name + " which is obsolete."));
 		    }
 		}
 	    }
@@ -122,8 +139,73 @@ namespace Spring2.DataTierGenerator.Parser {
 		    }
 		}
 	    }
+
+
+	    foreach (TaskElement task in generator.Tasks) {
+		IWriter w = GetWriter(task.Writer);
+		if (w == null) {
+		    vd(ParserValidationArgs.NewError("Task specified writer '" + task.Writer + "' that was not defined."));
+		}
+
+		// check to make sure the styler exists if it is specified (optional)
+		if (task.Styler.Length > 0) {
+		    IStyler s = GetStyler(task.Styler);
+		    if (s == null) {
+			vd(ParserValidationArgs.NewError("Task specified styler '" + task.Styler + "' that was not defined."));
+		    }
+		}
+	    }
 	}
 
+	public IWriter GetWriter(String name) {
+	    if (writers.Count ==0) {
+		foreach(WriterElement element in generator.Writers) {
+		    try {
+			Type clazz = System.Type.GetType(element.Class);
+			if (clazz != null) {
+			    Object o = System.Activator.CreateInstance(clazz, new Object[] { element.GetOptions() });
+			    if (o is IWriter) {
+				IWriter w = (IWriter)o;
+				writers.Add(element.Name, w);
+			    } else {
+				WriteToLog(element.Name + " does not support the IWriter interface");
+			    }
+			} else {
+			    WriteToLog("Could not find class '" + element.Class + "', '" + element.Name + "' will not be added to available writers.");
+			}
+		    } catch (Exception ex) {
+			WriteToLog("Error trying to create writer '" + element.Name + "': " + ex.Message);
+		    }
+		}
+	    }
+
+	    return (IWriter)writers[name];
+	}
+
+	public IStyler GetStyler(String name) {
+	    if (stylers.Count ==0) {
+		foreach(StylerElement element in generator.Stylers) {
+		    try {
+			Type clazz = System.Type.GetType(element.Class);
+			if (clazz != null) {
+			    Object o = System.Activator.CreateInstance(clazz, new Object[] { element.GetOptions() });
+			    if (o is IStyler) {
+				IStyler s = (IStyler)o;
+				stylers.Add(element.Name, s);
+			    } else {
+				WriteToLog(element.Name + " does not support the IStyler interface");
+			    }
+			} else {
+			    WriteToLog("Could not find class '" + element.Class + "', '" + element.Name + "' will not be added to available stylers.");
+			}
+		    } catch (Exception ex) {
+			WriteToLog("Error trying to create styler '" + element.Name + "': " + ex.Message);
+		    }
+		}
+	    }
+
+	    return (IStyler)stylers[name];
+	}
 
     }
 }

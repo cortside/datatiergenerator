@@ -10,18 +10,96 @@
 namespace $options.GetDAONameSpace($element.Name) {
     public class $options.GetDAOClassName($element.Name) : $options.DaoBaseClass {
 
+#if($element.SqlEntity.UseView)
 	private static readonly String VIEW = "$element.SqlEntity.View";
+#else
+	private static readonly String VIEW = "[$element.SqlEntity.Name]";
+#end
 	private static readonly String CONNECTION_STRING_KEY = "$element.SqlEntity.Key";
 #if($element.SqlEntity.GenerateInsertStoredProcScript || $element.SqlEntity.GenerateUpdateStoredProcScript || $element.SqlEntity.GenerateDeleteStoredProcScript)
 	private static readonly Int32 COMMAND_TIMEOUT = $element.SqlEntity.CommandTimeout;
 #end
+#set ($listtype="void")
+#if($options.GenerateAllCollections)
+#set ($listtype="${element.Name}List")
+#else
+#set ($listtype="IList")
+#end
+
+	/// <summary>
+	/// Hash table mapping entity property names to sql code.
+	/// </summary>
+	private static Hashtable propertyToSqlMap = new Hashtable();
+
+	/// <summary>
+	/// Initializes the static map of property names to sql expressions.
+	/// </summary>
+	static ${options.GetDAOClassName($element.Name)}() {
+#foreach($field in $element.fields)
+#if($field.Column.SqlType.Name.Length>0)
+	    if (!propertyToSqlMap.Contains("$field.GetMethodFormat()")) {
+		propertyToSqlMap.Add("$field.GetMethodFormat()",@"$field.GetSqlExpression(true)");
+	    }
+#end
+#end		
+	}
+	
+	/// <summary>
+	/// Creates a where clause object by mapping the given where clause text.  The text may reference
+	/// entity properties which will be mapped to sql code by enclosing the property names in braces.
+	/// </summary>
+	/// <param name="whereText">Text to be mapped</param>
+	/// <returns>WhereClause object.</returns>
+	/// <exception cref="ApplicationException">When property name found in braces is not found in the entity.</exception>
+	public static IWhere Where(String whereText) {
+	    return new WhereClause(ProcessExpression(propertyToSqlMap, whereText));
+	}
+
+	/// <summary>
+	/// Creates a where clause object that can be used to create sql to find objects whose entity property value
+	/// matches the value passed.  Note that the propertyName passed is an entity property name and will be mapped 
+	/// to the appropriate sql.
+	/// </summary>
+	/// <param name="propertyName">Entity property to be matched.</param>
+	/// <param name="value">Value to match the property with</param>
+	/// <returns>A WhereClause object.</returns>
+	/// <exception cref="ApplicationException">When the property name passed is not found in the entity.</exception>
+	public static IWhere Where(String propertyName, String value) {
+	    return new WhereClause(GetPropertyMapping(propertyToSqlMap, propertyName), value);
+	}
+
+	/// <summary>
+	/// Creates a where clause object that can be used to create sql to find objects whose entity property value
+	/// matches the value passed.  Note that the propertyName passed is an entity property name and will be mapped 
+	/// to the appropriate sql.
+	/// </summary>
+	/// <param name="propertyName">Entity property to be matched.</param>
+	/// <param name="value">Value to match the property with</param>
+	/// <returns>A WhereClause object.</returns>
+	/// <exception cref="ApplicationException">When the property name passed is not found in the entity.</exception>
+	public static IWhere Where(String propertyName, Int32 value) {
+	    return new WhereClause(GetPropertyMapping(propertyToSqlMap, propertyName), value);
+	}
+
+	/// <summary>
+	/// Creates a where clause object that can be used to create sql to find objects whose entity property value
+	/// matches the value passed.  Note that the propertyName passed is an entity property name and will be mapped 
+	/// to the appropriate sql.
+	/// </summary>
+	/// <param name="propertyName">Entity property to be matched.</param>
+	/// <param name="value">Value to match the property with</param>
+	/// <returns>A WhereClause object.</returns>
+	/// <exception cref="ApplicationException">When the property name passed is not found in the entity.</exception>
+	public static IWhere Where(String propertyName, DateTime value)	{
+	    return new WhereClause(GetPropertyMapping(propertyToSqlMap, propertyName), value);
+	}
 
 	/// <summary>
 	/// Returns a list of all $element.Name rows.
 	/// </summary>
 	/// <returns>List of $options.GetDOClassName($element.Name) objects.</returns>
 	/// <exception cref="Spring2.Core.DAO.FinderException">Thrown when no rows are found.</exception>
-	public static IList GetList() { 
+	public static $listtype GetList() { 
 	    return GetList(null, null);
 	}
 
@@ -31,7 +109,7 @@ namespace $options.GetDAONameSpace($element.Name) {
 	/// <param name="whereClause">Filtering criteria.</param>
 	/// <returns>List of $options.GetDOClassName($element.Name) objects.</returns>
 	/// <exception cref="Spring2.Core.DAO.FinderException">Thrown when no rows are found matching the where criteria.</exception>
-	public static IList GetList(IWhere whereClause) { 
+	public static $listtype GetList(IWhere whereClause) { 
 	    return GetList(whereClause, null);
 	}
 
@@ -41,7 +119,7 @@ namespace $options.GetDAONameSpace($element.Name) {
 	/// <param name="orderByClause">Ordering criteria.</param>
 	/// <returns>List of $options.GetDOClassName($element.Name) objects.</returns>
 	/// <exception cref="Spring2.Core.DAO.FinderException">Thrown when no rows are found.</exception>
-	public static IList GetList(IOrderBy orderByClause) { 
+	public static $listtype GetList(IOrderBy orderByClause) { 
 	    return GetList(null, orderByClause);
 	}
 
@@ -52,8 +130,55 @@ namespace $options.GetDAONameSpace($element.Name) {
 	/// <param name="orderByClause">Ordering criteria.</param>
 	/// <returns>List of $options.GetDOClassName($element.Name) objects.</returns>
 	/// <exception cref="Spring2.Core.DAO.FinderException">Thrown when no rows are found matching the where criteria.</exception>
-	public static IList GetList(IWhere whereClause, IOrderBy orderByClause) { 
+	public static $listtype GetList(IWhere whereClause, IOrderBy orderByClause) { 
 	    SqlDataReader dataReader = GetListReader(CONNECTION_STRING_KEY, VIEW, whereClause, orderByClause); 
+
+	    $listtype list = new #if($listtype=="IList")ArrayList#else$listtype#end(); 
+	    while (dataReader.Read()) { 
+		list.Add(GetDataObjectFromReader(dataReader)); 
+	    }
+	    dataReader.Close();
+	    return list; 
+	}
+
+	/// <summary>
+	/// Returns a list of all $element.Name rows.
+	/// </summary>
+	/// <returns>List of $options.GetDOClassName($element.Name) objects.</returns>
+	/// <exception cref="Spring2.Core.DAO.FinderException">Thrown when no rows are found.</exception>
+	public static $listtype GetList(Int32 maxRows) { 
+	    return GetList(null, null, maxRows);
+	}
+
+	/// <summary>
+	/// Returns a filtered list of $element.Name rows.
+	/// </summary>
+	/// <param name="whereClause">Filtering criteria.</param>
+	/// <returns>List of $options.GetDOClassName($element.Name) objects.</returns>
+	/// <exception cref="Spring2.Core.DAO.FinderException">Thrown when no rows are found matching the where criteria.</exception>
+	public static $listtype GetList(IWhere whereClause, Int32 maxRows) { 
+	    return GetList(whereClause, null, maxRows);
+	}
+
+	/// <summary>
+	/// Returns an ordered list of $element.Name rows.  All rows in the database are returned
+	/// </summary>
+	/// <param name="orderByClause">Ordering criteria.</param>
+	/// <returns>List of $options.GetDOClassName($element.Name) objects.</returns>
+	/// <exception cref="Spring2.Core.DAO.FinderException">Thrown when no rows are found.</exception>
+	public static $listtype GetList(IOrderBy orderByClause, Int32 maxRows) { 
+	    return GetList(null, orderByClause, maxRows);
+	}
+
+	/// <summary>
+	/// Returns an ordered and filtered list of $element.Name rows.
+	/// </summary>
+	/// <param name="whereClause">Filtering criteria.</param>
+	/// <param name="orderByClause">Ordering criteria.</param>
+	/// <returns>List of $options.GetDOClassName($element.Name) objects.</returns>
+	/// <exception cref="Spring2.Core.DAO.FinderException">Thrown when no rows are found matching the where criteria.</exception>
+	public static $listtype GetList(IWhere whereClause, IOrderBy orderByClause, Int32 maxRows) { 
+	    SqlDataReader dataReader = GetListReader(CONNECTION_STRING_KEY, VIEW, whereClause, orderByClause, maxRows); 
 
 	    ArrayList list = new ArrayList(); 
 	    while (dataReader.Read()) { 
@@ -72,7 +197,7 @@ namespace $options.GetDAONameSpace($element.Name) {
 	public static $options.GetDOClassName($element.Name) Load(#parameterList(true $element.GetPrimaryKeyFields())) {
 	    WhereClause w = new WhereClause();
 #foreach ($field in $element.GetPrimaryKeyFields())
-	    w.And("$field.Column.Name", $options.GetSqlConversion($field));
+	    w.And("$field.GetSqlAlias()", $options.GetSqlConversion($field));
 #end
 	    SqlDataReader dataReader = GetListReader(CONNECTION_STRING_KEY, VIEW, w, null);
 
@@ -94,7 +219,7 @@ namespace $options.GetDAONameSpace($element.Name) {
 	    $options.GetDOClassName($element.Name) data = new $options.GetDOClassName($element.Name)();
 #foreach($field in $element.Fields)
 #if($field.Column.SqlType.Name.Length>0)
-	    if (dataReader.IsDBNull(dataReader.GetOrdinal("$field.Column.Name"))) { 
+	    if (dataReader.IsDBNull(dataReader.GetOrdinal("$field.GetSqlAlias()"))) { 
 		data.${field.GetMethodFormat()} = ${field.Type.NullInstanceFormat};
 	    } else {
 		data.$field.GetMethodFormat() = $options.GetReaderString($field);
@@ -115,9 +240,21 @@ namespace $options.GetDAONameSpace($element.Name) {
 #set($s=${element.GetIdentityField().Type.Name})
 #end
 	public static $s Insert($options.GetDOClassName($element.Name) data) {
+	    #if($element.GetIdentityField())return #end#**#Insert(data, null);
+	}
+	
+	/// <summary>
+	/// Inserts a record into the $element.SqlEntity.Name table.
+	/// </summary>
+	/// <param name=""></param>
+#set($s="void")
+#if($element.GetIdentityField())
+#set($s=${element.GetIdentityField().Type.Name})
+#end
+	public static $s Insert($options.GetDOClassName($element.Name) data, SqlTransaction transaction) {
 	    // Create and execute the command
 #set($s="Insert")
-	    SqlCommand cmd = GetSqlCommand(CONNECTION_STRING_KEY, "$options.GetProcName($element.SqlEntity.Name, $s)", CommandType.StoredProcedure, COMMAND_TIMEOUT);
+	    SqlCommand cmd = GetSqlCommand(CONNECTION_STRING_KEY, "$options.GetProcName($element.SqlEntity.Name, $s)", CommandType.StoredProcedure, COMMAND_TIMEOUT, transaction);
 
 #if($element.GetIdentityField())
 	    SqlParameter rv = cmd.Parameters.Add("RETURN_VALUE", SqlDbType.Int);
@@ -125,12 +262,17 @@ namespace $options.GetDAONameSpace($element.Name) {
 #end
 	    //Create the parameters and append them to the command object
 #foreach($field in $element.Fields)
-#if(!$field.Column.ViewColumn && $field.Column.Name.Length>0 && !$field.Column.Identity && !$field.Column.RowGuidCol)	    $field.CreateSqlParameter(false, true)#end
+#if(!$field.Column.ViewColumn && $field.GetSqlAlias().Length>0 && !$field.Column.Identity && !$field.Column.RowGuidCol)	    $field.CreateSqlParameter(false, true)#end
 #end
 
 	    // Execute the query
 	    cmd.ExecuteNonQuery();
-	    cmd.Connection.Close();
+
+	    // do not close the connection if it is part of a transaction
+ 	    if (transaction == null) {
+ 		cmd.Connection.Close();
+ 	    }
+
 #if($element.GetIdentityField())
 	    // Set the output paramter value(s)
 	    return $options.GetProcedureReturnString($element.GetIdentityField());
@@ -144,18 +286,30 @@ namespace $options.GetDAONameSpace($element.Name) {
 	/// </summary>
 	/// <param name=""></param>
 	public static void Update($options.GetDOClassName($element.Name) data) {
+	    Update(data, null);
+	}
+	
+	/// <summary>
+	/// Updates a record in the $element.SqlEntity.Name table.
+	/// </summary>
+	/// <param name=""></param>
+	public static void Update($options.GetDOClassName($element.Name) data, SqlTransaction transaction) {
 	    // Create and execute the command
 #set($s="Update")
-	    SqlCommand cmd = GetSqlCommand(CONNECTION_STRING_KEY, "$options.GetProcName($element.SqlEntity.Name, $s)", CommandType.StoredProcedure, COMMAND_TIMEOUT);
+	    SqlCommand cmd = GetSqlCommand(CONNECTION_STRING_KEY, "$options.GetProcName($element.SqlEntity.Name, $s)", CommandType.StoredProcedure, COMMAND_TIMEOUT, transaction);
 
 	    //Create the parameters and append them to the command object
 #foreach($field in $element.Fields)
-#if(!$field.Column.ViewColumn && $field.Column.Name.Length>0)	    $field.CreateSqlParameter(false, true)#end
+#if(!$field.Column.ViewColumn && $field.GetSqlAlias().Length>0)	    $field.CreateSqlParameter(false, true)#end
 #end
 
 	    // Execute the query
 	    cmd.ExecuteNonQuery();
-	    cmd.Connection.Close();
+	    
+	    // do not close the connection if it is part of a transaction
+	    if (transaction == null) {
+		cmd.Connection.Close();
+	    }
 	}
 #end
 #if($element.SqlEntity.GenerateDeleteStoredProcScript)
@@ -165,8 +319,16 @@ namespace $options.GetDAONameSpace($element.Name) {
 	/// </summary>
 	/// <param name=""></param>
 	public static void Delete(#foreach( $field in $element.GetPrimaryKeyFields() )#if($velocityCount>1), #end$field.CreateMethodParameter()#end) {
+	    Delete(#foreach( $field in $element.GetPrimaryKeyFields() )#if($velocityCount>1), #end$field.GetFieldFormat()#end, null);
+	}
+	
+	/// <summary>
+	/// Deletes a record from the $element.SqlEntity.Name table by#if($element.GetPrimaryKeyFields().Count == 1 && $element.GetPrimaryKeyFields().get_Item(0).Column.Identity) $element.GetPrimaryKeyFields().get_Item(0).Name#else a composite primary key#end.
+	/// </summary>
+	/// <param name=""></param>
+	public static void Delete(#foreach( $field in $element.GetPrimaryKeyFields() )#if($velocityCount>1), #end$field.CreateMethodParameter()#end, SqlTransaction transaction) {
 	    // Create and execute the command
-	    SqlCommand cmd = GetSqlCommand(CONNECTION_STRING_KEY, "$options.GetProcName($element.SqlEntity.Name, "Delete")", CommandType.StoredProcedure, COMMAND_TIMEOUT);
+	    SqlCommand cmd = GetSqlCommand(CONNECTION_STRING_KEY, "$options.GetProcName($element.SqlEntity.Name, "Delete")", CommandType.StoredProcedure, COMMAND_TIMEOUT, transaction);
 
 	    // Create and append the parameters
 #foreach( $field in $element.GetPrimaryKeyFields() )
@@ -176,17 +338,18 @@ namespace $options.GetDAONameSpace($element.Name) {
 #end
 	    // Execute the query and return the result
 	    cmd.ExecuteNonQuery();
-	    cmd.Connection.Close();
+	    
+	    // do not close the connection if it is part of a transaction
+	    if (transaction == null) {
+		cmd.Connection.Close();
+	    }
 	}
 #end
 #if($element.SqlEntity.GenerateSelectStoredProcScript)
 ##Not implemented
 #end
-
-#if($element.Finders.Count > 0)
-
-#end
 #foreach($finder in $element.Finders)
+
 	/// <summary>
 #if($finder.Unique)
 	/// Returns an object which matches the values for the fields specified.
@@ -200,35 +363,86 @@ namespace $options.GetDAONameSpace($element.Name) {
 #else
 	/// <returns>The list of $options.GetDAOClassName($element.Name) objects found.</returns>
 #end
+#if($finder.Unique)
 	/// <exception cref="Spring2.Core.DAO.FinderException">Thrown when no rows are found.</exception>
+#end
 #if($finder.Unique)
 #set($s=$options.GetDOClassName($element.Name))
 #else
-#set($s="IList")
+#set($s=$listtype)
 #end
-	public static $s ${finder.Name}(#parameterList(true $finder.Fields)) {
-		WhereClause filter = new WhereClause();
-		OrderByClause sort = new OrderByClause("$finder.Sort");
+	public static $s ${finder.Name}(#parameterList(true $finder.Fields)#if($finder.Limit), Int32 limit#end) {
+#if($finder.Sort != "")
+	    OrderByClause sort = new OrderByClause("$finder.Sort");
+#end
+#if($finder.Expression == "")
+	    WhereClause filter = new WhereClause();
 #foreach($field in $finder.Fields)
-		filter.And("$field.Column.Name", $options.GetSqlConversion($field));
+	    filter.And("$field.GetSqlExpression()", $options.GetSqlConversion($field));
 #end
 #if($finder.Unique)
-		SqlDataReader dataReader = GetListReader(CONNECTION_STRING_KEY, VIEW, filter, sort);
+	    SqlDataReader dataReader = GetListReader(CONNECTION_STRING_KEY, VIEW, filter, sort#if($finder.Limit), limit#end);
 
-		if (!dataReader.Read()) {
-		    dataReader.Close();
-		    throw new FinderException("$options.GetDOClassName($element.Name).$finder.Name found no rows.");
-		}
-		$options.GetDOClassName($element.Name) data = GetDataObjectFromReader(dataReader);
+	    if (!dataReader.Read()) {
 		dataReader.Close();
-		return data;
+		throw new FinderException("$options.GetDOClassName($element.Name).$finder.Name found no rows.");
+	    }
+	    $options.GetDOClassName($element.Name) data = GetDataObjectFromReader(dataReader);
+	    dataReader.Close();
+	    return data;
 #else
 
-		return GetList(filter, sort);
+	    return GetList(filter, sort);
+#end
+#else
+	    WhereClause filter = new WhereClause("$finder.Expression");
+	    String sql = "Select #if($finder.Limit)top " + limit.ToString() + " #end* from " + VIEW + filter.FormatSql() + sort.FormatSql();
+	    SqlCommand cmd = GetSqlCommand(CONNECTION_STRING_KEY, sql, CommandType.Text);
+#foreach($field in $finder.Fields)
+	    cmd.Parameters.Add(new SqlParameter("@$field.GetPropertyName().Replace(".", "_")", SqlDbType.$field.GetSqlType().SqlDbType, $field.GetSqlType.Length, ParameterDirection.Input, false, 0, 0, "$field.GetPropertyName()", DataRowVersion.Proposed, $options.GetSqlConversion($field)));
+#end
+	    SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+#if($finder.Unique)
+	    if (!dataReader.Read()) {
+		dataReader.Close();
+		throw new FinderException("$options.GetDOClassName($element.Name).$finder.Name found no rows.");
+	    }
+	    $options.GetDOClassName($element.Name) data = GetDataObjectFromReader(dataReader);
+	    dataReader.Close();
+	    return data;
+#else
+	    $listtype list = new #if($listtype=="IList")ArrayList#else$listtype#end(); 
+
+	    while (dataReader.Read()) {
+		list.Add(GetDataObjectFromReader(dataReader)); 
+	    }
+	    dataReader.Close();
+	    return list;
+#end
 #end
 	}
-
 #end
+
+	/// <summary>
+	/// Get a new transaction for a connection that can be created from this classes connection string
+	/// </summary>
+	public static DaoTransaction GetNewTransaction(String transactionName) {
+	    SqlConnection conn = GetSqlConnection(GetConnectionString(CONNECTION_STRING_KEY));
+	    DaoTransaction transaction = new DaoTransaction(conn.BeginTransaction(transactionName));
+
+	    return transaction;
+	}
+
+	/// <summary>
+	/// Get a new transaction for a connection that can be created from this classes connection string
+	/// </summary>
+	public static DaoTransaction GetNewTransaction() {
+	    SqlConnection conn = GetSqlConnection(GetConnectionString(CONNECTION_STRING_KEY));
+	    DaoTransaction transaction = new DaoTransaction(conn.BeginTransaction());
+
+	    return transaction;
+	}
+	
     }
 }
 #end

@@ -20,6 +20,10 @@ namespace Spring2.DataTierGenerator.Element {
 	    if (node != null && elements != null) {
 		XmlNodeList excludes = node.SelectNodes("excludes/exclude");
 		foreach (XmlNode exclude in excludes) {
+		    if (exclude.NodeType == XmlNodeType.Comment)
+		    {
+			continue;
+		    }
 		    ExcludeElement element = new ExcludeElement();
 		    element.Name = GetAttributeValue(exclude, NAME, element.Name);
 		    elements.Add(element);
@@ -31,6 +35,10 @@ namespace Spring2.DataTierGenerator.Element {
 	    ArrayList elements = new ArrayList();
 	    XmlNodeList excludes = node.SelectNodes("excludes/exclude");
 	    foreach (XmlNode exclude in excludes) {
+		if (exclude.NodeType == XmlNodeType.Comment)
+		{
+		    continue;
+		}
 		ExcludeElement element = new ExcludeElement();
 		element.Name = GetAttributeValue(exclude, NAME, element.Name);
 		elements.Add(element);

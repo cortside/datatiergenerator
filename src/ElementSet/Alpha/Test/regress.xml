@@ -3,8 +3,8 @@
 <DataTierGenerator xmlns:xinc="http://www.w3.org/1999/XML/xinclude">
     <generator class="Spring2.DataTierGenerator.Generator.GeneratorTaskManager,Spring2.DataTierGenerator">
 	<writer name="region" class="Spring2.DataTierGenerator.Generator.Writer.RegionMergeWriter,Spring2.DataTierGenerator">
-	    <option name="begin marker" value="#region" />
-	    <option name="end marker" value="#endregion" />
+	    <option name="BeginMarker" value="#region" />
+	    <option name="EndMarker" value="#endregion" />
 	</writer>
 	<writer name="c#" class="Spring2.DataTierGenerator.Generator.Writer.CSharpCodeWriter,Spring2.DataTierGenerator">
 	    <option name="BraceStyle" value="c" />
@@ -37,10 +37,6 @@
     <!-- -->
     <config>
 	<setting name="RootDirectory" value=".\RegressTest\" />
-	<setting name="DaoClassDirectory" value="Dao" />
-	<setting name="DoClassDirectory" value="DataObject" />
-	<setting name="TypesClassDirectory" value="Types" />
-	<setting name="GenerateDataObjectClasses" value="True" />
 	<setting name="RootNameSpace" value="Spring2.DataTierGenerator" />
 	<setting name="DataObjectBaseClass" value="Spring2.Core.DataObject.DataObject" />
 	<setting name="DAOBaseClass" value="Spring2.Core.DAO.EntityDAO" />

@@ -22,6 +22,7 @@ namespace Spring2.DataTierGenerator.Element {
 	private static readonly String INCREMENT = "increment";
 	private static readonly String SEED = "seed";
 	private static readonly String FOREIGN_COLUMN = "foreigncolumn";
+	private static readonly String OBSOLETE = "obsolete";
 
 	private SqlTypeElement sqlType = new SqlTypeElement();
 	private Boolean identity = false;
@@ -40,6 +41,7 @@ namespace Spring2.DataTierGenerator.Element {
 	private Int32 length = 0;
 	private Int32 precision = 0;
 	private Int32 scale = 0;
+	private Boolean obsolete = false;
 
 	public String Formula {
 	    get { return this.formula; }
@@ -130,6 +132,11 @@ namespace Spring2.DataTierGenerator.Element {
 	    set { scale = value; }
 	}
 	
+	public Boolean Obsolete {
+	    get { return this.obsolete; }
+	    set { this.obsolete = value; }
+	}
+
 	/// <summary>
 	/// This is a sql expression for the use in creating views.  Is is not allowed if ViewColumn is false;
 	/// </summary>
@@ -165,6 +172,7 @@ namespace Spring2.DataTierGenerator.Element {
 			columnElement.Increment = Int32.Parse(GetAttributeValue(columnNode, INCREMENT, columnElement.Increment.ToString()));
 			columnElement.Seed = Int32.Parse(GetAttributeValue(columnNode, SEED, columnElement.Seed.ToString()));
 			columnElement.ForeignColumn = GetAttributeValue(columnNode, FOREIGN_COLUMN, columnElement.ForeignColumn);
+			columnElement.obsolete = Boolean.Parse(GetAttributeValue(columnNode, OBSOLETE, columnElement.Obsolete.ToString()));
 		
 			columnElements.Add(columnElement);
 		    }
@@ -183,6 +191,10 @@ namespace Spring2.DataTierGenerator.Element {
 	    }
 	    if (elements != null) {
 		foreach (XmlNode node in elements) {
+		    if (node.NodeType == XmlNodeType.Comment)
+		    {
+			continue;
+		    }
 		    if (node.Name.Equals("column")) {
 			ColumnElement column = new ColumnElement();
 			column.Name = GetAttributeValue(node, NAME, String.Empty);
@@ -236,6 +248,9 @@ namespace Spring2.DataTierGenerator.Element {
 			}
 			if (node.Attributes["expression"] != null) {
 			    column.Expression = node.Attributes["expression"].Value;
+			}
+			if (node.Attributes["obsolete"] != null) {
+			    column.Obsolete = Boolean.Parse(node.Attributes[OBSOLETE].Value);
 			}
 
 			columns.Add(column);

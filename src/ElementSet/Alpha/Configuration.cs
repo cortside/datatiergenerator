@@ -31,6 +31,9 @@ namespace Spring2.DataTierGenerator {
 			    case "daoclassdirectory":
 				this.daoClassDirectory = node.Attributes["value"].Value;
 				break;
+			    case "reportextractiondaoclassdirectory":
+				this.reportExtractionDaoClassDirectory = node.Attributes["value"].Value;
+				break;
 			    case "doclassdirectory":
 				this.doClassDirectory = node.Attributes["value"].Value;
 				break;
@@ -40,11 +43,17 @@ namespace Spring2.DataTierGenerator {
 			    case "generatedataobjectclasses":
 				this.generateDataObjectClasses = Boolean.Parse(node.Attributes["value"].Value);
 				break;
+			    case "generatereportextractiondaoclasses":
+				this.generateReportExtractionDaoClasses = Boolean.Parse(node.Attributes["value"].Value);
+				break;
 			    case "dataobjectbaseclass":
 				this.dataObjectBaseClass= node.Attributes["value"].Value;
 				break;
 			    case "daobaseclass":
 				this.daoBaseClass= node.Attributes["value"].Value;
+				break;
+			    case "reportextractiondaobaseclass":
+				this.reportExtractionDaoBaseClass= node.Attributes["value"].Value;
 				break;
 			    case "enumbaseclass":
 				this.enumBaseClass= node.Attributes["value"].Value;
@@ -58,6 +67,14 @@ namespace Spring2.DataTierGenerator {
 			}
 		    }
 		}
+	    }
+
+	    // Default report extraction attributes to the dao attributes.
+	    if (this.reportExtractionDaoBaseClass == String.Empty) {
+		this.reportExtractionDaoBaseClass = this.daoBaseClass;
+	    }
+	    if (this.reportExtractionDaoClassDirectory == String.Empty) {
+		this.reportExtractionDaoClassDirectory = this.daoClassDirectory;
 	    }
 	}
 
@@ -82,6 +99,17 @@ namespace Spring2.DataTierGenerator {
 	    return s;
 	}
 
+	public String GetReportExtractionDAONameSpace(String table) {
+	    String s;
+
+	    s = this.rootNameSpace;
+	    if (reportExtractionDaoClassDirectory.Length>0) {
+		s += "." + daoClassDirectory;
+	    }
+
+	    return s;
+	}
+
 	public String GetDONameSpace(String table) {
 	    String s;
 
@@ -100,6 +128,15 @@ namespace Spring2.DataTierGenerator {
 	}
 
 	public String GetDAOClassName(String table) {
+	    String s;
+
+	    s = "cls" + table.Replace(" ", "_");
+	    s = table.Replace(" ", "_") + "DAO";
+
+	    return s;
+	}
+
+	public String GetReportExtractionDAOClassName(String table) {
 	    String s;
 
 	    s = "cls" + table.Replace(" ", "_");
@@ -170,8 +207,7 @@ namespace Spring2.DataTierGenerator {
 	/// <returns>Reader syntax to use.</returns>
 	public String GetReaderString(PropertyElement field) {
 	    String readerMethod = String.Format(field.Column.SqlType.ReaderMethodFormat, "dataReader", field.Column.Name);
-	    if (field.Type.ConvertFromSqlTypeFormat.Length >0) 
-	    {
+	    if (field.Type.ConvertFromSqlTypeFormat.Length >0) {
 		readerMethod = 
 		    String.Format(field.Type.ConvertFromSqlTypeFormat, "data", field.GetMethodFormat(), readerMethod, "dataReader", field.Column.Name);
 	    } 
@@ -185,14 +221,29 @@ namespace Spring2.DataTierGenerator {
 	/// </summary>
 	/// <param name="field">Field whose reader syntax is needed.</param>
 	/// <returns>Reader syntax to use.</returns>
-	public String GetProcedureReturnString(PropertyElement field) 
-	{
+	public String GetProcedureReturnString(PropertyElement field) {
 	    String readerMethod = "(Int32)(cmd.Parameters[\"RETURN_VALUE\"].Value)";
-	    if (field.Type.ConvertFromSqlTypeFormat.Length >0) 
-	    {
+	    if (field.Type.ConvertFromSqlTypeFormat.Length >0) {
 		readerMethod = 
 		    String.Format(field.Type.ConvertFromSqlTypeFormat, "", "", 
-				  readerMethod, "", "");
+		    readerMethod, "", "");
+	    } 
+	    return readerMethod;
+	}
+
+	/// <summary>
+	/// Returns the syntax to get the data type of a field from a select Scope_Identity().
+	/// Note it assumes the id value has been put in an int variable named returnId.
+	/// Currently only used with Velocity generator.
+	/// </summary>
+	/// <param name="field">Field whose reader syntax is needed.</param>
+	/// <returns>Reader syntax to use.</returns>
+	public String GetSelectIdentityString(PropertyElement field) {
+	    String readerMethod = "returnId";
+	    if (field.Type.ConvertFromSqlTypeFormat.Length >0) {
+		readerMethod = 
+		    String.Format(field.Type.ConvertFromSqlTypeFormat, "", "", 
+		    readerMethod, "", "");
 	    } 
 	    return readerMethod;
 	}
@@ -203,14 +254,12 @@ namespace Spring2.DataTierGenerator {
 	/// <param name="entity">Entity code is being generated for</param>
 	/// <param name="isDaoClass">Indicates if a DAO class is being generated.</param>
 	/// <returns></returns>
-	public ArrayList GetUsingNamespaces(EntityElement entity, Boolean isDaoClass) 
-	{
+	public ArrayList GetUsingNamespaces(IPropertyContainer entity, Boolean isDaoClass) {
 
 	    ArrayList namespaces = new ArrayList();
 	    namespaces.Add("System");
 
-	    if (isDaoClass) 
-	    {
+	    if (isDaoClass) {
 		namespaces.Add("System.Collections");
 		namespaces.Add("System.Configuration");
 		namespaces.Add("System.Data");
@@ -219,10 +268,8 @@ namespace Spring2.DataTierGenerator {
 		namespaces.Add(GetDONameSpace(null));
 	    }
 
-	    foreach (PropertyElement field in entity.Fields) 
-	    {
-		if (!field.Type.Package.Equals(String.Empty) && !namespaces.Contains(field.Type.Package)) 
-		{
+	    foreach (PropertyElement field in entity.Fields) {
+		if (!field.Type.Package.Equals(String.Empty) && !namespaces.Contains(field.Type.Package)) {
 		    namespaces.Add(field.Type.Package);
 		}
 	    }
@@ -231,6 +278,40 @@ namespace Spring2.DataTierGenerator {
 	    Array.Sort(names);
 
 	    return new ArrayList(names);
+	}
+
+	public static string PrepareExpression(string withEmbedded, IExpressionContainer container, string idString, ParserValidationDelegate vd) {
+	    string checkExpression = withEmbedded;
+	    string retVal = String.Empty;
+	    int leftBrace = 0;
+	    int startPos = 0;
+	    for(leftBrace=checkExpression.IndexOf("{", startPos); startPos >=0; leftBrace=checkExpression.IndexOf("{", startPos)) {
+		if (leftBrace == -1) {
+		    // No more strings to replace.
+		    retVal += checkExpression.Substring(startPos, checkExpression.Length - startPos);
+		    break;
+		} else {
+		    // Concatenate portion of string without embedded references.
+		    retVal += checkExpression.Substring(startPos, leftBrace - startPos);
+		}
+
+		int rightBrace = checkExpression.IndexOf("}", leftBrace);
+		if (rightBrace == -1) {
+		    if (vd != null) {
+			vd(ParserValidationArgs.NewError("The " + idString + " has a left brace({} with no corresonding right brace(}}"));
+		    }
+		    return "";
+		}
+
+		// Isolate the property reference and concatenate it's expansion.
+		string expressionReference = checkExpression.Substring(leftBrace+1, rightBrace - leftBrace - 1);
+		retVal += container.GetExpressionSubstitution(expressionReference, idString, vd);
+		
+		// On to the next reference.
+		startPos = rightBrace + 1;
+	    }
+
+	    return retVal;
 	}
     }
 }

@@ -10,6 +10,8 @@ using System.Xml.Schema;
 
 using Spring2.DataTierGenerator.Element;
 using Spring2.DataTierGenerator.Generator;
+using Spring2.DataTierGenerator.Generator.Styler;
+using Spring2.DataTierGenerator.Generator.Writer;
 
 namespace Spring2.DataTierGenerator.Parser {
     /// <summary>
@@ -169,5 +171,14 @@ namespace Spring2.DataTierGenerator.Parser {
 		}
 	    }
 	}
+
+	public IStyler GetStyler(String name) {
+	    throw new NotImplementedException();
+	}
+
+	public IWriter GetWriter(String name) {
+	    throw new NotImplementedException();
+	}
+
     }
 }

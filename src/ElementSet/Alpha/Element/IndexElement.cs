@@ -69,6 +69,10 @@ namespace Spring2.DataTierGenerator.Element {
 	    }
 	    if (elements != null) {
 		foreach (XmlNode node in elements) {
+		    if (node.NodeType == XmlNodeType.Comment)
+		    {
+			continue;
+		    }
 		    IndexElement index = new IndexElement();
 		    index.Name = node.Attributes["name"].Value;
 
@@ -80,6 +84,10 @@ namespace Spring2.DataTierGenerator.Element {
 		    }
 
 		    foreach (XmlNode n in node.ChildNodes) {
+			if (node.NodeType == XmlNodeType.Comment)
+			{
+			    continue;
+			}
 			ColumnElement column = sqlentity.FindColumnByName(n.Attributes["name"].Value);
 			if (column == null) {
 			    vd(ParserValidationArgs.NewError("column specified (" + n.Attributes["name"].Value + ") in index (" + index.Name + ") not found as column."));

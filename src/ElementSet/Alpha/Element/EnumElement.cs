@@ -58,6 +58,10 @@ namespace Spring2.DataTierGenerator.Element {
 	    ArrayList enums = new ArrayList();
 	    XmlNodeList elements = doc.DocumentElement.GetElementsByTagName("enum");
 	    foreach (XmlNode node in elements) {
+		if (node.NodeType == XmlNodeType.Comment)
+		{
+		    continue;
+		}
 		EnumElement type = new EnumElement();
 		type.Name = node.Attributes["name"].Value;
 		// TODO: this returns all of the children node's innerText as well

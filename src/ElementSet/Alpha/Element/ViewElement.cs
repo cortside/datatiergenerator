@@ -52,10 +52,18 @@ namespace Spring2.DataTierGenerator.Element {
 	    XmlNodeList elements=root.SelectNodes("views/view");
 	    if (elements != null) {
 		foreach (XmlNode node in elements) {
+		    if (node.NodeType == XmlNodeType.Comment)
+		    {
+			continue;
+		    }
 		    ViewElement view = new ViewElement();
 		    view.Name = ParseStringAttribute(node, "name", String.Empty);
 
 		    foreach (XmlNode n in node.ChildNodes) {
+			if (node.NodeType == XmlNodeType.Comment)
+			{
+			    continue;
+			}
 			ConstraintElement constraint = sqlentity.FindConstraintByName(n.Attributes["name"].Value);
 			if (constraint == null) {
 			    vd(ParserValidationArgs.NewError("constraint specified (" + n.Attributes["name"].Value + ") in view (" + view.Name + ") not found."));
@@ -66,8 +74,8 @@ namespace Spring2.DataTierGenerator.Element {
 				vd(ParserValidationArgs.NewError("View [" + view.Name + "] references a constraint that is not a foreign key constraint: " + constraint.Name));
 			    }
 			}
-			constraint.Prefix = ParseStringAttribute(n, "prefix", constraint.ForeignEntity + "_");
-			SqlEntityElement foreignEntity = database.FindSqlEntityByName(constraint.ForeignEntity);
+			constraint.Prefix = ParseStringAttribute(n, "prefix", constraint.ForeignEntity.Name + "_");
+			SqlEntityElement foreignEntity = database.FindSqlEntityByName(constraint.ForeignEntity.Name);
 			if (foreignEntity == null) {
 			    vd(ParserValidationArgs.NewError("View [" + view.Name + "] references a constraint that references an sql entity that was not defined (or was not defined before this sql entity): " + constraint.ForeignEntity));
 			} else {
@@ -77,7 +85,7 @@ namespace Spring2.DataTierGenerator.Element {
 				    viewColumn.Name = constraint.Prefix + viewColumn.Name;
 				}
 				viewColumn.Prefix = constraint.Prefix;
-				viewColumn.ForeignSqlEntity = constraint.ForeignEntity;
+				viewColumn.ForeignSqlEntity = constraint.ForeignEntity.Name;
 				viewColumn.ViewColumn = true;
 				sqlentity.Columns.Add(viewColumn);
 			    }

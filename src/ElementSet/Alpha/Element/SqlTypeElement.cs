@@ -99,6 +99,10 @@ namespace Spring2.DataTierGenerator.Element {
 	    XmlNodeList elements = doc.DocumentElement.GetElementsByTagName("sqltype");
 
 	    foreach (XmlNode node in elements) {
+		if (node.NodeType == XmlNodeType.Comment)
+		{
+		    continue;
+		}
 		SqlTypeElement sqltype = new SqlTypeElement();
 		sqltype.Name = node.Attributes["name"].Value;
 		sqltype.SqlDbType = sqltype.Name.Substring(0, 1).ToUpper() + sqltype.Name.Substring(1);

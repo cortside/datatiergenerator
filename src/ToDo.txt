@@ -7,6 +7,13 @@
 - in table script - check for existance of primary key with different name and drop if found
 - in table script - check for columns in primary key of same name and if there are more or less or different columns, drop
 - in table script - drop indexes before altering columns so that indexed columns can be altered
+- expression columns are always view columns and check should be made if that attribute is specified
+- error parsing comment in view element
+- check for obsolete columns mapped to entity property
+- check to make sure that column has a defined sqltype (required attribute?)
+- a negative value for the limit is not a valid in the sql statement, the dao could check for a < 0 value and either prevent it or throw an exception better than a sql parse error exception.
+- make sure that a sqlentity only has 1 PK defined
+- don't alter image columns
 
 Generator Todo:
 ---------------

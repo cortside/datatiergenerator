@@ -4,18 +4,20 @@ using System.Collections;
 using Spring2.Core.Types;
 
 using Golf.Tournament.DataObject;
+using Golf.Tournament.Types;
 
 namespace Golf.Tournament.DataObject {
     public class ParticipantData : Spring2.Core.DataObject.DataObject {
 
 	private IdType participantId = IdType.DEFAULT;
 	private GolferData golfer = new GolferData();
-	private TournamentData tournament = new TournamentData();
-	private TeamData team = new TeamData();
 	private IList aLaCarteItems = new ArrayList();
-	private PaymentData payment = new PaymentData();
 	private BooleanType isValid = BooleanType.DEFAULT;
 	private CurrencyType registrationFee = CurrencyType.DEFAULT;
+	private TournamentData tournament = new TournamentData();
+	private TeamData team = new TeamData();
+	private GolferData golfer = new GolferData();
+	private PaymentData payment = new PaymentData();
 
 	public static readonly String PARTICIPANTID = "ParticipantId";
 	public static readonly String GOLFER = "Golfer";
@@ -38,6 +40,9 @@ namespace Golf.Tournament.DataObject {
 	public static readonly String GOLFER_PLAYERNUMBER = "Golfer.PlayerNumber";
 	public static readonly String GOLFER_GENDER = "Golfer.Gender";
 	public static readonly String GOLFER_GOLFERSTATUS = "Golfer.GolferStatus";
+	public static readonly String ALACARTEITEMS = "ALaCarteItems";
+	public static readonly String ISVALID = "IsValid";
+	public static readonly String REGISTRATIONFEE = "RegistrationFee";
 	public static readonly String TOURNAMENT = "Tournament";
 	public static readonly String TOURNAMENT_TOURNAMENTID = "Tournament.TournamentId";
 	public static readonly String TOURNAMENT_NAME = "Tournament.Name";
@@ -86,7 +91,26 @@ namespace Golf.Tournament.DataObject {
 	public static readonly String TEAM_STATUS = "Team.Status";
 	public static readonly String TEAM_TOURNAMENTID = "Team.TournamentId";
 	public static readonly String TEAM_PARTICIPANTS = "Team.Participants";
-	public static readonly String ALACARTEITEMS = "ALaCarteItems";
+	public static readonly String GOLFER = "Golfer";
+	public static readonly String GOLFER_GOLFERID = "Golfer.GolferId";
+	public static readonly String GOLFER_FIRSTNAME = "Golfer.FirstName";
+	public static readonly String GOLFER_MIDDLEINITIAL = "Golfer.MiddleInitial";
+	public static readonly String GOLFER_LASTNAME = "Golfer.LastName";
+	public static readonly String GOLFER_PHONE = "Golfer.Phone";
+	public static readonly String GOLFER_EMAIL = "Golfer.Email";
+	public static readonly String GOLFER_ADDRESS = "Golfer.Address";
+	public static readonly String GOLFER_ADDRESS_ADDRESS1 = "Golfer.Address.Address1";
+	public static readonly String GOLFER_ADDRESS_ADDRESS2 = "Golfer.Address.Address2";
+	public static readonly String GOLFER_ADDRESS_CITY = "Golfer.Address.City";
+	public static readonly String GOLFER_ADDRESS_STATE = "Golfer.Address.State";
+	public static readonly String GOLFER_ADDRESS_COUNTRY = "Golfer.Address.Country";
+	public static readonly String GOLFER_ADDRESS_POSTALCODE = "Golfer.Address.PostalCode";
+	public static readonly String GOLFER_DATEOFBIRTH = "Golfer.DateOfBirth";
+	public static readonly String GOLFER_HANDICAP = "Golfer.Handicap";
+	public static readonly String GOLFER_COURSENUMBER = "Golfer.CourseNumber";
+	public static readonly String GOLFER_PLAYERNUMBER = "Golfer.PlayerNumber";
+	public static readonly String GOLFER_GENDER = "Golfer.Gender";
+	public static readonly String GOLFER_GOLFERSTATUS = "Golfer.GolferStatus";
 	public static readonly String PAYMENT = "Payment";
 	public static readonly String PAYMENT_PAYMENTID = "Payment.PaymentId";
 	public static readonly String PAYMENT_TOURNAMENT = "Payment.Tournament";
@@ -171,8 +195,6 @@ namespace Golf.Tournament.DataObject {
 	public static readonly String PAYMENT_PARTICIPANTS = "Payment.Participants";
 	public static readonly String PAYMENT_CONFIRMATIONCODE = "Payment.ConfirmationCode";
 	public static readonly String PAYMENT_PAYMENTDATE = "Payment.PaymentDate";
-	public static readonly String ISVALID = "IsValid";
-	public static readonly String REGISTRATIONFEE = "RegistrationFee";
 
 	public IdType ParticipantId {
 	    get { return this.participantId; }
@@ -185,29 +207,12 @@ namespace Golf.Tournament.DataObject {
 	}
 
 
-	public TournamentData Tournament {
-	    get { return this.tournament; }
-	    set { this.tournament = value; }
-	}
-
-
-	public TeamData Team {
-	    get { return this.team; }
-	    set { this.team = value; }
-	}
 
 
 	public IList ALaCarteItems {
 	    get { return this.aLaCarteItems; }
 	    set { this.aLaCarteItems = value; }
 	}
-
-	public PaymentData Payment {
-	    get { return this.payment; }
-	    set { this.payment = value; }
-	}
-
-
 
 
 	public BooleanType IsValid {
@@ -218,6 +223,99 @@ namespace Golf.Tournament.DataObject {
 	public CurrencyType RegistrationFee {
 	    get { return this.registrationFee; }
 	    set { this.registrationFee = value; }
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	public TournamentData Tournament {
+	    get { return this.tournament; }
+	    set { this.tournament = value; }
+	}
+
+
+
+
+
+
+	public TeamData Team {
+	    get { return this.team; }
+	    set { this.team = value; }
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	public GolferData Golfer {
+	    get { return this.golfer; }
+	    set { this.golfer = value; }
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	public PaymentData Payment {
+	    get { return this.payment; }
+	    set { this.payment = value; }
 	}
     }
 }

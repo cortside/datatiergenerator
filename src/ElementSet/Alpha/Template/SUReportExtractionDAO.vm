@@ -1,0 +1,303 @@
+##
+##      ReportExtractionDAO.vm - default report extraction dao template for C#
+##
+#nameSpaces($options $element true)
+
+using Spring2.DataTierGenerator.Attribute;
+using StampinUp.Core.Types;
+
+namespace $options.GetReportExtractionDAONameSpace($element.Name) 
+{
+    public class $options.GetReportExtractionDAOClassName($element.Name) : $options.ReportExtractionDaoBaseClass 
+    {
+
+#set ($listtype="void")
+#if($options.GenerateAllCollections)
+#set ($listtype="${element.Name}List")
+#else
+#set ($listtype="IList")
+#end
+
+        /// <summary>
+        /// Hash table mapping entity property names to sql code.
+        /// </summary>
+        [Generate]
+        private static Hashtable propertyToSqlMap = new Hashtable();
+
+        /// <summary>
+        /// Initializes the static map of property names to sql expressions.
+        /// </summary>
+        [Generate]
+        static ${options.GetDAOClassName($element.Name)}() 
+        {
+#foreach($field in $element.fields)
+#if($field.Column.SqlType.Name.Length>0)
+        propertyToSqlMap.Add("$field.GetMethodFormat()",@"$field.GetSqlExpression(true)");
+#end
+#end        
+        }
+        
+        /// <summary>
+        /// Creates a where clause object by mapping the given where clause text.  The text may reference
+        /// entity properties which will be mapped to sql code by enclosing the property names in braces.
+        /// </summary>
+        /// <param name="whereText">Text to be mapped</param>
+        /// <returns>WhereClause object.</returns>
+        /// <exception cref="ApplicationException">When property name found in braces is not found in the entity.</exception>
+        [Generate]
+        public static IWhere Where(String whereText)
+        {
+            return new WhereClause(ProcessExpression(propertyToSqlMap, whereText));
+        }
+
+        /// <summary>
+        /// Creates a where clause object that can be used to create sql to find objects whose entity property value
+        /// matches the value passed.  Note that the propertyName passed is an entity property name and will be mapped 
+        /// to the appropriate sql.
+        /// </summary>
+        /// <param name="propertyName">Entity property to be matched.</param>
+        /// <param name="value">Value to match the property with</param>
+        /// <returns>A WhereClause object.</returns>
+        /// <exception cref="ApplicationException">When the property name passed is not found in the entity.</exception>
+        [Generate]
+        public static IWhere Where(String propertyName, String value)
+        {
+            return new WhereClause(GetPropertyMapping(propertyToSqlMap, propertyName), value);
+        }
+
+        /// <summary>
+        /// Creates a where clause object that can be used to create sql to find objects whose entity property value
+        /// matches the value passed.  Note that the propertyName passed is an entity property name and will be mapped 
+        /// to the appropriate sql.
+        /// </summary>
+        /// <param name="propertyName">Entity property to be matched.</param>
+        /// <param name="value">Value to match the property with</param>
+        /// <returns>A WhereClause object.</returns>
+        /// <exception cref="ApplicationException">When the property name passed is not found in the entity.</exception>
+        [Generate]
+        public static IWhere Where(String propertyName, Int32 value)
+        {
+            return new WhereClause(GetPropertyMapping(propertyToSqlMap, propertyName), value);
+        }
+
+        /// <summary>
+        /// Creates a where clause object that can be used to create sql to find objects whose entity property value
+        /// matches the value passed.  Note that the propertyName passed is an entity property name and will be mapped 
+        /// to the appropriate sql.
+        /// </summary>
+        /// <param name="propertyName">Entity property to be matched.</param>
+        /// <param name="value">Value to match the property with</param>
+        /// <returns>A WhereClause object.</returns>
+        /// <exception cref="ApplicationException">When the property name passed is not found in the entity.</exception>
+        [Generate]
+        public static IWhere Where(String propertyName, DateTime value)
+        {
+            return new WhereClause(GetPropertyMapping(propertyToSqlMap, propertyName), value);
+        }
+
+        /// <summary>
+        /// Returns a list of all $element.Name rows.
+        /// </summary>
+        /// <returns>List of $options.GetDOClassName($element.Name) objects.</returns>
+        /// <exception cref="Spring2.Core.DAO.FinderException">Thrown when no rows are found.</exception>
+        [Generate]
+        public static $listtype GetList ()
+        {   
+            return GetList(null, null);
+        }
+
+        /// <summary>
+        /// Returns a list of all $element.Name rows.
+        /// </summary>
+        /// <returns>List of $options.GetDOClassName($element.Name) objects.</returns>
+        /// <exception cref="Spring2.Core.DAO.FinderException">Thrown when no rows are found.</exception>
+        [Generate]
+        public static $listtype GetList ()
+        {   
+            return GetList(null, null);
+        }
+
+        /// <summary>
+        /// Returns a filtered list of $element.Name rows.
+        /// </summary>
+        /// <param name="whereClause">Filtering criteria.</param>
+        /// <returns>List of $options.GetDOClassName($element.Name) objects.</returns>
+        /// <exception cref="Spring2.Core.DAO.FinderException">Thrown when no rows are found matching the where criteria.</exception>
+        [Generate]
+        public static $listtype GetList (IWhere whereClause)
+        { 
+            return GetList(whereClause, null);
+        }
+
+        /// <summary>
+        /// Returns an ordered list of $element.Name rows.  All rows in the database are returned
+        /// </summary>
+        /// <param name="orderByClause">Ordering criteria.</param>
+        /// <returns>List of $options.GetDOClassName($element.Name) objects.</returns>
+        /// <exception cref="Spring2.Core.DAO.FinderException">Thrown when no rows are found.</exception>
+        [Generate]
+        public static $listtype GetList(IOrderBy orderByClause) 
+        {
+            return GetList(null, orderByClause);
+        }
+
+        /// <summary>
+        /// Returns an ordered and filtered list of $element.Name rows.
+        /// </summary>
+        /// <param name="whereClause">Filtering criteria.</param>
+        /// <param name="orderByClause">Ordering criteria.</param>
+        /// <returns>List of $options.GetDOClassName($element.Name) objects.</returns>
+        /// <exception cref="Spring2.Core.DAO.FinderException">Thrown when no rows are found matching the where criteria.</exception>
+        [Generate]
+        public static $listtype GetList(IWhere whereClause, IOrderBy orderByClause) 
+        { 
+           string sqlStatement = GetSqlStatement(whereClause, orderByClause);
+           
+           SqlDataReader dataReader = ExecuteReader("$element.GetFirstEntityReference().Entity.SqlEntity.Key", sqlStatement);
+           
+           $listtype list = new $listtype(); 
+
+            while (dataReader.Read()) 
+            {
+                list.Add(GetDataObjectFromReader(dataReader)); 
+            }
+            dataReader.Close();
+            return list; 
+        }
+
+        /// <summary>
+        /// Builds a data object from the current row in a data reader..
+        /// </summary>
+        /// <param name="dataReader">Container for database row.</param>
+        /// <returns>Data object built from current row.</returns>
+        [Generate]
+        private static $options.GetDOClassName($element.Name) GetDataObjectFromReader(SqlDataReader dataReader) 
+        {
+            $options.GetDOClassName($element.Name) data = new $options.GetDOClassName($element.Name)();
+#foreach($field in $element.Fields)
+#if($field.GetSqlAlias().Length>0)
+            if (dataReader.IsDBNull(dataReader.GetOrdinal("$field.GetSqlAlias()"))) 
+            {   
+                data.${field.GetMethodFormat()} = ${field.Type.NullInstanceFormat};
+            } 
+            else 
+            {
+                data.$field.GetMethodFormat() = $options.GetReaderString($field);
+            }
+#end
+#end
+
+            return data;
+        }
+
+        /// <summary>
+        /// Returns the sql statement used to retrieve this report extraction.
+        /// <param name="whereClause">Filtering criteria.</param>
+        /// <param name="orderByClause">Ordering criteria.</param>
+        /// <returns>string to execute to get rows desired.</returns>
+        [Generate]
+        private static string GetSqlStatement(IWhere whereClause, IOrderBy orderByClause)
+        {
+            string statement = "select ";
+#foreach($pr in ${element.GetAllPropertyReferences()})
+            statement += @"#if($velocityCount > 1), #end$pr.GetSqlExpression(true) as [$pr.GetSqlAlias()]";
+#end
+#foreach($p in ${element.ComputedProperties})
+            statement += @"#if($velocityCount > 1 || ${element.GetAllPropertyReferences().Count} > 0), #end${p.GetSqlExpression()} as [$p.Name]";
+#end
+            statement += @" from #if($element.GetFirstEntityReference().Entity.SqlEntity.UseView)[$element.GetFirstEntityReference().Entity.SqlEntity.View]#else[$element.GetFirstEntityReference().Entity.SqlEntity.Name]#end [$element.GetFirstEntityReference().Name]#if($element.GetFirstEntityReference().Hints != "")($element.GetFirstEntityReference().Hints)#else#if(${element.GetFirstEntityReference().Entity.SqlEntity.DefaultDirtyRead})(nolock)#end#end";
+#foreach($er in $element.EntityReferences)
+#if($velocityCount > 1)
+            statement += @"#if($er.JoinModifier != "") $er.JoinModifier#end join #if($er.Entity.SqlEntity.UseView)[$er.Entity.SqlEntity.View]#else[$er.Entity.SqlEntity.Name]#end [$er.Name]#if($er.Hints != "")($er.Hints)#else#if($er.entity.SqlEntity.DefaultDirtyRead)(nolock)#end#end on $er.GetSqlFilterExpression()";
+#end
+#end
+#if($element.GetFirstEntityReference().Filter != "")
+            WhereClause filterClause = new WhereClause(@"$element.GetFirstEntityReference().GetSqlFilterExpression()");
+            statement += filterClause.FormatSql();
+#end
+#foreach($groupString in $element.GetGroupPropertyStrings())
+#if($velocityCount == 1)
+            statement += @"group by $groupString";
+#else
+            statement += @", $groupString";
+#end
+#end
+#if($element.Having != "")
+            statement += @"having $element.Having()";
+            if (whereClause != null)
+            {
+                statement += whereClause.FormatSql().Replace("where", "and");
+            }
+#else
+            if (whereClause != null)
+            {
+                statement += whereClause.FormatSql().Replace("where", "having");
+            }
+#end
+            if(orderByClause != null)
+            {
+                statement += orderByClause.FormatSql();
+            }
+            return statement;
+        }
+#foreach($finder in $element.Finders)
+        /// <summary>
+#if($finder.Unique)
+        /// Returns an object which matches the values for the fields specified.
+#else
+        /// Returns a list of objects which match the values for the fields specified.
+#end
+        /// </summary>
+#parameterComments(true $finder.Fields "A field value to be matched.")
+#if($finder.Unique)
+        /// <returns>The object found.</returns>
+#else
+        /// <returns>The list of $options.GetDAOClassName($element.Name) objects found.</returns>
+#end
+        /// <exception cref="Spring2.Core.DAO.FinderException">Thrown when no rows are found.</exception>
+#if($finder.Unique)
+#set($s=$options.GetDOClassName($element.Name))
+#else
+#set($s=$listtype)
+#end
+        [Generate]
+        public static $s ${finder.Name}(#parameterList(true $finder.Fields)) 
+        {
+#if($finder.Expression == "")
+            WhereClause filter = new WhereClause();
+#foreach($field in $finder.Fields)
+            filter.And("$field.GetSqlExpression(true)", $options.GetSqlConversion($field));
+#end
+            $listtype list = GetList(filter, null);
+#else
+            WhereClause filter = new WhereClause("$finder.Expression()");
+            SqlCommand cmd = GetSqlCommand("$element.GetFirstEntityReference().Entity.SqlEntity.Key", GetSqlStatement(filter, null), CommandType.Text);
+#foreach($field in $finder.Fields)
+            cmd.Parameters.Add(new SqlParameter("@$field.GetPropertyName()", SqlDbType.$field.GetSqlType().SqlDbType, $field.GetSqlType.Length, ParameterDirection.Input, false, 0, 0, "$field.GetPropertyName()", DataRowVersion.Proposed, $options.GetSqlConversion($field)));
+#end
+            SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+            $listtype list = new $listtype(); 
+
+            while (dataReader.Read()) 
+            {
+                list.Add(GetDataObjectFromReader(dataReader)); 
+            }
+            dataReader.Close();
+#end
+#if($finder.Unique)
+            if(list.Count < 1)
+            {
+                throw new FinderException("$options.GetDOClassName($element.Name).$finder.Name found no rows.");
+            }
+#if($options.GenerateAllCollections)
+            return list[0];
+#else
+            return ($options.GetDOClassName($element.Name))(list[0]);
+#end
+#else
+            return list;
+#end
+        }
+#end
+    }
+}

@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<project name="eSchaefer.NAnt" default="xform" basedir=".">
+	<property name="debug" value="true"/>
+
+
+	<target name="xform">
+<style style="xsd-elements.xsl" in="config.xsd" out="elements.xml" />
+<style style="xsd-elements.xsl" in="config.xsd" out="elements.html" />
+<!--<style style="xsd-html.xsl" in="config.xsd" out="elements.html" /> -->
+<style style="schema2xhtml.xsl" in="config.xsd" out="schema.html" />
+<style style="tree-view.xsl" in="config.xsd" out="tree.html" />
+	</target>
+
+</project>
