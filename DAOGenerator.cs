@@ -42,7 +42,7 @@ namespace Spring2.DataTierGenerator {
 			if (options.UseDataTypes) {
 				Hashtable namespaces = new Hashtable();
 				foreach (Field field in fields) {
-					if (!namespaces.Contains(field.DataTypeNamespace)) {
+					if (!field.DataTypeNamespace.Equals(String.Empty) && !namespaces.Contains(field.DataTypeNamespace)) {
 						namespaces.Add(field.DataTypeNamespace, field.DataTypeNamespace);
 					}
 				}
@@ -110,11 +110,19 @@ namespace Spring2.DataTierGenerator {
             for (intIndex = 0; intIndex < fields.Count; intIndex++) {
                 objField = (Field)fields[intIndex];
                 if (objField.IsIdentity) {
-                    sb.Append("\t\tpublic Int32 Insert(");
+                    if (options.UseDataTypes) {
+                        sb.Append("\t\tpublic IdType Insert(");
+                    } else {
+                        sb.Append("\t\tpublic Int32 Insert(");
+                    }
                     blnReturnVoid = false;
                     break;
                 } else if (objField.IsRowGuidCol) {
-                    sb.Append("\t\tpublic Guid Insert(");
+                    if (options.UseDataTypes) {
+                        sb.Append("\t\tpublic StringType Insert(");
+                    } else {
+                        sb.Append("\t\tpublic Guid Insert(");
+                    }
                     blnReturnVoid = false;
                     break;
                 }
@@ -146,7 +154,7 @@ namespace Spring2.DataTierGenerator {
 			
             // Append the variable declarations
             //sb.Append("\t\t\tSqlConnection	objConnection;\n");
-            sb.Append("\t\t\tSqlCommand		objCommand;\n");
+            sb.Append("\t\t\tSqlCommand cmd;\n");
             sb.Append("\n");
 
             // Append the try block
@@ -154,7 +162,7 @@ namespace Spring2.DataTierGenerator {
 
 			sb.Append(GetCreateCommandSection(options.GetProcName(entity.Name, "Insert")));
 			
-            sb.Append("\t\t\t\tSqlParameter rv = objCommand.Parameters.Add(\"RETURN_VALUE\", SqlDbType.Int);\n");
+            sb.Append("\t\t\t\tSqlParameter rv = cmd.Parameters.Add(\"RETURN_VALUE\", SqlDbType.Int);\n");
             sb.Append("\t\t\t\trv.Direction = ParameterDirection.ReturnValue;\n");
 
             // Append the parameter appends  ;)
@@ -174,7 +182,7 @@ namespace Spring2.DataTierGenerator {
 
             // Append the execute statement
             sb.Append("\t\t\t\t// Execute the query\n");
-            sb.Append("\t\t\t\tobjCommand.ExecuteNonQuery();\n");
+            sb.Append("\t\t\t\tcmd.ExecuteNonQuery();\n");
 			
             // Append the parameter value extraction
             for (intIndex = 0; intIndex < fields.Count; intIndex++) {
@@ -182,10 +190,10 @@ namespace Spring2.DataTierGenerator {
                 if (objField.IsIdentity || objField.IsRowGuidCol) {
                     sb.Append("\n\t\t\t\t// Set the output paramter value(s)\n");
                     if (objField.IsIdentity)
-                        //sb.Append("\t\t\t\treturn Int32.Parse(objCommand.Parameters[\"@" + objField.ColumnName.Replace(" ", "_") + "\"].Value.ToString());\n");
-						sb.Append("\t\t\t\treturn Int32.Parse(objCommand.Parameters[\"RETURN_VALUE\"].Value.ToString());\n");
+                        //sb.Append("\t\t\t\treturn Int32.Parse(cmd.Parameters[\"@" + objField.ColumnName.Replace(" ", "_") + "\"].Value.ToString());\n");
+						sb.Append("\t\t\t\treturn Int32.Parse(cmd.Parameters[\"RETURN_VALUE\"].Value.ToString());\n");
                     else
-                        sb.Append("\t\t\t\treturn Guid.NewGuid(objCommand.Parameters[\"@" + objField.ColumnName.Replace(" ", "_") + "\"].Value.ToString());\n");
+                        sb.Append("\t\t\t\treturn Guid.NewGuid(cmd.Parameters[\"@" + objField.ColumnName.Replace(" ", "_") + "\"].Value.ToString());\n");
                 }
                 objField = null;
             }
@@ -207,9 +215,9 @@ namespace Spring2.DataTierGenerator {
         /// <param name="fields">ArrayList object containing one or more Field objects as defined in the table.</param>
         /// <param name="sb">StreamBuilder object that the resulting string should be appended to.</param>
         private void CreateUpdateMethod(StringBuilder sb) {
-            Field	objField;
-            Field	objNewField;
-            Field	objOldField;
+            Field objField;
+            Field objNewField;
+            Field objOldField;
             //string		strMethodParameter;
             int			intIndex;
 			
@@ -255,7 +263,7 @@ namespace Spring2.DataTierGenerator {
 			
             // Append the variable declarations
             //sb.Append("\t\t\tSqlConnection	objConnection;\n");
-            sb.Append("\t\t\tSqlCommand		objCommand;\n");
+            sb.Append("\t\t\tSqlCommand cmd;\n");
             sb.Append("\n");
 
             // Append the try block
@@ -286,7 +294,7 @@ namespace Spring2.DataTierGenerator {
 			
             // Append the execute statement
             sb.Append("\t\t\t\t// Execute the query\n");
-            sb.Append("\t\t\t\tobjCommand.ExecuteNonQuery();\n");
+            sb.Append("\t\t\t\tcmd.ExecuteNonQuery();\n");
 			
             // Append the catch block
 //            sb.Append("\t\t\t} catch (Exception objException) {\n");
@@ -352,7 +360,7 @@ namespace Spring2.DataTierGenerator {
 					
                     // Append the variable declarations
 //                    sb.Append("\t\t\tSqlConnection	objConnection;\n");
-                    sb.Append("\t\t\tSqlCommand		objCommand;\n");
+                    sb.Append("\t\t\tSqlCommand cmd;\n");
                     sb.Append("\n");
 
                     // Append the try block
@@ -367,7 +375,7 @@ namespace Spring2.DataTierGenerator {
 
                     // Append the execute statement
                     sb.Append("\t\t\t\t// Execute the query and return the result\n");
-                    sb.Append("\t\t\t\tobjCommand.ExecuteNonQuery();\n");
+                    sb.Append("\t\t\t\tcmd.ExecuteNonQuery();\n");
 					
                     // Append the catch block
 //                    sb.Append("\t\t\t} catch (Exception objException) {\n");
@@ -409,7 +417,7 @@ namespace Spring2.DataTierGenerator {
 				
                 // Append the variable declarations
 //                sb.Append("\t\t\tSqlConnection	objConnection;\n");
-                sb.Append("\t\t\tSqlCommand		objCommand;\n");
+                sb.Append("\t\t\tSqlCommand cmd;\n");
                 sb.Append("\n");
 
                 // Append the try block
@@ -428,7 +436,7 @@ namespace Spring2.DataTierGenerator {
 
                 // Append the execute statement
                 sb.Append("\t\t\t\t// Execute the query and return the result\n");
-                sb.Append("\t\t\t\tobjCommand.ExecuteNonQuery();\n");
+                sb.Append("\t\t\t\tcmd.ExecuteNonQuery();\n");
 				
                 // Append the catch block
 //                sb.Append("\t\t\t} catch (Exception objException) {\n");
@@ -484,7 +492,7 @@ namespace Spring2.DataTierGenerator {
 			
             // Append the variable declarations
 //            sb.Append("\t\t\tSqlConnection	objConnection;\n");
-            sb.Append("\t\t\tSqlCommand		objCommand;\n");
+            sb.Append("\t\t\tSqlCommand cmd;\n");
             sb.Append("\n");
 
             // Append the try block
@@ -494,7 +502,7 @@ namespace Spring2.DataTierGenerator {
 
             // Append the execute statement
             sb.Append("\t\t\t\t// Execute the query and return the result\n");
-            sb.Append("\t\t\t\treturn objCommand.ExecuteReader(CommandBehavior.CloseConnection);\n");
+            sb.Append("\t\t\t\treturn cmd.ExecuteReader(CommandBehavior.CloseConnection);\n");
 			
             // Append the catch block
             sb.Append("\t\t\t} catch (Exception objException) {\n");
@@ -521,7 +529,7 @@ namespace Spring2.DataTierGenerator {
 					
                     // Append the variable declarations
 //                    sb.Append("\t\t\tSqlConnection	objConnection;\n");
-                    sb.Append("\t\t\tSqlCommand		objCommand;\n");
+                    sb.Append("\t\t\tSqlCommand cmd;\n");
                     sb.Append("\n");
 
                     // Append the try block
@@ -536,7 +544,7 @@ namespace Spring2.DataTierGenerator {
 
                     // Append the execute statement
                     sb.Append("\t\t\t\t// Execute the query and return the result\n");
-                    sb.Append("\t\t\t\treturn objCommand.ExecuteReader(CommandBehavior.CloseConnection);\n");
+                    sb.Append("\t\t\t\treturn cmd.ExecuteReader(CommandBehavior.CloseConnection);\n");
 					
                     // Append the catch block
                     sb.Append("\t\t\t} catch (Exception objException) {\n");
@@ -571,7 +579,7 @@ namespace Spring2.DataTierGenerator {
 				
                 // Append the variable declarations
 //                sb.Append("\t\t\tSqlConnection	objConnection;\n");
-                sb.Append("\t\t\tSqlCommand		objCommand;\n");
+                sb.Append("\t\t\tSqlCommand cmd;\n");
                 sb.Append("\n");
 
                 // Append the try block
@@ -590,7 +598,7 @@ namespace Spring2.DataTierGenerator {
 
                 // Append the execute statement
                 sb.Append("\t\t\t\t// Execute the query and return the result\n");
-                sb.Append("\t\t\t\treturn objCommand.ExecuteReader(CommandBehavior.CloseConnection);\n");
+                sb.Append("\t\t\t\treturn cmd.ExecuteReader(CommandBehavior.CloseConnection);\n");
 				
                 // Append the catch block
                 sb.Append("\t\t\t} catch (Exception objException) {\n");
@@ -733,13 +741,13 @@ namespace Spring2.DataTierGenerator {
 					
 			// Append the command object creation
 			sb.Append("\t\t\t\t// Create and execute the command\n");
-			//                    sb.Append("\t\t\t\tobjCommand = new SqlCommand();\n");
-			//					sb.Append("\t\t\t\tobjCommand.Connection = objConnection;\n");
-			sb.Append("\t\t\t\tobjCommand = GetSqlCommand(connection, \"" + procName + "\", CommandType.StoredProcedure);\n");
+			//                    sb.Append("\t\t\t\tcmd = new SqlCommand();\n");
+			//					sb.Append("\t\t\t\tcmd.Connection = objConnection;\n");
+			sb.Append("\t\t\t\tcmd = GetSqlCommand(connection, \"" + procName + "\", CommandType.StoredProcedure);\n");
 
-			//sb.Append("\t\t\t\tobjCommand.CommandText = \"" + options.GetProcName(entity.Name, "DeleteBy" + strColumnName.Replace(" ", "_")) + "\";\n");
-			//sb.Append("\t\t\t\tobjCommand.CommandText = \"" + procName + "\";\n");
-			//sb.Append("\t\t\t\tobjCommand.CommandType = CommandType.StoredProcedure;\n");
+			//sb.Append("\t\t\t\tcmd.CommandText = \"" + options.GetProcName(entity.Name, "DeleteBy" + strColumnName.Replace(" ", "_")) + "\";\n");
+			//sb.Append("\t\t\t\tcmd.CommandText = \"" + procName + "\";\n");
+			//sb.Append("\t\t\t\tcmd.CommandType = CommandType.StoredProcedure;\n");
 			sb.Append("\n");
 			return sb.ToString();
 		}
