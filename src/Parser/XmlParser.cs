@@ -16,7 +16,7 @@ namespace Spring2.DataTierGenerator.Parser {
     /// <summary>
     /// Summary description for XMLParser.
     /// </summary>
-    public class XmlParser : ParserSkeleton, IParser {
+    public class XmlParser : ParserSkeleton {
 
 	private XmlDocument doc = null;
 
@@ -104,13 +104,11 @@ namespace Spring2.DataTierGenerator.Parser {
 		// when your walking to get a cup of coffee and your mind is in Hawaii
 		while (vr.Read());
 		vr.Close();
-	    }
-	    catch(UnauthorizedAccessException ex) {
+	    } catch(UnauthorizedAccessException ex) {
 		//dont have access permission
 		isValid=false;
 		errors.Add(ParserValidationArgs.NewError(ex.Message));
-	    }
-	    catch(Exception ex) {
+	    } catch(Exception ex) {
 		//and other things that could go wrong
 		isValid=false;
 		errors.Add(ParserValidationArgs.NewError(ex.Message));
@@ -130,6 +128,5 @@ namespace Spring2.DataTierGenerator.Parser {
 		errors.Add(ParserValidationArgs.NewWarning(args.Message));
 	    }
 	}
-
     }
 }

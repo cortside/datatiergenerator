@@ -16,7 +16,7 @@ namespace Spring2.DataTierGenerator.Parser {
     /// <summary>
     /// Summary description for XMLParser.
     /// </summary>
-    public class ConfigParser : ParserSkeleton, IParser {
+    public class ConfigParser : ParserSkeleton {
 
 	private XmlDocument doc = null;
 

@@ -5,8 +5,7 @@ namespace Spring2.DataTierGenerator.Util {
     /// <summary>
     /// Class that handles writing indented strings for Data Tier generator.
     /// </summary>
-    public class IndentableStringWriter : StringWriter 
-    {
+    public class IndentableStringWriter : StringWriter {
 
 	private static readonly String TABS = "\t\t\t\t\t\t\t\t\t\t";
 
@@ -15,8 +14,7 @@ namespace Spring2.DataTierGenerator.Util {
 	/// </summary>
 	/// <param name="level">Indention Level</param>
 	/// <param name="s">String to write</param>
-	public void WriteLine(Int32 level, String s) 
-	{
+	public void WriteLine(Int32 level, String s) {
 	    WriteLine(Indent(level) + s);
 	}
 
@@ -25,8 +23,7 @@ namespace Spring2.DataTierGenerator.Util {
 	/// </summary>
 	/// <param name="level">Indention level</param>
 	/// <param name="s">Line to write.</param>
-	public void Write(Int32 level, String s) 
-	{
+	public void Write(Int32 level, String s) {
 	    Write(Indent(level) + s);
 	}
 
@@ -35,11 +32,9 @@ namespace Spring2.DataTierGenerator.Util {
 	/// </summary>
 	/// <param name="level">Number of levels of indention</param>
 	/// <returns>Spaces for indention</returns>
-	private String Indent(Int32 level) 
-	{
+	private String Indent(Int32 level) {
 	    String indent = TABS.Substring(0, level / 2);
-	    if (level % 2 == 1) 
-	    {
+	    if (level % 2 == 1) {
 		indent += "    ";
 	    }
 
@@ -51,8 +46,7 @@ namespace Spring2.DataTierGenerator.Util {
 	/// </summary>
 	/// <param name="level">Indention level</param>
 	/// <param name="s">String for comment</param>
-	public void WriteSummaryComment(Int32 level, String s) 
-	{
+	public void WriteSummaryComment(Int32 level, String s) {
 	    String[] a = {s};
 	    WriteSummaryComment(level, a);
 	}
@@ -62,11 +56,9 @@ namespace Spring2.DataTierGenerator.Util {
 	/// </summary>
 	/// <param name="level">Indention level</param>
 	/// <param name="s">Array of strings for comment.</param>
-	public void WriteSummaryComment(Int32 level, String[] s)
-	{
+	public void WriteSummaryComment(Int32 level, String[] s) {
 	    WriteLine(level, "/// <summary>");
-	    for (int i = 0; i < s.Length; i++) 
-	    {
+	    for (int i = 0; i < s.Length; i++) {
 		WriteLine(level, "/// " + s[i]);
 	    }
 	    WriteLine(level, "/// </summary>");
@@ -79,8 +71,7 @@ namespace Spring2.DataTierGenerator.Util {
 	/// <param name="paramName">Name of the parameter.</param>
 	/// <param name="comment">Comment for the parameter.</param>
 	/// <exception cref="System.">Thrown when</exception>
-	public void WriteParameterComment(Int32 level, String paramName, String comment)
-	{
+	public void WriteParameterComment(Int32 level, String paramName, String comment) {
 	    WriteLine(level, "/// <param name=\"" + paramName + "\">" + comment + "</param>");
 	}
 
@@ -89,8 +80,7 @@ namespace Spring2.DataTierGenerator.Util {
 	/// </summary>
 	/// <param name="level">Indention level</param>
 	/// <param name="comment">comment</param>
-	public void WriteReturnsComment(Int32 level, String comment)
-	{
+	public void WriteReturnsComment(Int32 level, String comment) {
 	    WriteLine(level, "/// <returns>" + comment + "</returns>");
 	}
 
@@ -100,8 +90,7 @@ namespace Spring2.DataTierGenerator.Util {
 	/// <param name="level">Indention level</param>
 	/// <param name="exceptionName">Exception name.</param>
 	/// <param name="comment">Comment.</param>
-	public void WriteExceptionComment(Int32 level, String exceptionName, String comment)
-	{
+	public void WriteExceptionComment(Int32 level, String exceptionName, String comment) {
 	    WriteLine(level, "/// <exception cref=\"" + exceptionName + "\">" + comment + "</exception>");
 	}
     }

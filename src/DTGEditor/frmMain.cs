@@ -42,20 +42,13 @@ namespace Spring2.DataTierGenerator.DTGEditor {
 	private System.Windows.Forms.RadioButton documentTypeDTD;
 	private System.Windows.Forms.RadioButton documentTypeNone;
 	private System.Windows.Forms.TreeView treeView1;
-	private System.Windows.Forms.Splitter splitter1;
 	private System.Windows.Forms.ListView listView1;
 	private System.Windows.Forms.Button generate;
 	private System.Windows.Forms.TextBox file;
 
 	public frmMain() {
-	    //
 	    // Required for Windows Form Designer support
-	    //
 	    InitializeComponent();
-
-	    //
-	    // TODO: Add any constructor code after InitializeComponent call
-	    //
 	}
 
 	/// <summary>
@@ -70,7 +63,7 @@ namespace Spring2.DataTierGenerator.DTGEditor {
 	    base.Dispose( disposing );
 	}
 
-	#region Windows Form Designer generated code
+#region Windows Form Designer generated code
 	/// <summary>
 	/// Required method for Designer support - do not modify
 	/// the contents of this method with the code editor.
@@ -87,7 +80,6 @@ namespace Spring2.DataTierGenerator.DTGEditor {
 	    this.documentTypeDTD = new System.Windows.Forms.RadioButton();
 	    this.documentTypeNone = new System.Windows.Forms.RadioButton();
 	    this.treeView1 = new System.Windows.Forms.TreeView();
-	    this.splitter1 = new System.Windows.Forms.Splitter();
 	    this.listView1 = new System.Windows.Forms.ListView();
 	    this.generate = new System.Windows.Forms.Button();
 	    this.SuspendLayout();
@@ -131,6 +123,7 @@ namespace Spring2.DataTierGenerator.DTGEditor {
 	    // 
 	    // openFileDialog
 	    // 
+	    this.openFileDialog.Filter = "XML(*.xml)|*.xml";
 	    this.openFileDialog.FileOk += new System.ComponentModel.CancelEventHandler(this.BrowserSelection);
 	    // 
 	    // fileBrowse
@@ -197,13 +190,6 @@ namespace Spring2.DataTierGenerator.DTGEditor {
 	    this.treeView1.TabIndex = 10;
 	    this.treeView1.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterSelect);
 	    // 
-	    // splitter1
-	    // 
-	    this.splitter1.Name = "splitter1";
-	    this.splitter1.Size = new System.Drawing.Size(3, 486);
-	    this.splitter1.TabIndex = 12;
-	    this.splitter1.TabStop = false;
-	    // 
 	    // listView1
 	    // 
 	    this.listView1.AccessibleName = "";
@@ -236,7 +222,6 @@ namespace Spring2.DataTierGenerator.DTGEditor {
 	    this.Controls.AddRange(new System.Windows.Forms.Control[] {
 									  this.generate,
 									  this.listView1,
-									  this.splitter1,
 									  this.treeView1,
 									  this.documentTypeNone,
 									  this.documentTypeDTD,
@@ -254,8 +239,7 @@ namespace Spring2.DataTierGenerator.DTGEditor {
 	    this.ResumeLayout(false);
 
 	}
-		#endregion
-
+#endregion
 
 	/// <summary>
 	/// The main entry point for the application.
@@ -340,8 +324,6 @@ namespace Spring2.DataTierGenerator.DTGEditor {
 
 	//start file browser 
 	private void fileBrowse_Click(object sender, System.EventArgs e) {
-	    openFileDialog.Multiselect = false;
-	    openFileDialog.Filter = "XML(*.xml)|*.xml";
 	    openFileDialog.InitialDirectory = file.Text;
 	    openFileDialog.ShowDialog(this);
 	}
@@ -431,8 +413,6 @@ namespace Spring2.DataTierGenerator.DTGEditor {
 		node.Nodes.Add(n);
 	    }
 	    tree.Nodes.Add(node);
-
-
 	}
 
 	private void treeView1_AfterSelect(object sender, System.Windows.Forms.TreeViewEventArgs e) {
@@ -614,7 +594,6 @@ namespace Spring2.DataTierGenerator.DTGEditor {
 	    }
 	}
 
-
 	private void ShowCollections(Int32 level, String nodeText, String parentNodeText) {
 	    listView1.Items.Clear();
 	    listView1.Columns.Clear();
@@ -640,9 +619,6 @@ namespace Spring2.DataTierGenerator.DTGEditor {
 		    listView1.Items.Add(lvi);
 		}
 	    }
-	}
-
-	
+	}	
     }
-
 }
