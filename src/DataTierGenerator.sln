@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spring2.DataTierGenerator.N
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spring2.DataTierGenerator.DTGEditor", "Spring2.DataTierGenerator.DTGEditor.csproj", "{6A2FB4F6-83E4-455C-800B-21C9267D9651}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spring2.DataTierGenerator.Nant", "Spring2.DataTierGenerator.Nant.csproj", "{2844DE77-37C4-4DD5-A1B2-F217D40EEEFE}"
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		ConfigName.0 = Debug
@@ -39,6 +41,10 @@ Global
 		{6A2FB4F6-83E4-455C-800B-21C9267D9651}.Debug.Build.0 = Debug|.NET
 		{6A2FB4F6-83E4-455C-800B-21C9267D9651}.Release.ActiveCfg = Release|.NET
 		{6A2FB4F6-83E4-455C-800B-21C9267D9651}.Release.Build.0 = Release|.NET
+		{2844DE77-37C4-4DD5-A1B2-F217D40EEEFE}.Debug.ActiveCfg = Debug|.NET
+		{2844DE77-37C4-4DD5-A1B2-F217D40EEEFE}.Debug.Build.0 = Debug|.NET
+		{2844DE77-37C4-4DD5-A1B2-F217D40EEEFE}.Release.ActiveCfg = Release|.NET
+		{2844DE77-37C4-4DD5-A1B2-F217D40EEEFE}.Release.Build.0 = Release|.NET
 	EndGlobalSection
 	GlobalSection(SolutionItems) = postSolution
 		Item:1 = collections.inc.xml

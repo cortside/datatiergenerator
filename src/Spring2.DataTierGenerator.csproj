@@ -87,6 +87,11 @@
                     AssemblyName = "NVelocity"
                     HintPath = "..\lib\NVelocity.dll"
                 />
+                <Reference
+                    Name = "CSParser"
+                    AssemblyName = "CSParser"
+                    HintPath = "..\lib\CSParser.dll"
+                />
             </References>
         </Build>
         <Files>
@@ -239,27 +244,7 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Generator\CodeGenerator.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Generator\CollectionGenerator.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Generator\DaoGenerator.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Generator\DataObjectGenerator.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Generator\EnumGenerator.cs"
+                    RelPath = "Generator\CodeDomGenerator.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -275,16 +260,6 @@
                 />
                 <File
                     RelPath = "Generator\IGenerator.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Generator\SqlGenerator.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Generator\XmlGenerator.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
