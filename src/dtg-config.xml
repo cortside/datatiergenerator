@@ -1,23 +1,28 @@
 <?xml version="1.0" ?>
 <DataTierGenerator xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="config.xsd">
     <config>
+	<setting name="RootDirectory" value="c:\data\work\spring2\DataTierGenerator\" />
+	<setting name="DaoClassDirectory" value="Dao" />
+	<setting name="DoClassDirectory" value="DataObject" />
+	<setting name="TypesClassDirectory" value="Types" />
+	<setting name="GenerateDataObjectClasses" value="True" />
+	<setting name="RootNameSpace" value="Spring2.DataTierGenerator" />
+	<setting name="DataObjectBaseClass" value="Spring2.Core.DataObject.DataObject" />
+	<setting name="DAOBaseClass" value="Spring2.Core.DAO.EntityDAO" />
+	<setting name="EnumBaseClass" value="Spring2.Core.Types.EnumDataType" />
+	
+	<!-- database -->
 	<setting name="Server" value="hal" />
 	<setting name="Database" value="cort_project" />
 	<setting name="User" value="sa" />
 	<setting name="Password" value="" />
-	<setting name="RootDirectory" value="c:\data\work\spring2\DataTierGenerator\" />
 	<setting name="SqlScriptDirectory" value="Sql" />
-	<setting name="DaoClassDirectory" value="Dao" />
-	<setting name="DoClassDirectory" value="DataObject" />
-	<setting name="TypesClassDirectory" value="Types" />
 	<setting name="SingleFile" value="False" />
 	<setting name="GenerateSqlViewScripts" value="True" />
 	<setting name="GenerateSqlTableScripts" value="True" />
-	<setting name="UseViews" value="True" />
-	<setting name="GenerateDataObjectClasses" value="True" />
 	<setting name="ScriptDropStatement" value="True" />
 	<setting name="StoredProcNameFormat" value="proc{%TABLE_NAME%}{%PROC_TYPE%}" />
-	<setting name="RootNameSpace" value="Spring2.DataTierGenerator" />
+	<setting name="UseViews" value="True" />
 	<setting name="GenerateProcsForForeignKey" value="False" />
 	<setting name="GenerateSelectStoredProcs" value="False" />
 	<setting name="GenerateOnlyPrimaryDeleteStoredProc" value="True" />
@@ -25,9 +30,7 @@
 	<setting name="AutoDiscoverEntities" value="False" />
 	<setting name="AutoDiscoverProperties" value="False" />
 	<setting name="AutoDiscoverAttributes" value="False" />
-	<setting name="DataObjectBaseClass" value="Spring2.Core.DataObject.DataObject" />
-	<setting name="DAOBaseClass" value="Spring2.Core.DAO.EntityDAO" />
-	<setting name="EnumBaseClass" value="Spring2.Core.Types.EnumDataType" />
+	
 	<!-- unsupported below this line -->
 	<setting name="DataObjectNameFormat" value="{0}Data" />
 	<setting name="DaoNameFormat" value="{0}Dao" />
@@ -88,40 +91,70 @@
 	    </properties>
 	</entity>
     </entities>
-    <!--
-		sqlentity definitions
-		
-		this is how we might be able to define enough information to be able to create table scripts.
-		the following need to be able to be supported in order to create table scripts:
-			column nullability
-			identity specification (including seed an increment value)
-			constraints:
-				primary key
-				foreign key
-				default values
-				unique
-				check - I haven't seen this used in any code at spring2, but we should double check
-	-->
-    <sqlentities>
-	<sqlentity name="Testsqlentity">
-	    <columns>
-		<column name="sqlstringcolumn" sqltype="varchar" required="True" />
-		<column name="sqlintcolumn" sqltype="int" required="True" />
-		<column name="EmailFormat" sqltype="char" length="1" />
-		<column name="addr1" sqltype="varchar" length="50" />
-		<column name="addr2" sqltype="varchar" length="50" />
-		<column name="city" sqltype="varchar" length="50" />
-		<column name="state" sqltype="varchar" length="50" />
-		<column name="zip" sqltype="varchar" length="50" />
-	    </columns>
-	    <constraints>
-		<constraint name="PK_Testsqlentity" type="PRIMARY KEY" clustered="False">
-		    <column name="sqlstringcolumn" />
-		    <column name="sqlintcolumn" />
-		</constraint>
-	    </constraints>
-	</sqlentity>
-    </sqlentities>
+    
+    
+<!--
+    <xs:attribute name="scriptsinglefile" type="BooleanEnum" />
+    <xs:attribute name="server" type="xs:string" />
+    <xs:attribute name="database" type="xs:string" use="optional" />
+    <xs:attribute name="user" type="xs:string" />
+    <xs:attribute name="password" type="xs:string" />
+    <xs:attribute name="scriptdirectory" type="xs:string" />
+    <xs:attribute name="storedprocnameformat" type="xs:string" />
+    <xs:attribute name="generateviewscript" type="BooleanEnum" />
+    <xs:attribute name="generatetablescript" type="BooleanEnum" />
+    <xs:attribute name="generateinsertstoredprocscript" type="BooleanEnum" />
+    <xs:attribute name="generateupdatestoredprocscript" type="BooleanEnum" />
+    <xs:attribute name="generatedeletestoredprocscript" type="BooleanEnum" />
+    <xs:attribute name="scriptdropstatement" type="BooleanEnum" />
+    <xs:attribute name="useview" type="BooleanEnum" />
+    <xs:attribute name="generateprocsforforeignkeys" type="BooleanEnum" />
+    <xs:attribute name="generateselectstoredprocs" type="BooleanEnum" />
+    <xs:attribute name="generateonlyprimarydeletestoredproc" type="BooleanEnum" />
+    <xs:attribute name="allowupdateofprimarykey" type="BooleanEnum" />
+-->    
+    
+    <databases generateinsertstoredprocscript="True" 
+	       generateupdatestoredprocscript="True" 
+	       generatedeletestoredprocscript="True" 
+	       generateselectstoredprocscript="False" >
+	<database name="database1" key="con1">
+	    <sqlentities>
+		<sqlentity name="Testsqlentity" generatedeletestoredprocscript="False" >
+		    <columns>
+			<column name="sqlstringcolumn" sqltype="varchar" required="True" />
+			<column name="sqlintcolumn" sqltype="int" required="True" />
+			<column name="EmailFormat" sqltype="char" length="1" />
+			<column name="addr1" sqltype="varchar" length="50" />
+			<column name="addr2" sqltype="varchar" length="50" />
+			<column name="city" sqltype="varchar" length="50" />
+			<column name="state" sqltype="varchar" length="50" />
+			<column name="zip" sqltype="varchar" length="50" />
+		    </columns>
+		    <constraints>
+			<constraint name="PK_Testsqlentity" type="PRIMARY KEY" clustered="False">
+			    <column name="sqlstringcolumn" />
+			    <column name="sqlintcolumn" />
+			</constraint>
+		    </constraints>
+		</sqlentity>
+		<sqlentity name="Testsqlentity2" >
+		    <columns>
+			<column name="sqlstringcolumn" sqltype="varchar" required="True" />
+			<column name="sqlintcolumn" sqltype="int" required="True" />
+			<column name="EmailFormat" sqltype="char" length="1" />
+			<column name="addr1" sqltype="varchar" length="50" />
+			<column name="addr2" sqltype="varchar" length="50" />
+			<column name="city" sqltype="varchar" length="50" />
+			<column name="state" sqltype="varchar" length="50" />
+			<column name="zip" sqltype="varchar" length="50" />
+		    </columns>
+		</sqlentity>
+	    </sqlentities>
+	</database>
+    </databases>
+    
+    
     <!--
 		Enum definitions
 		Elements:
