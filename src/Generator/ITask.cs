@@ -41,5 +41,8 @@ namespace Spring2.DataTierGenerator.Generator {
 	    get;
 	}
 
+	String Name {
+	    get;
+	}
     }
 }

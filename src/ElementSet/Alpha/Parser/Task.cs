@@ -141,7 +141,11 @@ namespace Spring2.DataTierGenerator.Parser {
 	    get { return task.Styler; }
 	}
 
-	public String Template {
+    	public String Name {
+    		get { return task.Name; }
+    	}
+
+    	public String Template {
 	    get { return task.Template; }
 	}
 
