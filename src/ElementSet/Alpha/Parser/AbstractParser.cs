@@ -118,7 +118,7 @@ namespace Spring2.DataTierGenerator.Parser {
 	    foreach(EntityElement entity in entities) {
 		if (entity.SqlEntity.Name.Length>0) {
 		    foreach(ColumnElement column in entity.SqlEntity.Columns) {
-			if (!column.Obsolete && entity.FindFieldByColumnName(column.Name)==null) {
+			if (!column.Obsolete && EntityElement.FindAnyFieldByColumnName(entities, column.Name)==null) {
 			    vd(ParserValidationArgs.NewWarning("could not find property representing column " + column.Name + " in entity " + entity.Name + "."));
 			}
 		    }
