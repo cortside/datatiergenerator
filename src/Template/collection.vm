@@ -24,9 +24,25 @@ namespace $options.GetCollectionNameSpace($element.Name) {
 	    get { return (${element.Type}) List[index]; }
 	}
 
-	public void Add(${element.Type} a) {
+	public void Add(${element.Type} value) {
 	    if (!immutable) {
-		List.Add(a);
+		List.Add(value);
+	    } else {
+		throw new System.Data.ReadOnlyException();
+	    }
+	}
+
+	public Boolean Contains(${element.Type} value) {
+	    return List.Contains(value);
+	}
+	
+	public Int32 IndexOf(${element.Type} value) {
+	    return List.IndexOf(value);
+	}
+	
+	public void Insert(Int32 index, ${element.Type} value) {
+	    if (!immutable) {
+	    	List.Insert(index, value);
 	    } else {
 		throw new System.Data.ReadOnlyException();
 	    }
@@ -44,6 +60,14 @@ namespace $options.GetCollectionNameSpace($element.Name) {
 	    }
 	}
 
+	public void Remove(${element.Type} value) {
+	    if (!immutable) {
+		List.Remove(value); 
+	    } else {
+		throw new System.Data.ReadOnlyException();
+	    }
+	}
+
 	public void AddRange(System.Collections.IList list) {
 	    foreach(Object o in list) {
 		if (o is ${element.Type}) {
@@ -51,6 +75,20 @@ namespace $options.GetCollectionNameSpace($element.Name) {
 		} else {
 		    throw new System.InvalidCastException("object in list could not be cast to ${element.Type}");
 		}
+	    }
+	}
+	
+	public Boolean IsDefault {
+	    get { return Object.ReferenceEquals(this, DEFAULT); }
+	}
+
+	public Boolean IsUnset {
+	    get { return Object.ReferenceEquals(this, UNSET); }
+	}
+	
+	public Boolean IsValid {
+	    get {
+		return !(IsDefault || IsUnset);
 	    }
 	}
 
