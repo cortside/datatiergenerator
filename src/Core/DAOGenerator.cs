@@ -207,7 +207,6 @@ namespace Spring2.DataTierGenerator.Core {
 	/// <param name="fields">ArrayList object containing one or more Field objects as defined in the table.</param>
 	/// <param name="sb">StreamBuilder object that the resulting string should be appended to.</param>
 	private void CreateDeleteMethods(IndentableStringWriter writer) {
-			
 	    // Create the array list of key fields
 	    String primaryKeyList = String.Empty;
 	    ArrayList keyList = new ArrayList();
@@ -273,7 +272,7 @@ namespace Spring2.DataTierGenerator.Core {
 
 	    /*********************************************************************************************************/
 	    // Create the select functions based on a composite primary key
-	    if (keyList.Count > 1) {
+	    if (keyList.Count > 0) {
 		// Append the method header
 		writer.WriteLine(2, "/// <summary>");
 		writer.WriteLine(2, "/// Deletes a record from the " + entity.SqlEntity.Name + " table by a composite primary key.");
@@ -304,16 +303,15 @@ namespace Spring2.DataTierGenerator.Core {
 		GetCreateCommandSection(writer, options.GetProcName(entity.SqlEntity.Name, methodName));
 
 		// Append the parameters
-		writer.WriteLine(4, "// Create and append the parameters");
+		writer.WriteLine(3, "// Create and append the parameters");
 		for (int i = 0; i < keyList.Count; i++) {
 		    Field field = (Field)keyList[i];
-		    writer.Write(4, field.CreateSqlParameter(false, false));
+		    writer.Write(3, field.CreateSqlParameter(false, false));
 		}
-		writer.WriteLine();
 
 		// Append the execute statement
-		writer.WriteLine(4, "// Execute the query and return the result");
-		writer.WriteLine(4, "cmd.ExecuteNonQuery();");
+		writer.WriteLine(3, "// Execute the query and return the result");
+		writer.WriteLine(3, "cmd.ExecuteNonQuery();");
 				
 		// Append the method footer
 		writer.WriteLine(2, "}");
