@@ -11,6 +11,7 @@ Todo:
     - all elements needs to have an Equals() method so that 2 instances can be compared, including collections. (needed to complete DatabaseCompareParser)
     - create custom element collections - find and compare methods could be put at this level
     - implement logger that can be passed to NVelocity for template processing messages
+    - NVelocity Toolbox tool for sql - escape can be the first method - remove from elements
 
 Completed:
     - preservation of custom regions (pull code from regions and insert into generated source before overwritting)
