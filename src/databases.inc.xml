@@ -1,0 +1,60 @@
+<!--
+    <xs:attribute name="scriptsinglefile" type="BooleanEnum" />
+    <xs:attribute name="server" type="xs:string" />
+    <xs:attribute name="database" type="xs:string" use="optional" />
+    <xs:attribute name="user" type="xs:string" />
+    <xs:attribute name="password" type="xs:string" />
+    <xs:attribute name="scriptdirectory" type="xs:string" />
+    <xs:attribute name="storedprocnameformat" type="xs:string" />
+    <xs:attribute name="generateviewscript" type="BooleanEnum" />
+    <xs:attribute name="generatetablescript" type="BooleanEnum" />
+    <xs:attribute name="generateinsertstoredprocscript" type="BooleanEnum" />
+    <xs:attribute name="generateupdatestoredprocscript" type="BooleanEnum" />
+    <xs:attribute name="generatedeletestoredprocscript" type="BooleanEnum" />
+    <xs:attribute name="scriptdropstatement" type="BooleanEnum" />
+    <xs:attribute name="useview" type="BooleanEnum" />
+    <xs:attribute name="generateprocsforforeignkeys" type="BooleanEnum" />
+    <xs:attribute name="generateselectstoredprocs" type="BooleanEnum" />
+    <xs:attribute name="generateonlyprimarydeletestoredproc" type="BooleanEnum" />
+    <xs:attribute name="allowupdateofprimarykey" type="BooleanEnum" />
+-->    
+    
+    <databases generateinsertstoredprocscript="True" 
+	       generateupdatestoredprocscript="True" 
+	       generatedeletestoredprocscript="True" 
+	       generateselectstoredprocscript="False" >
+	<database name="database1" key="con1">
+	    <sqlentities>
+		<sqlentity name="Testsqlentity" generatedeletestoredprocscript="False" >
+		    <columns>
+			<column name="sqlstringcolumn" sqltype="varchar" required="True" />
+			<column name="sqlintcolumn" sqltype="int" required="True" />
+			<column name="EmailFormat" sqltype="char" length="1" />
+			<column name="addr1" sqltype="varchar" length="50" />
+			<column name="addr2" sqltype="varchar" length="50" />
+			<column name="city" sqltype="varchar" length="50" />
+			<column name="state" sqltype="varchar" length="50" />
+			<column name="zip" sqltype="varchar" length="50" />
+		    </columns>
+		    <constraints>
+			<constraint name="PK_Testsqlentity" type="PRIMARY KEY" clustered="False">
+			    <column name="sqlstringcolumn" />
+			    <column name="sqlintcolumn" />
+			</constraint>
+		    </constraints>
+		</sqlentity>
+		<sqlentity name="Testsqlentity2" >
+		    <columns>
+			<column name="sqlstringcolumn" sqltype="varchar" required="True" />
+			<column name="sqlintcolumn" sqltype="int" required="True" />
+			<column name="EmailFormat" sqltype="char" length="1" />
+			<column name="addr1" sqltype="varchar" length="50" />
+			<column name="addr2" sqltype="varchar" length="50" />
+			<column name="city" sqltype="varchar" length="50" />
+			<column name="state" sqltype="varchar" length="50" />
+			<column name="zip" sqltype="varchar" length="50" />
+		    </columns>
+		</sqlentity>
+	    </sqlentities>
+	</database>
+    </databases>

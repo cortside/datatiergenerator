@@ -1,0 +1,11 @@
+<config>
+	<setting name="RootDirectory" value="c:\data\work\spring2\DataTierGenerator\" />
+	<setting name="DaoClassDirectory" value="Dao" />
+	<setting name="DoClassDirectory" value="DataObject" />
+	<setting name="TypesClassDirectory" value="Types" />
+	<setting name="GenerateDataObjectClasses" value="True" />
+	<setting name="RootNameSpace" value="Spring2.DataTierGenerator" />
+	<setting name="DataObjectBaseClass" value="Spring2.Core.DataObject.DataObject" />
+	<setting name="DAOBaseClass" value="Spring2.Core.DAO.EntityDAO" />
+	<setting name="EnumBaseClass" value="Spring2.Core.Types.EnumDataType" />
+</config>

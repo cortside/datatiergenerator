@@ -1,0 +1,55 @@
+    <!--
+		Application entites (objects)
+
+				Finder attributes:
+					name - name that must match a name defined in the properties collection
+					sort - a comma seperated list of sql column names.  If one is not specified, one is created using the order of the properties specified
+					unique - a boolean that determines is a single row or a collection of rows is returned/expected.  Default is false;
+					
+					support for Or?
+					support for specifying custom sql?
+		
+	-->
+    <entities>
+	<entity name="Address">
+	    <properties>
+		<property name="Address1" type="StringType" />
+		<property name="Address2" type="StringType" />
+		<property name="City" type="StringType" />
+		<property name="State" type="StringType" />
+		<property name="PostalCode" type="StringType" />
+		<property name="Country" type="StringType" />
+	    </properties>
+	</entity>
+	<entity name="Testsqlentity" sqlentity="Testsqlentity">
+	    <properties>
+		<property name="StringColumn" column="sqlstringcolumn" type="StringType" />
+		<property name="Int32Column" column="sqlintcolumn" type="IdType" />
+		<property name="EmailFormat" type="FormatType" />
+		<property name="Address" type="AddressData" />
+		<property name="Address.Address1" column="addr1" type="StringType" />
+		<property name="Address.Address2" column="addr2" type="StringType" />
+		<property name="Address.City" column="city" type="StringType" />
+		<property name="Address.State" column="state" type="StringType" />
+		<property name="Address.PostalCode" column="zip" type="StringType" />
+	    </properties>
+	    <finders>
+		<finder name="FindByPostalCode" sort="Int32Column, StringColumn">
+		    <properties>
+			<property name="Address.PostalCode" />
+		    </properties>
+		</finder>
+		<finder name="FindByPK" unique="True">
+		    <properties>
+			<property name="StringColumn" />
+			<property name="Int32Column" />
+		    </properties>
+		</finder>
+	    </finders>
+	</entity>
+	<entity name="Testsqlentity2" sqlentity="Testsqlentity2">
+	    <properties>
+		<property name="Id" type="IdType" />
+	    </properties>
+	</entity>
+    </entities>

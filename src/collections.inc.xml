@@ -1,0 +1,14 @@
+<!--
+
+Collections (extending CollectionBase)
+    
+    collection attributes:
+    name - 
+    type - type that is being wrapped
+
+-->
+<collections>
+    <collection name="TeamCollection" type="TeamData" />
+    <collection name="ALaCarteItemCollection" type="ALaCarteItemData" />
+    <collection name="ParticipantCollection" type="ParticipantData" />
+</collections>

@@ -1,0 +1,27 @@
+    <!--
+		Enum definitions
+		Elements:
+			<enum>
+				<value />
+			</enum>
+
+		Possible enum attributes are:
+			name - type name
+			
+		Possible value attributes are:
+			name - constant name/to string value
+			code - database value
+	-->
+    <enums>
+	<enum name="OrderType">
+	    <value name="Personal" code="P" />
+	    <value name="Firm" code="F" />
+	</enum>
+	<enum name="FormatType">
+	    <value name="HTML" code="H" />
+	    <value name="Text" code="T" />
+	    <value name="JavaScript" code="J" />
+	    <value name="RTF" code="R" />
+	    <value name="None" code="N" />
+	</enum>
+    </enums>
