@@ -120,10 +120,15 @@ namespace Spring2.DataTierGenerator.Parser {
 		    }
 		}
 
-		// make sure that obsolete columns are not mapped to properties
 		foreach(PropertyElement property in entity.Fields) {
+		    // make sure that obsolete columns are not mapped to properties
 		    if (property.Column.Obsolete && property.Column.Name.Length > 0) {
 			vd(ParserValidationArgs.NewWarning("property " + property.Name + " in entity " + entity.Name + " is mapped to column " + property.Column.Name + " which is obsolete."));
+		    }
+
+		    // have property descriptions "inherit" from a column if they are not populated
+		    if (property.Column.Description.Length > 0 && property.Description.Length ==0)  {
+			property.Description = property.Column.Description;
 		    }
 		}
 	    }
