@@ -325,6 +325,10 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "Template\header.vm"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "Util\IndentableStringWriter.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
