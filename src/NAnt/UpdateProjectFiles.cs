@@ -3,10 +3,13 @@ using System.Collections;
 using System.IO;
 using System.Xml;
 
-using SourceForge.NAnt;
-using SourceForge.NAnt.Attributes;
+using NAnt;
+using NAnt.Core;
+using NAnt.Core.Attributes;
+using NAnt.Core.Types;
 
-namespace eSchaefer.NAnt {
+
+namespace Spring2.DataTierGenerator.NAntTasks {
     
     [TaskName("updateprojectfiles")]
     public class ProjectFileIncludeTask : Task {
@@ -53,7 +56,7 @@ namespace eSchaefer.NAnt {
 
 		XmlNode node = doc.SelectSingleNode(xpath);
 		if (node == null) {
-		    LogToNAnt("Adding " + path + " to " + project.FullName);
+		    Log(NAnt.Core.Level.Info, "Adding " + path + " to " + project.FullName);
 
 		    XmlElement element = doc.CreateElement("File");
 		    XmlAttribute attribute = doc.CreateAttribute("RelPath");
@@ -74,17 +77,12 @@ namespace eSchaefer.NAnt {
 	    }
 
 	    if (updated) {
-		LogToNAnt("Saving " + project.Name);
+		Log(NAnt.Core.Level.Info, "Saving " + project.Name);
 		doc.Save(project.FullName);
 	    } else {
-		LogToNAnt("no new files to add");
+		Log(NAnt.Core.Level.Info, "no new files to add");
 	    }
 	}
-
-	private void LogToNAnt(String s) {
-	    Log.WriteLine("  [updateprojectfiles] " + s);
-	}
-
 
     }
 }

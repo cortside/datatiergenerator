@@ -5,8 +5,9 @@ using System.Xml;
 using System.Xml.XPath;
 using System.Xml.Xsl;
 
-using SourceForge.NAnt;
-using SourceForge.NAnt.Attributes;
+using NAnt;
+using NAnt.Core;
+using NAnt.Core.Attributes;
 
 using NVelocity.App;
 using NVelocity.Runtime;
@@ -15,7 +16,7 @@ using Spring2.Core.Xml;
 
 using Spring2.DataTierGenerator.Generator;
 
-namespace Spring2.DataTierGenerator.NAnt {
+namespace Spring2.DataTierGenerator.NAntTasks {
     
     [TaskName("generate")]
     public class Generate : Task {
@@ -42,9 +43,9 @@ namespace Spring2.DataTierGenerator.NAnt {
 	    Velocity.SetProperty(RuntimeConstants_Fields.FILE_RESOURCE_LOADER_PATH, Project.BaseDirectory);
 
 	    try {
-		LogToNAnt(String.Empty.PadLeft(20,'='));
-		LogToNAnt("Start :: " + DateTime.Now.ToString());
-		LogToNAnt(String.Empty.PadLeft(20,'='));
+		Log(NAnt.Core.Level.Info, String.Empty.PadLeft(20,'='));
+		Log(NAnt.Core.Level.Info, "Start :: " + DateTime.Now.ToString());
+		Log(NAnt.Core.Level.Info, String.Empty.PadLeft(20,'='));
 
 		XmlDocument doc = new XmlDocument();
 		// while this might seem silly, extended ASCII chararcter encoding does not happen if just the filename 
@@ -72,10 +73,10 @@ namespace Spring2.DataTierGenerator.NAnt {
 			    if (o is IGenerator) {
 				generator = (IGenerator) o;
 			    } else  {
-				LogToNAnt("ERROR: class " + parser.Generator + " does not support IGenerator interface.\n");
+				Log(NAnt.Core.Level.Info, "ERROR: class " + parser.Generator + " does not support IGenerator interface.\n");
 			    }
 			} catch (Exception ex) {
-			    LogToNAnt("ERROR: could not instanciate generator class " + parser.Generator + "\n" + ex);
+			    Log(NAnt.Core.Level.Info, "ERROR: could not instanciate generator class " + parser.Generator + "\n" + ex);
 			}
 
 			// if the generator is not null, generate
@@ -84,29 +85,25 @@ namespace Spring2.DataTierGenerator.NAnt {
 			    LogToNAnt(generator.Log);
 			}
 		    } else {
-			LogToNAnt("ERROR: Parser found errors:");
+			Log(NAnt.Core.Level.Info, "ERROR: Parser found errors:");
 			LogToNAnt(parser.Log);
 		    }
 		} else  {
-		    LogToNAnt("ERROR: class " + parserClassname + " does not support IParser interface.\n");
+		    Log(NAnt.Core.Level.Info, "ERROR: class " + parserClassname + " does not support IParser interface.\n");
 		}
 
 
-		LogToNAnt(String.Empty.PadLeft(20,'='));
-		LogToNAnt("Done :: " + DateTime.Now.ToString());
-		LogToNAnt(String.Empty.PadLeft(20,'='));
+		Log(NAnt.Core.Level.Info, String.Empty.PadLeft(20,'='));
+		Log(NAnt.Core.Level.Info, "Done :: " + DateTime.Now.ToString());
+		Log(NAnt.Core.Level.Info, String.Empty.PadLeft(20,'='));
 	    } catch (Exception ex) {
-		LogToNAnt("An error occcurred while generating.\n\n" + ex.ToString());
+		Log(NAnt.Core.Level.Info, "An error occcurred while generating.\n\n" + ex.ToString());
 	    }
-	}
-
-	private void LogToNAnt(String s) {
-	    Log.WriteLine("  [generate] " + s);
 	}
 
 	private void LogToNAnt(IList messages) {
 	    foreach(String s in messages) {
-		LogToNAnt(s);
+		Log(NAnt.Core.Level.Info, s);
 	    }
 	}
 
