@@ -21,7 +21,7 @@ CREATE PROCEDURE sp${element.Name}_Delete
 
 AS
 
-if not exists(SELECT * FROM $element.EscapedName WHERE (#foreach($column in $element.GetPrimaryKeyColumns())
+if not exists(SELECT * FROM $sql.Escape($element.Name) WHERE (#foreach($column in $element.GetPrimaryKeyColumns())
 #if($velocityCount > 1) and
 #end
 	${column.Name} = @${column.Name}
@@ -34,7 +34,7 @@ if not exists(SELECT * FROM $element.EscapedName WHERE (#foreach($column in $ele
 
 DELETE
 FROM
-	${element.EscapedName}
+	$sql.Escape($element.Name)
 WHERE 
 #foreach($column in $element.GetPrimaryKeyColumns())
 #if($velocityCount > 1) and

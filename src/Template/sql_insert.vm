@@ -27,10 +27,10 @@ AS
 ## #foreach($column in $element.Columns)#if($column.Default.Length > 0)
 ##     if @$column.Name is null set @$column.Name=$column.Default
 ## #end#end
-INSERT INTO ${element.EscapedName} (
+INSERT INTO $sql.Escape($element.Name) (
 #set($cols = 0)
 #foreach($column in $element.Columns)#if(!$column.Identity && !$column.ViewColumn)#set($cols = $cols + 1)#if($cols>1),
-#end	${column.EscapedName}#end#end)
+#end	$sql.Escape(${column.Name})#end#end)
 #set($cols = 0)
 VALUES (
 #foreach($column in $element.Columns)#if(!$column.Identity && !$column.ViewColumn)#set($cols = $cols + 1)#if($cols>1),

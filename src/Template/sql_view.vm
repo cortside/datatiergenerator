@@ -18,15 +18,15 @@ AS
 
 SELECT
 #foreach($column in $element.Columns)
-	#if($column.ForeignSqlEntity.Length>0)${column.EscapedForeignSqlEntity}#else$element.EscapedName#end.#if($column.Prefix.Length==0)$column.EscapedName#else$column.Name.Substring($column.Prefix.Length) $column.Name#end#if($velocityCount!=$element.Columns.Count),
+	#if($column.ForeignSqlEntity.Length>0)$sql.Escape(${column.ForeignSqlEntity})#else$sql.Escape($element.Name)#end.#if($column.Prefix.Length==0)$sql.Escape($column.Name)#else$column.Name.Substring($column.Prefix.Length) $column.Name#end#if($velocityCount!=$element.Columns.Count),
 #end
 #end
 
 FROM
-	$element.EscapedName
+	$sql.Escape($element.Name)
 #if ($element.Views.Count==1)
 #foreach($constraint in $element.Views.get_Item(0).Constraints)
-LEFT JOIN $constraint.EscapedForeignEntity on #foreach($column in $constraint.Columns)#if ($velocityCount >1) and #end${element.Name}.$column.Name = ${constraint.EscapedForeignEntity}.$column.ForeignColumn#end
+LEFT JOIN $sql.Escape($constraint.ForeignEntity) on #foreach($column in $constraint.Columns)#if ($velocityCount >1) and #end${element.Name}.$column.Name = $sql.Escape(${constraint.ForeignEntity}).$column.ForeignColumn#end
 
 #end
 #end

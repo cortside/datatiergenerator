@@ -29,14 +29,14 @@ AS
 
 
 UPDATE
-	${element.EscapedName}
+	$sql.Escape(${element.Name})
 SET
 #set($cols = 0)
 #foreach($column in $element.Columns)
 #if(!$column.ViewColumn && !$column.Identity && !$element.IsPrimaryKeyColumn($column.Name))
 #set($cols = $cols + 1)#if($cols>1),
 #end
-	${column.EscapedName} = @${column.Name}#end
+	$sql.Escape(${column.Name}) = @${column.Name}#end
 #end
 
 WHERE
