@@ -80,7 +80,9 @@ namespace Spring2.DataTierGenerator.ConsoleRunner {
 			}
 		    } else {
 			Console.Out.WriteLine("ERROR: Parser found errors:");
-			Console.Out.WriteLine(parser.Log);
+			foreach(String s in parser.Log) {
+			    Console.Out.WriteLine(s);
+			}
 		    }
 		} else  {
 		    Console.Out.WriteLine("ERROR: class " + parserClassname + " does not support IParser interface.\n");
