@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Specialized;
 using System.IO;
 
 using NUnit.Framework;
@@ -19,156 +20,119 @@ namespace Spring2.DataTierGenerator.Test {
 
 	[Test]
 	public void TestSanity() {
+	    Execute(@"..\..\src\ElementSet\Alpha\Test\Sanity", @"..\..\src\ElementSet\Alpha\Test\sanity.xml", @".\SanityTest");
+	}
+
+	[Test]
+	public void TestRegressSanity() {
+	    Execute(@"..\..\src\ElementSet\Alpha\Test\Regress", @"..\..\src\ElementSet\Alpha\Test\regress.xml", @".\RegressTest");
+	}
+
+	[Test]
+	public void TestSUSanity() {
+	    Execute(@"..\..\src\ElementSet\Alpha\Test\SU", @"..\..\src\ElementSet\Alpha\Test\su.xml", @".\SU");
+	}
+
+	private void Execute(String root, String configFilename, String outputPath) {
 	    IParser parser = new XmlParser();
-	    parser.Parse("..\\src\\ElementSet\\Alpha\\Test\\Sanity\\sanity.xml");
+	    parser.Parse(configFilename);
 	    if (!parser.IsValid) {
+		String message = String.Empty;
 		foreach(String s in parser.Log) {
 		    Console.Out.WriteLine(s);
+		    message += s + "\n";
 		}
+		Assertion.Fail(message);
 	    } else {
 		IGenerator gen = new NVelocityGenerator();
-		if (Directory.Exists(@".\SanityTest")) {
-		    Directory.Delete(@".\SanityTest", true);
+		if (Directory.Exists(outputPath)) {
+		    Directory.Delete(outputPath, true);
 		}
 		gen.Generate(parser);
+		String message = String.Empty;
 		foreach(String s in gen.Log) {
 		    Console.Out.WriteLine(s);
+		    message += s + "\n";
 		}
 
-		CompareResults("..\\src\\ElementSet\\Alpha\\Test\\Sanity");
+		if (message.IndexOf("ERROR") >=0) {
+		    Assertion.Fail(message);
+		}
+
+		CompareResults(root, outputPath);
 	    }
 	}
 
-
-	private void CompareResults(String compareRoot) {
+	private void CompareResults(String compareRoot, String outputPath) {
 	    Boolean pass = true;
+	    String message = String.Empty;
 
-	    pass = pass && CompareFile(compareRoot, "DAO", "GolferDAO.cs");
-	    pass = pass && CompareFile(compareRoot, "DAO", "OrganizerDAO.cs");
-	    pass = pass && CompareFile(compareRoot, "DAO", "ParticipantDAO.cs");
-	    pass = pass && CompareFile(compareRoot, "DAO", "PaymentDAO.cs");
-	    pass = pass && CompareFile(compareRoot, "DAO", "TeamDAO.cs");
-	    pass = pass && CompareFile(compareRoot, "DAO", "TournamentDAO.cs");
-	    pass = pass && CompareFile(compareRoot, "DAO", "TournamentFeeDAO.cs");
-	    pass = pass && CompareFile(compareRoot, "DAO", "TestSqlEntitiesDAO.cs");
+	    IList files = new StringCollection();
+	    // get list of files from compare root and add to list
+	    // get list of files from build root and add to list if not already in list
 
-	    pass = pass && CompareFile(compareRoot, "DataObject", "ALaCarteItemCollection.cs");
-	    pass = pass && CompareFile(compareRoot, "DataObject", "ParticipantCollection.cs");
-	    pass = pass && CompareFile(compareRoot, "DataObject", "TeamCollection.cs");
-	    pass = pass && CompareFile(compareRoot, "DataObject", "TournamentFeeCollection.cs");
+	    // add new files from compare directory
+	    FindFiles(compareRoot, compareRoot, files);
+	    FindFiles(outputPath, outputPath, files);
 
-	    pass = pass && CompareFile(compareRoot, "DataObject", "AddressData.cs");
-	    pass = pass && CompareFile(compareRoot, "DataObject", "ALaCarteItemData.cs");
-	    pass = pass && CompareFile(compareRoot, "DataObject", "ContactData.cs");
-	    pass = pass && CompareFile(compareRoot, "DataObject", "CreditCardData.cs");
-	    pass = pass && CompareFile(compareRoot, "DataObject", "FlightData.cs");
-	    pass = pass && CompareFile(compareRoot, "DataObject", "GolferData.cs");
-	    pass = pass && CompareFile(compareRoot, "DataObject", "LocationData.cs");
-	    pass = pass && CompareFile(compareRoot, "DataObject", "NotificationData.cs");
-	    pass = pass && CompareFile(compareRoot, "DataObject", "OrganizationData.cs");
-	    pass = pass && CompareFile(compareRoot, "DataObject", "OrganizerData.cs");
-	    pass = pass && CompareFile(compareRoot, "DataObject", "PairingData.cs");
-	    pass = pass && CompareFile(compareRoot, "DataObject", "ParticipantData.cs");
-	    pass = pass && CompareFile(compareRoot, "DataObject", "PaymentData.cs");
-	    pass = pass && CompareFile(compareRoot, "DataObject", "PrizeData.cs");
-	    pass = pass && CompareFile(compareRoot, "DataObject", "ProfileData.cs");
-	    pass = pass && CompareFile(compareRoot, "DataObject", "RoundData.cs");
-	    pass = pass && CompareFile(compareRoot, "DataObject", "ScorecardData.cs");
-	    pass = pass && CompareFile(compareRoot, "DataObject", "SponsorData.cs");
-	    pass = pass && CompareFile(compareRoot, "DataObject", "TeamData.cs");
-	    pass = pass && CompareFile(compareRoot, "DataObject", "TournamentData.cs");
-	    pass = pass && CompareFile(compareRoot, "DataObject", "TournamentFeeData.cs");
-	    pass = pass && CompareFile(compareRoot, "DataObject", "WaitListData.cs");
-	    pass = pass && CompareFile(compareRoot, "DataObject", "TestSqlEntitiesData.cs");
+	    if (files.Count == 0) {
+		throw new FileNotFoundException("No files to compare were found.");
+	    }
 
-	    pass = pass && CompareFile(compareRoot, "Sql\\proc", "spGolfer_Delete.proc.sql");
-	    pass = pass && CompareFile(compareRoot, "Sql\\proc", "spGolfer_Insert.proc.sql");
-	    pass = pass && CompareFile(compareRoot, "Sql\\proc", "spGolfer_Update.proc.sql");
-	    pass = pass && CompareFile(compareRoot, "Sql\\proc", "spOrganizer_Delete.proc.sql");
-	    pass = pass && CompareFile(compareRoot, "Sql\\proc", "spOrganizer_Insert.proc.sql");
-	    pass = pass && CompareFile(compareRoot, "Sql\\proc", "spOrganizer_Update.proc.sql");
-	    pass = pass && CompareFile(compareRoot, "Sql\\proc", "spParticipant_Delete.proc.sql");
-	    pass = pass && CompareFile(compareRoot, "Sql\\proc", "spParticipant_Insert.proc.sql");
-	    pass = pass && CompareFile(compareRoot, "Sql\\proc", "spParticipant_Update.proc.sql");
-	    pass = pass && CompareFile(compareRoot, "Sql\\proc", "spPayment_Delete.proc.sql");
-	    pass = pass && CompareFile(compareRoot, "Sql\\proc", "spPayment_Insert.proc.sql");
-	    pass = pass && CompareFile(compareRoot, "Sql\\proc", "spPayment_Update.proc.sql");
-	    pass = pass && CompareFile(compareRoot, "Sql\\proc", "spTeam_Delete.proc.sql");
-	    pass = pass && CompareFile(compareRoot, "Sql\\proc", "spTeam_Insert.proc.sql");
-	    pass = pass && CompareFile(compareRoot, "Sql\\proc", "spTeam_Update.proc.sql");
-	    pass = pass && CompareFile(compareRoot, "Sql\\proc", "spTournament_Delete.proc.sql");
-	    pass = pass && CompareFile(compareRoot, "Sql\\proc", "spTournament_Insert.proc.sql");
-	    pass = pass && CompareFile(compareRoot, "Sql\\proc", "spTournament_Update.proc.sql");
-	    pass = pass && CompareFile(compareRoot, "Sql\\proc", "spTournamentFee_Delete.proc.sql");
-	    pass = pass && CompareFile(compareRoot, "Sql\\proc", "spTournamentFee_Insert.proc.sql");
-	    pass = pass && CompareFile(compareRoot, "Sql\\proc", "spTournamentFee_Update.proc.sql");
-	    pass = pass && CompareFile(compareRoot, "Sql\\proc", "spTestSqlEntities_Update.proc.sql");
-
-	    pass = pass && CompareFile(compareRoot, "Sql\\table", "Golfer.table.sql");
-	    pass = pass && CompareFile(compareRoot, "Sql\\table", "Organizer.table.sql");
-	    pass = pass && CompareFile(compareRoot, "Sql\\table", "Participant.table.sql");
-	    pass = pass && CompareFile(compareRoot, "Sql\\table", "Payment.table.sql");
-	    pass = pass && CompareFile(compareRoot, "Sql\\table", "Team.table.sql");
-	    pass = pass && CompareFile(compareRoot, "Sql\\table", "Tournament.table.sql");
-	    pass = pass && CompareFile(compareRoot, "Sql\\table", "TournamentFee.table.sql");
-	    pass = pass && CompareFile(compareRoot, "Sql\\table", "TestSqlEntities.table.sql");
-
-	    pass = pass && CompareFile(compareRoot, "Sql\\view", "vwGolfer.view.sql");
-	    pass = pass && CompareFile(compareRoot, "Sql\\view", "vwOrganizer.view.sql");
-	    pass = pass && CompareFile(compareRoot, "Sql\\view", "vwPayment.view.sql");
-	    pass = pass && CompareFile(compareRoot, "Sql\\view", "vwTeam.view.sql");
-	    pass = pass && CompareFile(compareRoot, "Sql\\view", "vwTournamentFee.view.sql");
-	    pass = pass && CompareFile(compareRoot, "Sql\\view", "vwTestSqlEntities.view.sql");
-
-	    pass = pass && CompareFile(compareRoot, "Sql\\data", "GolferStatusEnum.data.sql");
-	    pass = pass && CompareFile(compareRoot, "Sql\\data", "FunctionEnum.data.sql");
-
-	    pass = pass && CompareFile(compareRoot, "Test", "CreditCardTypeEnumTest.cs");
-	    pass = pass && CompareFile(compareRoot, "Test", "ExpMonthEnumTest.cs");
-	    pass = pass && CompareFile(compareRoot, "Test", "ExpYearEnumTest.cs");
-	    pass = pass && CompareFile(compareRoot, "Test", "GolferStatusEnumTest.cs");
-	    pass = pass && CompareFile(compareRoot, "Test", "PaymentStatusEnumTest.cs");
-	    pass = pass && CompareFile(compareRoot, "Test", "TeamSizeEnumTest.cs");
-	    pass = pass && CompareFile(compareRoot, "Test", "TeamStatusEnumTest.cs");
-	    pass = pass && CompareFile(compareRoot, "Test", "TournamentFormatEnumTest.cs");
-	    pass = pass && CompareFile(compareRoot, "Test", "USStateEnumTest.cs");
-
-	    pass = pass && CompareFile(compareRoot, "Types", "CreditCardTypeEnum.cs");
-	    pass = pass && CompareFile(compareRoot, "Types", "ExpMonthEnum.cs");
-	    pass = pass && CompareFile(compareRoot, "Types", "ExpYearEnum.cs");
-	    pass = pass && CompareFile(compareRoot, "Types", "GolferStatusEnum.cs");
-	    pass = pass && CompareFile(compareRoot, "Types", "PaymentStatusEnum.cs");
-	    pass = pass && CompareFile(compareRoot, "Types", "TeamSizeEnum.cs");
-	    pass = pass && CompareFile(compareRoot, "Types", "TeamStatusEnum.cs");
-	    pass = pass && CompareFile(compareRoot, "Types", "TournamentFormatEnum.cs");
-	    pass = pass && CompareFile(compareRoot, "Types", "USStateEnum.cs");
+	    foreach(String filename in files) {
+		Boolean p = CompareFile(outputPath, compareRoot, filename);
+		pass = pass & p;
+		if (!p) {
+		    message += filename + "...FAIL" + Environment.NewLine;
+		}
+	    }
 
 	    if (!pass) {
-		Assertion.Fail("more than 1 output file did not match it's compare file.  Sanity is just an illusion.");
+		Assertion.Fail("more than 1 output file did not match it's compare file.  Sanity is just an illusion.\n" + message);
 	    }
 	}
 
 
-	private Boolean CompareFile(String compareRoot, String directory, String filename) {
-	    if (!isMatch("SanityTest\\" + directory, compareRoot + "\\" +directory, filename, "", "cmp")) {
-		Console.Out.WriteLine(directory + "\\" + filename + "...FAIL");
+	/// <summary>
+	/// recursive method to find files
+	/// </summary>
+	/// <param name="root"></param>
+	/// <param name="directory"></param>
+	/// <param name="files"></param>
+	private void FindFiles(String root, String directory, IList files) {
+	    foreach(String filename in Directory.GetFiles(directory)) {
+		String f = filename.Substring(root.Length+1);
+		if (!files.Contains(f)) {
+		    files.Add(f);
+		}
+	    }
+
+	    foreach(String d in Directory.GetDirectories(directory)) {
+		if (!d.EndsWith("CVS")) {
+		    FindFiles(root, d, files);
+		}
+	    }
+	}
+
+	private Boolean CompareFile(String outputPath, String compareRoot, String filename) {
+	    if (!isMatch(outputPath + "\\" + filename, compareRoot + "\\" + filename)) {
+		Console.Out.WriteLine(filename + "...FAIL");
 		return false;
 	    }
-	    Console.Out.WriteLine(directory + "\\" + filename + "...PASS");
+	    Console.Out.WriteLine(filename + "...PASS");
 	    return true;
 	}
 
 
-	protected internal virtual bool isMatch(System.String resultsDir, System.String compareDir, System.String baseFileName, System.String resultExt, System.String compareExt) {
+	protected internal virtual bool isMatch(String filename1, String filename2) {
 	    Boolean SHOW_RESULTS = true;
 
-	    String basename = resultsDir + "\\" + baseFileName;
-	    System.String result = StringUtil.fileContentsToString(resultsDir + "\\" + baseFileName);
-	    System.String compare = StringUtil.fileContentsToString(compareDir + "\\" + baseFileName + "." + compareExt);
+	    System.String result = StringUtil.fileContentsToString(filename1);
+	    System.String compare = StringUtil.fileContentsToString(filename2);
 			
 	    Boolean equals = result.Equals(compare);
 	    if (!equals && SHOW_RESULTS) {
-		Console.Out.WriteLine(basename + " :: ");
+		Console.Out.WriteLine(filename1 + "/" + filename2 + " :: ");
 		String[] cmp = compare.Split(Environment.NewLine.ToCharArray());
 		String[] res = result.Split(Environment.NewLine.ToCharArray());
 
