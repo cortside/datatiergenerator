@@ -4,12 +4,12 @@
 
 *###
 #if($element.GenerateSqlTableScripts)
-#if ($element.Description.Length>0)
-/*
-$$elementDescription).Append("
-*/
-
-#end
+###if ($element.Description.Length>0)
+##/*
+##$element.Description
+##*/
+##
+###end
 ## initial table script - if table does not already exist
 SET ANSI_NULLS ON
 SET QUOTED_IDENTIFIER ON
