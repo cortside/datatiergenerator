@@ -5,11 +5,8 @@ Todo:
     - sqltypes image and binary do not generate correct code for pulling data from a datareader (populating a dataobject).
     - data objects could/should support ICloneable with MemberwiseClone().
     - when loading property attributes, not all overridable values are being loaded (i.e. readerformat)
-    - DTD/Schema.  XML validation
-    - better validation on load
     - define default types and sqltypes so that they don't have to be defined in every config file if they are default.
     - DataObject, DAO, stored proc, view name formats specifiable in config.xml
-	- ident level in generating code
     - look for read-only files when writing output and change the attribute before proceeding.
     - finder methods that support named stored procedures and arguments.  would also have to support knowing what object is to be populated from the data reader.
     - ability to externally define sql keywords
@@ -33,4 +30,6 @@ Completed:
     - when comparing entity properties to database schema, match columns on lower-cased names
     - data object Equals method (done in DataObject base class)
     - only enclose tables and column names in sql scripts in [ ] if they have spaces or are a keyword
-	
+    - DTD/Schema.  XML validation	
+    - better validation on load
+    - ident level in generating code

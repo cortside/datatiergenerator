@@ -77,6 +77,16 @@
                     Project = "{80B94045-4DE6-4BB0-BE22-C5CC0E772695}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
+                <Reference
+                    Name = "Velocity"
+                    AssemblyName = "Velocity"
+                    HintPath = "..\lib\Velocity.dll"
+                />
+                <Reference
+                    Name = "Commons"
+                    AssemblyName = "Commons"
+                    HintPath = "..\lib\Commons.dll"
+                />
             </References>
         </Build>
         <Files>
@@ -88,7 +98,7 @@
                 />
                 <File
                     RelPath = "config.xsd"
-                    BuildAction = "Content"
+                    BuildAction = "EmbeddedResource"
                 />
                 <File
                     RelPath = "config.xsx"
@@ -104,6 +114,19 @@
                     RelPath = "ConfigurationData.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ResourceManager.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Config\sqltypes.inc.xml"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Config\types.inc.xml"
+                    BuildAction = "EmbeddedResource"
                 />
                 <File
                     RelPath = "Element\Collection.cs"
@@ -122,6 +145,11 @@
                 />
                 <File
                     RelPath = "Element\Database.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Element\ElementSkeleton.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -151,6 +179,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Element\Generator.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Element\Index.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -167,6 +200,11 @@
                 />
                 <File
                     RelPath = "Element\SqlType.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Element\Task.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -206,6 +244,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Generator\GeneratorTaskManager.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Generator\IGenerator.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -217,6 +260,11 @@
                 />
                 <File
                     RelPath = "Generator\XmlGenerator.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Generator\Task\VelocityTask.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -259,6 +307,18 @@
                     RelPath = "Parser\XmlParser.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Template\collection.vm"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Template\enum.vm"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Template\EnumTest.vm"
+                    BuildAction = "EmbeddedResource"
                 />
                 <File
                     RelPath = "Util\IndentableStringWriter.cs"
