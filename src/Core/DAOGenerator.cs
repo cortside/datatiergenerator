@@ -489,36 +489,60 @@ namespace Spring2.DataTierGenerator.Core {
 		field = null;
 	    }
 	}
-		
+
+	/// <summary>
+	/// Writes out dao llist methods
+	/// </summary>
+	/// <param name="writer">Writer to use for writing.</param>
 	private void CreateDAOListMethods(IndentableStringWriter writer) {
 			
 	    // GetList - no parms
+	    writer.WriteSummaryComment(2, "Returns a list of all " + entity.Name + " rows.");
+	    writer.WriteReturnsComment(2, "List of " + options.GetDOClassName(entity.Name) + " objects.");
+	    writer.WriteExceptionComment(2, "Spring2.Core.DAO.FinderException", "Thrown when no rows are found.");
 	    writer.WriteLine(2, "public static IList GetList() { ");
 	    writer.WriteLine(3, "return GetList(null, null);");
 	    writer.WriteLine(2, "}");
 	    writer.WriteLine();
 
 	    // GetList - where
+	    writer.WriteSummaryComment(2, "Returns a filtered list of " + entity.Name + " rows.");
+	    writer.WriteParameterComment(2, "whereClause", "Filtering criteria.");
+	    writer.WriteReturnsComment(2, "List of " + options.GetDOClassName(entity.Name) + " objects.");
+	    writer.WriteExceptionComment(2, "Spring2.Core.DAO.FinderException", "Thrown when no rows are found matching the where criteria.");
 	    writer.WriteLine(2, "public static IList GetList(IWhere whereClause) { ");
 	    writer.WriteLine(3, "return GetList(whereClause, null);");
 	    writer.WriteLine(2, "}");
 	    writer.WriteLine();
 
 	    // GetList - order by
+	    writer.WriteSummaryComment(2, "Returns an ordered list of " + entity.Name + " rows.  All rows in the database are returned");
+	    writer.WriteParameterComment(2, "orderByClause", "Ordering criteria.");
+	    writer.WriteReturnsComment(2, "List of " + options.GetDOClassName(entity.Name) + " objects.");
+	    writer.WriteExceptionComment(2, "Spring2.Core.DAO.FinderException", "Thrown when no rows are found.");
 	    writer.WriteLine(2, "public static IList GetList(IOrderBy orderByClause) { ");
 	    writer.WriteLine(3, "return GetList(null, orderByClause);");
 	    writer.WriteLine(2, "}");
 	    writer.WriteLine();
 
 	    // GetList - both
+	    writer.WriteSummaryComment(2, "Returns an ordered and filtered list of " + entity.Name + " rows.");
+	    writer.WriteParameterComment(2, "whereClause", "Filtering criteria.");
+	    writer.WriteParameterComment(2, "orderByClause", "Ordering criteria.");
+	    writer.WriteReturnsComment(2, "List of " + options.GetDOClassName(entity.Name) + " objects.");
+	    writer.WriteExceptionComment(2, "Spring2.Core.DAO.FinderException", "Thrown when no rows are found matching the where criteria.");
 	    writer.WriteLine(2, "public static IList GetList(IWhere whereClause, IOrderBy orderByClause) { ");
 	    writer.WriteLine(3, "SqlDataReader dataReader = GetListReader(CONNECTION_STRING_KEY, VIEW, whereClause, orderByClause); ");
+
 	    writer.WriteLine();
 	    writer.WriteLine(3, "ArrayList list = new ArrayList(); ");
 	    writer.WriteLine(3, "while (dataReader.Read()) { ");
 	    writer.WriteLine(4, "list.Add(GetDataObjectFromReader(dataReader)); ");
 	    writer.WriteLine(3, "}");
 	    writer.WriteLine(3, "dataReader.Close();");
+	    writer.WriteLine(3, "if (list.Count < 1) {");
+	    writer.WriteLine(4, "throw new FinderException(\"List retrieval returned no members for " + entity.Name + ".\");");
+	    writer.WriteLine(3, "}");
 	    writer.WriteLine(3, "return list; ");
 	    writer.WriteLine(2, "}");
 	    writer.WriteLine();
@@ -532,6 +556,14 @@ namespace Spring2.DataTierGenerator.Core {
 		}
 		parms += field.CreateMethodParameter();
 	    }
+
+	    writer.WriteSummaryComment(2, "Finds a " + entity.Name + " entity using it's primary key.");
+	    foreach (Field field in keys)
+	    {
+		writer.WriteParameterComment(2, field.Column.Name, "A key field.");
+	    }
+	    writer.WriteReturnsComment(2, "A " + options.GetDOClassName(entity.Name) + " object.");
+	    writer.WriteExceptionComment(2, "Spring2.Core.DAO.FinderException", "Thrown when no entity exists witht he specified primary key..");
 	    writer.WriteLine(2, "public static " + options.GetDOClassName(entity.Name) + " Load(" + parms + ") {");
 	    writer.WriteLine(3, "WhereClause w = new WhereClause();");
 	    foreach (Field field in keys) {
@@ -539,7 +571,10 @@ namespace Spring2.DataTierGenerator.Core {
 	    }
 	    writer.WriteLine(3, "SqlDataReader dataReader = GetListReader(CONNECTION_STRING_KEY, VIEW, w, null);");
 	    writer.WriteLine();
-	    writer.WriteLine(3, "dataReader.Read();");
+	    writer.WriteLine(3, "if (!dataReader.Read()) {");
+	    writer.WriteLine(4, "dataReader.Close();");
+	    writer.WriteLine(4, "throw new FinderException(\"Load found no rows for " + entity.Name +".\");");
+	    writer.WriteLine(3, "}");
 	    writer.WriteLine(3, options.GetDOClassName(entity.Name) + " data = GetDataObjectFromReader(dataReader);");
 	    writer.WriteLine(3, "dataReader.Close();");
 	    writer.WriteLine(3, "return data;");
@@ -547,6 +582,9 @@ namespace Spring2.DataTierGenerator.Core {
 	    writer.WriteLine();			
 
 	    // GetDataObjectFromReader
+	    writer.WriteSummaryComment(2, "Builds a data object from the current row in a data reader..");
+	    writer.WriteParameterComment(2, "dataReader", "Container for database row.");
+	    writer.WriteReturnsComment(2, "Data object built from current row.");
 	    writer.WriteLine(2, "private static " + options.GetDOClassName(entity.Name) + " GetDataObjectFromReader(SqlDataReader dataReader) {");
 	    writer.WriteLine(3, options.GetDOClassName(entity.Name) + " data = new " + options.GetDOClassName(entity.Name) + "();");
 
@@ -594,6 +632,28 @@ namespace Spring2.DataTierGenerator.Core {
 		    }
 		    parms += field.CreateMethodParameter();
 		}
+
+		if (finder.Unique)
+		{
+		    writer.WriteSummaryComment(2, "Returns an object which matches the values for the fields specified.");
+		}
+		else
+		{
+		    writer.WriteSummaryComment(2, "Returns a list of objects which match the values for the fields specified.");
+		}
+		foreach (Field field in finder.Fields) 
+		{
+		    writer.WriteParameterComment(2, field.Column.Name, "A field value to be matched.");
+		}
+		if (finder.Unique)
+		{
+		    writer.WriteReturnsComment(2, "The object found.");
+		}
+		else
+		{
+		    writer.WriteReturnsComment(2, "The list of " + options.GetDAOClassName(entity.Name) + " objects found.");
+		}
+		writer.WriteExceptionComment(2, "Spring2.Core.DAO.FinderException", "Thrown when no rows are found.");
 		writer.Write(2, "public static ");
 		if (finder.Unique) {
 		    writer.Write(options.GetDOClassName(entity.Name));
@@ -611,9 +671,12 @@ namespace Spring2.DataTierGenerator.Core {
 		    writer.WriteLine();
 		    writer.WriteLine(4, "return GetList(filter, sort);");
     		} else {
-		    writer.WriteLine(2, "	SqlDataReader dataReader = GetListReader(CONNECTION_STRING_KEY, VIEW, filter, sort);");
+		    writer.WriteLine(4, "SqlDataReader dataReader = GetListReader(CONNECTION_STRING_KEY, VIEW, filter, sort);");
 		    writer.WriteLine();
-		    writer.WriteLine(2, "	dataReader.Read();");
+		    writer.WriteLine(4, "if (!dataReader.Read()) {");
+		    writer.WriteLine(5, "dataReader.Close();");
+		    writer.WriteLine(5, "throw new FinderException(\"" + options.GetDOClassName(entity.Name) + "."  + finder.Name + " found no rows.\");");
+		    writer.WriteLine(4, "}");
 		    writer.WriteLine(4, options.GetDOClassName(entity.Name) + " data = GetDataObjectFromReader(dataReader);");
 		    writer.WriteLine(4, "dataReader.Close();");
 		    writer.WriteLine(2, "	return data;");
