@@ -155,7 +155,60 @@ namespace Spring2.DataTierGenerator {
 	public String SqlParameter {
 	    get { return "@" + name + "\t" + sqlType.Declaration; }
 	}
-
    
+	public String ToXml() {
+	    StringBuilder sb = new StringBuilder();
+	    sb.Append("<column");
+	    sb.Append(" name=\"").Append(name).Append("\"");
+
+	    if (sqlType.Name.Length>0) {
+		sb.Append(" sqltype=\"").Append(sqlType.Name).Append("\"");
+	    }
+	    if (sqlType.Length!=0) {
+		sb.Append(" length=\"").Append(sqlType.Length.ToString()).Append("\"");
+	    }
+	    if (sqlType.Scale!=0) {
+		sb.Append(" scale=\"").Append(sqlType.Scale.ToString()).Append("\"");
+	    }
+	    if (sqlType.Precision!=0) {
+		sb.Append(" precision=\"").Append(sqlType.Precision.ToString()).Append("\"");
+	    }
+	    if (identity) {
+		sb.Append(" identity=\"True\"");
+		if (increment!=1) {
+		    sb.Append(" increment=\"").Append(increment.ToString()).Append("\"");
+		}
+		if (seed!=1) {
+		    sb.Append(" seed=\"").Append(seed.ToString()).Append("\"");
+		}
+	    }
+	    if (rowguidcol) {
+		sb.Append(" rowguidcol=\"True\"");
+	    }
+	    if (!formula.Equals(String.Empty)) {
+		sb.Append(" formula=\"").Append(formula).Append("\"");
+	    }
+	    if (!defaultvalue.Equals(String.Empty)) {
+		sb.Append(" default=\"").Append(defaultvalue).Append("\"");
+	    }
+	    if (required) {
+		sb.Append(" required=\"True\"");
+	    }
+	    if (viewColumn) {
+		sb.Append(" viewcolumn=\"True\"");
+	    }
+
+	    if (!foreignColumn.Equals(String.Empty)) {
+		sb.Append(" foreigncolumn=\"").Append(foreignColumn).Append("\"");
+	    }
+	    if (!sortDirection.Equals(String.Empty)) {
+		sb.Append(" sortdirection=\"").Append(sortDirection).Append("\"");
+	    }
+
+
+	    sb.Append(" />");
+
+	    return sb.ToString();
+	}
     }
 }

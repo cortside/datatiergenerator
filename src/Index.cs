@@ -75,6 +75,26 @@ namespace Spring2.DataTierGenerator {
 	    return indexes;
 	}
 
+	public String ToXml() {
+	    StringBuilder sb = new StringBuilder();
+	    sb.Append("<index");
+	    sb.Append(" name=\"").Append(name).Append("\"");
+
+	    if (unique) {
+		sb.Append(" unique=\"True\"");
+	    }
+	    if (clustered) {
+		sb.Append(" clustered=\"True\"");
+	    }
+		sb.Append(">\n");
+		foreach (Column column in columns) {
+		    sb.Append("        ").Append(column.ToXml()).Append("\n");
+		}
+		sb.Append("      </index>");
+
+	    return sb.ToString();
+	}
+
     
     }
 }
