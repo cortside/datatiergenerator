@@ -51,5 +51,10 @@ namespace Spring2.DataTierGenerator.Parser {
 	Element.Generator Generator {
 	    get;
 	}
+
+	Element.Parser Parser {
+	    get;
+	}
+
     }
 }
