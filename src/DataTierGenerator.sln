@@ -38,6 +38,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spring2.DataTierGenerator.C
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spring2.DataTierGenerator.UpdateProjectFiles", "Spring2.DataTierGenerator.UpdateProjectFiles.csproj", "{B6CB9D43-AD25-41E3-892E-242844DD6A7A}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
@@ -80,6 +84,10 @@ Global
 		{2001988D-69BC-4D0D-BA21-19A98E89CADC}.Debug.Build.0 = Debug|.NET
 		{2001988D-69BC-4D0D-BA21-19A98E89CADC}.Release.ActiveCfg = Release|.NET
 		{2001988D-69BC-4D0D-BA21-19A98E89CADC}.Release.Build.0 = Release|.NET
+		{B6CB9D43-AD25-41E3-892E-242844DD6A7A}.Debug.ActiveCfg = Debug|.NET
+		{B6CB9D43-AD25-41E3-892E-242844DD6A7A}.Debug.Build.0 = Debug|.NET
+		{B6CB9D43-AD25-41E3-892E-242844DD6A7A}.Release.ActiveCfg = Release|.NET
+		{B6CB9D43-AD25-41E3-892E-242844DD6A7A}.Release.Build.0 = Release|.NET
 	EndGlobalSection
 	GlobalSection(SolutionItems) = postSolution
 		collections.inc.xml = collections.inc.xml
