@@ -35,7 +35,8 @@ namespace Spring2.DataTierGenerator.Generator.Task {
 	    vc.put("options", options);
 	    vc.put("element", element);
 
-	    Template template = Velocity.GetTemplate(task.Template);
+	    Template template = Velocity.GetTemplate("Template\\dtg_csharp_library.vm");
+	    template = Velocity.GetTemplate(task.Template);
 	    template.merge(vc, writer);
 
 	    FileInfo file = new FileInfo(options.RootDirectory + task.Directory + "\\" + String.Format(task.FileNameFormat, name));
