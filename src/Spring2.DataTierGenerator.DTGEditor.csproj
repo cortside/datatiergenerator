@@ -1,228 +1,46 @@
 <VisualStudioProject>
-    <CSHARP
-        ProjectType = "Local"
-        ProductVersion = "7.10.3077"
-        SchemaVersion = "2.0"
-        ProjectGuid = "{6A2FB4F6-83E4-455C-800B-21C9267D9651}"
-    >
-        <Build>
-            <Settings
-                ApplicationIcon = "DTGEditor\App.ico"
-                AssemblyKeyContainerName = ""
-                AssemblyName = "DTGEditor"
-                AssemblyOriginatorKeyFile = ""
-                DefaultClientScript = "JScript"
-                DefaultHTMLPageLayout = "Grid"
-                DefaultTargetSchema = "IE50"
-                DelaySign = "false"
-                OutputType = "WinExe"
-                PreBuildEvent = ""
-                PostBuildEvent = ""
-                RootNamespace = "Spring2.DataTierGenerator.DTGEditor"
-                RunPostBuildEvent = "OnBuildSuccess"
-                StartupObject = ""
-            >
-                <Config
-                    Name = "Debug"
-                    AllowUnsafeBlocks = "false"
-                    BaseAddress = "285212672"
-                    CheckForOverflowUnderflow = "false"
-                    ConfigurationOverrideFile = ""
-                    DefineConstants = "DEBUG;TRACE"
-                    DocumentationFile = ""
-                    DebugSymbols = "true"
-                    FileAlignment = "4096"
-                    IncrementalBuild = "true"
-                    NoStdLib = "false"
-                    NoWarn = ""
-                    Optimize = "false"
-                    OutputPath = "..\build\"
-                    RegisterForComInterop = "false"
-                    RemoveIntegerChecks = "false"
-                    TreatWarningsAsErrors = "false"
-                    WarningLevel = "4"
-                />
-                <Config
-                    Name = "Release"
-                    AllowUnsafeBlocks = "false"
-                    BaseAddress = "285212672"
-                    CheckForOverflowUnderflow = "false"
-                    ConfigurationOverrideFile = ""
-                    DefineConstants = "TRACE"
-                    DocumentationFile = ""
-                    DebugSymbols = "false"
-                    FileAlignment = "4096"
-                    IncrementalBuild = "false"
-                    NoStdLib = "false"
-                    NoWarn = ""
-                    Optimize = "true"
-                    OutputPath = "bin\Release\"
-                    RegisterForComInterop = "false"
-                    RemoveIntegerChecks = "false"
-                    TreatWarningsAsErrors = "false"
-                    WarningLevel = "4"
-                />
-            </Settings>
-            <References>
-                <Reference
-                    Name = "System"
-                    AssemblyName = "System"
-                    HintPath = "..\..\..\..\..\..\WINNT\Microsoft.NET\Framework\v1.0.3705\System.dll"
-                />
-                <Reference
-                    Name = "System.Data"
-                    AssemblyName = "System.Data"
-                    HintPath = "..\..\..\..\..\..\WINNT\Microsoft.NET\Framework\v1.0.3705\System.Data.dll"
-                />
-                <Reference
-                    Name = "System.Drawing"
-                    AssemblyName = "System.Drawing"
-                    HintPath = "..\..\..\..\..\..\WINNT\Microsoft.NET\Framework\v1.0.3705\System.Drawing.dll"
-                />
-                <Reference
-                    Name = "System.Windows.Forms"
-                    AssemblyName = "System.Windows.Forms"
-                    HintPath = "..\..\..\..\..\..\WINNT\Microsoft.NET\Framework\v1.0.3705\System.Windows.Forms.dll"
-                />
-                <Reference
-                    Name = "System.XML"
-                    AssemblyName = "System.Xml"
-                    HintPath = "..\..\..\..\..\..\WINNT\Microsoft.NET\Framework\v1.0.3705\System.XML.dll"
-                />
-                <Reference
-                    Name = "Spring2.Core"
-                    AssemblyName = "Spring2.Core"
-                    HintPath = "..\lib\Spring2.Core.dll"
-                />
-                <Reference
-                    Name = "Spring2.DataTierGenerator"
-                    Project = "{8BE555A1-8BBA-4CF7-9B4A-6BBEF7E20FA8}"
-                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
-                />
-                <Reference
-                    Name = "Spring2.DataTierGenerator.Nant"
-                    Project = "{2844DE77-37C4-4DD5-A1B2-F217D40EEEFE}"
-                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
-                />
-                <Reference
-                    Name = "Spring2.DataTierGenerator.Alpha"
-                    Project = "{069AFE42-50D3-48D3-A12B-FAE1D8A2A44A}"
-                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
-                />
-                <Reference
-                    Name = "Infragistics.Win.UltraWinTabControl.v3.2"
-                    AssemblyName = "Infragistics.Win.UltraWinTabControl.v3.2"
-                    HintPath = "..\..\..\..\..\Program Files\Infragistics\NetAdvantage 2004 Volume 2\Windows Forms\Bin\Infragistics.Win.UltraWinTabControl.v3.2.dll"
-                    AssemblyFolderKey = "hklm\infragistics.winassemblies.20042"
-                />
-                <Reference
-                    Name = "Infragistics.Win.v3.2"
-                    AssemblyName = "Infragistics.Win.v3.2"
-                    HintPath = "..\..\..\..\..\Program Files\Infragistics\NetAdvantage 2004 Volume 2\Windows Forms\Bin\Infragistics.Win.v3.2.dll"
-                    AssemblyFolderKey = "hklm\infragistics.winassemblies.20042"
-                />
-                <Reference
-                    Name = "Infragistics.Shared.v3.2"
-                    AssemblyName = "Infragistics.Shared.v3.2"
-                    HintPath = "..\..\..\..\..\Program Files\Infragistics\NetAdvantage 2004 Volume 2\Windows Forms\Bin\Infragistics.Shared.v3.2.dll"
-                    AssemblyFolderKey = "hklm\infragistics.winassemblies.20042"
-                />
-                <Reference
-                    Name = "System.Design"
-                    AssemblyName = "System.Design"
-                    HintPath = "..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Design.dll"
-                />
-                <Reference
-                    Name = "System.Runtime.Serialization.Formatters.Soap"
-                    AssemblyName = "System.Runtime.Serialization.Formatters.Soap"
-                    HintPath = "..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Runtime.Serialization.Formatters.Soap.dll"
-                />
-                <Reference
-                    Name = "Infragistics.Win.UltraWinDock.v3.2"
-                    AssemblyName = "Infragistics.Win.UltraWinDock.v3.2"
-                    HintPath = "..\..\..\..\..\Program Files\Infragistics\NetAdvantage 2004 Volume 2\Windows Forms\Bin\Infragistics.Win.UltraWinDock.v3.2.dll"
-                    AssemblyFolderKey = "hklm\infragistics.winassemblies.20042"
-                />
-                <Reference
-                    Name = "Infragistics.Win.UltraWinGrid.v3.2"
-                    AssemblyName = "Infragistics.Win.UltraWinGrid.v3.2"
-                    HintPath = "..\..\..\..\..\Program Files\Infragistics\NetAdvantage 2004 Volume 2\Windows Forms\Bin\Infragistics.Win.UltraWinGrid.v3.2.dll"
-                    AssemblyFolderKey = "hklm\infragistics.winassemblies.20042"
-                />
-                <Reference
-                    Name = "Microsoft.VisualBasic"
-                    AssemblyName = "Microsoft.VisualBasic"
-                    HintPath = "..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\Microsoft.VisualBasic.dll"
-                />
-                <Reference
-                    Name = "Infragistics.Win.UltraWinTree.v3.2"
-                    AssemblyName = "Infragistics.Win.UltraWinTree.v3.2"
-                    HintPath = "..\..\..\..\..\Program Files\Infragistics\NetAdvantage 2004 Volume 2\Windows Forms\Bin\Infragistics.Win.UltraWinTree.v3.2.dll"
-                    AssemblyFolderKey = "hklm\infragistics.winassemblies.20042"
-                />
-                <Reference
-                    Name = "Infragistics.Win.UltraWinToolbars.v3.2"
-                    AssemblyName = "Infragistics.Win.UltraWinToolbars.v3.2"
-                    HintPath = "..\..\..\..\..\Program Files\Infragistics\NetAdvantage 2004 Volume 2\Windows Forms\Bin\Infragistics.Win.UltraWinToolbars.v3.2.dll"
-                    AssemblyFolderKey = "hklm\infragistics.winassemblies.20042"
-                />
-                <Reference
-                    Name = "Infragistics.Win.Misc.v3.2"
-                    AssemblyName = "Infragistics.Win.Misc.v3.2"
-                    HintPath = "..\..\..\..\..\Program Files\Infragistics\NetAdvantage 2004 Volume 2\Windows Forms\Bin\Infragistics.Win.Misc.v3.2.dll"
-                    AssemblyFolderKey = "hklm\infragistics.winassemblies.20042"
-                />
-                <Reference
-                    Name = "Infragistics.Win.UltraWinEditors.v3.2"
-                    AssemblyName = "Infragistics.Win.UltraWinEditors.v3.2"
-                    HintPath = "..\..\..\..\..\Program Files\Infragistics\NetAdvantage 2004 Volume 2\Windows Forms\Bin\Infragistics.Win.UltraWinEditors.v3.2.dll"
-                    AssemblyFolderKey = "hklm\infragistics.winassemblies.20042"
-                />
-                <Reference
-                    Name = "Infragistics.Win.UltraWinStatusBar.v3.2"
-                    AssemblyName = "Infragistics.Win.UltraWinStatusBar.v3.2"
-                    HintPath = "..\..\..\..\..\Program Files\Infragistics\NetAdvantage 2004 Volume 2\Windows Forms\Bin\Infragistics.Win.UltraWinStatusBar.v3.2.dll"
-                    AssemblyFolderKey = "hklm\infragistics.winassemblies.20042"
-                />
-            </References>
-        </Build>
-        <Files>
-            <Include>
-                <File
-                    RelPath = "licenses.licx"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "DTGEditor\App.ico"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "DTGEditor\AssemblyInfo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "DTGEditor\Editor.cs"
-                    SubType = "Form"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "DTGEditor\Editor.resx"
-                    DependentUpon = "Editor.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "DTGEditor\frmMain.cs"
-                    SubType = "Form"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "DTGEditor\frmMain.resx"
-                    DependentUpon = "frmMain.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-            </Include>
-        </Files>
-    </CSHARP>
+  <CSHARP ProjectType="Local" ProductVersion="7.10.3077" SchemaVersion="2.0" ProjectGuid="{6A2FB4F6-83E4-455C-800B-21C9267D9651}">
+    <Build>
+      <Settings ApplicationIcon="DTGEditor\App.ico" AssemblyKeyContainerName="" AssemblyName="DTGEditor" AssemblyOriginatorKeyFile="" DefaultClientScript="JScript" DefaultHTMLPageLayout="Grid" DefaultTargetSchema="IE50" DelaySign="false" OutputType="WinExe" PreBuildEvent="" PostBuildEvent="" RootNamespace="Spring2.DataTierGenerator.DTGEditor" RunPostBuildEvent="OnBuildSuccess" StartupObject="">
+        <Config Name="Debug" AllowUnsafeBlocks="false" BaseAddress="285212672" CheckForOverflowUnderflow="false" ConfigurationOverrideFile="" DefineConstants="DEBUG;TRACE" DocumentationFile="" DebugSymbols="true" FileAlignment="4096" IncrementalBuild="true" NoStdLib="false" NoWarn="" Optimize="false" OutputPath="..\build\" RegisterForComInterop="false" RemoveIntegerChecks="false" TreatWarningsAsErrors="false" WarningLevel="4" />
+        <Config Name="Release" AllowUnsafeBlocks="false" BaseAddress="285212672" CheckForOverflowUnderflow="false" ConfigurationOverrideFile="" DefineConstants="TRACE" DocumentationFile="" DebugSymbols="false" FileAlignment="4096" IncrementalBuild="false" NoStdLib="false" NoWarn="" Optimize="true" OutputPath="bin\Release\" RegisterForComInterop="false" RemoveIntegerChecks="false" TreatWarningsAsErrors="false" WarningLevel="4" />
+      </Settings>
+      <References>
+        <Reference Name="System" AssemblyName="System" HintPath="..\..\..\..\..\..\WINNT\Microsoft.NET\Framework\v1.0.3705\System.dll" />
+        <Reference Name="System.Data" AssemblyName="System.Data" HintPath="..\..\..\..\..\..\WINNT\Microsoft.NET\Framework\v1.0.3705\System.Data.dll" />
+        <Reference Name="System.Drawing" AssemblyName="System.Drawing" HintPath="..\..\..\..\..\..\WINNT\Microsoft.NET\Framework\v1.0.3705\System.Drawing.dll" />
+        <Reference Name="System.Windows.Forms" AssemblyName="System.Windows.Forms" HintPath="..\..\..\..\..\..\WINNT\Microsoft.NET\Framework\v1.0.3705\System.Windows.Forms.dll" />
+        <Reference Name="System.XML" AssemblyName="System.Xml" HintPath="..\..\..\..\..\..\WINNT\Microsoft.NET\Framework\v1.0.3705\System.XML.dll" />
+        <Reference Name="Spring2.Core" AssemblyName="Spring2.Core" HintPath="..\lib\Spring2.Core.dll" />
+        <Reference Name="Spring2.DataTierGenerator" Project="{8BE555A1-8BBA-4CF7-9B4A-6BBEF7E20FA8}" Package="{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}" />
+        <Reference Name="Spring2.DataTierGenerator.Nant" Project="{2844DE77-37C4-4DD5-A1B2-F217D40EEEFE}" Package="{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}" />
+        <Reference Name="Spring2.DataTierGenerator.Alpha" Project="{069AFE42-50D3-48D3-A12B-FAE1D8A2A44A}" Package="{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}" />
+        <Reference Name="Infragistics.Win.UltraWinTabControl.v4.3" AssemblyName="Infragistics.Win.UltraWinTabControl.v4.3" HintPath="C:\Program Files\Infragistics\NetAdvantage 2004 Volume 3\windows forms\bin\Infragistics.Win.UltraWinTabControl.v4.3.dll" AssemblyFolderKey="hklm\Infragistics.WinAssemblies.20043" />
+        <Reference Name="Infragistics.Win.v4.3" AssemblyName="Infragistics.Win.v4.3" HintPath="C:\Program Files\Infragistics\NetAdvantage 2004 Volume 3\windows forms\bin\Infragistics.Win.v4.3.dll" AssemblyFolderKey="hklm\Infragistics.WinAssemblies.20043" />
+        <Reference Name="Infragistics.Shared.v4.3" AssemblyName="Infragistics.Shared.v4.3" HintPath="C:\Program Files\Infragistics\NetAdvantage 2004 Volume 3\windows forms\bin\Infragistics.Shared.v4.3.dll" AssemblyFolderKey="hklm\Infragistics.WinAssemblies.20043" />
+        <Reference Name="System.Design" AssemblyName="System.Design" HintPath="..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Design.dll" />
+        <Reference Name="System.Runtime.Serialization.Formatters.Soap" AssemblyName="System.Runtime.Serialization.Formatters.Soap" HintPath="..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Runtime.Serialization.Formatters.Soap.dll" />
+        <Reference Name="Infragistics.Win.UltraWinDock.v4.3" AssemblyName="Infragistics.Win.UltraWinDock.v4.3" HintPath="C:\Program Files\Infragistics\NetAdvantage 2004 Volume 3\windows forms\bin\Infragistics.Win.UltraWinDock.v4.3.dll" AssemblyFolderKey="hklm\Infragistics.WinAssemblies.20043" />
+        <Reference Name="Infragistics.Win.UltraWinGrid.v4.3" AssemblyName="Infragistics.Win.UltraWinGrid.v4.3" HintPath="C:\Program Files\Infragistics\NetAdvantage 2004 Volume 3\windows forms\bin\Infragistics.Win.UltraWinGrid.v4.3.dll" AssemblyFolderKey="hklm\Infragistics.WinAssemblies.20043" />
+        <Reference Name="Microsoft.VisualBasic" AssemblyName="Microsoft.VisualBasic" HintPath="..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\Microsoft.VisualBasic.dll" />
+        <Reference Name="Infragistics.Win.UltraWinTree.v4.3" AssemblyName="Infragistics.Win.UltraWinTree.v4.3" HintPath="C:\Program Files\Infragistics\NetAdvantage 2004 Volume 3\windows forms\bin\Infragistics.Win.UltraWinTree.v4.3.dll" AssemblyFolderKey="hklm\Infragistics.WinAssemblies.20043" />
+        <Reference Name="Infragistics.Win.UltraWinToolbars.v4.3" AssemblyName="Infragistics.Win.UltraWinToolbars.v4.3" HintPath="C:\Program Files\Infragistics\NetAdvantage 2004 Volume 3\windows forms\bin\Infragistics.Win.UltraWinToolbars.v4.3.dll" AssemblyFolderKey="hklm\Infragistics.WinAssemblies.20043" />
+        <Reference Name="Infragistics.Win.Misc.v4.3" AssemblyName="Infragistics.Win.Misc.v4.3" HintPath="C:\Program Files\Infragistics\NetAdvantage 2004 Volume 3\windows forms\bin\Infragistics.Win.Misc.v4.3.dll" AssemblyFolderKey="hklm\Infragistics.WinAssemblies.20043" />
+        <Reference Name="Infragistics.Win.UltraWinEditors.v4.3" AssemblyName="Infragistics.Win.UltraWinEditors.v4.3" HintPath="C:\Program Files\Infragistics\NetAdvantage 2004 Volume 3\windows forms\bin\Infragistics.Win.UltraWinEditors.v4.3.dll" AssemblyFolderKey="hklm\Infragistics.WinAssemblies.20043" />
+        <Reference Name="Infragistics.Win.UltraWinStatusBar.v4.3" AssemblyName="Infragistics.Win.UltraWinStatusBar.v4.3" HintPath="C:\Program Files\Infragistics\NetAdvantage 2004 Volume 3\windows forms\bin\Infragistics.Win.UltraWinStatusBar.v4.3.dll" AssemblyFolderKey="hklm\Infragistics.WinAssemblies.20043" />
+        <Reference Name="Infragistics.Win.UltraWinDataSource.v4.3" AssemblyName="Infragistics.Win.UltraWinDataSource.v4.3" HintPath="C:\Program Files\Infragistics\NetAdvantage 2004 Volume 3\windows forms\bin\Infragistics.Win.UltraWinDataSource.v4.3.dll" AssemblyFolderKey="hklm\Infragistics.WinAssemblies.20043" />
+      </References>
+    </Build>
+    <Files>
+      <Include>
+        <File RelPath="licenses.licx" BuildAction="EmbeddedResource" />
+        <File RelPath="DTGEditor\App.ico" BuildAction="Content" />
+        <File RelPath="DTGEditor\AssemblyInfo.cs" SubType="Code" BuildAction="Compile" />
+        <File RelPath="DTGEditor\Editor.cs" SubType="Form" BuildAction="Compile" />
+        <File RelPath="DTGEditor\Editor.resx" DependentUpon="Editor.cs" BuildAction="EmbeddedResource" />
+        <File RelPath="DTGEditor\frmMain.cs" SubType="Form" BuildAction="Compile" />
+        <File RelPath="DTGEditor\frmMain.resx" DependentUpon="frmMain.cs" BuildAction="EmbeddedResource" />
+      </Include>
+    </Files>
+  </CSHARP>
 </VisualStudioProject>
-
