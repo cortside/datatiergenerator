@@ -39,7 +39,9 @@ namespace Spring2.DataTierGenerator.Generator.Task {
 	    template.merge(vc, writer);
 
 	    FileInfo file = new FileInfo(options.RootDirectory + task.Directory + "\\" + String.Format(task.FileNameFormat, name));
-	    WriteToFile(file, writer.ToString(), false);
+	    if (writer.ToString().Length > 0) {
+		WriteToFile(file, writer.ToString(), false);
+	    }
 	}
 
     }
