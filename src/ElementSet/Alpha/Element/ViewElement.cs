@@ -76,9 +76,16 @@ namespace Spring2.DataTierGenerator.Element {
 			}
 			constraint.Prefix = ParseStringAttribute(n, "prefix", constraint.ForeignEntity.Name + "_");
 			SqlEntityElement foreignEntity = database.FindSqlEntityByName(constraint.ForeignEntity.Name);
+
+			// check to see if the foreignEntity is itself
+			if (foreignEntity == null && sqlentity.Name == constraint.ForeignEntity.Name) {
+			    foreignEntity = sqlentity;
+			}
+
 			if (foreignEntity == null) {
 			    vd(ParserValidationArgs.NewError("View [" + view.Name + "] references a constraint that references an sql entity that was not defined (or was not defined before this sql entity): " + constraint.ForeignEntity));
 			} else {
+			    ArrayList columnsToAdd = new ArrayList();
 			    foreach(ColumnElement column in foreignEntity.Columns) {
 				ColumnElement viewColumn = (ColumnElement)column.Clone();
 				if (!constraint.Prefix.Equals(String.Empty)) {
@@ -87,8 +94,9 @@ namespace Spring2.DataTierGenerator.Element {
 				viewColumn.Prefix = constraint.Prefix;
 				viewColumn.ForeignSqlEntity = constraint.ForeignEntity.Name;
 				viewColumn.ViewColumn = true;
-				sqlentity.Columns.Add(viewColumn);
+				columnsToAdd.Add(viewColumn);
 			    }
+			    sqlentity.Columns.AddRange(columnsToAdd);
 			}
 			view.Constraints.Add(constraint);
 		    }
