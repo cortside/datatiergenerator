@@ -7,16 +7,16 @@
     >
         <Build>
             <Settings
-                ApplicationIcon = "App.ico"
+                ApplicationIcon = "DTGEditor\App.ico"
                 AssemblyKeyContainerName = ""
-                AssemblyName = "DTGEditor"
+                AssemblyName = "DataTierGenerator"
                 AssemblyOriginatorKeyFile = ""
                 DefaultClientScript = "JScript"
                 DefaultHTMLPageLayout = "Grid"
                 DefaultTargetSchema = "IE50"
                 DelaySign = "false"
                 OutputType = "WinExe"
-                RootNamespace = "DTGEditor"
+                RootNamespace = "Spring2.DataTierGenerator.DTGEditor"
                 StartupObject = ""
             >
                 <Config
@@ -31,7 +31,7 @@
                     FileAlignment = "4096"
                     IncrementalBuild = "true"
                     Optimize = "false"
-                    OutputPath = "bin\Debug\"
+                    OutputPath = "bin\"
                     RegisterForComInterop = "false"
                     RemoveIntegerChecks = "false"
                     TreatWarningsAsErrors = "false"
@@ -83,35 +83,35 @@
                     HintPath = "..\..\..\..\..\..\WINNT\Microsoft.NET\Framework\v1.0.3705\System.XML.dll"
                 />
                 <Reference
-                    Name = "Core"
-                    Project = "{8BE555A1-8BBA-4CF7-9B4A-6BBEF7E20FA8}"
+                    Name = "Spring2.Core"
+                    Project = "{80B94045-4DE6-4BB0-BE22-C5CC0E772695}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
                 <Reference
-                    Name = "Spring2.Core"
-                    AssemblyName = "Spring2.Core"
-                    HintPath = "..\..\lib\Spring2.Core.dll"
+                    Name = "Spring2.DataTierGenerator"
+                    Project = "{8BE555A1-8BBA-4CF7-9B4A-6BBEF7E20FA8}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
             </References>
         </Build>
         <Files>
             <Include>
                 <File
-                    RelPath = "App.ico"
+                    RelPath = "DTGEditor\App.ico"
                     BuildAction = "Content"
                 />
                 <File
-                    RelPath = "AssemblyInfo.cs"
+                    RelPath = "DTGEditor\AssemblyInfo.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "frmMain.cs"
+                    RelPath = "DTGEditor\frmMain.cs"
                     SubType = "Form"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "frmMain.resx"
+                    RelPath = "DTGEditor\frmMain.resx"
                     DependentUpon = "frmMain.cs"
                     BuildAction = "EmbeddedResource"
                 />
