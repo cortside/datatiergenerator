@@ -48,7 +48,6 @@ namespace Spring2.DataTierGenerator.Element {
 	/// <param name="node"></param>
 	/// <param name="enumValueElements"></param>
 	public static void ParseFromXml(XmlNode node, IList enumValueElements) {
-
 	    if (node != null && enumValueElements != null) {
 
 		foreach (XmlNode enumNode in node.ChildNodes) {

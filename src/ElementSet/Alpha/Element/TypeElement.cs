@@ -44,8 +44,7 @@ namespace Spring2.DataTierGenerator.Element {
 	    set { this.convertFromSqlTypeFormat = value; }
 	}
 
-	public String ConvertForCompare 
-	{
+	public String ConvertForCompare {
 	    get { return this.convertForCompare; }
 	    set { this.convertForCompare = value; }
 	}
@@ -67,7 +66,6 @@ namespace Spring2.DataTierGenerator.Element {
 	/// <param name="node"></param>
 	/// <param name="typeElements"></param>
 	public static void ParseFromXml(XmlNode node, IList typeElements) {
-
 	    if (node != null && typeElements != null) {
 
 		foreach (XmlNode typeNode in node.ChildNodes) {
@@ -91,8 +89,7 @@ namespace Spring2.DataTierGenerator.Element {
 	    Hashtable types = new Hashtable();
 	    XmlNodeList elements = doc.DocumentElement.GetElementsByTagName("type");
 	    foreach (XmlNode node in elements) {
-		if (node.NodeType == XmlNodeType.Comment)
-		{
+		if (node.NodeType == XmlNodeType.Comment) {
 		    continue;
 		}
 		TypeElement type = new TypeElement();
@@ -119,8 +116,7 @@ namespace Spring2.DataTierGenerator.Element {
 		if (node.Attributes["convertfromsqltypeformat"] != null) {
 		    type.ConvertFromSqlTypeFormat = node.Attributes["convertfromsqltypeformat"].Value;
 		}
-		if (node.Attributes[CONVERT_FOR_COMPARE] != null) 
-		{
+		if (node.Attributes[CONVERT_FOR_COMPARE] != null) {
 		    type.ConvertForCompare = node.Attributes[CONVERT_FOR_COMPARE].Value;
 		}
 		if (types.ContainsKey(type.Name)) {
@@ -133,8 +129,7 @@ namespace Spring2.DataTierGenerator.Element {
 	    // add entities as data objects to types if not already defined
 	    elements = doc.DocumentElement.GetElementsByTagName("entity");
 	    foreach (XmlNode node in elements) {
-		if (node.NodeType == XmlNodeType.Comment)
-		{
+		if (node.NodeType == XmlNodeType.Comment) {
 		    continue;
 		}
 		if (!types.Contains(node.Attributes["name"].Value + "Data")) {
@@ -173,8 +168,7 @@ namespace Spring2.DataTierGenerator.Element {
 	    // add enums to types if not already defined
 	    elements = doc.DocumentElement.GetElementsByTagName("enum");
 	    foreach (XmlNode node in elements) {
-		if (node.NodeType == XmlNodeType.Comment)
-		{
+		if (node.NodeType == XmlNodeType.Comment) {
 		    continue;
 		}
 		if (!types.Contains(node.Attributes["name"].Value)) {
@@ -190,60 +184,53 @@ namespace Spring2.DataTierGenerator.Element {
 		}
 	    }
 
-            // see if we want to generate collections for all entities
-            XmlNodeList collectionElement = doc.DocumentElement.GetElementsByTagName ("collections");
-            XmlNode collectionNode = collectionElement[0];
+	    // see if we want to generate collections for all entities
+	    XmlNodeList collectionElement = doc.DocumentElement.GetElementsByTagName ("collections");
+	    XmlNode collectionNode = collectionElement[0];
 	    Boolean generateAll = false;
-	    if (collectionNode.Attributes["generateall"] != null)
-	    {
+	    if (collectionNode.Attributes["generateall"] != null) {
 		generateAll = Boolean.Parse (collectionNode.Attributes["generateall"].Value.ToString ());
 	    }
 
-            if (generateAll)
-            {
-                // add collections for all entities as data objects to types if not already defined
-                elements = doc.DocumentElement.GetElementsByTagName ("entity");
-                foreach (XmlNode node in elements)
-                {
-		    if (node.NodeType == XmlNodeType.Comment)
-		    {
+	    if (generateAll) {
+		// add collections for all entities as data objects to types if not already defined
+		elements = doc.DocumentElement.GetElementsByTagName ("entity");
+		foreach (XmlNode node in elements) {
+		    if (node.NodeType == XmlNodeType.Comment) {
 			continue;
 		    }
-                    if (!types.Contains (node.Attributes["name"].Value + "List"))
-                    {
-                        TypeElement type = new TypeElement ();
-                        type.Name = node.Attributes["name"].Value + "List";
-                        type.ConcreteType = type.Name;
-                        type.Package = options.GetDONameSpace ("");
-                        type.NewInstanceFormat = type.Name + ".DEFAULT";
-                        type.NullInstanceFormat = type.Name + ".UNSET";
-                        types.Add (type.Name, type);
-                    }
-                }
-            }
-            else
-            {
-	    // add collections as data objects to types if not already defined
-	    elements = doc.DocumentElement.GetElementsByTagName("collection");
-	    foreach (XmlNode node in elements) {
-		    if (node.NodeType == XmlNodeType.Comment)
-		    {
+		    if (!types.Contains (node.Attributes["name"].Value + "List")) {
+			TypeElement type = new TypeElement ();
+			type.Name = node.Attributes["name"].Value + "List";
+			type.ConcreteType = type.Name;
+			type.Package = options.GetDONameSpace ("");
+			type.NewInstanceFormat = type.Name + ".DEFAULT";
+			type.NullInstanceFormat = type.Name + ".UNSET";
+			types.Add (type.Name, type);
+		    }
+		}
+	    } else {
+		// add collections as data objects to types if not already defined
+		elements = doc.DocumentElement.GetElementsByTagName("collection");
+		foreach (XmlNode node in elements) {
+		    if (node.NodeType == XmlNodeType.Comment) {
 			continue;
 		    }
-		if (!types.Contains(node.Attributes["name"].Value)) {
-		    TypeElement type = new TypeElement();
-		    type.Name = node.Attributes["name"].Value;
-		    type.ConcreteType = type.Name;
-		    type.Package = options.GetDONameSpace("");
-		    //type.NewInstanceFormat = "new " + type.Name + "()";
-		    type.NewInstanceFormat = type.Name + ".DEFAULT";
-		    type.NullInstanceFormat = type.Name + ".UNSET";
-		    types.Add(type.Name, type);
-                    }
+		    if (!types.Contains(node.Attributes["name"].Value)) {
+			TypeElement type = new TypeElement();
+			type.Name = node.Attributes["name"].Value;
+			type.ConcreteType = type.Name;
+			type.Package = options.GetDONameSpace("");
+			//type.NewInstanceFormat = "new " + type.Name + "()";
+			type.NewInstanceFormat = type.Name + ".DEFAULT";
+			type.NullInstanceFormat = type.Name + ".UNSET";
+			types.Add(type.Name, type);
+		    }
 		}
 	    }
 	    
 	    return types;
 	}
+
     }
 }

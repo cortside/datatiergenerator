@@ -79,15 +79,12 @@ namespace Spring2.DataTierGenerator.Parser {
 		this.options = new Configuration();
 	    }
 
-            // see if we want to generate collections for all entities
-            XmlNodeList collectionElement = doc.DocumentElement.GetElementsByTagName ("collections");
-            XmlNode collectionNode = collectionElement[0];
-	    if (collectionNode.Attributes["generateall"] == null)
-	    {
+	    // see if we want to generate collections for all entities
+	    XmlNodeList collectionElement = doc.DocumentElement.GetElementsByTagName ("collections");
+	    XmlNode collectionNode = collectionElement[0];
+	    if (collectionNode.Attributes["generateall"] == null) {
 		options.GenerateAllCollections = false;
-	    }
-	    else
-	    {
+	    } else {
 		options.GenerateAllCollections = Boolean.Parse (collectionNode.Attributes["generateall"].Value.ToString ());
 	    }
 
