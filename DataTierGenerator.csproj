@@ -138,11 +138,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "orders.xsx"
-                    DependentUpon = "orders.xsd"
-                    BuildAction = "None"
-                />
-                <File
                     RelPath = "SQLGenerator.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
