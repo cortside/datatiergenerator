@@ -9,11 +9,12 @@
 		$elements - IList of $element typed objects
 	
 *###
-    <entities>
+    <sqlentities>
+## note that this is overriding $element in the context
 #foreach ($element in $elements)
 #if ($velocityCount>1)
 
 #end
 #parse("template\\config_sqlentity.vm")
 #end    
-    </entities>
+    </sqlentities>

@@ -10,6 +10,7 @@
 	
 *###
     <entities>
+## note that this is overriding $element in the context
 #foreach ($element in $elements)
 #if ($velocityCount>1)
 
