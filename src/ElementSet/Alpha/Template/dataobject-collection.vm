@@ -4,7 +4,9 @@
 *###
 #set ($namespaces = "#nameSpaces($options $element false)")
 using Spring2.DataTierGenerator.Attribute;
+#if ($namespaces.IndexOf("using System.Collections;") < 0)
 using System.Collections;
+#end
 
 $namespaces
 ## manually add the data object namespace -- should probably look this up
