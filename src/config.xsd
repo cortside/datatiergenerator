@@ -165,6 +165,7 @@
                                                                         <xs:sequence>
                                                                             <xs:element name="column" minOccurs="0" maxOccurs="unbounded">
                                                                                 <xs:complexType>
+                                                                                    <xs:all />
                                                                                     <xs:attribute name="name" type="xs:string" />
                                                                                     <xs:attribute name="sqltype" type="xs:string" />
                                                                                     <xs:attribute name="identity" type="BooleanEnum" />
@@ -175,6 +176,8 @@
                                                                                     <xs:attribute name="scale" type="xs:nonNegativeInteger" />
                                                                                     <xs:attribute name="expression" type="xs:string" />
                                                                                     <xs:attribute name="default" type="xs:string" />
+                                                                                    <xs:attribute name="increment" type="xs:nonNegativeInteger" />
+                                                                                    <xs:attribute name="seed" type="xs:nonNegativeInteger" />
                                                                                 </xs:complexType>
                                                                             </xs:element>
                                                                         </xs:sequence>
