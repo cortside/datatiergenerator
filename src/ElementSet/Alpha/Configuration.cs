@@ -196,7 +196,17 @@ namespace Spring2.DataTierGenerator {
 	/// <param name="field">Field whose sql format is needed.</param>
 	/// <returns>String for converting the field to sql format (like artProjectId.DBValue)</returns>
 	public String GetSqlConversion(PropertyElement field) {
-	    return String.Format(field.Type.ConvertToSqlTypeFormat, "", field.GetFieldFormat(), "", "", field.GetFieldFormat());
+	    return GetSqlConversion(field, field.GetFieldFormat());
+	}
+
+	/// <summary>
+	/// Returns the phrase to use to get the sql format of a type.  Currently
+	/// only used with Velocity generator.
+	/// </summary>
+	/// <param name="field">Field whose sql format is needed.</param>
+	/// <returns>String for converting the field to sql format (like artProjectId.DBValue)</returns>
+	public String GetSqlConversion(PropertyElement field, String fieldName) {
+	    return String.Format(field.Type.ConvertToSqlTypeFormat, "", fieldName, "", "", fieldName);
 	}
 
 	/// <summary>
