@@ -278,10 +278,6 @@ namespace Spring2.DataTierGenerator.DTGEditor {
 
 		Console.Out.WriteLine(String.Empty.PadLeft(20,'='));
 		Console.Out.WriteLine("Start :: " + DateTime.Now.ToString());
-		//	    Console.WriteLine("Number of command line parameters = {0}", args.Length);
-		//	    foreach(string s in args) {
-		//		Console.WriteLine(s);
-		//	    }
 		Console.Out.WriteLine(String.Empty.PadLeft(20,'='));
 
 		ConfigParser p = new ConfigParser(filename);
