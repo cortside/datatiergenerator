@@ -4,7 +4,7 @@ using System.IO;
 using System.Collections;
 using System.Text;
 
-namespace Spring2.DataTierGenerator {
+namespace Spring2.DataTierGenerator.Core {
     /// <summary>
     /// Generates stored procedures and associated data access code for the specified database.
     /// </summary>
@@ -41,6 +41,7 @@ namespace Spring2.DataTierGenerator {
 	    writer.WriteLine();
 
 	    writer.WriteLine(2, "private static readonly String VIEW = \"" + entity.SqlEntity.View + "\";");
+	    writer.WriteLine(2, "private static readonly String CONNECTION_STRING_KEY = \"" + entity.SqlEntity.Key + "\";");
 	    writer.WriteLine();
 
 	    CreateDAOListMethods(writer);
@@ -54,7 +55,7 @@ namespace Spring2.DataTierGenerator {
 	    writer.WriteLine();
 	    CreateDeleteMethods(writer);
 
-	    if (options.GenerateSelectStoredProcs) {
+	    if (entity.SqlEntity.GenerateSelectStoredProcScript) {
 		writer.WriteLine();
 		CreateSelectMethods(writer);
 	    }
@@ -222,12 +223,12 @@ namespace Spring2.DataTierGenerator {
 	    for (int i = 0; i < entity.Fields.Count; i++) {
 		Field field = (Field)entity.Fields[i];
 			
-		if (field.Column.Identity || (options.GenerateProcsForForeignKey && (field.Column.RowGuidCol || entity.SqlEntity.IsPrimaryKeyColumn(field.Column.Name) || entity.SqlEntity.IsPrimaryKeyColumn(field.Column.Name)))) {
+		if (field.Column.Identity || (entity.SqlEntity.GenerateProcsForForeignKey && (field.Column.RowGuidCol || entity.SqlEntity.IsPrimaryKeyColumn(field.Column.Name) || entity.SqlEntity.IsPrimaryKeyColumn(field.Column.Name)))) {
 		    String columnName = field.Name.Substring(0, 1).ToUpper() + field.Name.Substring(1);
 					
 		    String methodName = "Delete" + columnName.Replace(" ", "_");
 		    // if this option is on, only generate the PK 
-		    if (options.GenerateOnlyPrimaryDeleteStoredProc) {
+		    if (entity.SqlEntity.GenerateOnlyPrimaryDeleteStoredProc) {
 			keyList.Clear();
 			methodName = "Delete";
 		    }
@@ -274,7 +275,7 @@ namespace Spring2.DataTierGenerator {
 		writer.WriteLine(2, "/// <param name=\"\"></param>");
 
 		String methodName = String.Empty;
-		if (options.GenerateOnlyPrimaryDeleteStoredProc) {
+		if (entity.SqlEntity.GenerateOnlyPrimaryDeleteStoredProc) {
 		    methodName = "Delete";
 		} else {
 		    methodName = "DeleteBy" + primaryKeyList;
@@ -505,7 +506,7 @@ namespace Spring2.DataTierGenerator {
 
 	    // GetList - both
 	    writer.WriteLine(2, "public static IList GetList(IWhere whereClause, IOrderBy orderByClause) { ");
-	    writer.WriteLine(3, "SqlDataReader dataReader = GetListReader(VIEW, whereClause, orderByClause); ");
+	    writer.WriteLine(3, "SqlDataReader dataReader = GetListReader(CONNECTION_STRING_KEY, VIEW, whereClause, orderByClause); ");
 	    writer.WriteLine();
 	    writer.WriteLine(3, "ArrayList list = new ArrayList(); ");
 	    writer.WriteLine(3, "while (dataReader.Read()) { ");
@@ -530,7 +531,7 @@ namespace Spring2.DataTierGenerator {
 	    foreach (Field field in keys) {
 		writer.WriteLine(3, "w.And(\"" + field.Column.Name + "\", " + String.Format(field.Type.ConvertToSqlTypeFormat, "", field.GetFieldFormat(), "", "", field.GetFieldFormat()) + ");");
 	    }
-	    writer.WriteLine(3, "SqlDataReader dataReader = GetListReader(VIEW, w, null);");
+	    writer.WriteLine(3, "SqlDataReader dataReader = GetListReader(CONNECTION_STRING_KEY, VIEW, w, null);");
 	    writer.WriteLine();
 	    writer.WriteLine(3, "dataReader.Read();");
 	    writer.WriteLine(3, options.GetDOClassName(entity.Name) + " data = GetDataObjectFromReader(dataReader);");
@@ -569,7 +570,7 @@ namespace Spring2.DataTierGenerator {
 
 	private String GetCreateCommandSection(IndentableStringWriter writer, String procName) {
 	    writer.WriteLine(3, "// Create and execute the command");
-	    writer.WriteLine(3, "cmd = GetSqlCommand(\"" + procName + "\", CommandType.StoredProcedure);");
+	    writer.WriteLine(3, "cmd = GetSqlCommand(CONNECTION_STRING_KEY, \"" + procName + "\", CommandType.StoredProcedure);");
 	    writer.WriteLine();
 	    return writer.ToString();
 	}
@@ -604,7 +605,7 @@ namespace Spring2.DataTierGenerator {
 		    writer.WriteLine();
 		    writer.WriteLine(4, "return GetList(filter, sort);");
     		} else {
-		    writer.WriteLine(2, "	SqlDataReader dataReader = GetListReader(VIEW, filter, sort);");
+		    writer.WriteLine(2, "	SqlDataReader dataReader = GetListReader(CONNECTION_STRING_KEY, VIEW, filter, sort);");
 		    writer.WriteLine();
 		    writer.WriteLine(2, "	dataReader.Read();");
 		    writer.WriteLine(4, options.GetDOClassName(entity.Name) + " data = GetDataObjectFromReader(dataReader);");
