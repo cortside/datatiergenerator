@@ -8,9 +8,10 @@ using System.Xml;
 using System.Xml.Xsl;
 using System.IO;
 
-using Spring2.DataTierGenerator.Core;
+using Spring2.DataTierGenerator.Generator;
+using Spring2.DataTierGenerator.Parser;
 
-namespace Spring2.DataTierGenerator {
+namespace Spring2.DataTierGenerator.DataTierGenerator {
     /// <summary>
     /// Summary description for frmMain.
     /// </summary>
@@ -21,7 +22,6 @@ namespace Spring2.DataTierGenerator {
 	private System.Windows.Forms.Button loadXml;
 	private System.Windows.Forms.TextBox xmlConfigFilename;
 
-	private Configuration config;
         private System.Windows.Forms.OpenFileDialog openFileDialog;
 	private Boolean isXmlLoaded = false;
 	
@@ -167,8 +167,8 @@ namespace Spring2.DataTierGenerator {
 
 	    // decide whether to parse XML file and go or bring up form
 	    if (args.Length==1) {
-		Generator g = new Generator(args[0]);
-		g.GenerateSource();
+		CodeGenerator g = new CodeGenerator(args[0]);
+		g.Generate();
 	    } else {
 		Application.Run(new frmMain());
 	    }
@@ -189,14 +189,14 @@ namespace Spring2.DataTierGenerator {
 
 	private void btnOK_Click(object sender, System.EventArgs e) {
 	    try {
-		Generator g = new Generator(xmlConfigFilename.Text);
-		g.GenerateSource();
+		CodeGenerator g = new CodeGenerator(xmlConfigFilename.Text);
+		g.Generate();
 
 		// Alert the user everything went ok
 		MessageBox.Show("Data tier generated successfully.");
-	    } catch (Exception objException) {
-		MessageBox.Show("An error occcurred while generating.\n\n" + objException.ToString());
-		Console.Out.WriteLine("An error occcurred while generating.\n\n" + objException.ToString());
+	    } catch (Exception ex) {
+		MessageBox.Show("An error occcurred while generating.\n\n" + ex.ToString());
+		Console.Out.WriteLine("An error occcurred while generating.\n\n" + ex.ToString());
 	    }
 	}
 

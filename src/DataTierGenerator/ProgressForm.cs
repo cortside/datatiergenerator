@@ -4,7 +4,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
 
-namespace Spring2.DataTierGenerator {
+namespace Spring2.DataTierGenerator.DataTierGenerator {
     /// <summary>
     /// Summary description for ProgressForm.
     /// </summary>
