@@ -96,6 +96,16 @@
                     BuildAction = "Content"
                 />
                 <File
+                    RelPath = "Configuration.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ConfigurationData.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Element\ArgumentElement.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

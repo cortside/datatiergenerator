@@ -82,6 +82,11 @@
                     AssemblyName = "nunit.framework"
                     HintPath = "..\..\..\lib\nunit.framework.dll"
                 />
+                <Reference
+                    Name = "Spring2.DataTierGenerator"
+                    Project = "{8BE555A1-8BBA-4CF7-9B4A-6BBEF7E20FA8}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+                />
             </References>
         </Build>
         <Files>
@@ -94,6 +99,16 @@
                 <File
                     RelPath = "config.xsd"
                     BuildAction = "Content"
+                />
+                <File
+                    RelPath = "Configuration.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ConfigurationData.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Element\ArgumentElement.cs"
