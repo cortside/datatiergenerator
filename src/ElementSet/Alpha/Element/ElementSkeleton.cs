@@ -14,8 +14,8 @@ namespace Spring2.DataTierGenerator.Element {
 	protected static readonly String NAME = "name";
 
 	protected String name = String.Empty;
-	private String description = String.Empty;
-	private String template = String.Empty;
+	protected String description = String.Empty;
+	protected String template = String.Empty;
 
 	public String Name {
 	    get { return this.name; }
@@ -52,6 +52,9 @@ namespace Spring2.DataTierGenerator.Element {
 	}
 
 	public static String GetAttributeValue(XmlNode node, String attributeName, String defaultValue) {
+	    if (node == null || attributeName == null || node.Attributes == null || node.Attributes[attributeName]== null) {
+		return defaultValue;
+	    }
 	    XmlAttribute attribute = node.Attributes[attributeName];
 	    return attribute == null ? defaultValue : attribute.Value;
 	}
