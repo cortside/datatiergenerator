@@ -73,11 +73,6 @@
                     HintPath = "..\..\..\..\..\..\WINNT\Microsoft.NET\Framework\v1.0.3705\System.XML.dll"
                 />
                 <Reference
-                    Name = "Spring2.Core"
-                    Project = "{80B94045-4DE6-4BB0-BE22-C5CC0E772695}"
-                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
-                />
-                <Reference
                     Name = "Commons"
                     AssemblyName = "Commons"
                     HintPath = "..\lib\Commons.dll"
@@ -91,6 +86,11 @@
                     Name = "CSParser"
                     AssemblyName = "CSParser"
                     HintPath = "..\lib\CSParser.dll"
+                />
+                <Reference
+                    Name = "Spring2.Core"
+                    AssemblyName = "Spring2.Core"
+                    HintPath = "..\lib\Spring2.Core.dll"
                 />
             </References>
         </Build>
