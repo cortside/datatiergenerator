@@ -12,7 +12,9 @@ namespace $options.GetDAONameSpace($element.Name) {
 
 	private static readonly String VIEW = "$element.SqlEntity.View";
 	private static readonly String CONNECTION_STRING_KEY = "$element.SqlEntity.Key";
+#if($element.SqlEntity.GenerateInsertStoredProcScript || $element.SqlEntity.GenerateUpdateStoredProcScript || $element.SqlEntity.GenerateDeleteStoredProcScript)
 	private static readonly Int32 COMMAND_TIMEOUT = $element.SqlEntity.CommandTimeout;
+#end
 
 	/// <summary>
 	/// Returns a list of all $element.Name rows.
