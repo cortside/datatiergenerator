@@ -82,6 +82,10 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "config.xsd"
+                    BuildAction = "Content"
+                />
+                <File
                     RelPath = "Element\ArgumentElement.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
