@@ -404,7 +404,9 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 		Int32 index = type.Members.IndexOf(member);
 		type.Members[index] = mergeMember;
 	    } else {
-		log.Add("member " + type.Name + "." + member.Name + " was found in generated source but was not overwritten because it does not have the Generate attribute.");
+		if (IsMemberGenerated(mergeMember)) {
+		    log.Add("member " + type.Name + "." + member.Name + " was found in generated source but was not overwritten because it does not have the Generate attribute.");
+		}
 	    }
 	}
 
