@@ -16,6 +16,9 @@ namespace Spring2.DataTierGenerator.Generator {
 	    this.type = type;
 	}
 
+	/// <summary>
+	/// 
+	/// </summary>
 	public override void Generate() {
 	    IndentableStringWriter writer = new IndentableStringWriter();
 
@@ -33,6 +36,11 @@ namespace Spring2.DataTierGenerator.Generator {
 	    writer.WriteLine();
 
 	    foreach (EnumValue value in type.Values) {
+		if (!value.Description.Equals(String.Empty)) {
+		    writer.WriteLine(2, "/// <summary>");
+		    writer.WriteLine(2, "/// " + value.Description);
+		    writer.WriteLine(2, "/// </summary>");
+		}
 		writer.WriteLine(2, "public static readonly " + type.Name + " " + value.Name.Replace(' ','_').ToUpper() + " = new " + type.Name + "(\"" + value.Code + "\", \"" + value.Name + "\");");
 	    }
 
@@ -45,6 +53,21 @@ namespace Spring2.DataTierGenerator.Generator {
 	    writer.WriteLine(5, "}");
 	    writer.WriteLine(4, "}");
 	    writer.WriteLine(3, "}");
+
+	    if (type.IntegerBased) {
+		writer.WriteLine(3, "if (value is Int32) {");
+		writer.WriteLine(4, "foreach (" + type.Name + " t in OPTIONS) {");
+		writer.WriteLine(5, "try {");
+		writer.WriteLine(6, "if (Int32.Parse(t.Code).Equals(value)) {");
+		writer.WriteLine(7, "return t;");
+		writer.WriteLine(6, "}");
+		writer.WriteLine(5, "} catch (Exception) {");
+		writer.WriteLine(6, "// parse exception - continue");
+		writer.WriteLine(5, "}");
+		writer.WriteLine(4, "}");
+		writer.WriteLine(3, "}");
+	    }
+
 	    writer.WriteLine();
 	    writer.WriteLine(3, "return UNSET;");
 	    writer.WriteLine(2, "}");
@@ -68,6 +91,28 @@ namespace Spring2.DataTierGenerator.Generator {
 	    writer.WriteLine(2, "public static IList Options {");
 	    writer.WriteLine(3, "get { return OPTIONS; }");
 	    writer.WriteLine(2, "}");
+
+	    if (type.IntegerBased) {
+		writer.WriteLine();
+		writer.WriteLine(2, "/// <summary>");
+		writer.WriteLine(2, "/// Convert a " + type.Name + " instance to an Int32;");
+		writer.WriteLine(2, "/// </summary>");
+		writer.WriteLine(2, "/// <returns>the Int32 representation for the enum instance.</returns>");
+		writer.WriteLine(2, "/// <exception cref=\"InvalidCastException\">when converting DEFAULT or UNSET to an Int32.</exception>");
+		writer.WriteLine(2, "public Int32 ToInt32() {");
+		writer.WriteLine(3, "if (IsValid) {");
+		writer.WriteLine(4, "try {");
+		writer.WriteLine(5, "return Int32.Parse(code);");
+		writer.WriteLine(4, "} catch (Exception) {");
+		writer.WriteLine(5, "// parse error  - don't do anything - an acceptable exception will be thrown below");
+		writer.WriteLine(4, "}");
+		writer.WriteLine(3, "}");
+		writer.WriteLine();
+		writer.WriteLine(3, "// instance was !IsValid or there was a parser error");
+		writer.WriteLine(3, "throw new InvalidCastException(); ");
+		writer.WriteLine(2, "}");
+	    }
+
 	    writer.WriteLine(1, "}");
 	    writer.WriteLine("}");
 
