@@ -197,7 +197,7 @@ namespace Spring2.DataTierGenerator.Generator {
 			    } else {
 				first=false;
 			    }
-			    sb.Append("\t" + EscapeSqlName(column.Name) + " = @" + EscapeSqlName(column.Name));
+			    sb.Append("\t" + EscapeSqlName(column.Name) + " = @" + column.Name);
 			}
 		    }
 		}
