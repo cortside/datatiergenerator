@@ -107,7 +107,7 @@ namespace Spring2.DataTierGenerator {
 	    // lnkEverythingSQL
 	    // 
 	    this.lnkEverythingSQL.LinkBehavior = System.Windows.Forms.LinkBehavior.HoverUnderline;
-	    this.lnkEverythingSQL.Location = new System.Drawing.Point(8, 192);
+	    this.lnkEverythingSQL.Location = new System.Drawing.Point(8, 200);
 	    this.lnkEverythingSQL.Name = "lnkEverythingSQL";
 	    this.lnkEverythingSQL.Size = new System.Drawing.Size(360, 23);
 	    this.lnkEverythingSQL.TabIndex = 20;
@@ -246,7 +246,7 @@ namespace Spring2.DataTierGenerator {
 	    // frmMain
 	    // 
 	    this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-	    this.ClientSize = new System.Drawing.Size(376, 216);
+	    this.ClientSize = new System.Drawing.Size(376, 222);
 	    this.Controls.AddRange(new System.Windows.Forms.Control[] {
 									  this.generateEntitesXML,
 									  this.xmlConfigFilename,
@@ -292,20 +292,17 @@ namespace Spring2.DataTierGenerator {
 	}
 
 	private void btnOK_Click(object sender, System.EventArgs e) {
-	    Generator objGenerator;
-
 	    try {
 		GetDataFromForm();
-
-		objGenerator = new Generator(config);
+		Generator objGenerator = new Generator(config);
 		objGenerator.GenerateSource();
 		objGenerator = null;
 
 		// Alert the user everything went ok
 		MessageBox.Show("Data tier generated successfully.");
 	    } catch (Exception objException) {
-		MessageBox.Show("An error occcurred while generating.\n\n" + objException.Message);
-		Console.Out.WriteLine("An error occcurred while generating.\n\n" + objException.Message);
+		MessageBox.Show("An error occcurred while generating.\n\n" + objException.ToString());
+		Console.Out.WriteLine("An error occcurred while generating.\n\n" + objException.ToString());
 	    }
 	}
 
@@ -320,26 +317,31 @@ namespace Spring2.DataTierGenerator {
 	private void loadXml_Click(object sender, System.EventArgs e) {
 	    XmlDocument doc = new XmlDocument();
 			
-	    doc.Load(xmlConfigFilename.Text);
-	    XmlNode root = doc.DocumentElement["config"];
-	    if (root != null) {
-		config = new Configuration(root);
-		config.XmlConfigFilename = xmlConfigFilename.Text;
-		PopulateForm();
+	    try {
+		doc.Load(xmlConfigFilename.Text);
+		XmlNode root = doc.DocumentElement["config"];
+		if (root != null) {
+		    config = new Configuration(root);
+		    config.XmlConfigFilename = xmlConfigFilename.Text;
+		    PopulateForm();
+		}
+	    } catch (Exception objException) {
+		MessageBox.Show("An error occcurred while generating.\n\n" + objException.ToString());
+		Console.Out.WriteLine("An error occcurred while generating.\n\n" + objException.ToString());
 	    }
 	}
 
 	private void generateEntitesXML_Click(object sender, System.EventArgs e) {
-	    Generator objGenerator;
-
-	    GetDataFromForm();
-
-	    objGenerator = new Generator(config);
-	    objGenerator.GenerateXML();
-	    objGenerator = null;
-
-	    // Alert the user everything went ok
-	    MessageBox.Show("Xml generated successfully.");
+	    try {
+		GetDataFromForm();
+		Generator objGenerator = new Generator(config);
+		objGenerator.GenerateXML();
+		objGenerator = null;
+		MessageBox.Show("Xml generated successfully.");
+	    } catch (Exception objException) {
+		MessageBox.Show("An error occcurred while generating.\n\n" + objException.ToString());
+		Console.Out.WriteLine("An error occcurred while generating.\n\n" + objException.ToString());
+	    }
 	}
 
 	#endregion
@@ -410,8 +412,14 @@ namespace Spring2.DataTierGenerator {
 
 	private void frmMain_Load(object sender, System.EventArgs e) {
 	    config = new Configuration();
-	    //config.XmlConfigFilename = "..\\dtg-config.xml";
-	    //config.XmlConfigFilename = "C:\\Data\\work\\seamlessweb\\manhattan\\src\\DataTierGenerator.config.xml";
+	    try {
+		//config.XmlConfigFilename = "..\\dtg-config.xml";
+		//config.XmlConfigFilename = "C:\\Data\\work\\seamlessweb\\manhattan\\src\\DataTierGenerator.config.xml";
+	    } catch (Exception objException) {
+		MessageBox.Show("An error occcurred while generating.\n\n" + objException.ToString());
+		Console.Out.WriteLine("An error occcurred while generating.\n\n" + objException.ToString());
+	    }
+
 	    PopulateForm();
 
 	    if (config.XmlConfigFilename.Length>0) {
