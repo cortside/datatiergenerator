@@ -62,7 +62,9 @@ namespace Spring2.DataTierGenerator {
 		    if (inRegion) {
 			regions.WriteLine(fileLine);
 		    } else {
-			changed = !changed && !fileLine.Equals(textLine);
+			if (!fileLine.Equals(textLine)) {
+			    changed = true;
+			}
 		    }
 
 		    // Check to see if we have left a region.
@@ -76,7 +78,9 @@ namespace Spring2.DataTierGenerator {
 		// Handle the case where the generated text has more lines than the
 		// existing file but up to that point they were identical.  Don't
 		// know how that could happen, but this should handle it.
-		changed = !changed && fileLine != null;
+		if (fileLine != null) {
+		    changed = true;
+		}
 
 		fileReader.Close();
 		textReader.Close();
@@ -104,7 +108,7 @@ namespace Spring2.DataTierGenerator {
 
 	public String GetUsingNamespaces(Boolean isDaoClass) {
 
-	    IList namespaces = new ArrayList();
+	    ArrayList namespaces = new ArrayList();
 	    namespaces.Add("System");
 
 	    if (isDaoClass) {
@@ -124,9 +128,10 @@ namespace Spring2.DataTierGenerator {
 		}
 	    }
 
-
+	    Array names = namespaces.ToArray(typeof(String));
+	    Array.Sort(names);
 	    StringBuilder sb = new StringBuilder();
-	    foreach (String s in namespaces) {
+	    foreach (String s in names) {
 		sb.Append("using ").Append(s).Append(";\n");
 	    }
 
