@@ -4,6 +4,7 @@
 *###
 #set ($namespaces = "#nameSpaces($options $element false)")
 using Spring2.DataTierGenerator.Attribute;
+using System.Collections;
 
 $namespaces
 ## manually add the data object namespace -- should probably look this up
@@ -27,6 +28,8 @@ using ${options.RootNameSpace}.DataObject;
 #set ($len = $class.Length - 3)
 #set ($class = $class.Substring(0, $len))
 #set ($dataObjectClass = "${element.Name}Data")
+#set($identity = $element.GetIdentityField())
+
 namespace $namespace {
 
     /// <summary>
@@ -42,6 +45,11 @@ namespace $namespace {
 	[Generate]
 	private Boolean immutable = false;
 	
+#if($identity)
+	[Generate]
+	private Hashtable keys = new Hashtable();
+
+#end
 	[Generate]
 	private $class (Boolean immutable) {
 	        this.immutable = immutable;
@@ -51,6 +59,13 @@ namespace $namespace {
 	public ${class}() {
 	}
 
+#if($identity)
+	[Generate]
+	public ICollection Keys {
+	    get { return new ArrayList(keys.Keys); }	
+	}
+	
+#end
 	// Indexer implementation.
 	[Generate]
 	public $dataObjectClass this[int index] {
@@ -58,6 +73,9 @@ namespace $namespace {
 	    set { 
 		if (!immutable) {
 		    List[index] = value;
+#if($identity)
+		    keys[value.${identity.GetMethodFormat()}] = value;
+#end
 		} else {
 		    throw new System.Data.ReadOnlyException();
 		}
@@ -68,6 +86,9 @@ namespace $namespace {
 	public void Add(${dataObjectClass} value) {
 	    if (!immutable) {
 		List.Add(value);
+#if($identity)
+		keys[value.$identity.GetMethodFormat()] = value;
+#end
 	    } else {
 		throw new System.Data.ReadOnlyException();
 	    }
@@ -87,6 +108,9 @@ namespace $namespace {
 	public void Insert(Int32 index, ${dataObjectClass} value) {
 	    if (!immutable) {
 	    	List.Insert(index, value);
+#if($identity)
+		keys[value.$identity.GetMethodFormat()] = value;
+#end
 	    } else {
 		throw new System.Data.ReadOnlyException();
 	    }
@@ -98,6 +122,10 @@ namespace $namespace {
 		if (index > Count - 1 || index < 0) {
 		    throw new IndexOutOfRangeException();
 		} else {
+#if($identity)
+		    ${dataObjectClass} value = this[index];
+		    keys.Remove(value.$identity.GetMethodFormat());
+#end
 		    List.RemoveAt(index); 
 		}
 	    } else {
@@ -108,7 +136,10 @@ namespace $namespace {
 	[Generate]
 	public void Remove(${dataObjectClass} value) {
 	    if (!immutable) {
-		List.Remove(value); 
+		List.Remove(value);
+#if($identity)
+		keys.Remove(value.$identity.GetMethodFormat());
+#end
 	    } else {
 		throw new System.Data.ReadOnlyException();
 	    }
@@ -143,19 +174,13 @@ namespace $namespace {
 	}
 
 ## generate Contains method and indexer property by identity field, if one exists
-#set($identity = $element.GetIdentityField())
 #if($identity)
 	/// <summary>
 	/// See if the list contains an instance by identity
 	/// </summary>
 	[Generate]
 	public Boolean Contains($identity.Type.Name $identity.GetFieldFormat()) {
-	    foreach(${dataObjectClass} o in List) {
-		if (o.${identity.Name}.Equals($identity.GetFieldFormat())) {
-		    return true;
-		}
-	    }
-	    return false;
+	    return keys.Contains($identity.GetFieldFormat());
 	}
 
 	/// <summary>
@@ -163,16 +188,7 @@ namespace $namespace {
 	/// </summary>
 	[Generate]
 	public $dataObjectClass this[$identity.Type.Name $identity.GetFieldFormat()] {
-	    get { 
-		foreach($dataObjectClass o in List) {
-		    if (o.${identity.Name}.Equals($identity.GetFieldFormat())) {
-			return o;
-		    }
-		}
-
-		// not found
-		return null;
-	    }
+	    get { return keys[$identity.GetFieldFormat()] as $dataObjectClass; }
 	}
 	
 	/// <summary>
