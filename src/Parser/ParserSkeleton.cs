@@ -20,10 +20,10 @@ namespace Spring2.DataTierGenerator.Parser {
     public abstract class ParserSkeleton : IParser {
 
 	protected Configuration options = new Configuration();
-	protected ArrayList entities = new ArrayList();
-	protected ArrayList enumtypes = new ArrayList();
-	protected ArrayList collections = new ArrayList();
-	protected ArrayList databases = new ArrayList();
+	protected IList entities = new ArrayList();
+	protected IList enumtypes = new ArrayList();
+	protected IList collections = new ArrayList();
+	protected IList databases = new ArrayList();
 	protected Hashtable types = new Hashtable();
 	protected Hashtable sqltypes = new Hashtable();
 	protected Element.Generator generator = new Element.Generator();
@@ -55,19 +55,19 @@ namespace Spring2.DataTierGenerator.Parser {
 	}
 
 	public IList Databases {
-	    get { return (ArrayList)databases.Clone(); }
+	    get { return (ArrayList)((ArrayList)databases).Clone(); }
 	}
 
 	public IList Entities {
-	    get { return (ArrayList)entities.Clone(); }
+	    get { return (ArrayList)((ArrayList)entities).Clone(); }
 	}
 
 	public IList Enums {
-	    get { return (ArrayList)enumtypes.Clone(); }
+	    get { return (ArrayList)((ArrayList)enumtypes).Clone(); }
 	}
 
 	public IList Collections {
-	    get { return (ArrayList)collections.Clone(); }
+	    get { return (ArrayList)((ArrayList)collections).Clone(); }
 	}
 
 	public ICollection Types {
