@@ -11,6 +11,8 @@ using NVelocity.App;
 
 using Spring2.DataTierGenerator;
 using Spring2.DataTierGenerator.Generator.Writer;
+using Spring2.DataTierGenerator.Generator.Styler;
+
 
 namespace Spring2.DataTierGenerator.Generator {
 
@@ -21,7 +23,6 @@ namespace Spring2.DataTierGenerator.Generator {
 	public NVelocityGenerator() {
 	    InitNVelocity();
 	}
-
 
 	/// <summary>
 	/// Init the NVelocity singleton
@@ -42,7 +43,6 @@ namespace Spring2.DataTierGenerator.Generator {
 		}
 
 		foreach(ITask task in parser.Tasks) {
-//WriteToLog("executing task: " + task.Template);
 		    foreach(IElement element in task.Elements) {
 			GenerateFile(parser, element, task);
 		    }
@@ -79,9 +79,13 @@ namespace Spring2.DataTierGenerator.Generator {
 	    FileInfo file = new FileInfo(task.Directory + "\\" + String.Format(task.FileNameFormat, element.Name));
 	    String content = writer.ToString();
 	    if (content.Length > 0) {
-		IWriter w = WriterFactory.GetWriter(task.Writer);
+		IStyler s = parser.GetStyler(task.Styler);
+		if (s == null) {
+		    s = new NoStyler();
+		}
+		IWriter w = parser.GetWriter(task.Writer);
 		try {
-		    if (w.Write(file, content)) {
+		    if (w.Write(file, s.Style(content))) {
 			WriteToLog(w.Log);
 			WriteToLog("generating " + file.FullName);
 		    } 
