@@ -7,7 +7,6 @@ Todo:
 	- when loading property attributes, not all overridable values are being loaded (i.e. readerformat)
 	- DTD/Schema.  XML validation
 	- better validation on load
-    - parse enums as types, when parsing types
     - define default types and sqltypes so that they don't have to be defined in every config file if they are default.
     - DataObject, DAO, stored proc, view name formats specifiable in config.xml
 
@@ -21,3 +20,6 @@ Completed:
 	- DAO GetList method should return IList not ICollection
 	- load method does not take the correct parameters and types based on identity or primary key columns.
 	- configurable base classes for DataObjects, DAOs and Enums.
+    - parse enums as types, when parsing types
+
+	
