@@ -325,26 +325,6 @@ namespace Spring2.DataTierGenerator {
 	    return strParameter;
 	}
 
-	// static helper method
-	public static Field GetIdentityColumn(ArrayList fields) {
-	    foreach (Field field in fields) {
-		if (field.IsIdentity) {
-		    return field;
-		}
-	    }
-	    return new Field();   // this should not return this - should return null
-	}
-
-	public static Field FindFieldBySqlName(ArrayList fields, String name) {
-	    foreach (Field field in fields) {
-		if (field.SqlName == name) {
-		    return field;
-		}
-	    }
-	    return null;
-	}
-
-
 	public String ToXml(Boolean sqlAttributesOnly) {
 	    StringBuilder sb = new StringBuilder();
 	    sb.Append("<property name=\"").Append(name).Append("\"");

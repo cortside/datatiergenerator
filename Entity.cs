@@ -83,5 +83,40 @@ namespace Spring2.DataTierGenerator {
 			return has;
 		}
 
+	    public IList GetPrimaryKeyColumns() {
+		ArrayList list = new ArrayList();
+		Field id = GetIdentityColumn();
+		if (id != null && id.Name.Length>0) {
+		    list.Add(id);
+		} else {
+		    foreach (Field field in fields) {
+			if (field.IsPrimaryKey) {
+			    list.Add(field);
+			}
+		    }
+		}
+		return list;
+	    }
+
+	    // static helper method
+	    public Field GetIdentityColumn() {
+		foreach (Field field in fields) {
+		    if (field.IsIdentity) {
+			return field;
+		    }
+		}
+		return new Field();   // this should not return this - should return null
+	    }
+
+	    public Field FindFieldBySqlName(String name) {
+		foreach (Field field in fields) {
+		    if (field.SqlName == name) {
+			return field;
+		    }
+		}
+		return null;
+	    }
+
+
 	}
 }
