@@ -137,6 +137,7 @@ namespace Spring2.DataTierGenerator.Generator {
 	    // Append the execute statement
 	    writer.WriteLine(3, "// Execute the query");
 	    writer.WriteLine(3, "cmd.ExecuteNonQuery();");
+	    writer.WriteLine(3, "cmd.Connection.Close();");
 			
 	    // Append the parameter value extraction
 	    if (idField != null) {
@@ -192,6 +193,7 @@ namespace Spring2.DataTierGenerator.Generator {
 	    // Append the execute statement
 	    writer.WriteLine(3, "// Execute the query");
 	    writer.WriteLine(3, "cmd.ExecuteNonQuery();");
+	    writer.WriteLine(3, "cmd.Connection.Close();");
 						
 	    // Append the method footer
 	    writer.WriteLine(2, "}");
@@ -253,6 +255,7 @@ namespace Spring2.DataTierGenerator.Generator {
 		    // Append the execute statement
 		    writer.WriteLine(3, "// Execute the query and return the result");
 		    writer.WriteLine(3, "cmd.ExecuteNonQuery();");
+		    writer.WriteLine(3, "cmd.Connection.Close();");
 					
 		    // Append the method footer
 		    if (keyList.Count > 0) {
@@ -304,6 +307,7 @@ namespace Spring2.DataTierGenerator.Generator {
 		// Append the execute statement
 		writer.WriteLine(3, "// Execute the query and return the result");
 		writer.WriteLine(3, "cmd.ExecuteNonQuery();");
+		writer.WriteLine(3, "cmd.Connection.Close();");
 				
 		// Append the method footer
 		writer.WriteLine(2, "}");
