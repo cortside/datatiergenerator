@@ -145,6 +145,12 @@ namespace Spring2.DataTierGenerator.Parser {
 		}
 	    }
 
+	    // find and assign types to collections if available (the TypeElement is needed for templates that need to add namespaces)
+	    foreach(CollectionElement collection in Collections) {
+		if (types.Contains(collection.Type.Name)) {
+		    collection.Type = (TypeElement)types[collection.Type.Name];
+		}
+	    }
 
 	    foreach (TaskElement task in generator.Tasks) {
 		IWriter w = GetWriter(task.Writer);
