@@ -25,7 +25,7 @@ namespace Spring2.DataTierGenerator.Element {
 	    "|nonclustered|trigger|deallocate|not|truncate|declare|null|tsequal|default|nullif|union" +
 	    "|delete|of|unique|deny|off|update|desc|offsets|updatetext|disk|on|use|distinct|open|user" +
 	    "|distributed|opendatasource|values|double|openquery|varying|drop|openrowset|view|dummy" +
-	    "|openxml|waitfor|dump|option|when|else|or|where|end|order|while|errlvl|outer|with|escape|over|writetext|min|max|";
+	    "|openxml|waitfor|dump|option|when|else|or|where|end|order|while|errlvl|outer|with|escape|over|writetext|min|max|collate|";
 
 
 	protected String EscapeSqlName(String s) {

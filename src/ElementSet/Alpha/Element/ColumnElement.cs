@@ -23,6 +23,7 @@ namespace Spring2.DataTierGenerator.Element {
 	private static readonly String SEED = "seed";
 	private static readonly String FOREIGN_COLUMN = "foreigncolumn";
 	private static readonly String OBSOLETE = "obsolete";
+	private static readonly String COLLATE = "collate";
 
 	private SqlTypeElement sqlType = new SqlTypeElement();
 	private Boolean identity = false;
@@ -42,6 +43,7 @@ namespace Spring2.DataTierGenerator.Element {
 	private Int32 precision = 0;
 	private Int32 scale = 0;
 	private Boolean obsolete = false;
+	private String collate = String.Empty;
 
 	public String Formula {
 	    get { return this.formula; }
@@ -146,6 +148,14 @@ namespace Spring2.DataTierGenerator.Element {
 	}
 
 	/// <summary>
+	/// This is the SQL Collation to use on the column.
+	/// </summary>
+	public String Collate {
+	    get { return this.collate; }
+	    set { this.collate = value; }
+	}
+
+	/// <summary>
 	/// Parse only method. Parses and adds all entities found in the given node and adds them to the given
 	/// list.
 	/// </summary>
@@ -172,7 +182,8 @@ namespace Spring2.DataTierGenerator.Element {
 			columnElement.ForeignColumn = GetAttributeValue(columnNode, FOREIGN_COLUMN, columnElement.ForeignColumn);
 			columnElement.obsolete = Boolean.Parse(GetAttributeValue(columnNode, OBSOLETE, columnElement.Obsolete.ToString()));
 			columnElement.Description = columnNode.InnerText.Trim();
-		
+			columnElement.Collate = GetAttributeValue(columnNode, COLLATE, columnElement.Collate);
+
 			columnElements.Add(columnElement);
 		    }
 		}
@@ -251,6 +262,10 @@ namespace Spring2.DataTierGenerator.Element {
 			if (node.Attributes["obsolete"] != null) {
 			    column.Obsolete = Boolean.Parse(node.Attributes[OBSOLETE].Value);
 			}
+			if (node.Attributes[COLLATE] != null) {
+			    column.Collate = node.Attributes[COLLATE].Value;
+			}
+
 			column.Description = node.InnerText.Trim();
 
 			columns.Add(column);
@@ -312,7 +327,9 @@ namespace Spring2.DataTierGenerator.Element {
 	    if (!sortDirection.Equals(String.Empty)) {
 		sb.Append(" sortdirection=\"").Append(sortDirection).Append("\"");
 	    }
-
+	    if (!Collate.Equals(String.Empty)) {
+		sb.Append(" collate=\"").Append(Collate).Append("\"");
+	    }
 
 	    sb.Append(" />");
 

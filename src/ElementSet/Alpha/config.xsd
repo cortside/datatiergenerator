@@ -32,13 +32,13 @@
 									<xs:sequence>
 									    <xs:element name="propertyreference" minOccurs="1" maxOccurs="unbounded">
 										<xs:complexType>
-    										    <xs:simpleContent>
+										    <xs:simpleContent>
 											<xs:extension base="xs:string">
 											    <xs:attribute name="name" type="xs:string" />
 											    <xs:attribute name="alias" type="xs:string" />
 											    <xs:attribute name="groupby" type="BooleanEnum" />
 											    <xs:attribute name="groupfunction" type="xs:string" />
-    											</xs:extension>
+											</xs:extension>
 										    </xs:simpleContent>
 										</xs:complexType>
 									    </xs:element>
@@ -358,6 +358,7 @@
 											    <xs:attribute name="increment" type="xs:nonNegativeInteger" />
 											    <xs:attribute name="seed" type="xs:nonNegativeInteger" />
 											    <xs:attribute name="obsolete" type="BooleanEnum" />
+											    <xs:attribute name="collate" type="xs:string" />
 											</xs:extension>
 										    </xs:simpleContent>
 										</xs:complexType>
