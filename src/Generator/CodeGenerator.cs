@@ -39,7 +39,7 @@ namespace Spring2.DataTierGenerator.Generator {
 		}
 
 		foreach (Entity entity in parser.Entities) {
-		    IGenerator dogen = new DataObjectGenerator(options, entity);
+		    IGenerator dogen = new DataObjectGenerator(options, entity, (ArrayList)parser.Entities);
 		    dogen.Generate();
 		    IGenerator daogen = new DaoGenerator(options, entity);
 		    daogen.Generate();
