@@ -24,13 +24,8 @@ namespace Spring2.DataTierGenerator.Test {
 
 	public void Test_Sanity() {
 	    IParser parser = new XmlParser("..\\test\\sanity\\sanity.xml");
-	    IGenerator gen = new CodeGenerator(parser);
-	    //TODO: clean output directory
-	    gen.Generate();
 
-	    CompareResults("..\\test\\sanity", false);
-
-	    gen = new GeneratorTaskManager(parser);
+	    IGenerator gen = new GeneratorTaskManager(parser);
 	    //TODO: clean output directory
 	    gen.Generate();
 
