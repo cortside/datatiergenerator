@@ -76,7 +76,7 @@
                 />
                 <Reference
                     Name = "System.XML"
-                    AssemblyName = "System.XML"
+                    AssemblyName = "System.Xml"
                     HintPath = "..\..\..\..\WINNT\Microsoft.NET\Framework\v1.0.3705\System.XML.dll"
                 />
             </References>
@@ -108,6 +108,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Entity.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Field.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -126,6 +131,16 @@
                     RelPath = "Generator.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GeneratorBase.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "orders.xsx"
+                    DependentUpon = "orders.xsd"
+                    BuildAction = "None"
                 />
                 <File
                     RelPath = "SQLGenerator.cs"

@@ -4,6 +4,8 @@ using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
 using System.Text;
+using System.Xml;
+using System.Xml.Xsl;
 
 namespace Spring2.DataTierGenerator {
 	/// <summary>
@@ -33,6 +35,13 @@ namespace Spring2.DataTierGenerator {
 		private System.Windows.Forms.TextBox txtServerName;
 		private System.Windows.Forms.TextBox txtProjectNamespace;
 		private System.Windows.Forms.Label label2;
+		private System.Windows.Forms.Button loadXml;
+		private System.Windows.Forms.TextBox xmlConfigFilename;
+
+		private Configuration config;
+		private System.Windows.Forms.Button generateEntitesXML;
+
+		#region stuff that cort does not want to see
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -70,6 +79,8 @@ namespace Spring2.DataTierGenerator {
 			this.btnClose = new System.Windows.Forms.Button();
 			this.lnkEverythingSQL = new System.Windows.Forms.LinkLabel();
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
+			this.label2 = new System.Windows.Forms.Label();
+			this.txtProjectNamespace = new System.Windows.Forms.TextBox();
 			this.chkScriptDropStatement = new System.Windows.Forms.CheckBox();
 			this.chkGenerateDataObjects = new System.Windows.Forms.CheckBox();
 			this.chkUseViewsInStoreProc = new System.Windows.Forms.CheckBox();
@@ -87,8 +98,9 @@ namespace Spring2.DataTierGenerator {
 			this.txtDatabaseName = new System.Windows.Forms.TextBox();
 			this.lblServerName = new System.Windows.Forms.Label();
 			this.txtServerName = new System.Windows.Forms.TextBox();
-			this.txtProjectNamespace = new System.Windows.Forms.TextBox();
-			this.label2 = new System.Windows.Forms.Label();
+			this.loadXml = new System.Windows.Forms.Button();
+			this.xmlConfigFilename = new System.Windows.Forms.TextBox();
+			this.generateEntitesXML = new System.Windows.Forms.Button();
 			this.groupBox1.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.SuspendLayout();
@@ -97,7 +109,7 @@ namespace Spring2.DataTierGenerator {
 			// 
 			this.btnOK.Anchor = (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right);
 			this.btnOK.Enabled = false;
-			this.btnOK.Location = new System.Drawing.Point(192, 408);
+			this.btnOK.Location = new System.Drawing.Point(184, 608);
 			this.btnOK.Name = "btnOK";
 			this.btnOK.Size = new System.Drawing.Size(72, 23);
 			this.btnOK.TabIndex = 15;
@@ -107,7 +119,7 @@ namespace Spring2.DataTierGenerator {
 			// btnClose
 			// 
 			this.btnClose.Anchor = (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right);
-			this.btnClose.Location = new System.Drawing.Point(272, 408);
+			this.btnClose.Location = new System.Drawing.Point(264, 608);
 			this.btnClose.Name = "btnClose";
 			this.btnClose.Size = new System.Drawing.Size(72, 23);
 			this.btnClose.TabIndex = 16;
@@ -117,7 +129,7 @@ namespace Spring2.DataTierGenerator {
 			// lnkEverythingSQL
 			// 
 			this.lnkEverythingSQL.LinkBehavior = System.Windows.Forms.LinkBehavior.HoverUnderline;
-			this.lnkEverythingSQL.Location = new System.Drawing.Point(16, 448);
+			this.lnkEverythingSQL.Location = new System.Drawing.Point(8, 648);
 			this.lnkEverythingSQL.Name = "lnkEverythingSQL";
 			this.lnkEverythingSQL.Size = new System.Drawing.Size(336, 23);
 			this.lnkEverythingSQL.TabIndex = 20;
@@ -141,10 +153,28 @@ namespace Spring2.DataTierGenerator {
 																					this.chkSingleFile});
 			this.groupBox1.Location = new System.Drawing.Point(8, 168);
 			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(344, 232);
+			this.groupBox1.Size = new System.Drawing.Size(344, 296);
 			this.groupBox1.TabIndex = 29;
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "Generation Options";
+			// 
+			// label2
+			// 
+			this.label2.Location = new System.Drawing.Point(8, 192);
+			this.label2.Name = "label2";
+			this.label2.Size = new System.Drawing.Size(104, 16);
+			this.label2.TabIndex = 37;
+			this.label2.Text = "Project Namespace";
+			// 
+			// txtProjectNamespace
+			// 
+			this.txtProjectNamespace.Anchor = ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+				| System.Windows.Forms.AnchorStyles.Right);
+			this.txtProjectNamespace.Location = new System.Drawing.Point(120, 184);
+			this.txtProjectNamespace.Name = "txtProjectNamespace";
+			this.txtProjectNamespace.Size = new System.Drawing.Size(216, 20);
+			this.txtProjectNamespace.TabIndex = 36;
+			this.txtProjectNamespace.Text = "";
 			// 
 			// chkScriptDropStatement
 			// 
@@ -311,36 +341,46 @@ namespace Spring2.DataTierGenerator {
 			this.txtServerName.TabIndex = 22;
 			this.txtServerName.Text = "";
 			// 
-			// txtProjectNamespace
+			// loadXml
 			// 
-			this.txtProjectNamespace.Anchor = ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-				| System.Windows.Forms.AnchorStyles.Right);
-			this.txtProjectNamespace.Location = new System.Drawing.Point(120, 184);
-			this.txtProjectNamespace.Name = "txtProjectNamespace";
-			this.txtProjectNamespace.Size = new System.Drawing.Size(216, 20);
-			this.txtProjectNamespace.TabIndex = 36;
-			this.txtProjectNamespace.Text = "";
+			this.loadXml.Location = new System.Drawing.Point(272, 480);
+			this.loadXml.Name = "loadXml";
+			this.loadXml.TabIndex = 31;
+			this.loadXml.Text = "Load XML";
+			this.loadXml.Click += new System.EventHandler(this.loadXml_Click);
 			// 
-			// label2
+			// xmlConfigFilename
 			// 
-			this.label2.Location = new System.Drawing.Point(8, 192);
-			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(104, 16);
-			this.label2.TabIndex = 37;
-			this.label2.Text = "Project Namespace";
+			this.xmlConfigFilename.Location = new System.Drawing.Point(8, 480);
+			this.xmlConfigFilename.Name = "xmlConfigFilename";
+			this.xmlConfigFilename.Size = new System.Drawing.Size(256, 20);
+			this.xmlConfigFilename.TabIndex = 32;
+			this.xmlConfigFilename.Text = "";
+			// 
+			// generateEntitesXML
+			// 
+			this.generateEntitesXML.Location = new System.Drawing.Point(256, 552);
+			this.generateEntitesXML.Name = "generateEntitesXML";
+			this.generateEntitesXML.Size = new System.Drawing.Size(88, 23);
+			this.generateEntitesXML.TabIndex = 33;
+			this.generateEntitesXML.Text = "Generate XML";
+			this.generateEntitesXML.Click += new System.EventHandler(this.generateEntitesXML_Click);
 			// 
 			// frmMain
 			// 
 			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-			this.ClientSize = new System.Drawing.Size(358, 466);
+			this.ClientSize = new System.Drawing.Size(358, 666);
 			this.Controls.AddRange(new System.Windows.Forms.Control[] {
+																		  this.generateEntitesXML,
+																		  this.xmlConfigFilename,
+																		  this.loadXml,
 																		  this.groupBox2,
 																		  this.groupBox1,
 																		  this.lnkEverythingSQL,
 																		  this.btnOK,
 																		  this.btnClose});
-			this.MaximumSize = new System.Drawing.Size(1600, 500);
-			this.MinimumSize = new System.Drawing.Size(366, 500);
+			this.MaximumSize = new System.Drawing.Size(1800, 700);
+			this.MinimumSize = new System.Drawing.Size(366, 700);
 			this.Name = "frmMain";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
 			this.Text = "Data Tier Generator";
@@ -358,9 +398,12 @@ namespace Spring2.DataTierGenerator {
 		static void Main() {
 			Application.Run(new frmMain());
 		}
+#endregion
 
+
+		#region Button click handlers
 		private void EnableOK()	{
-			if (txtServerName.Text.Length == 0 || txtDatabaseName.Text.Length == 0 || txtUserID.Text.Length == 0 || (!chkBlankPassword.Checked & txtPassword.Text.Length == 0))
+			if (txtServerName.Text.Length == 0 || txtDatabaseName.Text.Length == 0 || txtUserID.Text.Length == 0)
 				btnOK.Enabled = false;
 			else
 				btnOK.Enabled = true;
@@ -383,37 +426,20 @@ namespace Spring2.DataTierGenerator {
 		}
 
 		private void btnOK_Click(object sender, System.EventArgs e) {
-			StringBuilder	objStringBuilder;
-			Generator	objGenerator;
+			Generator objGenerator;
 
-			try {
-				// Build the database connection string
-				objStringBuilder = new StringBuilder(255);
-				objStringBuilder.Append("Data Source = " + txtServerName.Text + ";");
-				objStringBuilder.Append("Initial Catalog = " + txtDatabaseName.Text + ";");
-				objStringBuilder.Append("User ID = " + txtUserID.Text + ";");
-				objStringBuilder.Append("Password = " + txtPassword.Text + ";");
-				
-				// Generate the SQL and C#
-                Configuration options = new Configuration();
-                options.ConnectionString = objStringBuilder.ToString();
-                options.StoredProcNameFormat = txtStoreProcNameFormatString.Text;
-                options.SingleFile = chkSingleFile.Checked;
-                options.CreateViews = chkCreateViews.Checked;
-                options.UseViews = chkUseViewsInStoreProc.Checked;
-                options.CreateDataObjects = chkGenerateDataObjects.Checked;
-                options.ScriptDropStatement = chkScriptDropStatement.Checked;
-                options.ProjectNameSpace = txtProjectNamespace.Text;
+//			try {
+				GetDataFromForm();
 
-				objGenerator = new Generator(options);
+				objGenerator = new Generator(config);
 				objGenerator.ProcessTables();
 				objGenerator = null;
 
 				// Alert the user everything went ok
 				MessageBox.Show("Data tier generated successfully.");
-			} catch (Exception objException) {
-				MessageBox.Show("An error occcurred while generating the data tier.\n\n" + objException.Message);
-			}
+//			} catch (Exception objException) {
+//				MessageBox.Show("An error occcurred while generating the data tier.\n\n" + objException.Message);
+//			}
 		}
 
 		private void btnClose_Click(object sender, System.EventArgs e) {
@@ -439,23 +465,108 @@ namespace Spring2.DataTierGenerator {
 				chkUseViewsInStoreProc.Enabled = false;
 		}
 
-		private void frmMain_Load(object sender, System.EventArgs e) {
-			txtServerName.Text = "hal";
-			txtDatabaseName.Text = "cort_seamless";
-			txtUserID.Text = "sa";
-            txtPassword.Text = "";
-			chkBlankPassword.Checked = true;
+		#endregion
 
-			txtProjectNamespace.Text = "Seamless.Manhattan";
-
-			chkCreateViews.Checked = true;
-			chkUseViewsInStoreProc.Checked = true;
-			chkGenerateDataObjects.Checked = true;
-			chkScriptDropStatement.Checked = true;
-
-			EnableOK();
-			chkCreateViews_CheckedChanged(null, null);
+		private void GetDataFromForm() {
+			// update with form settings
+			config.Server = txtServerName.Text;
+			config.Database = txtDatabaseName.Text;
+			config.User = txtUserID.Text;
+			config.Password = txtPassword.Text;
+			config.StoredProcNameFormat = txtStoreProcNameFormatString.Text;
+			config.SingleFile = chkSingleFile.Checked;
+			config.CreateViews = chkCreateViews.Checked;
+			config.UseViews = chkUseViewsInStoreProc.Checked;
+			config.CreateDataObjects = chkGenerateDataObjects.Checked;
+			config.ScriptDropStatement = chkScriptDropStatement.Checked;
+			config.ProjectNameSpace = txtProjectNamespace.Text;
+			config.XmlConfigFilename = xmlConfigFilename.Text;
 		}
+
+		private void PopulateForm() {
+			// update with form settings
+			txtServerName.Text = config.Server;
+			txtDatabaseName.Text = config.Database;
+			txtUserID.Text = config.User;
+			txtPassword.Text = config.Password;
+			txtStoreProcNameFormatString.Text = config.StoredProcNameFormat;
+			chkSingleFile.Checked = config.SingleFile;
+			chkCreateViews.Checked = config.CreateViews;
+			chkUseViewsInStoreProc.Checked = config.UseViews;
+			chkGenerateDataObjects.Checked = config.CreateDataObjects;
+			chkScriptDropStatement.Checked = config.ScriptDropStatement;
+			txtProjectNamespace.Text = config.ProjectNameSpace;
+			xmlConfigFilename.Text = config.XmlConfigFilename;
+			EnableOK();
+		}
+
+		private void frmMain_Load(object sender, System.EventArgs e) {
+			config = new Configuration();
+			config.XmlConfigFilename = "..\\..\\config.xml";
+			PopulateForm();
+		}
+
+		private void loadXml_Click(object sender, System.EventArgs e) {
+//			XmlDocument doc = new XmlDocument();
+//
+//			doc.Load("..\\..\\orders.xml");
+//			XslTransform tfm = new XslTransform();
+//			System.IO.StringWriter newDoc = new System.IO.StringWriter();
+//			tfm.Load("..\\..\\transform.xslt");
+//			tfm.Transform(doc.CreateNavigator(), new System.Xml.Xsl.XsltArgumentList(), newDoc);
+			//Console.Out.WriteLine(newDoc.ToString());
+
+			//doc.Load("..\\..\\config.xml");
+			//EnumerateEntities(doc.DocumentElement["entities"]);
+			//EnumerateEntities(doc.DocumentElement["enums"]);
+
+			//Configuration config = GetDataFromForm();
+			//Console.Out.WriteLine(config.ToString());
+
+			XmlDocument doc = new XmlDocument();
+			
+			doc.Load(xmlConfigFilename.Text);
+			XmlNode root = doc.DocumentElement["config"];
+			if (root != null) {
+				config = new Configuration(root);
+				config.XmlConfigFilename = xmlConfigFilename.Text;
+				PopulateForm();
+			}
+		}
+
+		private void EnumerateEntities(XmlNode root) {
+			for (Int32 i = 0; i< root.ChildNodes.Count; i++) {
+				XmlNode nodeOuter = root.ChildNodes[i];
+				Console.Out.WriteLine(nodeOuter.Name);
+				if (nodeOuter.HasChildNodes) {
+					for (Int32 j =0; j<nodeOuter.ChildNodes.Count; j++) {
+						XmlNode nodeInner = nodeOuter.ChildNodes[j];
+						Console.Out.WriteLine("\t" + nodeInner.Name + " " + nodeInner.InnerText);
+						if (nodeInner.Attributes != null) {
+							for (Int32 k =0; k<nodeInner.Attributes.Count; k++) {
+								Console.Out.WriteLine("\t\t" + nodeInner.Attributes[k].Name + " " + nodeInner.Attributes[k].Value);
+							}
+						}
+					}
+				}
+			}
+		}
+
+		private void generateEntitesXML_Click(object sender, System.EventArgs e) {
+			Generator objGenerator;
+
+			GetDataFromForm();
+
+			objGenerator = new Generator(config);
+			objGenerator.GenerateXML();
+			objGenerator = null;
+
+			// Alert the user everything went ok
+			MessageBox.Show("Data tier generated successfully.");
+		
+		}
+
+
 
 	}
 }

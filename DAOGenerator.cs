@@ -8,21 +8,13 @@ namespace Spring2.DataTierGenerator {
     /// <summary>
     /// Generates stored procedures and associated data access code for the specified database.
     /// </summary>
-    public class DAOGenerator {
-        private StreamWriter writer;
-        private Configuration options;
-        private String table;
-        private ArrayList fields;
+    public class DAOGenerator : GeneratorBase {
 
         /// <summary>
         /// Contructor for the Generator class.
         /// </summary>
         /// <param name="strConnectionString">Connecion string to a SQL Server database.</param>
-        public DAOGenerator(Configuration options, StreamWriter writer, String table, ArrayList fields) {
-            this.options = options;
-            this.writer = writer;
-            this.table = table;
-            this.fields = fields;
+        public DAOGenerator(Configuration options, StreamWriter writer, Entity entity, ArrayList fields) : base(options, writer, entity, fields) {
         }
 		
 
@@ -47,12 +39,24 @@ namespace Spring2.DataTierGenerator {
 			sb.Append("using Spring2.Core.DAO;\n");
             sb.Append("using ").Append(options.GetDONameSpace(null)).Append(";\n");
 
+			if (options.UseDataTypes) {
+				Hashtable namespaces = new Hashtable();
+				foreach (Field field in fields) {
+					if (!namespaces.Contains(field.DataTypeNamespace)) {
+						namespaces.Add(field.DataTypeNamespace, field.DataTypeNamespace);
+					}
+				}
+				foreach (Object o in namespaces.Keys) {
+					sb.Append("using ").Append(o.ToString()).Append(";\n");
+				}
+			}
+
             sb.Append("\n");
-            sb.Append("namespace " + options.GetDAONameSpace(table) + " {\n");
-            sb.Append("\tpublic class " + options.GetDAOClassName(table) + " : Spring2.Core.DAO.EntityDAO {\n");
+            sb.Append("namespace " + options.GetDAONameSpace(entity.Name) + " {\n");
+            sb.Append("\tpublic class " + options.GetDAOClassName(entity.Name) + " : Spring2.Core.DAO.EntityDAO {\n");
 
             //sb.Append("\n\t\tprivate readonly String TABLE=\"").Append(table).Append("\";\n\n");
-            sb.Append("\n\t\tprivate readonly String VIEW=\"vw").Append(table).Append("\";\n\n");
+            sb.Append("\n\t\tprivate readonly String VIEW=\"vw").Append(entity.Name).Append("\";\n\n");
 
             CreateDAOListMethods(sb);
 
@@ -73,7 +77,7 @@ namespace Spring2.DataTierGenerator {
             sb.Append("}\n");
 
             // Create the output stream
-            strFileName = options.RootDirectory + options.DaoClassDirectory + "\\" + options.GetDAOClassName(table) + ".cs";
+            strFileName = options.RootDirectory + options.DaoClassDirectory + "\\" + options.GetDAOClassName(entity.Name) + ".cs";
             if (File.Exists(strFileName))
                 File.Delete(strFileName);
             objStreamWriter = new StreamWriter(strFileName);
@@ -97,7 +101,7 @@ namespace Spring2.DataTierGenerator {
 			
             // Append the method header
             sb.Append("\t\t/// <summary>\n");
-            sb.Append("\t\t/// Inserts a record into the " + table + " table.\n");
+            sb.Append("\t\t/// Inserts a record into the " + entity.Name + " table.\n");
             sb.Append("\t\t/// </summary>\n");
             sb.Append("\t\t/// <param name=\"\"></param>\n");
 			
@@ -132,7 +136,7 @@ namespace Spring2.DataTierGenerator {
             */			
 
             // Append the method call parameters - data object
-            sb.Append(table).Append("Data data, ");
+            sb.Append(entity.Name).Append("Data data, ");
 
             // Append the connection string parameter
             sb.Append("SqlConnection connection");
@@ -148,7 +152,7 @@ namespace Spring2.DataTierGenerator {
             // Append the try block
 //            sb.Append("\t\t\ttry {\n");
 
-			sb.Append(GetCreateCommandSection(options.GetProcName(table, "Insert")));
+			sb.Append(GetCreateCommandSection(options.GetProcName(entity.Name, "Insert")));
 			
             sb.Append("\t\t\t\tSqlParameter rv = objCommand.Parameters.Add(\"RETURN_VALUE\", SqlDbType.Int);\n");
             sb.Append("\t\t\t\trv.Direction = ParameterDirection.ReturnValue;\n");
@@ -161,7 +165,7 @@ namespace Spring2.DataTierGenerator {
 					if (objField.IsIdentity || objField.IsRowGuidCol) {
 						//sb.Append("\t\t\t\t" + objField.CreateSqlParameter(true, true));
 					} else {
-						sb.Append("\t\t\t\t" + objField.CreateSqlParameter(false, true));
+						sb.Append("\t\t\t\t" + objField.CreateSqlParameter(false, true, options.UseDataTypes));
 					}
                 }
                 objField = null;
@@ -188,7 +192,7 @@ namespace Spring2.DataTierGenerator {
 			
             // Append the catch block
 //            sb.Append("\t\t\t} catch (Exception objException) {\n");
-//            sb.Append("\t\t\t\tthrow (new Exception(\"" + table.Replace(" ", "_") + ".Insert\\n\\n\" + objException.Message));\n");
+//            sb.Append("\t\t\t\tthrow (new Exception(\"" + entity.Name.Replace(" ", "_") + ".Insert\\n\\n\" + objException.Message));\n");
 //            sb.Append("\t\t\t}\n");
 			
             // Append the method footer
@@ -211,7 +215,7 @@ namespace Spring2.DataTierGenerator {
 			
             // Append the method header
             sb.Append("\t\t/// <summary>\n");
-            sb.Append("\t\t/// Updates a record in the " + table + " table.\n");
+            sb.Append("\t\t/// Updates a record in the " + entity.Name + " table.\n");
             sb.Append("\t\t/// </summary>\n");
             sb.Append("\t\t/// <param name=\"\"></param>\n");
             sb.Append("\t\tpublic void Update(");
@@ -240,7 +244,7 @@ namespace Spring2.DataTierGenerator {
                         }
             */
             // Append the method call parameters - data object
-            sb.Append(table).Append("Data data, ");
+            sb.Append(entity.Name).Append("Data data, ");
 
 			
             // Append the connection string parameter
@@ -257,7 +261,7 @@ namespace Spring2.DataTierGenerator {
             // Append the try block
 //            sb.Append("\t\t\ttry {\n");
 
-			sb.Append(GetCreateCommandSection(options.GetProcName(table, "Update")));
+			sb.Append(GetCreateCommandSection(options.GetProcName(entity.Name, "Update")));
 			
             // Append the parameter appends  ;)
             sb.Append("\t\t\t\t//Create the parameters and append them to the command object\n");
@@ -273,7 +277,7 @@ namespace Spring2.DataTierGenerator {
 //                        objNewField.ColumnName = "New" + objNewField.ColumnName;
 //                        sb.Append("\t\t\t\t" + objNewField.CreateSqlParameter(false, true));
 //                    } else {
-                        sb.Append("\t\t\t\t" + objField.CreateSqlParameter(false, true));
+                        sb.Append("\t\t\t\t" + objField.CreateSqlParameter(false, true, options.UseDataTypes));
 //                    }
                 }
                 objField = null;
@@ -286,7 +290,7 @@ namespace Spring2.DataTierGenerator {
 			
             // Append the catch block
 //            sb.Append("\t\t\t} catch (Exception objException) {\n");
-//            sb.Append("\t\t\t\tthrow (new Exception(\"" + table.Replace(" ", "_") + ".Update\\n\\n\" + objException.Message));\n");
+//            sb.Append("\t\t\t\tthrow (new Exception(\"" + entity.Name.Replace(" ", "_") + ".Update\\n\\n\" + objException.Message));\n");
 //            sb.Append("\t\t\t}\n");
 			
             // Append the method footer
@@ -340,7 +344,7 @@ namespace Spring2.DataTierGenerator {
 
                     // Append the method header
                     sb.Append("\t\t/// <summary>\n");
-                    sb.Append("\t\t/// Deletes a record from the " + table + " table by " + objField.ColumnName + ".\n");
+                    sb.Append("\t\t/// Deletes a record from the " + entity.Name + " table by " + objField.ColumnName + ".\n");
                     sb.Append("\t\t/// </summary>\n");
                     sb.Append("\t\t/// <param name=\"\"></param>\n");
                     //sb.Append("\t\tpublic void DeleteBy" + strColumnName.Replace(" ", "_") + "(" + objField.CreateMethodParameter() + ", SqlConnection connection) {\n");
@@ -354,11 +358,11 @@ namespace Spring2.DataTierGenerator {
                     // Append the try block
 //                    sb.Append("\t\t\ttry {\n");
 
-					sb.Append(GetCreateCommandSection(options.GetProcName(table, methodName)));
+					sb.Append(GetCreateCommandSection(options.GetProcName(entity.Name, methodName)));
 
                     // Append the parameters
                     sb.Append("\t\t\t\t// Create and append the parameters\n");
-                    sb.Append("\t\t\t\t" + objField.CreateSqlParameter(false, false));
+                    sb.Append("\t\t\t\t" + objField.CreateSqlParameter(false, false, options.UseDataTypes));
                     sb.Append("\n");
 
                     // Append the execute statement
@@ -385,7 +389,7 @@ namespace Spring2.DataTierGenerator {
             if (arrKeyList.Count > 1) {
                 // Append the method header
                 sb.Append("\t\t/// <summary>\n");
-                sb.Append("\t\t/// Deletes a record from the " + table + " table by a composite primary key.\n");
+                sb.Append("\t\t/// Deletes a record from the " + entity.Name + " table by a composite primary key.\n");
                 sb.Append("\t\t/// </summary>\n");
                 sb.Append("\t\t/// <param name=\"\"></param>\n");
 
@@ -411,13 +415,13 @@ namespace Spring2.DataTierGenerator {
                 // Append the try block
 //                sb.Append("\t\t\ttry {\n");
 
-				sb.Append(GetCreateCommandSection(options.GetProcName(table, methodName)));
+				sb.Append(GetCreateCommandSection(options.GetProcName(entity.Name, methodName)));
 
                 // Append the parameters
                 sb.Append("\t\t\t\t// Create and append the parameters\n");
                 for (intIndex = 0; intIndex < arrKeyList.Count; intIndex++) {
                     objField = (Field)arrKeyList[intIndex];
-                    sb.Append("\t\t\t\t" + objField.CreateSqlParameter(false, false));
+                    sb.Append("\t\t\t\t" + objField.CreateSqlParameter(false, false, options.UseDataTypes));
                     objField = null;
                 }
                 sb.Append("\n");
@@ -428,7 +432,7 @@ namespace Spring2.DataTierGenerator {
 				
                 // Append the catch block
 //                sb.Append("\t\t\t} catch (Exception objException) {\n");
-//                sb.Append("\t\t\t\tthrow (new Exception(\"" + table.Replace(" ", "_") + "." + methodName + "\\n\\n\" + objException.Message));\n");
+//                sb.Append("\t\t\t\tthrow (new Exception(\"" + entity.Name.Replace(" ", "_") + "." + methodName + "\\n\\n\" + objException.Message));\n");
 //                sb.Append("\t\t\t}\n");
 				
                 // Append the method footer
@@ -473,7 +477,7 @@ namespace Spring2.DataTierGenerator {
 			
             // Append the method header
             sb.Append("\t\t/// <summary>\n");
-            sb.Append("\t\t/// Selects a record from the " + table + " table.\n");
+            sb.Append("\t\t/// Selects a record from the " + entity.Name + " table.\n");
             sb.Append("\t\t/// </summary>\n");
             sb.Append("\t\t/// <param name=\"\"></param>\n");
             sb.Append("\t\tpublic SqlDataReader Select(SqlConnection connection) {\n");
@@ -486,7 +490,7 @@ namespace Spring2.DataTierGenerator {
             // Append the try block
             sb.Append("\t\t\ttry {\n");
 
-			sb.Append(GetCreateCommandSection(options.GetProcName(table, "Select")));
+			sb.Append(GetCreateCommandSection(options.GetProcName(entity.Name, "Select")));
 
             // Append the execute statement
             sb.Append("\t\t\t\t// Execute the query and return the result\n");
@@ -494,7 +498,7 @@ namespace Spring2.DataTierGenerator {
 			
             // Append the catch block
             sb.Append("\t\t\t} catch (Exception objException) {\n");
-            sb.Append("\t\t\t\tthrow (new Exception(\"" + table.Replace(" ", "_") + ".Select\\n\\n\" + objException.Message));\n");
+            sb.Append("\t\t\t\tthrow (new Exception(\"" + entity.Name.Replace(" ", "_") + ".Select\\n\\n\" + objException.Message));\n");
             sb.Append("\t\t\t}\n");
 			
             // Append the method footer
@@ -510,7 +514,7 @@ namespace Spring2.DataTierGenerator {
 				
                     // Append the method header
                     sb.Append("\t\t/// <summary>\n");
-                    sb.Append("\t\t/// Selects a record from the " + table + " table by " + objField.ColumnName + ".\n");
+                    sb.Append("\t\t/// Selects a record from the " + entity.Name + " table by " + objField.ColumnName + ".\n");
                     sb.Append("\t\t/// </summary>\n");
                     sb.Append("\t\t/// <param name=\"\"></param>\n");
                     sb.Append("\t\tpublic SqlDataReader SelectBy" + strColumnName.Replace(" ", "_") + "(" + objField.CreateMethodParameter() + ", SqlConnection connection) {\n");
@@ -523,11 +527,11 @@ namespace Spring2.DataTierGenerator {
                     // Append the try block
                     sb.Append("\t\t\ttry {\n");
 
-					sb.Append(GetCreateCommandSection(options.GetProcName(table, options.GetProcName(table, "SelectBy" + strColumnName.Replace(" ", "_")))));
+					sb.Append(GetCreateCommandSection(options.GetProcName(entity.Name, options.GetProcName(entity.Name, "SelectBy" + strColumnName.Replace(" ", "_")))));
 
                     // Append the parameters
                     sb.Append("\t\t\t\t// Create and append the parameters\n");
-                    sb.Append("\t\t\t\t" + objField.CreateSqlParameter(false, false));
+                    sb.Append("\t\t\t\t" + objField.CreateSqlParameter(false, false, options.UseDataTypes));
                     sb.Append("\n");
 
                     // Append the execute statement
@@ -536,7 +540,7 @@ namespace Spring2.DataTierGenerator {
 					
                     // Append the catch block
                     sb.Append("\t\t\t} catch (Exception objException) {\n");
-                    sb.Append("\t\t\t\tthrow (new Exception(\"" + table.Replace(" ", "_") + ".SelectBy" + strColumnName.Replace(" ", "_") + "\\n\\n\" + objException.Message));\n");
+                    sb.Append("\t\t\t\tthrow (new Exception(\"" + entity.Name.Replace(" ", "_") + ".SelectBy" + strColumnName.Replace(" ", "_") + "\\n\\n\" + objException.Message));\n");
                     sb.Append("\t\t\t}\n");
 					
                     // Append the method footer
@@ -554,7 +558,7 @@ namespace Spring2.DataTierGenerator {
             if (arrKeyList.Count > 1) {
                 // Append the method header
                 sb.Append("\t\t/// <summary>\n");
-                sb.Append("\t\t/// Selects a record from the " + table + " table by a composite primary key.\n");
+                sb.Append("\t\t/// Selects a record from the " + entity.Name + " table by a composite primary key.\n");
                 sb.Append("\t\t/// </summary>\n");
                 sb.Append("\t\t/// <param name=\"\"></param>\n");
 				
@@ -573,13 +577,13 @@ namespace Spring2.DataTierGenerator {
                 // Append the try block
                 sb.Append("\t\t\ttry {\n");
 
-				sb.Append(GetCreateCommandSection(options.GetProcName(table, options.GetProcName(table, "SelectBy" + strPrimaryKeyList))));
+				sb.Append(GetCreateCommandSection(options.GetProcName(entity.Name, options.GetProcName(entity.Name, "SelectBy" + strPrimaryKeyList))));
 
                 // Append the parameters
                 sb.Append("\t\t\t\t// Create and append the parameters\n");
                 for (intIndex = 0; intIndex < arrKeyList.Count; intIndex++) {
                     objField = (Field)arrKeyList[intIndex];
-                    sb.Append("\t\t\t\t" + objField.CreateSqlParameter(false, false));
+                    sb.Append("\t\t\t\t" + objField.CreateSqlParameter(false, false, options.UseDataTypes));
                     objField = null;
                 }
                 sb.Append("\n");
@@ -590,7 +594,7 @@ namespace Spring2.DataTierGenerator {
 				
                 // Append the catch block
                 sb.Append("\t\t\t} catch (Exception objException) {\n");
-                sb.Append("\t\t\t\tthrow (new Exception(\"" + table.Replace(" ", "_") + ".SelectBy" + strPrimaryKeyList + "\\n\\n\" + objException.Message));\n");
+                sb.Append("\t\t\t\tthrow (new Exception(\"" + entity.Name.Replace(" ", "_") + ".SelectBy" + strPrimaryKeyList + "\\n\\n\" + objException.Message));\n");
                 sb.Append("\t\t\t}\n");
 				
                 // Append the method footer
@@ -667,7 +671,7 @@ namespace Spring2.DataTierGenerator {
 //            sb.Append("\t\t}\n");
 //            sb.Append("\n");			
 
-            sb.Append("\t\tpublic ").Append(options.GetDOClassName(table)).Append(" Load(Int32 id, SqlConnection connection) {\n");
+            sb.Append("\t\tpublic ").Append(options.GetDOClassName(entity.Name)).Append(" Load(Int32 id, SqlConnection connection) {\n");
 			sb.Append("\t\t	SqlDataReader dataReader = GetListReader(new WhereClause(\"").Append(Field.GetIdentityColumn(fields)).Append("\", id), null, connection);\n");
             sb.Append("\t\t    \n");
             sb.Append("\t\t	dataReader.Read();\n");
@@ -675,21 +679,36 @@ namespace Spring2.DataTierGenerator {
             sb.Append("\t\t}\n");
             sb.Append("\n");			
 
-            sb.Append("\t\tprivate ").Append(options.GetDOClassName(table)).Append(" GetDataObjectFromReader(SqlDataReader dataReader) {\n");
-            sb.Append("\t\t	").Append(options.GetDOClassName(table)).Append(" data = new ").Append(options.GetDOClassName(table)).Append("();\n");
+            sb.Append("\t\tprivate ").Append(options.GetDOClassName(entity.Name)).Append(" GetDataObjectFromReader(SqlDataReader dataReader) {\n");
+            sb.Append("\t\t	").Append(options.GetDOClassName(entity.Name)).Append(" data = new ").Append(options.GetDOClassName(entity.Name)).Append("();\n");
 
-            for (intIndex = 0; intIndex < fields.Count; intIndex++) {
-                objField = (Field)fields[intIndex];
-				switch (objField.ReaderType.ToLower()) {
-					case "bytes":
-						sb.Append("\t\t\tdataReader.GetBytes(").Append(intIndex).Append(", 0, data.").Append(objField.ColumnName).Append(", 0, ").Append(objField.Length).Append(");\n");
-						break;
-					default: 
-						sb.Append("\t\t\tdata.").Append(objField.ColumnName).Append(" = ").Append("dataReader.Get").Append(objField.ReaderType).Append("(").Append(intIndex).Append(");\n");
-						break;
+			for (intIndex = 0; intIndex < fields.Count; intIndex++) {
+				objField = (Field)fields[intIndex];
+				if (options.UseDataTypes) {
+					switch(objField.SqlType.ToLower()) {
+						case "image":
+							sb.Append("\t\t\t//dataReader.GetBytes(").Append("dataReader.GetOrdinal(\"").Append(objField.ColumnName).Append("\")").Append(", 0, data.").Append(objField.ColumnName).Append(", 0, ").Append(objField.Length).Append(");\n");
+							break;
+						default: 
+							if (objField.Constructor.Length>0) {
+								sb.Append("\t\t\tdata.").Append(objField.GetMethodFormat()).Append(" = dataReader.IsDBNull(dataReader.GetOrdinal(\"").Append(objField.ColumnName).Append("\")) ? ").Append(objField.DataTypeClass).Append(".UNSET : ").Append("").Append(objField.DataTypeClass).Append(".").Append(objField.Constructor).Append("(dataReader.Get").Append(objField.ReaderType).Append("(").Append("dataReader.GetOrdinal(\"").Append(objField.ColumnName).Append("\")").Append("));\n");
+							} else {
+								sb.Append("\t\t\tdata.").Append(objField.GetMethodFormat()).Append(" = dataReader.IsDBNull(dataReader.GetOrdinal(\"").Append(objField.ColumnName).Append("\")) ? ").Append(objField.DataTypeClass).Append(".UNSET : ").Append("new ").Append(objField.DataTypeClass).Append("(dataReader.Get").Append(objField.ReaderType).Append("(").Append("dataReader.GetOrdinal(\"").Append(objField.ColumnName).Append("\")").Append("));\n");
+							}
+							break;
+					}
+				} else {
+					switch (objField.SqlType.ToLower()) {
+						case "bytes":
+							sb.Append("\t\t\t//dataReader.GetBytes(").Append("dataReader.GetOrdinal(\"").Append(objField.ColumnName).Append("\")").Append(", 0, data.").Append(objField.ColumnName).Append(", 0, ").Append(objField.Length).Append(");\n");
+							break;
+						default: 
+							sb.Append("\t\t\tdata.").Append(objField.ColumnName).Append(" = ").Append("dataReader.Get").Append(objField.ReaderType).Append("(").Append("dataReader.GetOrdinal(\"").Append(objField.ColumnName).Append("\")").Append(");\n");
+							break;
+					}
 				}
-                objField = null;
-            }
+				objField = null;
+			}
             /*
             sb.Append("\t\t	if (dataReader.IsDBNull(7)) { \n");
             sb.Append("\t\t		data.LastUpdateUser = \"\";\n");
@@ -718,7 +737,7 @@ namespace Spring2.DataTierGenerator {
 			//					sb.Append("\t\t\t\tobjCommand.Connection = objConnection;\n");
 			sb.Append("\t\t\t\tobjCommand = GetSqlCommand(connection, \"" + procName + "\", CommandType.StoredProcedure);\n");
 
-			//sb.Append("\t\t\t\tobjCommand.CommandText = \"" + options.GetProcName(table, "DeleteBy" + strColumnName.Replace(" ", "_")) + "\";\n");
+			//sb.Append("\t\t\t\tobjCommand.CommandText = \"" + options.GetProcName(entity.Name, "DeleteBy" + strColumnName.Replace(" ", "_")) + "\";\n");
 			//sb.Append("\t\t\t\tobjCommand.CommandText = \"" + procName + "\";\n");
 			//sb.Append("\t\t\t\tobjCommand.CommandType = CommandType.StoredProcedure;\n");
 			sb.Append("\n");
