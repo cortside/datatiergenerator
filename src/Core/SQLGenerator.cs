@@ -3,7 +3,7 @@ using System.Data;
 using System.IO;
 using System.Collections;
 using System.Text;
-using System.Windows.Forms;
+//using System.Windows.Forms;
 
 namespace Spring2.DataTierGenerator {
     /// <summary>

@@ -2,7 +2,7 @@ using System;
 using System.Data;
 using System.Data.SqlClient;
 using System.IO;
-using System.Windows.Forms;
+//using System.Windows.Forms;
 using System.Collections;
 using System.Text;
 using System.Xml;
@@ -12,17 +12,46 @@ namespace Spring2.DataTierGenerator {
     public class Generator : GeneratorBase {
 	private ArrayList entities = new ArrayList();
 	private ArrayList sqlentities = new ArrayList();
+	private ArrayList enumtypes = new ArrayList();
+	private ArrayList collections = new ArrayList();
 	private Hashtable types = new Hashtable();
 	private Hashtable sqltypes = new Hashtable();
 	private XmlDocument doc = null;
-	private ProgressForm form = new ProgressForm();
+	private SqlConnection connection = null;
 
-	public Generator(Configuration options) {
-	    this.options = options;
-	    this.form = form;
-	    if (options.XmlConfigFilename.Length > 0) {
+	//private ProgressForm form = new ProgressForm();
+
+
+	public IList Entities {
+	    get { return (ArrayList)entities.Clone(); }
+	}
+	public IList SqlEntities {
+	    get { return (ArrayList)sqlentities.Clone(); }
+	}
+	public IList Enums {
+	    get { return (ArrayList)enumtypes.Clone(); }
+	}
+	public IList Collections {
+	    get { return (ArrayList)collections.Clone(); }
+	}
+	public ICollection Types {
+	    get { return types.Values; }
+	}
+	public ICollection SqlTypes {
+	    get { return sqltypes.Values; }
+	}
+
+
+	public Generator(String filename) {
+	    //this.form = form;
+	    if (filename.Length > 0) {
 		doc = new XmlDocument();
-		doc.Load(options.XmlConfigFilename);
+		doc.Load(filename);
+
+		XmlNode root = doc.DocumentElement["config"];
+		if (root != null) {
+		    this.options = new Configuration(root);
+		}
 	    }
 
 	    if (doc!=null) {
@@ -32,29 +61,29 @@ namespace Spring2.DataTierGenerator {
 		sqltypes=new Hashtable();
 		types=new Hashtable();
 	    }
-	    sqlentities = new ArrayList();
-	    entities = new ArrayList();
+
+	    if (options.AutoDiscoverEntities || options.AutoDiscoverProperties) {
+		connection = new SqlConnection(options.ConnectionString);
+		connection.Open();
+	    }
+
+	    sqlentities = GetSqlEntities(doc, connection);
+	    entities = GetEntities(doc, connection, sqlentities);
+
+	    enumtypes = EnumType.ParseFromXml(options,doc,sqltypes,types);
+	    collections = Collection.ParseFromXml(options,doc,sqltypes,types);
 	}
-		
+
 	public void GenerateSource() {
 	    Console.Out.Write("\n");
 	    Console.Out.WriteLine(String.Empty.PadLeft(20,'='));
 	    Console.Out.WriteLine("Parse/Load entities and properties");
 	    Console.Out.WriteLine(String.Empty.PadLeft(20,'='));
 
-	    SqlConnection connection = null;
-	    if (options.AutoDiscoverEntities || options.AutoDiscoverProperties) {
-		connection = new SqlConnection(options.ConnectionString);
-		connection.Open();
-	    }
-
 	    // Process each table
-	    sqlentities = GetSqlEntities(doc, connection);
-	    entities = GetEntities(doc, connection, sqlentities);
-
 	    foreach (SqlEntity sqlentity in sqlentities) {
 		SQLGenerator sqlgen = new SQLGenerator(options, sqlentity);
-		sqlgen.CreateTable();
+		if (options.GenerateSqlTableScripts) sqlgen.CreateTable();
 		if (options.GenerateSqlViewScripts) sqlgen.CreateView();
 		sqlgen.CreateInsertStoredProcedure();
 		if (sqlentity.HasUpdatableColumns()) sqlgen.CreateUpdateStoredProcedure();
@@ -73,13 +102,11 @@ namespace Spring2.DataTierGenerator {
 		if (!String.Empty.Equals(entity.SqlEntity.Name)) daogen.CreateDataAccessClass();
 	    }
 
-	    ArrayList enumtypes = EnumType.ParseFromXml(options,doc,sqltypes,types);
 	    foreach (EnumType type in enumtypes) {
 		EnumGenerator eg = new EnumGenerator(options, type);
 		eg.Generate();
 	    }
 
-	    ArrayList collections = Collection.ParseFromXml(options,doc,sqltypes,types);
 	    foreach (Collection collection in collections) {
 		CollectionGenerator cg = new CollectionGenerator(options, collection);
 		cg.Generate();
@@ -92,8 +119,8 @@ namespace Spring2.DataTierGenerator {
 	    SqlConnection connection = new SqlConnection(options.ConnectionString);
 	    connection.Open();
 
-	    form.Clear();
-	    form.Show();
+	    //form.Clear();
+	    //form.Show();
 	    ArrayList entities = DiscoverSqlEntities(connection);
 	    StringBuilder sb = new StringBuilder();
 	    sb.Append("<sqlentities>\n");
@@ -132,7 +159,7 @@ namespace Spring2.DataTierGenerator {
 	    sb.Append("</sqlentities>\n");
 
 	    Console.Out.WriteLine(sb.ToString());
-	    form.Hide();
+	    //form.Hide();
 	}
 
 
@@ -268,7 +295,8 @@ namespace Spring2.DataTierGenerator {
 	    sql = sql + "		'0' IsViewColumn, \n";
 	    sql = sql + "		coalesce(VC.colid, 1000+ORDINAL_POSITION) COLUMN_ID, \n";
 	    sql = sql + "		ColumnProperty(OBJECT_ID(INFORMATION_SCHEMA.COLUMNS.TABLE_NAME), INFORMATION_SCHEMA.COLUMNS.COLUMN_NAME, 'IsIdentity') AS IsIdentity, \n";
-	    sql = sql + "		ColumnProperty(OBJECT_ID(INFORMATION_SCHEMA.COLUMNS.TABLE_NAME), INFORMATION_SCHEMA.COLUMNS.COLUMN_NAME, 'IsRowGuidCol') AS IsRowGuidCol \n";
+	    sql = sql + "		ColumnProperty(OBJECT_ID(INFORMATION_SCHEMA.COLUMNS.TABLE_NAME), INFORMATION_SCHEMA.COLUMNS.COLUMN_NAME, 'IsRowGuidCol') AS IsRowGuidCol, \n";
+	    sql = sql + " 		INFORMATION_SCHEMA.COLUMNS.IS_NULLABLE \n";
 //	    sql = sql + "		case when INFORMATION_SCHEMA.COLUMNS.COLUMN_NAME in (SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE INNER JOIN INFORMATION_SCHEMA.TABLE_CONSTRAINTS ON INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE.CONSTRAINT_NAME = INFORMATION_SCHEMA.TABLE_CONSTRAINTS.CONSTRAINT_NAME WHERE INFORMATIoN_SCHEMA.TABLE_CONSTRAINTS.TABLE_NAME = INFORMATION_SCHEMA.COLUMNS.TABLE_NAME AND CONSTRAINT_TYPE = 'FOREIGN KEY') then 1 else 0 end IsForeignKey, \n";
 //	    sql = sql + "		case when INFORMATION_SCHEMA.COLUMNS.COLUMN_NAME in (SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE INNER JOIN INFORMATION_SCHEMA.TABLE_CONSTRAINTS ON INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE.CONSTRAINT_NAME = INFORMATION_SCHEMA.TABLE_CONSTRAINTS.CONSTRAINT_NAME WHERE INFORMATIoN_SCHEMA.TABLE_CONSTRAINTS.TABLE_NAME = INFORMATION_SCHEMA.COLUMNS.TABLE_NAME AND CONSTRAINT_TYPE = 'PRIMARY KEY') then 1 else 0 end IsPrimaryKey \n";
 	    sql = sql + " 	FROM INFORMATION_SCHEMA.COLUMNS \n";
@@ -290,7 +318,8 @@ namespace Spring2.DataTierGenerator {
 		sql = sql + " 		'1' IsViewColumn, \n";
 		sql = sql + "		ORDINAL_POSITION COLUMN_ID, \n";
 		sql = sql + "		ColumnProperty(OBJECT_ID(INFORMATION_SCHEMA.COLUMNS.TABLE_NAME), INFORMATION_SCHEMA.COLUMNS.COLUMN_NAME, 'IsIdentity') AS IsIdentity, \n";
-		sql = sql + "		ColumnProperty(OBJECT_ID(INFORMATION_SCHEMA.COLUMNS.TABLE_NAME), INFORMATION_SCHEMA.COLUMNS.COLUMN_NAME, 'IsRowGuidCol') AS IsRowGuidCol \n";
+		sql = sql + "		ColumnProperty(OBJECT_ID(INFORMATION_SCHEMA.COLUMNS.TABLE_NAME), INFORMATION_SCHEMA.COLUMNS.COLUMN_NAME, 'IsRowGuidCol') AS IsRowGuidCol, \n";
+		sql = sql + " 		INFORMATION_SCHEMA.COLUMNS.IS_NULLABLE \n";
 //		sql = sql + "		case when INFORMATION_SCHEMA.COLUMNS.COLUMN_NAME in (SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE INNER JOIN INFORMATION_SCHEMA.TABLE_CONSTRAINTS ON INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE.CONSTRAINT_NAME = INFORMATION_SCHEMA.TABLE_CONSTRAINTS.CONSTRAINT_NAME WHERE INFORMATIoN_SCHEMA.TABLE_CONSTRAINTS.TABLE_NAME = INFORMATION_SCHEMA.COLUMNS.TABLE_NAME AND CONSTRAINT_TYPE = 'FOREIGN KEY') then 1 else 0 end IsForeignKey, \n";
 //		sql = sql + "		case when INFORMATION_SCHEMA.COLUMNS.COLUMN_NAME in (SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE INNER JOIN INFORMATION_SCHEMA.TABLE_CONSTRAINTS ON INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE.CONSTRAINT_NAME = INFORMATION_SCHEMA.TABLE_CONSTRAINTS.CONSTRAINT_NAME WHERE INFORMATIoN_SCHEMA.TABLE_CONSTRAINTS.TABLE_NAME = INFORMATION_SCHEMA.COLUMNS.TABLE_NAME AND CONSTRAINT_TYPE = 'PRIMARY KEY') then 1 else 0 end IsPrimaryKey \n";
 		sql = sql + " 	FROM INFORMATION_SCHEMA.COLUMNS \n";
@@ -313,22 +342,30 @@ namespace Spring2.DataTierGenerator {
 
 	    // Get a list of the entities in the database
 	    DataTable table = new DataTable();
-	    SqlDataAdapter adapter = new SqlDataAdapter("SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_CATALOG = '" + connection.Database + "'", connection);
-	    //SqlDataAdapter adapter = new SqlDataAdapter("SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_CATALOG = '" + connection.Database + "' and TABLE_NAME in ('Address')", connection);
+	    //SqlDataAdapter adapter = new SqlDataAdapter("SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_CATALOG = '" + connection.Database + "'", connection);
+	    SqlDataAdapter adapter = new SqlDataAdapter("SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_CATALOG = '" + connection.Database + "' and TABLE_NAME in ('Address','ErrorLog','Firm','Function' ,'GroupOrderDetail' ,'GroupOrders','GroupOrderVendors' ,'OrderAllocation' ,'OrderDelivery' ,'OrderDetail' ,'OrderDetailOption' ,'Orders' ,'OrderVendor' ,'OrdPmt' ,'pmt_type' ,'SecurityGroup' ,'SecurityGroupFunction' ,'ServiceArea','Users' ,'FirmLocation' ,'FirmLocRule' ,'FirmRule')", connection);
+	    //'Address','ErrorLog','Firm','Function' ,'GroupOrderDetail' ,'GroupOrders','GroupOrderVendors' ,'OrderAllocation' ,'OrderDelivery' ,'OrderDetail' ,'OrderDetailOption' ,'Orders' ,'OrderVendor' ,'OrdPmt' ,'pmt_type' ,'SecurityGroup' ,'SecurityGroupFunction' ,'ServiceArea','Users' ,'FirmLocation' ,'FirmLocRule' ,'FirmRule'
+	    //SqlDataAdapter adapter = new SqlDataAdapter("SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_CATALOG = '" + connection.Database + "' and TABLE_NAME in ('Users')", connection);
+
 	    adapter.Fill(table);
-	    
-	    form.Maximum= table.Rows.Count +1;
+	    //form.Maximum= table.Rows.Count +1;
 
 	    foreach (DataRow row in table.Rows) {
 		if (row["TABLE_TYPE"].ToString() == "BASE TABLE" && row["TABLE_NAME"].ToString() != "dtproperties") {
 		    SqlEntity sqlentity = new SqlEntity();
 		    sqlentity.Name = row["TABLE_NAME"].ToString();
 		    sqlentity.View = "vw" + sqlentity.Name;
+		    if (sqlentity.Name.Equals("Users")) {
+			sqlentity.View = "vwUser";
+		    }
+		    if (sqlentity.Name.Equals("Orders")) {
+			sqlentity.View = "vwOrder";
+		    }
 		    sqlentity.Columns = DiscoverColumns(sqlentity, connection);
 		    sqlentity.Constraints = DiscoverConstraints(sqlentity, connection);
 		    sqlentity.Indexes = DiscoverIndexes(sqlentity, connection);
 		    list.Add(sqlentity);
-		    form.Step();
+		    //form.Step();
 		}
 	    }	    
 
@@ -521,6 +558,7 @@ namespace Spring2.DataTierGenerator {
 		    column.Identity = row["IsIdentity"].ToString() == "1";
 		    column.RowGuidCol = row["IsRowGuidCol"].ToString() == "1";
 		    column.ViewColumn = row["IsViewColumn"].ToString() == "1";
+		    column.Required = row["IS_NULLABLE"].ToString().Trim().ToUpper().Equals("NO");
 
 		    // Check for unicode columns
 		    if (column.SqlType.Name.ToLower() == "nchar" || column.SqlType.Name.ToLower() == "nvarchar" || column.SqlType.Name.ToLower() == "ntext") {
@@ -542,7 +580,7 @@ namespace Spring2.DataTierGenerator {
 //			foundNewProperties=true;
 //		    }
 //		    Console.Out.WriteLine("\t" + column.ToXml(true));
-		    Application.DoEvents();
+		    //Application.DoEvents();
 		}
 	    }
 //	    if (foundNewProperties) {

@@ -50,6 +50,15 @@ namespace Spring2.DataTierGenerator {
 	    return null;
 	}
 
+	public static Entity FindEntityByName(ArrayList entities, String name) {
+	    foreach (Entity entity in entities) {
+		if (entity.Name.Equals(name)) {
+		    return entity;
+		}
+	    }
+	    return null;
+	}
+
 	public static ArrayList ParseFromXml(Configuration options, XmlDocument doc, Hashtable sqltypes, Hashtable types, ArrayList sqlentities) {
 	    ArrayList entities = new ArrayList();
 	    XmlNodeList elements = doc.DocumentElement.GetElementsByTagName("entity");
@@ -152,6 +161,15 @@ namespace Spring2.DataTierGenerator {
 
 	public Object Clone() {
 	    return MemberwiseClone();
+	}
+
+	public Finder FindFinderByName(String name) {
+	    foreach (Finder finder in finders) {
+		if (finder.Name == name) {
+		    return finder;
+		}
+	    }
+	    return null;
 	}
 
 
