@@ -26,11 +26,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spring2.DataTierGenerator.A
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spring2.DataTierGenerator.ConsoleRunner", "Spring2.DataTierGenerator.ConsoleRunner.csproj", "{C49BE045-C72A-43DD-8DAC-CE11F08C6A6F}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spring2.DataTierGenerator.Beta", "ElementSet\Beta\Spring2.DataTierGenerator.Beta.csproj", "{715E64DD-2DAD-4DA8-ACC5-2BAEBA573487}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spring2.DataTierGenerator.ConsoleRunner", "Spring2.DataTierGenerator.ConsoleRunner.csproj", "{C49BE045-C72A-43DD-8DAC-CE11F08C6A6F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spring2.DataTierGenerator.DTGEditor", "Spring2.DataTierGenerator.DTGEditor.csproj", "{6A2FB4F6-83E4-455C-800B-21C9267D9651}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
@@ -64,14 +68,18 @@ Global
 		{069AFE42-50D3-48D3-A12B-FAE1D8A2A44A}.Debug.Build.0 = Debug|.NET
 		{069AFE42-50D3-48D3-A12B-FAE1D8A2A44A}.Release.ActiveCfg = Release|.NET
 		{069AFE42-50D3-48D3-A12B-FAE1D8A2A44A}.Release.Build.0 = Release|.NET
-		{715E64DD-2DAD-4DA8-ACC5-2BAEBA573487}.Debug.ActiveCfg = Debug|.NET
-		{715E64DD-2DAD-4DA8-ACC5-2BAEBA573487}.Debug.Build.0 = Debug|.NET
-		{715E64DD-2DAD-4DA8-ACC5-2BAEBA573487}.Release.ActiveCfg = Release|.NET
-		{715E64DD-2DAD-4DA8-ACC5-2BAEBA573487}.Release.Build.0 = Release|.NET
 		{C49BE045-C72A-43DD-8DAC-CE11F08C6A6F}.Debug.ActiveCfg = Debug|.NET
 		{C49BE045-C72A-43DD-8DAC-CE11F08C6A6F}.Debug.Build.0 = Debug|.NET
 		{C49BE045-C72A-43DD-8DAC-CE11F08C6A6F}.Release.ActiveCfg = Release|.NET
 		{C49BE045-C72A-43DD-8DAC-CE11F08C6A6F}.Release.Build.0 = Release|.NET
+		{715E64DD-2DAD-4DA8-ACC5-2BAEBA573487}.Debug.ActiveCfg = Debug|.NET
+		{715E64DD-2DAD-4DA8-ACC5-2BAEBA573487}.Debug.Build.0 = Debug|.NET
+		{715E64DD-2DAD-4DA8-ACC5-2BAEBA573487}.Release.ActiveCfg = Release|.NET
+		{715E64DD-2DAD-4DA8-ACC5-2BAEBA573487}.Release.Build.0 = Release|.NET
+		{6A2FB4F6-83E4-455C-800B-21C9267D9651}.Debug.ActiveCfg = Debug|.NET
+		{6A2FB4F6-83E4-455C-800B-21C9267D9651}.Debug.Build.0 = Debug|.NET
+		{6A2FB4F6-83E4-455C-800B-21C9267D9651}.Release.ActiveCfg = Release|.NET
+		{6A2FB4F6-83E4-455C-800B-21C9267D9651}.Release.Build.0 = Release|.NET
 	EndGlobalSection
 	GlobalSection(SolutionItems) = postSolution
 		collections.inc.xml = collections.inc.xml
