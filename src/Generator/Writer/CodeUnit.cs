@@ -30,7 +30,7 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 	    this.log = log;
 	    this.cgOptions = options;
 
-	    StringWriter sw =new StringWriter();
+	    StringWriter sw = new StringWriter();
 	    System.IO.TextWriter cout = Console.Out;
 	    System.IO.TextWriter cerr = Console.Error;
 	    Console.SetOut(sw);
@@ -70,18 +70,24 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 	}
 
 	private String GetSource(Member member) {
-	    StringBuilder sb = new StringBuilder();
-	    for (Int32 i=member.FirstLine; i<=member.LastLine && i<src.Count; i++) {
-		sb.Append(src[i-1].ToString()).Append(Environment.NewLine);
+
+	    if ((member.Element.Attributes & MemberAttributes.ScopeMask) == MemberAttributes.Abstract) {
+		return String.Empty;
 	    }
 
-	    String hold = sb.ToString();
+	    StringBuilder buffer = new StringBuilder();
+	    for (Int32 i = member.FirstLine; i <= member.LastLine && i < src.Count; i++) {
+		buffer.Append(src[i-1].ToString()).Append(Environment.NewLine);
+	    }
 
-	    String s = sb.ToString();
+	    String hold = buffer.ToString();
+	    String s = buffer.ToString();
+
 	    s = s.Substring(s.IndexOf("{")+1);
 
 	    ArrayList source = GetSourceLines(s);
-	    // remove the comment and attribute lines that belong to the next method
+
+	    // Remove the comment and attribute lines that belong to the next method.
 	    while (source[source.Count-1].ToString().Trim().StartsWith("#region") || source[source.Count-1].ToString().Trim().StartsWith("//") || source[source.Count-1].ToString().Trim().StartsWith("[") || source[source.Count-1].ToString().Trim().Equals(String.Empty)) {
 		if (source[source.Count-1].ToString().Trim().StartsWith("#region")) {
 		    member.HasBeginRegion = true;
@@ -95,15 +101,15 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 	    } else {
 		String line = source[source.Count-1].ToString();
 		if (line.LastIndexOf("}")>=0) {
-		    source[source.Count-1] = line.Substring(0,line.LastIndexOf("}")-1);
+		    source[source.Count-1] = line.Substring(0, line.LastIndexOf("}")-1);
 		} else {
 		    throw new Exception("could not find closing brace: " + hold);
 		}
 	    }
 
-	    // if this is the last member, remove the extra curly brace
-	    if (member.LastLine>=9999) {
-		// remove emtpy lines at the end of the method block
+	    // If this is the last member, remove the extra curly brace.
+	    if (member.LastLine >= 9999) {
+		// Remove emtpy lines at the end of the method block.
 		while (source[source.Count-1].ToString().Trim().Equals(String.Empty)) {
 		    source.RemoveAt(source.Count-1);
 		}
@@ -126,17 +132,17 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 		}
 	    }
 
-	    // remove emtpy lines at the beginning of the method block
+	    // Remove emtpy lines at the beginning of the method block.
 	    while (source.Count > 0 && source[0].ToString().Trim().Equals(String.Empty)) {
 		source.RemoveAt(0);
 	    }
 
-	    sb = new StringBuilder();
+	    buffer = new StringBuilder();
 	    foreach(String line in source) {
-		sb.Append(line).Append(Environment.NewLine);
+		buffer.Append(line).Append(Environment.NewLine);
 	    }
 
-	    s= sb.ToString().Trim();
+	    s = buffer.ToString().Trim();
 	    return s;
 	}
 
