@@ -6,8 +6,8 @@ using NUnit.Framework;
 
 using Spring2.Core.Util;
 
-using Spring2.DataTierGenerator.Parser;
 using Spring2.DataTierGenerator.Generator;
+using Spring2.DataTierGenerator.Parser;
 
 namespace Spring2.DataTierGenerator.Test {
 
@@ -19,17 +19,18 @@ namespace Spring2.DataTierGenerator.Test {
 
 	[Test]
 	public void TestSanity() {
-	    IParser parser = new XmlParser("..\\..\\src\\Test\\Sanity\\sanity.xml");
+	    IParser parser = new XmlParser();
+	    parser.Parse("..\\..\\src\\Test\\Sanity\\sanity.xml");
 	    if (!parser.IsValid) {
 		foreach(String s in parser.Log) {
 		    Console.Out.WriteLine(s);
 		}
 	    } else {
-		IGenerator gen = new GeneratorTaskManager(parser);
+		IGenerator gen = new NVelocityGenerator();
 		if (Directory.Exists(@".\SanityTest")) {
 		    Directory.Delete(@".\SanityTest", true);
 		}
-		gen.Generate();
+		gen.Generate(parser);
 		foreach(String s in gen.Log) {
 		    Console.Out.WriteLine(s);
 		}

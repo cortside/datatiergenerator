@@ -3,9 +3,6 @@ using System.Collections;
 using System.Text;
 using System.Xml;
 
-using Spring2.DataTierGenerator;
-using Spring2.DataTierGenerator.Parser;
-
 namespace Spring2.DataTierGenerator.Element {
     /// <summary>
     /// Summary description for SqlEntityData.
@@ -213,6 +210,6 @@ namespace Spring2.DataTierGenerator.Element {
 	    }
 	}
 
-	public override void Validate(IParser parser) {}
+	public override void Validate(RootElement root) {}
     }
 }

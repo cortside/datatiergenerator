@@ -1,5 +1,4 @@
 using System;
-
 using System.Collections;
 using System.Data;
 using System.Data.SqlClient;
@@ -7,44 +6,44 @@ using System.IO;
 using System.Text;
 using System.Xml;
 
-using Spring2.DataTierGenerator;
 using Spring2.DataTierGenerator.Element;
+using Spring2.DataTierGenerator.Generator;
 
 namespace Spring2.DataTierGenerator.Parser {
 
     /// <summary>
     /// Summary description for DatabaseParser.
     /// </summary>
-    public class DatabaseParser : ParserSkeleton {
+    public class DatabaseParser : AbstractParser {
 	
-	public DatabaseParser(ParserElement parser, ConfigurationElement options, XmlDocument doc) : base(parser, options, doc) {
-	    this.options = options;
-	    this.sqltypes = sqltypes;
-	    this.types = types;
-	    enumtypes = EnumElement.ParseFromXml(options, doc, sqltypes, types, this);
-	    collections = CollectionElement.ParseFromXml(options, doc, sqltypes, types, this);
-
-	    if (parser.FindArgumentByName("server") == null || parser.FindArgumentByName("database") == null || parser.FindArgumentByName("user") == null || parser.FindArgumentByName("password") == null) {
-		this.AddValidationMessage(ParserValidationMessage.NewError("expected to find the following arguments, but didn't: server, database, user, password."));
-	    } else {
-		String connectionString = "server=" + parser.FindArgumentByName("server").Value + ";databse=" + parser.FindArgumentByName("database").Value + ";user=" + parser.FindArgumentByName("user").Value + ";password=" + parser.FindArgumentByName("password").Value + ";";
-		
-		DatabaseElement db = new DatabaseElement();
-		db.Name = "db";
-		db.Server = parser.FindArgumentByName("server").Value;
-		db.Database = parser.FindArgumentByName("database").Value;
-		db.User = parser.FindArgumentByName("user").Value;
-		db.Password = parser.FindArgumentByName("password").Value;
-		connectionString = db.ConnectionString;
-
-		SqlConnection conn = new SqlConnection(connectionString);
-		db.SqlEntities = DiscoverSqlEntities(conn, this);
-		databases.Add(db);
-		entities = GetEntities(doc, conn, new ArrayList(), this);
-	    }
-
-	    Validate();
-	}
+//	public DatabaseParser(ParserElement parser, ConfigurationElement options, XmlDocument doc) : base(parser, options, doc) {
+//	    this.options = options;
+//	    this.sqltypes = sqltypes;
+//	    this.types = types;
+//	    enumtypes = EnumElement.ParseFromXml(options, doc, sqltypes, types, this);
+//	    collections = CollectionElement.ParseFromXml(options, doc, sqltypes, types, this);
+//
+//	    if (parser.FindArgumentByName("server") == null || parser.FindArgumentByName("database") == null || parser.FindArgumentByName("user") == null || parser.FindArgumentByName("password") == null) {
+//		this.AddValidationMessage(ParserValidationMessage.NewError("expected to find the following arguments, but didn't: server, database, user, password."));
+//	    } else {
+//		String connectionString = "server=" + parser.FindArgumentByName("server").Value + ";databse=" + parser.FindArgumentByName("database").Value + ";user=" + parser.FindArgumentByName("user").Value + ";password=" + parser.FindArgumentByName("password").Value + ";";
+//		
+//		DatabaseElement db = new DatabaseElement();
+//		db.Name = "db";
+//		db.Server = parser.FindArgumentByName("server").Value;
+//		db.Database = parser.FindArgumentByName("database").Value;
+//		db.User = parser.FindArgumentByName("user").Value;
+//		db.Password = parser.FindArgumentByName("password").Value;
+//		connectionString = db.ConnectionString;
+//
+//		SqlConnection conn = new SqlConnection(connectionString);
+//		db.SqlEntities = DiscoverSqlEntities(conn, this);
+//		databases.Add(db);
+//		entities = GetEntities(doc, conn, new ArrayList(), this);
+//	    }
+//
+//	    Validate();
+//	}
 
 	private ArrayList GetEntities(XmlDocument doc, SqlConnection connection, ArrayList sqlentities, IParser vd) {
 	    ArrayList entities = new ArrayList();

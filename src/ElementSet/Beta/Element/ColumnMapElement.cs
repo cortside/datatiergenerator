@@ -1,5 +1,4 @@
 using System;
-//using System.Drawing;
 using System.Text;
 using System.Xml;
 
@@ -39,11 +38,11 @@ namespace Spring2.DataTierGenerator.Element {
 	    get { return column; }
 	}
 
-	public override void Validate(IParser parser) {
+	public override void Validate(RootElement root) {
 	    // Look up the property from the property path.
 	    PropertyElement propertyElement = this.dataMap.Entity.FindProperty(this.Name);
 	    if (propertyElement == null) {
-		parser.AddValidationMessage(ParserValidationMessage.NewError(String.Format("ColumnMap: property ({0}) not found.", this.Name)));
+		root.AddValidationMessage(ParserValidationMessage.NewError(String.Format("ColumnMap: property ({0}) not found.", this.Name)));
 	    } else {
 		this.property = propertyElement;
 	    }
@@ -51,7 +50,7 @@ namespace Spring2.DataTierGenerator.Element {
 	    // Look up the column in the sql entity.
 	    ColumnElement columnElement = this.dataMap.SqlEntity.FindColumnByName(this.column.Name);
 	    if (columnElement == null) {
-		parser.AddValidationMessage(ParserValidationMessage.NewError(String.Format("ColumnMap: column ({0}) not found.", this.column.Name)));		
+		root.AddValidationMessage(ParserValidationMessage.NewError(String.Format("ColumnMap: column ({0}) not found.", this.column.Name)));		
 	    } else {
 		this.column = columnElement;
 

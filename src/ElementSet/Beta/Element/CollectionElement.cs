@@ -3,9 +3,6 @@ using System.Collections;
 using System.Text;
 using System.Xml;
 
-using Spring2.DataTierGenerator;
-using Spring2.DataTierGenerator.Parser;
-
 namespace Spring2.DataTierGenerator.Element {
 
     public class CollectionElement : ElementSkeleton {
@@ -33,24 +30,24 @@ namespace Spring2.DataTierGenerator.Element {
 	    }
 	}
 
-	public override void Validate(IParser parser) {
+	public override void Validate(RootElement root) {
 	}
 
-	public static ArrayList ParseFromXml(ConfigurationElement options, XmlDocument doc, Hashtable sqltypes, Hashtable types, IParser vd) {
-	    ArrayList list = new ArrayList();
-	    XmlNodeList elements = doc.DocumentElement.GetElementsByTagName("collection");
-	    foreach (XmlNode node in elements) {
-		CollectionElement collection = new CollectionElement();
-		collection.Name = node.Attributes["name"].Value;
-		collection.Type = node.Attributes["type"].Value;
-		if (node.Attributes["template"] != null) {
-		    collection.Template = node.Attributes["template"].Value;
-		}
-		collection.Description = node.InnerText;	
-		list.Add(collection);
-	    }
-	    return list;
-	}
+//	public static ArrayList ParseFromXml(ConfigurationElement options, XmlDocument doc, Hashtable sqltypes, Hashtable types, IParser vd) {
+//	    ArrayList list = new ArrayList();
+//	    XmlNodeList elements = doc.DocumentElement.GetElementsByTagName("collection");
+//	    foreach (XmlNode node in elements) {
+//		CollectionElement collection = new CollectionElement();
+//		collection.Name = node.Attributes["name"].Value;
+//		collection.Type = node.Attributes["type"].Value;
+//		if (node.Attributes["template"] != null) {
+//		    collection.Template = node.Attributes["template"].Value;
+//		}
+//		collection.Description = node.InnerText;	
+//		list.Add(collection);
+//	    }
+//	    return list;
+//	}
 
 	public static CollectionElement FindByName(ArrayList list, String name) {
 	    foreach (CollectionElement item in list) {

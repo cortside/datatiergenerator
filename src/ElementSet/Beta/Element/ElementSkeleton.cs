@@ -3,12 +3,9 @@ using System.Collections;
 using System.Text;
 using System.Xml;
 
-using Spring2.DataTierGenerator;
-using Spring2.DataTierGenerator.Parser;
-
 namespace Spring2.DataTierGenerator.Element {
 
-    public abstract class ElementSkeleton : Spring2.Core.DataObject.DataObject {//, ICloneable {
+    public abstract class ElementSkeleton {
 
 	protected static readonly String NAME = "name";
 
@@ -49,7 +46,7 @@ namespace Spring2.DataTierGenerator.Element {
 	public virtual void ToXml(StringBuilder buffer, Int32 indentLevel) {
 	}
 
-	public abstract void Validate(IParser parser);
+	public abstract void Validate(RootElement root);
 
 //	protected virtual void AddValidationMessage(ParserValidationMessage message) {
 //	    parentElement.AddValidationMessage(message);

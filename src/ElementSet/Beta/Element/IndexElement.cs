@@ -3,9 +3,6 @@ using System.Collections;
 using System.Text;
 using System.Xml;
 
-using Spring2.DataTierGenerator;
-using Spring2.DataTierGenerator.Parser;
-
 namespace Spring2.DataTierGenerator.Element {
 
     public class IndexElement : SqlElementSkeleton {
@@ -52,7 +49,7 @@ namespace Spring2.DataTierGenerator.Element {
 	    }
 	}
 
-	public override void Validate(IParser parser) {
+	public override void Validate(RootElement root) {
 
 	    ArrayList columns = new ArrayList();
 	    foreach (ColumnElement column in this.columns) {
@@ -65,44 +62,44 @@ namespace Spring2.DataTierGenerator.Element {
 	    this.columns = columns;
 	}
   
-	public static ArrayList ParseFromXml(XmlNode root, SqlEntityElement sqlentity, Hashtable sqltypes, Hashtable types, IParser parser) {
-	    ArrayList indexes = new ArrayList();
-	    XmlNodeList elements=null;
-	    foreach (XmlNode n in root.ChildNodes) {
-		if (n.Name.Equals("indexes")) {
-		    elements = n.ChildNodes;
-		    break;
-		}
-	    }
-	    if (elements != null) {
-		foreach (XmlNode node in elements) {
-		    IndexElement index = new IndexElement();
-		    index.Name = node.Attributes["name"].Value;
-
-		    if (node.Attributes["clustered"] != null) {
-			index.Clustered = Boolean.Parse(node.Attributes["clustered"].Value);
-		    }
-		    if (node.Attributes["unique"] != null) {
-			index.Unique = Boolean.Parse(node.Attributes["unique"].Value);
-		    }
-
-		    foreach (XmlNode n in node.ChildNodes) {
-			ColumnElement column = sqlentity.FindColumnByName(n.Attributes["name"].Value);
-			if (column == null) {
-			    parser.AddValidationMessage(ParserValidationMessage.NewError("column specified (" + n.Attributes["name"].Value + ") in index (" + index.Name + ") not found as column."));
-			    column = new ColumnElement();
-			    column.Name = n.Attributes["name"].Value;
-			}
-			if (n.Attributes["sortdirection"] != null) {
-			    column.SortDirection = n.Attributes["sortdirection"].Value;
-			}
-			index.Columns.Add(column);
-		    }
-		    indexes.Add(index);
-		}
-	    }
-	    return indexes;
-	}
+//	public static ArrayList ParseFromXml(XmlNode root, SqlEntityElement sqlentity, Hashtable sqltypes, Hashtable types, IParser parser) {
+//	    ArrayList indexes = new ArrayList();
+//	    XmlNodeList elements=null;
+//	    foreach (XmlNode n in root.ChildNodes) {
+//		if (n.Name.Equals("indexes")) {
+//		    elements = n.ChildNodes;
+//		    break;
+//		}
+//	    }
+//	    if (elements != null) {
+//		foreach (XmlNode node in elements) {
+//		    IndexElement index = new IndexElement();
+//		    index.Name = node.Attributes["name"].Value;
+//
+//		    if (node.Attributes["clustered"] != null) {
+//			index.Clustered = Boolean.Parse(node.Attributes["clustered"].Value);
+//		    }
+//		    if (node.Attributes["unique"] != null) {
+//			index.Unique = Boolean.Parse(node.Attributes["unique"].Value);
+//		    }
+//
+//		    foreach (XmlNode n in node.ChildNodes) {
+//			ColumnElement column = sqlentity.FindColumnByName(n.Attributes["name"].Value);
+//			if (column == null) {
+//			    parser.AddValidationMessage(ParserValidationMessage.NewError("column specified (" + n.Attributes["name"].Value + ") in index (" + index.Name + ") not found as column."));
+//			    column = new ColumnElement();
+//			    column.Name = n.Attributes["name"].Value;
+//			}
+//			if (n.Attributes["sortdirection"] != null) {
+//			    column.SortDirection = n.Attributes["sortdirection"].Value;
+//			}
+//			index.Columns.Add(column);
+//		    }
+//		    indexes.Add(index);
+//		}
+//	    }
+//	    return indexes;
+//	}
 
 	public String ToXml() {
 	    StringBuilder sb = new StringBuilder();

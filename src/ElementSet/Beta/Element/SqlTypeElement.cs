@@ -2,9 +2,6 @@ using System;
 using System.Collections;
 using System.Xml;
 
-using Spring2.DataTierGenerator;
-using Spring2.DataTierGenerator.Parser;
-
 namespace Spring2.DataTierGenerator.Element {
 
     public class SqlTypeElement : ElementSkeleton {
@@ -83,49 +80,49 @@ namespace Spring2.DataTierGenerator.Element {
 	    }
 	}
 
-	public override void Validate(IParser parser) {
+	public override void Validate(RootElement root) {
 	    // Capitalize sql type name ?
 	    // Avoid duplicate types.
 	}
 
-	public static Hashtable ParseFromXml(XmlDocument doc, IParser parser) {
-
-	    Hashtable sqltypes = new Hashtable();
-	    XmlNodeList elements = doc.DocumentElement.GetElementsByTagName("sqltype");
-
-	    foreach (XmlNode node in elements) {
-		SqlTypeElement sqltype = new SqlTypeElement();
-		sqltype.Name = node.Attributes["name"].Value;
-		sqltype.SqlDbType = sqltype.Name.Substring(0, 1).ToUpper() + sqltype.Name.Substring(1);
-		if (node.Attributes["type"] != null) {
-		    sqltype.Type = node.Attributes["type"].Value;
-		}
-		if (node.Attributes["length"] != null) {
-		    sqltype.Length = Int32.Parse(node.Attributes["length"].Value);
-		}
-		if (node.Attributes["scale"] != null) {
-		    sqltype.Scale = Int32.Parse(node.Attributes["scale"].Value);
-		}
-		if (node.Attributes["precision"] != null) {
-		    sqltype.Precision = Int32.Parse(node.Attributes["precision"].Value);
-		}
-		if (node.Attributes["readermethodformat"] != null) {
-		    sqltype.ReaderMethodFormat = node.Attributes["readermethodformat"].Value;
-		}
-		if (node.Attributes["sqldbtype"] != null) {
-		    sqltype.SqlDbType = node.Attributes["sqldbtype"].Value;
-		}
-		if (node.Attributes["declarationformat"] != null) {
-		    sqltype.DeclarationFormat = node.Attributes["declarationformat"].Value;
-		}
-		if (sqltypes.ContainsKey(sqltype.Name)) {
-		    parser.AddValidationMessage(ParserValidationMessage.NewWarning("Ignoring duplicate definition of sqltype: " + sqltype.Name));
-		} else {
-		    sqltypes.Add(sqltype.Name, sqltype);
-		}
-	    }
-
-	    return sqltypes;
-	}
+//	public static Hashtable ParseFromXml(XmlDocument doc, IParser parser) {
+//
+//	    Hashtable sqltypes = new Hashtable();
+//	    XmlNodeList elements = doc.DocumentElement.GetElementsByTagName("sqltype");
+//
+//	    foreach (XmlNode node in elements) {
+//		SqlTypeElement sqltype = new SqlTypeElement();
+//		sqltype.Name = node.Attributes["name"].Value;
+//		sqltype.SqlDbType = sqltype.Name.Substring(0, 1).ToUpper() + sqltype.Name.Substring(1);
+//		if (node.Attributes["type"] != null) {
+//		    sqltype.Type = node.Attributes["type"].Value;
+//		}
+//		if (node.Attributes["length"] != null) {
+//		    sqltype.Length = Int32.Parse(node.Attributes["length"].Value);
+//		}
+//		if (node.Attributes["scale"] != null) {
+//		    sqltype.Scale = Int32.Parse(node.Attributes["scale"].Value);
+//		}
+//		if (node.Attributes["precision"] != null) {
+//		    sqltype.Precision = Int32.Parse(node.Attributes["precision"].Value);
+//		}
+//		if (node.Attributes["readermethodformat"] != null) {
+//		    sqltype.ReaderMethodFormat = node.Attributes["readermethodformat"].Value;
+//		}
+//		if (node.Attributes["sqldbtype"] != null) {
+//		    sqltype.SqlDbType = node.Attributes["sqldbtype"].Value;
+//		}
+//		if (node.Attributes["declarationformat"] != null) {
+//		    sqltype.DeclarationFormat = node.Attributes["declarationformat"].Value;
+//		}
+//		if (sqltypes.ContainsKey(sqltype.Name)) {
+//		    parser.AddValidationMessage(ParserValidationMessage.NewWarning("Ignoring duplicate definition of sqltype: " + sqltype.Name));
+//		} else {
+//		    sqltypes.Add(sqltype.Name, sqltype);
+//		}
+//	    }
+//
+//	    return sqltypes;
+//	}
     }
 }

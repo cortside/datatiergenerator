@@ -33,17 +33,17 @@ namespace Spring2.DataTierGenerator.Element {
 	}
 
 
-	public override void Validate(IParser parser) {
+	public override void Validate(RootElement root) {
 	    // Find the sql entity.
-	    SqlEntityElement sqlEntity = parser.FindSqlEntity(this.sqlEntity.Name);
+	    SqlEntityElement sqlEntity = root.FindSqlEntity(this.sqlEntity.Name);
 	    if (sqlEntity == null) {
-		parser.AddValidationMessage(ParserValidationMessage.NewError(String.Format("Sql Entity ({0}) not found.", this.sqlEntity.Name)));
+		root.AddValidationMessage(ParserValidationMessage.NewError(String.Format("Sql Entity ({0}) not found.", this.sqlEntity.Name)));
 	    } else {
 		this.sqlEntity = sqlEntity;
 
 		// Validate each of the column map entries.
 		foreach (ColumnMapElement columnMap in this.columnMaps) {
-		    columnMap.Validate(parser);
+		    columnMap.Validate(root);
 		}
 	    }
 	}

@@ -3,7 +3,6 @@ using System.Collections;
 using System.Text;
 using System.Xml;
 
-using Spring2.DataTierGenerator;
 using Spring2.DataTierGenerator.Parser;
 
 namespace Spring2.DataTierGenerator.Element {
@@ -96,7 +95,7 @@ namespace Spring2.DataTierGenerator.Element {
 	    get { return ArrayList.ReadOnly(dataMaps); }
 	}
 
-	public override void Validate(IParser parser) {
+	public override void Validate(RootElement root) {
 
 	    // Look up the SQL entity in the database elements.
 	    //	    if (!this.SqlEntity.Name.Equals(String.Empty)) {
@@ -110,61 +109,61 @@ namespace Spring2.DataTierGenerator.Element {
 
 	    // Look up the base entity in the entity collection.
 	    if (!this.BaseEntity.Name.Equals(String.Empty)) {
-		EntityElement baseEntity = parser.FindEntity(this.BaseEntity.Name);
+		EntityElement baseEntity = root.FindEntity(this.BaseEntity.Name);
 		if (baseEntity == null) {
-		    parser.AddValidationMessage(ParserValidationMessage.NewError("baseentity (" + BaseEntity.Name + ") specified in entity " + Name + " could not be found as an defined entity (or is defined after this entity in the config file)"));
+		    root.AddValidationMessage(ParserValidationMessage.NewError("baseentity (" + BaseEntity.Name + ") specified in entity " + Name + " could not be found as an defined entity (or is defined after this entity in the config file)"));
 		} else {
 		    this.baseEntity = baseEntity;
 		}
 	    }
 
 	    foreach (PropertyElement property in this.Properties) {
-		property.Validate(parser);
+		property.Validate(root);
 	    }
 	    foreach (DataMapElement dataMap in this.dataMaps) {
-		dataMap.Validate(parser);
+		dataMap.Validate(root);
 	    }
 	    foreach (FinderElement finder in this.Finders) {
-		finder.Validate(parser);
+		finder.Validate(root);
 	    }
 	}
 
-	public static ArrayList ParseFromXml(ConfigurationElement options, XmlDocument doc, Hashtable sqltypes, Hashtable types, ArrayList sqlentities, IParser parser) {
-	    ArrayList entities = new ArrayList();
-	    XmlNodeList elements = doc.DocumentElement.GetElementsByTagName("entity");
-	    foreach (XmlNode node in elements) {
-		EntityElement entity = new EntityElement();
-		entity.Name = node.Attributes["name"].Value;
-		if (node.Attributes["sqlentity"] != null) {
-		    SqlEntityElement sqlentity = SqlEntityElement.FindByName(sqlentities, node.Attributes["sqlentity"].Value);
-		    if (sqlentity!=null) {
-			entity.SqlEntity = (SqlEntityElement)sqlentity.Clone();
-		    } else {
-			entity.SqlEntity.Name = node.Attributes["sqlentity"].Value;
-			parser.AddValidationMessage(ParserValidationMessage.NewError("sqlentity (" + entity.SqlEntity.Name + ") specified in entity " + entity.Name + " could not be found as an defined sql entity"));
-		    }
-		}
-
-		if (node.Attributes["baseentity"] != null) {
-		    EntityElement baseentity = EntityElement.FindEntityByName(entities, node.Attributes["baseentity"].Value);
-		    if (baseentity!=null) {
-			entity.BaseEntity = (EntityElement)baseentity.Clone();
-		    } else {
-			entity.BaseEntity.Name = node.Attributes["baseentity"].Value;
-			parser.AddValidationMessage(ParserValidationMessage.NewError("baseentity (" + entity.BaseEntity.Name + ") specified in entity " + entity.Name + " could not be found as an defined entity (or is defined after this entity in the config file)"));
-		    }
-		}
-
-		if (node.Attributes["abstract"] != null) {
-		    entity.IsAbstract = Boolean.Parse(node.Attributes["abstract"].Value);
-		}
-
-		entity.Properties = PropertyElement.ParseFromXml(doc, entities, entity, sqltypes, types, parser);
-		entity.Finders = FinderElement.ParseFromXml(node, entity, parser);
-		entities.Add(entity);
-	    }
-	    return entities;
-	}
+//	public static ArrayList ParseFromXml(ConfigurationElement options, XmlDocument doc, Hashtable sqltypes, Hashtable types, ArrayList sqlentities, IParser parser) {
+//	    ArrayList entities = new ArrayList();
+//	    XmlNodeList elements = doc.DocumentElement.GetElementsByTagName("entity");
+//	    foreach (XmlNode node in elements) {
+//		EntityElement entity = new EntityElement();
+//		entity.Name = node.Attributes["name"].Value;
+//		if (node.Attributes["sqlentity"] != null) {
+//		    SqlEntityElement sqlentity = SqlEntityElement.FindByName(sqlentities, node.Attributes["sqlentity"].Value);
+//		    if (sqlentity!=null) {
+//			entity.SqlEntity = (SqlEntityElement)sqlentity.Clone();
+//		    } else {
+//			entity.SqlEntity.Name = node.Attributes["sqlentity"].Value;
+//			parser.AddValidationMessage(ParserValidationMessage.NewError("sqlentity (" + entity.SqlEntity.Name + ") specified in entity " + entity.Name + " could not be found as an defined sql entity"));
+//		    }
+//		}
+//
+//		if (node.Attributes["baseentity"] != null) {
+//		    EntityElement baseentity = EntityElement.FindEntityByName(entities, node.Attributes["baseentity"].Value);
+//		    if (baseentity!=null) {
+//			entity.BaseEntity = (EntityElement)baseentity.Clone();
+//		    } else {
+//			entity.BaseEntity.Name = node.Attributes["baseentity"].Value;
+//			parser.AddValidationMessage(ParserValidationMessage.NewError("baseentity (" + entity.BaseEntity.Name + ") specified in entity " + entity.Name + " could not be found as an defined entity (or is defined after this entity in the config file)"));
+//		    }
+//		}
+//
+//		if (node.Attributes["abstract"] != null) {
+//		    entity.IsAbstract = Boolean.Parse(node.Attributes["abstract"].Value);
+//		}
+//
+//		entity.Properties = PropertyElement.ParseFromXml(doc, entities, entity, sqltypes, types, parser);
+//		entity.Finders = FinderElement.ParseFromXml(node, entity, parser);
+//		entities.Add(entity);
+//	    }
+//	    return entities;
+//	}
 
 	public override String ToString() {
 	    StringBuilder buffer = new StringBuilder("ENTITY\n");

@@ -29,18 +29,18 @@ namespace Spring2.DataTierGenerator.Element {
 	    get { return foreignColumns; }
 	}
 
-	public override void Validate(IParser parser) {
-	    base.Validate(parser);
-	    SqlEntityElement foreignEntity = parser.FindSqlEntity(this.foreignEntity.Name);
+	public override void Validate(RootElement root) {
+	    base.Validate(root);
+	    SqlEntityElement foreignEntity = root.FindSqlEntity(this.foreignEntity.Name);
 	    if (foreignEntity == null) {
-		parser.AddValidationMessage(ParserValidationMessage.NewError(String.Format("Foreign entity ({0}) not found for constraint ({1}).", this.foreignEntity.Name, this.Name)));
+		root.AddValidationMessage(ParserValidationMessage.NewError(String.Format("Foreign entity ({0}) not found for constraint ({1}).", this.foreignEntity.Name, this.Name)));
 	    } else {
 		this.foreignEntity = foreignEntity;
 		ArrayList columns = new ArrayList();
 		foreach (ColumnElement column in foreignColumns) {
 		    ColumnElement columnElement = this.foreignEntity.FindColumnByName(column.Name);
 		    if (columnElement == null) {
-			parser.AddValidationMessage(ParserValidationMessage.NewError(String.Format("Foreign column ({0}) not found for constraint ({1}).", column.Name, this.Name)));
+			root.AddValidationMessage(ParserValidationMessage.NewError(String.Format("Foreign column ({0}) not found for constraint ({1}).", column.Name, this.Name)));
 		    } else {
 			columns.Add(columnElement);
 		    }

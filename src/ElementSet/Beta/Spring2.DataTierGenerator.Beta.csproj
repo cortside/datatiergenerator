@@ -82,6 +82,11 @@
                     AssemblyName = "nunit.framework"
                     HintPath = "..\..\..\lib\nunit.framework.dll"
                 />
+                <Reference
+                    Name = "Spring2.DataTierGenerator"
+                    Project = "{8BE555A1-8BBA-4CF7-9B4A-6BBEF7E20FA8}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+                />
             </References>
         </Build>
         <Files>
@@ -206,11 +211,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Element\ParserElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "Element\PrimaryKeyConstraintElement.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -271,7 +271,7 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Parser\ConfigParser.cs"
+                    RelPath = "Parser\AbstractParser.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -282,16 +282,6 @@
                 />
                 <File
                     RelPath = "Parser\DatabaseParser.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Parser\IParser.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Parser\ParserSkeleton.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

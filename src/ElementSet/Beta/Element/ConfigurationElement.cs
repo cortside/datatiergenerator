@@ -4,9 +4,6 @@ using System.Reflection;
 using System.Text;
 using System.Xml;
 
-using Spring2.DataTierGenerator.Parser;
-using Spring2.DataTierGenerator.Element;
-
 namespace Spring2.DataTierGenerator.Element {
     public class ConfigurationElement : ElementSkeleton {
 
@@ -82,7 +79,7 @@ namespace Spring2.DataTierGenerator.Element {
 	    Console.Out.WriteLine(String.Empty.PadLeft(20,'='));
 	}
 
-	public override void Validate(IParser parser) {
+	public override void Validate(RootElement root) {
 	}
 
 	// methods

@@ -3,9 +3,6 @@ using System.Collections;
 using System.Text;
 using System.Xml;
 
-using Spring2.DataTierGenerator;
-using Spring2.DataTierGenerator.Parser;
-
 namespace Spring2.DataTierGenerator.Element {
 
     public class SqlEntityElement : SqlEntityData, ICloneable {
@@ -136,49 +133,49 @@ namespace Spring2.DataTierGenerator.Element {
 	    }
 	}
 
-	public override void Validate(IParser parser) {
+	public override void Validate(RootElement root) {
 	    // View name defaults to vw + sqlentity name.
 	    this.View = this.View.Equals(String.Empty) ? "vw" + this.Name : this.View;
 
 	    foreach (ColumnElement column in this.Columns) {
-		column.Validate(parser);
+		column.Validate(root);
 	    }
 	    foreach (ConstraintElement constraint in this.Constraints) {
-		constraint.Validate(parser);
+		constraint.Validate(root);
 	    }
 	    foreach (IndexElement index in this.Indexes) {
-		index.Validate(parser);
+		index.Validate(root);
 	    }
 	    foreach (ViewElement view in this.Views) {
-		view.Validate(parser);
+		view.Validate(root);
 	    }
 	}	
 
-	public static ArrayList ParseFromXml(DatabaseElement database, XmlNode databaseNode, Hashtable sqltypes, Hashtable types, IParser vd) {
-	    ArrayList sqlentities = new ArrayList();
-	    foreach (XmlNode node in databaseNode.ChildNodes) {
-		if (node.Name.Equals("sqlentity")) {
-		    SqlEntityElement sqlentity = new SqlEntityElement(database);
-		    ParseNodeAttributes(node, sqlentity);
-		    sqlentity.View = "vw" + sqlentity.Name;
-		    if (node.Attributes["view"] != null) {
-			sqlentity.View = node.Attributes["view"].Value;
-		    }
-		    sqlentity.Columns = ColumnElement.ParseFromXml(node, sqlentity, sqltypes, types, vd);
-		    sqlentity.Constraints = ConstraintElement.ParseFromXml(node, sqlentity, sqltypes, types, vd);
-		    sqlentity.Indexes = IndexElement.ParseFromXml(node, sqlentity, sqltypes, types, vd);
-
-		    // TODO: this is a hack as many things need to be restructured.  the Elements all need to be parsed first, then 
-		    // relationships and links need to be created.  Otherwise, the config file becomes order dependant.
-		    DatabaseElement d = new DatabaseElement();
-		    d.SqlEntities = sqlentities;
-		    sqlentity.Views = ViewElement.ParseFromXml(node, d, sqlentity, sqltypes, types, vd);
-
-		    sqlentities.Add(sqlentity);
-		}
-	    }
-	    return sqlentities;
-	}
+//	public static ArrayList ParseFromXml(DatabaseElement database, XmlNode databaseNode, Hashtable sqltypes, Hashtable types, IParser vd) {
+//	    ArrayList sqlentities = new ArrayList();
+//	    foreach (XmlNode node in databaseNode.ChildNodes) {
+//		if (node.Name.Equals("sqlentity")) {
+//		    SqlEntityElement sqlentity = new SqlEntityElement(database);
+//		    ParseNodeAttributes(node, sqlentity);
+//		    sqlentity.View = "vw" + sqlentity.Name;
+//		    if (node.Attributes["view"] != null) {
+//			sqlentity.View = node.Attributes["view"].Value;
+//		    }
+//		    sqlentity.Columns = ColumnElement.ParseFromXml(node, sqlentity, sqltypes, types, vd);
+//		    sqlentity.Constraints = ConstraintElement.ParseFromXml(node, sqlentity, sqltypes, types, vd);
+//		    sqlentity.Indexes = IndexElement.ParseFromXml(node, sqlentity, sqltypes, types, vd);
+//
+//		    // TODO: this is a hack as many things need to be restructured.  the Elements all need to be parsed first, then 
+//		    // relationships and links need to be created.  Otherwise, the config file becomes order dependant.
+//		    DatabaseElement d = new DatabaseElement();
+//		    d.SqlEntities = sqlentities;
+//		    sqlentity.Views = ViewElement.ParseFromXml(node, d, sqlentity, sqltypes, types, vd);
+//
+//		    sqlentities.Add(sqlentity);
+//		}
+//	    }
+//	    return sqlentities;
+//	}
 
 	public Boolean HasUpdatableColumns() {
 	    Boolean has = false;

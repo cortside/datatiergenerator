@@ -9,7 +9,7 @@ namespace Spring2.DataTierGenerator.Element {
     /// <summary>
     /// Summary description for RootElement.
     /// </summary>
-    public class RootElement : ElementSkeleton, IParser {
+    public class RootElement : ElementSkeleton {
 
 	private Boolean isValid = true;
 
@@ -36,13 +36,53 @@ namespace Spring2.DataTierGenerator.Element {
 
 	private IList log = new ArrayList();
 
-	private RootElement() {}
+	private RootElement(XmlNode rootNode) {
+	    
+	    // Parse entities.
+	    foreach (XmlNode node in GetChildNodes(rootNode, ENTITIES, EntityElement.ENTITY)) {
+		entityElements.Add(new EntityElement(node));
+	    }
 
-	public RootElement(ParserElement parser, ConfigurationElement options, XmlDocument doc) {
-	    this.configElements.Add(options);
-	    XmlNode node = doc.GetElementsByTagName(DATA_TIER_GENERATOR)[0];
-	    Parse(node);
+	    // Parse collections.
+	    foreach (XmlNode node in GetChildNodes(rootNode, COLLECTIONS, CollectionElement.COLLECTION)) {
+		collectionElements.Add(new CollectionElement(node));
+	    }
+
+	    // Parse enums.
+	    foreach (XmlNode node in GetChildNodes(rootNode, ENUMS, EnumElement.ENUM)) {
+		enumElements.Add(new EnumElement(node));
+	    }
+
+	    // Parse types.
+	    foreach (XmlNode node in GetChildNodes(rootNode, TYPES, TypeElement.TYPE)) {
+		TypeElement typeElement = new TypeElement(node);
+		typeElements.Add(typeElement.Name, typeElement);
+	    }
+
+	    // Parse SQL types.
+	    foreach (XmlNode node in GetChildNodes(rootNode, SQLTYPES, SqlTypeElement.SQLTYPE)) {
+		sqlTypeElements.Add(new SqlTypeElement(node));
+	    }
+
+	    // Parse databases.
+	    XmlNode databasesNode = GetChildNodeByName(rootNode, DATABASES);
+	    SqlEntityData databaseDefaults = new SqlEntityData(databasesNode, new SqlEntityData());
+	    foreach (XmlNode node in GetChildNodes(rootNode, DATABASES, DatabaseElement.DATABASE)) {
+		databaseElements.Add(new DatabaseElement(node, databaseDefaults));
+	    }
+
+	    // Parse generator.
+	    foreach (XmlNode node in GetChildNodes(rootNode, GeneratorElement.GENERATOR)) {
+		generatorElements.Add(new GeneratorElement(node));
+	    }
+
 	}
+
+//	public RootElement(ParserElement parser, ConfigurationElement options, XmlDocument doc) {
+//	    this.configElements.Add(options);
+//	    XmlNode node = doc.GetElementsByTagName(DATA_TIER_GENERATOR)[0];
+//	    Parse(node);
+//	}
 
 	public override void ToXml(StringBuilder buffer, Int32 indentLevel) {
 	    buffer.Append(OpenTag(DATA_TIER_GENERATOR, indentLevel));
@@ -135,58 +175,11 @@ namespace Spring2.DataTierGenerator.Element {
 	    get { return (GeneratorElement)generatorElements[0]; }
 	}
 	
-	public ParserElement Parser {
-	    get { return (ParserElement)parserElements[0]; }
-	}
-
 	public void AddValidationMessage(ParserValidationMessage message) {
 	    this.log.Add(message);
 	}
 
 	public void Parse(XmlNode rootNode) {
-
-	    // Parse entities.
-	    foreach (XmlNode node in GetChildNodes(rootNode, ENTITIES, EntityElement.ENTITY)) {
-		entityElements.Add(new EntityElement(node));
-	    }
-
-	    // Parse collections.
-	    foreach (XmlNode node in GetChildNodes(rootNode, COLLECTIONS, CollectionElement.COLLECTION)) {
-		collectionElements.Add(new CollectionElement(node));
-	    }
-
-	    // Parse enums.
-	    foreach (XmlNode node in GetChildNodes(rootNode, ENUMS, EnumElement.ENUM)) {
-		enumElements.Add(new EnumElement(node));
-	    }
-
-	    // Parse types.
-	    foreach (XmlNode node in GetChildNodes(rootNode, TYPES, TypeElement.TYPE)) {
-		TypeElement typeElement = new TypeElement(node);
-		typeElements.Add(typeElement.Name, typeElement);
-	    }
-
-	    // Parse SQL types.
-	    foreach (XmlNode node in GetChildNodes(rootNode, SQLTYPES, SqlTypeElement.SQLTYPE)) {
-		sqlTypeElements.Add(new SqlTypeElement(node));
-	    }
-
-	    // Parse databases.
-	    XmlNode databasesNode = GetChildNodeByName(rootNode, DATABASES);
-	    SqlEntityData databaseDefaults = new SqlEntityData(databasesNode, new SqlEntityData());
-	    foreach (XmlNode node in GetChildNodes(rootNode, DATABASES, DatabaseElement.DATABASE)) {
-		databaseElements.Add(new DatabaseElement(node, databaseDefaults));
-	    }
-
-	    // Parse generator.
-	    foreach (XmlNode node in GetChildNodes(rootNode, GeneratorElement.GENERATOR)) {
-		generatorElements.Add(new GeneratorElement(node));
-	    }
-
-	    // Parse parser.
-	    foreach (XmlNode node in GetChildNodes(rootNode, ParserElement.PARSER)) {
-		parserElements.Add(new ParserElement(node));
-	    }
 	}
 
 	public EntityElement FindEntity(String name) {
@@ -231,34 +224,31 @@ namespace Spring2.DataTierGenerator.Element {
 	    Validate(this);
 	}
 
-	public override void Validate(IParser parser) {
+	public override void Validate(RootElement root) {
 
 	    PreValidate();
 	    
 	    // Recursively validate all parsed elements.
 	    foreach (EntityElement elem in entityElements) {
-		elem.Validate(parser);
+		elem.Validate(root);
 	    }
 	    foreach (CollectionElement elem in collectionElements) {
-		elem.Validate(parser);
+		elem.Validate(root);
 	    }
 	    foreach (EnumElement elem in enumElements) {
-		elem.Validate(parser);
+		elem.Validate(root);
 	    }
 	    foreach (TypeElement elem in typeElements.Values) {
-		elem.Validate(parser);
+		elem.Validate(root);
 	    }
 	    foreach (SqlTypeElement elem in sqlTypeElements) {
-		elem.Validate(parser);
+		elem.Validate(root);
 	    }
 	    foreach (DatabaseElement elem in databaseElements) {
-		elem.Validate(parser);
+		elem.Validate(root);
 	    }
 	    foreach (GeneratorElement elem in generatorElements) {
-		elem.Validate(parser);
-	    }
-	    foreach (ParserElement elem in parserElements) {
-		elem.Validate(parser);
+		elem.Validate(root);
 	    }
 
 	    PostValidate();

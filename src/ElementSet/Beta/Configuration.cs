@@ -219,7 +219,7 @@ namespace Spring2.DataTierGenerator {
 		namespaces.Add(GetDONameSpace(null));
 	    }
 
-	    foreach (PropertyElement field in entity.Fields) 
+	    foreach (PropertyElement field in entity.Properties) 
 	    {
 		if (!field.Type.Package.Equals(String.Empty) && !namespaces.Contains(field.Type.Package)) 
 		{

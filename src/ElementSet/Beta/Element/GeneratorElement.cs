@@ -2,9 +2,6 @@ using System;
 using System.Collections;
 using System.Xml;
 
-using Spring2.DataTierGenerator;
-using Spring2.DataTierGenerator.Parser;
-
 namespace Spring2.DataTierGenerator.Element {
 
     public class GeneratorElement : ElementSkeleton {
@@ -48,9 +45,7 @@ namespace Spring2.DataTierGenerator.Element {
 	    set { tools = value; }
 	}
 
-	public override void Validate(IParser parser) {
-	    // No validation necessary.
-	}
+	public override void Validate(RootElement root) {}
 
 	public IList FindTasksByElement(String element) {
 	    IList list = new ArrayList();

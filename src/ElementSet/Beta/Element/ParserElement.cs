@@ -3,7 +3,7 @@ using System.Collections;
 using System.Xml;
 
 using Spring2.DataTierGenerator;
-using Spring2.DataTierGenerator.Parser;
+using Spring2.DataTierGenerator.Generator;
 
 namespace Spring2.DataTierGenerator.Element {
 

@@ -3,9 +3,6 @@ using System.Collections;
 using System.Text;
 using System.Xml;
 
-using Spring2.DataTierGenerator;
-using Spring2.DataTierGenerator.Parser;
-
 namespace Spring2.DataTierGenerator.Element {
 
     public class IncludeElement : ElementSkeleton {
@@ -20,8 +17,6 @@ namespace Spring2.DataTierGenerator.Element {
 	    }
 	}
 
-	public override void Validate(IParser parser) {
-	    // No validation necessary.
-	}
+	public override void Validate(RootElement root) {}
     }
 }

@@ -3,7 +3,6 @@ using System.Collections;
 using System.Text;
 using System.Xml;
 
-using Spring2.DataTierGenerator;
 using Spring2.DataTierGenerator.Parser;
 
 namespace Spring2.DataTierGenerator.Element {
@@ -89,14 +88,14 @@ namespace Spring2.DataTierGenerator.Element {
 	    set { this.prefix = value; }
 	}
 
-	public override void Validate(IParser parser) {
+	public override void Validate(RootElement root) {
 
 	    // Replace each column placeholder with the column from the sql entity.
 	    ArrayList columns = new ArrayList();
 	    foreach (ColumnElement column in this.columns) {
 		ColumnElement columnElement = this.sqlEntity.FindColumnByName(column.Name);
 		if (columnElement == null) {
-		    parser.AddValidationMessage(ParserValidationMessage.NewError(String.Format("Column specified ({0}) in constraint ({1}) not found as column.", column.Name, this.Name)));		
+		    root.AddValidationMessage(ParserValidationMessage.NewError(String.Format("Column specified ({0}) in constraint ({1}) not found as column.", column.Name, this.Name)));		
 		} else {
 		    columns.Add(columnElement);
 		}
@@ -104,7 +103,7 @@ namespace Spring2.DataTierGenerator.Element {
 	    this.columns = columns;
 	}
 
-	public static ArrayList ParseFromXml(XmlNode root, SqlEntityElement sqlentity, Hashtable sqltypes, Hashtable types, IParser parser) {
+//	public static ArrayList ParseFromXml(XmlNode root, SqlEntityElement sqlentity, Hashtable sqltypes, Hashtable types, IParser parser) {
 //	    ArrayList constraints = new ArrayList();
 //	    XmlNodeList elements=null;
 //	    foreach (XmlNode n in root.ChildNodes) {
@@ -144,8 +143,8 @@ namespace Spring2.DataTierGenerator.Element {
 //		}
 //	    }
 //	    return constraints;
-	    return null;
-	}
+//	    return null;
+//	}
 
 //	public String ToXml() {
 //	    StringBuilder sb = new StringBuilder();

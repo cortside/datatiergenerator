@@ -3,9 +3,6 @@ using System.Collections;
 using System.Text;
 using System.Xml;
 
-using Spring2.DataTierGenerator;
-using Spring2.DataTierGenerator.Parser;
-
 namespace Spring2.DataTierGenerator.Element {
 
     public class EnumValueElement : ElementSkeleton { 
@@ -47,28 +44,27 @@ namespace Spring2.DataTierGenerator.Element {
 	    return sb.ToString();
 	}
 
-	public override void Validate(IParser parser) {
-	}
+	public override void Validate(RootElement root) {}
 
-	public static ArrayList ParseFromXml(String name, ConfigurationElement options, XmlDocument doc, Hashtable sqltypes, Hashtable types, IParser vd) {
-	    ArrayList values = new ArrayList();
-	    XmlNodeList elements = doc.DocumentElement.GetElementsByTagName("enum");
-	    foreach (XmlNode element in elements) {
-		if (element.Attributes["name"].Value.Equals(name) && element.HasChildNodes) {
-		    foreach (XmlNode node in element.ChildNodes) {
-			if (node.Name.Equals("value")) {
-			    EnumValueElement value = new EnumValueElement();
-			    value.Name = node.Attributes["name"].Value;
-			    value.Code = node.Attributes["code"].Value;
-			    if (!node.InnerText.Equals(String.Empty)) {
-				value.Description = node.InnerText;
-			    }
-			    values.Add(value);
-			}
-		    }
-		}
-	    }
-	    return values;
-	}
+//	public static ArrayList ParseFromXml(String name, ConfigurationElement options, XmlDocument doc, Hashtable sqltypes, Hashtable types, IParser vd) {
+//	    ArrayList values = new ArrayList();
+//	    XmlNodeList elements = doc.DocumentElement.GetElementsByTagName("enum");
+//	    foreach (XmlNode element in elements) {
+//		if (element.Attributes["name"].Value.Equals(name) && element.HasChildNodes) {
+//		    foreach (XmlNode node in element.ChildNodes) {
+//			if (node.Name.Equals("value")) {
+//			    EnumValueElement value = new EnumValueElement();
+//			    value.Name = node.Attributes["name"].Value;
+//			    value.Code = node.Attributes["code"].Value;
+//			    if (!node.InnerText.Equals(String.Empty)) {
+//				value.Description = node.InnerText;
+//			    }
+//			    values.Add(value);
+//			}
+//		    }
+//		}
+//	    }
+//	    return values;
+//	}
     }
 }

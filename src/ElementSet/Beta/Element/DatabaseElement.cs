@@ -3,9 +3,6 @@ using System.Collections;
 using System.Text;
 using System.Xml;
 
-using Spring2.DataTierGenerator;
-using Spring2.DataTierGenerator.Parser;
-
 namespace Spring2.DataTierGenerator.Element {
     /// <summary>
     /// Summary description for Database.
@@ -78,37 +75,37 @@ namespace Spring2.DataTierGenerator.Element {
 	    throw new ArgumentException("The given node does not contain a sql entities tag.");
 	}
 
-	public override void Validate(IParser parser) {
+	public override void Validate(RootElement root) {
 	    foreach (SqlEntityElement sqlEntity in this.SqlEntities) {
-		sqlEntity.Validate(parser);
+		sqlEntity.Validate(root);
 	    }
 	}
 
-	public static ArrayList ParseFromXml(ConfigurationElement options, XmlDocument doc, Hashtable sqltypes, Hashtable types, IParser parser) {
-	    DatabaseElement defaults = new DatabaseElement();
-	    XmlNodeList elements = doc.DocumentElement.GetElementsByTagName("databases");
-	    if (elements.Count < 1)
-	    {
-		parser.AddValidationMessage(ParserValidationMessage.NewError("No databases tags found.  You must have at least one databases tag."));
-	    }
-	    else
-	    {
-		SqlEntityElement.ParseNodeAttributes(elements[0], defaults);
-	    }
-
-	    ArrayList list = new ArrayList();
-	    elements = doc.DocumentElement.GetElementsByTagName("database");
-	    foreach (XmlNode node in elements) {
-		DatabaseElement database = new DatabaseElement(defaults);
-		SqlEntityElement.ParseNodeAttributes(node, database);
-		if (node.Attributes["key"] != null) {
-		    database.Key = node.Attributes["key"].Value;
-		}
-		database.SqlEntities = SqlEntityElement.ParseFromXml(database, GetSqlEntitiesNode(node), sqltypes, types, parser);
-		list.Add(database);
-	    }
-	    return list;
-	}
+//	public static ArrayList ParseFromXml(ConfigurationElement options, XmlDocument doc, Hashtable sqltypes, Hashtable types, IParser parser) {
+//	    DatabaseElement defaults = new DatabaseElement();
+//	    XmlNodeList elements = doc.DocumentElement.GetElementsByTagName("databases");
+//	    if (elements.Count < 1)
+//	    {
+//		parser.AddValidationMessage(ParserValidationMessage.NewError("No databases tags found.  You must have at least one databases tag."));
+//	    }
+//	    else
+//	    {
+//		SqlEntityElement.ParseNodeAttributes(elements[0], defaults);
+//	    }
+//
+//	    ArrayList list = new ArrayList();
+//	    elements = doc.DocumentElement.GetElementsByTagName("database");
+//	    foreach (XmlNode node in elements) {
+//		DatabaseElement database = new DatabaseElement(defaults);
+//		SqlEntityElement.ParseNodeAttributes(node, database);
+//		if (node.Attributes["key"] != null) {
+//		    database.Key = node.Attributes["key"].Value;
+//		}
+//		database.SqlEntities = SqlEntityElement.ParseFromXml(database, GetSqlEntitiesNode(node), sqltypes, types, parser);
+//		list.Add(database);
+//	    }
+//	    return list;
+//	}
 
 	public static ArrayList GetAllSqlEntities(IList databases) {
 	    ArrayList list = new ArrayList();

@@ -3,9 +3,6 @@ using System.Collections;
 using System.Text;
 using System.Xml;
 
-using Spring2.DataTierGenerator;
-using Spring2.DataTierGenerator.Parser;
-
 namespace Spring2.DataTierGenerator.Element {
 
     public class TaskElement : ElementSkeleton {
@@ -105,7 +102,7 @@ namespace Spring2.DataTierGenerator.Element {
 // 		}
 // >>>>>>> 1.2
 
-	public override void Validate(IParser parser) {
+	public override void Validate(RootElement root) {
 	}
 
 //	public static ArrayList ParseFromXml(ConfigurationElement options, XmlNode root, IParser vd) {

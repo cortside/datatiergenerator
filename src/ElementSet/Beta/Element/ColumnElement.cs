@@ -3,7 +3,6 @@ using System.Collections;
 using System.Text;
 using System.Xml;
 
-using Spring2.DataTierGenerator;
 using Spring2.DataTierGenerator.Parser;
 
 namespace Spring2.DataTierGenerator.Element {
@@ -171,83 +170,83 @@ namespace Spring2.DataTierGenerator.Element {
 	    set { this.expression = value; }
 	}
 
-	public override void Validate(IParser parser) {
-	    SqlTypeElement sqlType = parser.FindSqlType(this.sqlType.Name);
+	public override void Validate(RootElement root) {
+	    SqlTypeElement sqlType = root.FindSqlType(this.sqlType.Name);
 	    if (sqlType == null) {
-		parser.AddValidationMessage(ParserValidationMessage.NewError(String.Format("SqlType ({0}) was not defined [column=({1}.{2})]", this.sqlType.Name, this.sqlEntity, this.Name)));
+		root.AddValidationMessage(ParserValidationMessage.NewError(String.Format("SqlType ({0}) was not defined [column=({1}.{2})]", this.sqlType.Name, this.sqlEntity, this.Name)));
 	    } else {
 		this.sqlType = sqlType;
 	    }
 	}
 	
 
-	public static ArrayList ParseFromXml(XmlNode root, SqlEntityElement sqlentity, Hashtable sqltypes, Hashtable types, IParser parser) {
-	    ArrayList columns = new ArrayList();
-	    XmlNodeList elements=null;
-	    foreach (XmlNode n in root.ChildNodes) {
-		if (n.Name.Equals("columns")) {
-		    elements = n.ChildNodes;
-		    break;
-		}
-	    }
-	    if (elements != null) {
-		foreach (XmlNode node in elements) {
-		    ColumnElement column = new ColumnElement();
-		    column.Name = node.Attributes["name"].Value;
-		    column.Description = node.InnerText.Trim();
-
-		    if (node.Attributes["sqltype"] != null) {
-			column.SqlType.Name = node.Attributes["sqltype"].Value;
-			if (sqltypes.ContainsKey(column.SqlType.Name)) {
-			    column.SqlType = (SqlTypeElement)((SqlTypeElement)sqltypes[column.SqlType.Name]).Clone();
-			} else {
-			    parser.AddValidationMessage(ParserValidationMessage.NewError("SqlType " + column.SqlType.Name + " was not defined [column=" + sqlentity.Name + "." + column.Name + "]"));
-			}
-		    }
-
-		    if (node.Attributes["required"] != null) {
-			column.Required = Boolean.Parse(node.Attributes["required"].Value);
-		    }
-		    if (node.Attributes["identity"] != null) {
-			column.Identity = Boolean.Parse(node.Attributes["identity"].Value);
-		    }
-		    if (node.Attributes["rowguidcol"] != null) {
-			column.RowGuidCol = Boolean.Parse(node.Attributes["rowguidcol"].Value);
-		    }
-		    if (node.Attributes["viewcolumn"] != null) {
-			column.ViewColumn = Boolean.Parse(node.Attributes["viewcolumn"].Value);
-		    }
-
-		    if (node.Attributes["increment"] != null) {
-			column.Increment = Int32.Parse(node.Attributes["increment"].Value);
-		    }
-		    if (node.Attributes["seed"] != null) {
-			column.Seed = Int32.Parse(node.Attributes["seed"].Value);
-		    }
-		    if (node.Attributes["default"] != null) {
-			column.Default = node.Attributes["default"].Value;
-		    }
-		    if (node.Attributes["formula"] != null) {
-			column.Formula = node.Attributes["formula"].Value;
-		    }
-		    if (node.Attributes["length"] != null) {
-			column.SqlType.Length = Int32.Parse(node.Attributes["length"].Value);
-		    }
-		    if (node.Attributes["scale"] != null) {
-			column.SqlType.Scale = Int32.Parse(node.Attributes["scale"].Value);
-		    }
-		    if (node.Attributes["precision"] != null) {
-			column.SqlType.Precision = Int32.Parse(node.Attributes["precision"].Value);
-		    }
-		    if (node.Attributes["expression"] != null) {
-			column.Expression = node.Attributes["expression"].Value;
-		    }
-
-		    columns.Add(column);
-		}
-	    }
-	    return columns;
-	}
+//	public static ArrayList ParseFromXml(XmlNode root, SqlEntityElement sqlentity, Hashtable sqltypes, Hashtable types, AbstractParser parser) {
+//	    ArrayList columns = new ArrayList();
+//	    XmlNodeList elements=null;
+//	    foreach (XmlNode n in root.ChildNodes) {
+//		if (n.Name.Equals("columns")) {
+//		    elements = n.ChildNodes;
+//		    break;
+//		}
+//	    }
+//	    if (elements != null) {
+//		foreach (XmlNode node in elements) {
+//		    ColumnElement column = new ColumnElement();
+//		    column.Name = node.Attributes["name"].Value;
+//		    column.Description = node.InnerText.Trim();
+//
+//		    if (node.Attributes["sqltype"] != null) {
+//			column.SqlType.Name = node.Attributes["sqltype"].Value;
+//			if (sqltypes.ContainsKey(column.SqlType.Name)) {
+//			    column.SqlType = (SqlTypeElement)((SqlTypeElement)sqltypes[column.SqlType.Name]).Clone();
+//			} else {
+//			    parser.AddValidationMessage(ParserValidationMessage.NewError("SqlType " + column.SqlType.Name + " was not defined [column=" + sqlentity.Name + "." + column.Name + "]"));
+//			}
+//		    }
+//
+//		    if (node.Attributes["required"] != null) {
+//			column.Required = Boolean.Parse(node.Attributes["required"].Value);
+//		    }
+//		    if (node.Attributes["identity"] != null) {
+//			column.Identity = Boolean.Parse(node.Attributes["identity"].Value);
+//		    }
+//		    if (node.Attributes["rowguidcol"] != null) {
+//			column.RowGuidCol = Boolean.Parse(node.Attributes["rowguidcol"].Value);
+//		    }
+//		    if (node.Attributes["viewcolumn"] != null) {
+//			column.ViewColumn = Boolean.Parse(node.Attributes["viewcolumn"].Value);
+//		    }
+//
+//		    if (node.Attributes["increment"] != null) {
+//			column.Increment = Int32.Parse(node.Attributes["increment"].Value);
+//		    }
+//		    if (node.Attributes["seed"] != null) {
+//			column.Seed = Int32.Parse(node.Attributes["seed"].Value);
+//		    }
+//		    if (node.Attributes["default"] != null) {
+//			column.Default = node.Attributes["default"].Value;
+//		    }
+//		    if (node.Attributes["formula"] != null) {
+//			column.Formula = node.Attributes["formula"].Value;
+//		    }
+//		    if (node.Attributes["length"] != null) {
+//			column.SqlType.Length = Int32.Parse(node.Attributes["length"].Value);
+//		    }
+//		    if (node.Attributes["scale"] != null) {
+//			column.SqlType.Scale = Int32.Parse(node.Attributes["scale"].Value);
+//		    }
+//		    if (node.Attributes["precision"] != null) {
+//			column.SqlType.Precision = Int32.Parse(node.Attributes["precision"].Value);
+//		    }
+//		    if (node.Attributes["expression"] != null) {
+//			column.Expression = node.Attributes["expression"].Value;
+//		    }
+//
+//		    columns.Add(column);
+//		}
+//	    }
+//	    return columns;
+//	}
 
 	public String SqlParameter {
 	    get { return "@" + Name + "\t" + sqlType.Declaration; }
