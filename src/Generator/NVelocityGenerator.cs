@@ -99,7 +99,7 @@ namespace Spring2.DataTierGenerator.Generator {
 		    }
 		}
 	    } catch (Exception ex) {
-		WriteToLog(ex.Message);                                                                      
+		WriteToLog(ex.ToString());                                                                      
 	    }
 	}
 
