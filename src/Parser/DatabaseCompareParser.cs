@@ -17,19 +17,10 @@ namespace Spring2.DataTierGenerator.Parser {
     public class DatabaseCompareParser : ParserSkeleton, IParser {
 
 	private String connectionString;
-	private IParser parser;
 
 	public DatabaseCompareParser(String connectionString, IParser parser) {
 	    this.connectionString = connectionString;
-	    this.parser = parser;
 	}
-
-
-
-	//	    if (options.AutoDiscoverEntities || options.AutoDiscoverProperties) {
-	//		connection = new SqlConnection(options.ConnectionString);
-	//		connection.Open();
-	//	    }
 
     }
 }
