@@ -83,14 +83,24 @@
                     HintPath = "..\lib\NVelocity.dll"
                 />
                 <Reference
-                    Name = "CSParser"
-                    AssemblyName = "CSParser"
-                    HintPath = "..\lib\CSParser.dll"
-                />
-                <Reference
                     Name = "Spring2.Core"
                     AssemblyName = "Spring2.Core"
                     HintPath = "..\lib\Spring2.Core.dll"
+                />
+                <Reference
+                    Name = "System.Windows.Forms"
+                    AssemblyName = "System.Windows.Forms"
+                    HintPath = "..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.0.3705\System.Windows.Forms.dll"
+                />
+                <Reference
+                    Name = "Spring2.DataTierGenerator.Attribute"
+                    Project = "{3131371A-6B4B-4B39-9DB0-18B9F955E0BD}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+                />
+                <Reference
+                    Name = "CSParser"
+                    AssemblyName = "CSParser"
+                    HintPath = "..\lib\CSParser.dll"
                 />
             </References>
         </Build>
@@ -264,11 +274,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Generator\CodeDomGenerator.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "Generator\GeneratorSkeleton.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -284,7 +289,37 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Generator\Task\VelocityTask.cs"
+                    RelPath = "Generator\Writer\AbstractWriter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Generator\Writer\CodeUnit.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Generator\Writer\CSharpCodeWriter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Generator\Writer\IWriter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Generator\Writer\RegionMergeWriter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Generator\Writer\TextWriter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Generator\Writer\WriterFactory.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
