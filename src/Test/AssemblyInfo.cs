@@ -43,3 +43,7 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyDelaySign(false)]
 [assembly: AssemblyKeyFile("")]
 [assembly: AssemblyKeyName("")]
+
+// Added by recommendation of FxCop
+[assembly:System.CLSCompliant(true)]
+[assembly:System.Runtime.InteropServices.ComVisibleAttribute(true)]
