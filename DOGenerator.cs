@@ -26,7 +26,7 @@ namespace Spring2.DataTierGenerator {
 			if (options.UseDataTypes) {
 				Hashtable namespaces = new Hashtable();
 				foreach (Field field in fields) {
-					if (!namespaces.Contains(field.DataTypeNamespace)) {
+					if (!field.DataTypeNamespace.Equals(String.Empty) && !namespaces.Contains(field.DataTypeNamespace)) {
 						namespaces.Add(field.DataTypeNamespace, field.DataTypeNamespace);
 					}
 				}
@@ -44,10 +44,13 @@ namespace Spring2.DataTierGenerator {
                 Field objField = (Field)fields[intIndex];
                 //if (objField.IsIdentity == false && objField.IsRowGuidCol == false) {
                 sb.Append("\t\tprivate ");
-				if (options.UseDataTypes) {
-					sb.Append(objField.DataTypeClass);
-					sb.Append(" ").Append(objField.GetFieldFormat()).Append(" = ").Append(objField.DataTypeClass).Append(".DEFAULT;\n");
-				} else {
+                if (options.UseDataTypes && objField.DataType.Length>0) {
+                    sb.Append(objField.DataTypeClass);
+                    sb.Append(" ").Append(objField.GetFieldFormat()).Append(" = ").Append(objField.DataTypeClass).Append(".DEFAULT;\n");
+                } else if (objField.Type.Length>1) {
+                    sb.Append(objField.Type);
+                    sb.Append(" ").Append(objField.GetFieldFormat()).Append(" = new ").Append(objField.ConcreteType).Append("();\n");
+				} else  {
 					sb.Append(objField.ParameterType);
 					sb.Append(" ").Append(objField.GetFieldFormat()).Append(";\n");
 				}
