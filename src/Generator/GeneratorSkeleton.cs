@@ -4,6 +4,8 @@ using System.IO;
 using System.Collections;
 using System.Text;
 
+using org.apache.velocity.app;
+
 using Spring2.DataTierGenerator;
 using Spring2.DataTierGenerator.Element;
 using Spring2.DataTierGenerator.Util;
@@ -17,9 +19,12 @@ namespace Spring2.DataTierGenerator.Generator {
 
 	protected Configuration options;
 
-	public GeneratorSkeleton() {}
+	public GeneratorSkeleton() {
+	    Velocity.Init();
+	}
 
 	public GeneratorSkeleton(Configuration options) {
+	    Velocity.Init();
 	    this.options = options;
 	}
 
@@ -177,5 +182,6 @@ namespace Spring2.DataTierGenerator.Generator {
 	protected virtual String EndRegionTag {
 	    get { return END_REGION; }
 	}
+
     }
 }
