@@ -32,7 +32,7 @@ namespace Spring2.DataTierGenerator {
             // Create the SQL for the stored procedure
             sb = new StringBuilder(1024);
 
-            strProcName = options.GetProcName(entity.Name, "Insert");
+            strProcName = options.GetProcName(entity.SqlObject, "Insert");
 
             sb.Append("CREATE PROCEDURE " + strProcName + "\n");
 
@@ -62,7 +62,7 @@ namespace Spring2.DataTierGenerator {
                 }
             }
 			
-            sb.Append("INSERT INTO [" + entity.Name + "] (\n");
+            sb.Append("INSERT INTO [" + entity.SqlObject + "] (\n");
 			
             // Create the parameter list
             first = true;
@@ -104,7 +104,7 @@ namespace Spring2.DataTierGenerator {
 
             sb.Append("\n\nif @@rowcount <> 1 or @@error!=0\n");
             sb.Append("    BEGIN\n");
-            sb.Append("        RAISERROR  20000 '").Append(strProcName).Append(": Unable to insert new row into ").Append(entity.Name).Append(" table '\n");
+            sb.Append("        RAISERROR  20000 '").Append(strProcName).Append(": Unable to insert new row into ").Append(entity.SqlObject).Append(" table '\n");
             //sb.Append("        ROLLBACK TRAN\n");
             sb.Append("        RETURN(-1)\n");
             sb.Append("    END\n");
@@ -142,7 +142,7 @@ namespace Spring2.DataTierGenerator {
             StringBuilder sb = new StringBuilder(1024);
             int intWhereClauseCount;
 
-            sb.Append("CREATE PROCEDURE " + options.GetProcName(entity.Name, "Update") + "\n\n");
+            sb.Append("CREATE PROCEDURE " + options.GetProcName(entity.SqlObject, "Update") + "\n\n");
 
             // Create the parameter list
 			Boolean first = true;
@@ -183,7 +183,7 @@ namespace Spring2.DataTierGenerator {
 				sb.Append("\n");
 
             sb.Append("\nAS\n");
-            sb.Append("\nUPDATE\n\t[" + entity.Name + "]\n");
+            sb.Append("\nUPDATE\n\t[" + entity.SqlObject + "]\n");
             sb.Append("SET\n");
 			
             // Create the set statement
@@ -241,14 +241,14 @@ namespace Spring2.DataTierGenerator {
 
             sb.Append("\n\nif @@ROWCOUNT <> 1\n");
             sb.Append("    BEGIN\n");
-            //sb.Append("        RAISERROR  ('").Append(options.GetProcName(entity.Name, "Update")).Append(": ").Append(Field.GetIdentityColumn(fields).ColumnName).Append(" %d not found to update', 16,1, @").Append(Field.GetIdentityColumn(fields).ColumnName).Append(")\n");
-			sb.Append("        RAISERROR  ('").Append(options.GetProcName(entity.Name, "Update")).Append(":  update was expected to update a single row and updated %d rows', 16,1, @@ROWCOUNT)\n");
+            //sb.Append("        RAISERROR  ('").Append(options.GetProcName(entity.SqlObject, "Update")).Append(": ").Append(Field.GetIdentityColumn(fields).ColumnName).Append(" %d not found to update', 16,1, @").Append(Field.GetIdentityColumn(fields).ColumnName).Append(")\n");
+			sb.Append("        RAISERROR  ('").Append(options.GetProcName(entity.SqlObject, "Update")).Append(":  update was expected to update a single row and updated %d rows', 16,1, @@ROWCOUNT)\n");
             sb.Append("        RETURN(-1)\n");
             sb.Append("    END\n");
 
 
             // Write out the stored procedure
-            WriteProcToFile(options.GetProcName(entity.Name, "Update"), sb.ToString() + "\nGO\n\n");
+            WriteProcToFile(options.GetProcName(entity.SqlObject, "Update"), sb.ToString() + "\nGO\n\n");
             sb = null;
         }
 
@@ -306,9 +306,9 @@ namespace Spring2.DataTierGenerator {
                     sb = new StringBuilder(1024);
                     
                     if (objField.IsIdentity) {
-                        strProcName = options.GetProcName(entity.Name, "Delete");
+                        strProcName = options.GetProcName(entity.SqlObject, "Delete");
                     } else {
-                        strProcName = options.GetProcName(entity.Name, "DeleteBy" + strColumnName.Replace(" ", "_"));
+                        strProcName = options.GetProcName(entity.SqlObject, "DeleteBy" + strColumnName.Replace(" ", "_"));
                     }
 
                     sb.Append("CREATE PROCEDURE " + strProcName + "\n\n");
@@ -316,7 +316,7 @@ namespace Spring2.DataTierGenerator {
                     sb.Append("@" + objField.ColumnName.Replace(" ", "_") + " " + objField.SqlType);
                     sb.Append("\n\nAS\n\n");
 
-                    sb.Append("if not exists(SELECT ").Append(objField.ColumnName).Append(" FROM ").Append(entity.Name).Append(" WHERE (").Append(objField.ColumnName).Append(" = @").Append(objField.ColumnName).Append("))\n");
+                    sb.Append("if not exists(SELECT ").Append(objField.ColumnName).Append(" FROM [").Append(entity.SqlObject).Append("] WHERE ([").Append(objField.ColumnName).Append("] = @").Append(objField.ColumnName).Append("))\n");
                     sb.Append("    BEGIN\n");
                     sb.Append("        RAISERROR  ('").Append(strProcName).Append(": ").Append(objField.ColumnName).Append(" %d not found to delete', 16,1, @").Append(objField.ColumnName).Append(")\n");
                     sb.Append("        RETURN(-1)\n");
@@ -324,7 +324,7 @@ namespace Spring2.DataTierGenerator {
 
 
                     sb.Append("DELETE\n");
-                    sb.Append("FROM\n\t[" + entity.Name + "]\n");
+                    sb.Append("FROM\n\t[" + entity.SqlObject + "]\n");
                     sb.Append("WHERE \n");
                     sb.Append("\t[" + objField.ColumnName + "] = @" + objField.ColumnName.Replace(" ", "_") + "\n");
 
@@ -344,15 +344,15 @@ namespace Spring2.DataTierGenerator {
                 sb = new StringBuilder(1024);
 
 				if (options.GenerateOnlyPrimaryDeleteStoredProc) {
-					strProcName = options.GetProcName(entity.Name, "Delete");
+					strProcName = options.GetProcName(entity.SqlObject, "Delete");
 				} else {
-					strProcName = options.GetProcName(entity.Name, "DeleteBy" + strPrimaryKeyList);
+					strProcName = options.GetProcName(entity.SqlObject, "DeleteBy" + strPrimaryKeyList);
 				}
 
                 sb.Append("CREATE PROCEDURE " + strProcName + "\n\n");				
 				
                 //// Is this a self-referencing key?
-                //sb.Append("CREATE PROCEDURE proc" + entity.Name.Replace(" ", "_") + "DeleteBy" + strPrimaryKeyList + "\n\n");
+                //sb.Append("CREATE PROCEDURE proc" + entity.SqlObject.Replace(" ", "_") + "DeleteBy" + strPrimaryKeyList + "\n\n");
 
                 // Create the parameter list
                 for (i = 0; i < arrKeyList.Count; i++) {
@@ -381,7 +381,7 @@ namespace Spring2.DataTierGenerator {
 				}
 
 
-				sb.Append("if not exists(SELECT ").Append("*").Append(" FROM ").Append(entity.Name).Append(" WHERE (").Append(where.ToString()).Append("))\n");
+				sb.Append("if not exists(SELECT ").Append("*").Append(" FROM [").Append(entity.SqlObject).Append("] WHERE (").Append(where.ToString()).Append("))\n");
 				sb.Append("    BEGIN\n");
 				sb.Append("        RAISERROR  ('").Append(strProcName).Append(": ").Append("record").Append(" not found to delete', 16,1)\n");
 				sb.Append("        RETURN(-1)\n");
@@ -389,7 +389,7 @@ namespace Spring2.DataTierGenerator {
 
 
                 sb.Append("DELETE\n");
-                sb.Append("FROM\n\t[" + entity.Name + "]\n");
+                sb.Append("FROM\n\t[" + entity.SqlObject + "]\n");
                 sb.Append("WHERE \n");
 
 /*                // Create the where clause
@@ -432,7 +432,7 @@ namespace Spring2.DataTierGenerator {
             // Create the SQL for the stored procedure
             sb = new StringBuilder(1024);
 
-            strProcName = options.GetProcName(entity.Name, "Select");
+            strProcName = options.GetProcName(entity.SqlObject, "Select");
 
             sb.Append("CREATE PROCEDURE " + strProcName + "\n\n");
             sb.Append("\n\nAS\n\n");
@@ -440,7 +440,7 @@ namespace Spring2.DataTierGenerator {
             sb.Append("FROM\n\t[");
             if (options.UseViews)
                 sb.Append("vw");
-            sb.Append(entity.Name);
+            sb.Append(entity.SqlObject);
             sb.Append("]\n");
 			
             // Write out the stored procedure
@@ -478,7 +478,7 @@ namespace Spring2.DataTierGenerator {
                     // Create the SQL for the stored procedure
                     sb = new StringBuilder(1024);
 
-                    strProcName = options.GetProcName(entity.Name, "SelectBy" + strColumnName.Replace(" ", "_"));
+                    strProcName = options.GetProcName(entity.SqlObject, "SelectBy" + strColumnName.Replace(" ", "_"));
                     sb.Append("CREATE PROCEDURE " + strProcName + "\n\n");
 
                     sb.Append("@" + objField.ColumnName.Replace(" ", "_") + "\t" + objField.SqlType);
@@ -487,7 +487,7 @@ namespace Spring2.DataTierGenerator {
                     sb.Append("FROM\n\t[");
                     if (options.UseViews)
                         sb.Append("vw");
-                    sb.Append(entity.Name);
+                    sb.Append(entity.SqlObject);
                     sb.Append("]\n");
 
                     sb.Append("WHERE \n");
@@ -505,11 +505,11 @@ namespace Spring2.DataTierGenerator {
                 // Create the SQL for the stored procedure
                 sb = new StringBuilder(1024);
 
-                strProcName = options.GetProcName(entity.Name, "SelectBy" + strPrimaryKeyList);
+                strProcName = options.GetProcName(entity.SqlObject, "SelectBy" + strPrimaryKeyList);
                 sb.Append("CREATE PROCEDURE " + strProcName + "\n\n");
 				
                 //// Is this a self-referencing key?
-                //sb.Append("CREATE PROCEDURE proc" + entity.Name.Replace(" ", "_") + "SelectBy" + strPrimaryKeyList + "\n\n");
+                //sb.Append("CREATE PROCEDURE proc" + entity.SqlObject.Replace(" ", "_") + "SelectBy" + strPrimaryKeyList + "\n\n");
 
                 // Create the parameter list
                 for (i = 0; i < arrKeyList.Count; i++) {
@@ -525,7 +525,7 @@ namespace Spring2.DataTierGenerator {
 				
                 sb.Append("\n\nAS\n\n");
                 sb.Append("SELECT\n\t*\n");
-                sb.Append("FROM\n\t[" + entity.Name + "]\n");
+                sb.Append("FROM\n\t[" + entity.SqlObject + "]\n");
                 sb.Append("WHERE \n");
 
                 // Create the where clause
@@ -554,7 +554,7 @@ namespace Spring2.DataTierGenerator {
             // Create the SQL for the stored procedure
             sb = new StringBuilder(1024);
 
-            strProcName = "vw" + entity.Name;
+            strProcName = "vw" + entity.SqlObject;
 
             sb.Append("if exists (select * from sysobjects where id = object_id(N'[" + strProcName + "]') and OBJECTPROPERTY(id, N'IsView') = 1)\n");
             sb.Append("drop view [" + strProcName + "]\n");
@@ -579,7 +579,7 @@ namespace Spring2.DataTierGenerator {
             }
             sb.Append("\n");			
             sb.Append("FROM\n\t[");
-            sb.Append(entity.Name);
+            sb.Append(entity.SqlObject);
             sb.Append("]\n");
 
             // Write out the stored procedure
