@@ -12,6 +12,12 @@ Todo:
     - create custom element collections - find and compare methods could be put at this level
     - implement logger that can be passed to NVelocity for template processing messages
     - NVelocity Toolbox tool for sql - escape can be the first method - remove from elements
+    - having a comment node in the /databases/database/sqlentities/sqlentity/column childern causes a null exception
+    - update version of NVelocity used
+    - use HttpHandlerLogger (or whatever it is renamed to) to having NVelocity messages show up in a single DTG log (might want to change logging level)
+    - use of log4net for logging instead of caputuring System.Out to a file stream.
+    - if 2 properties on an entity have the same name, no errors or warnings are generated
+    - ability to generate stored procs based on finder methods
 
 Completed:
     - preservation of custom regions (pull code from regions and insert into generated source before overwritting)
