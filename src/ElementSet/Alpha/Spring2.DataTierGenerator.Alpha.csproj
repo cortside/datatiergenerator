@@ -97,6 +97,10 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "AssemblyVersionInfo.cs"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "config.xsd"
                     BuildAction = "EmbeddedResource"
                 />

@@ -3,7 +3,7 @@
         ProjectType = "Local"
         ProductVersion = "7.0.9466"
         SchemaVersion = "1.0"
-        ProjectGuid = "{3131371A-6B4B-4b39-9DB0-18B9F955E0BD}"
+        ProjectGuid = "{3131371A-6B4B-4B39-9DB0-18B9F955E0BD}"
     >
         <Build>
             <Settings
@@ -76,6 +76,10 @@
         </Build>
         <Files>
             <Include>
+                <File
+                    RelPath = "AssemblyVersionInfo.cs"
+                    BuildAction = "Compile"
+                />
                 <File
                     RelPath = "Attribute\AssemblyInfo.cs"
                     SubType = "Code"

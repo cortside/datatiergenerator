@@ -77,16 +77,26 @@
                     Project = "{8BE555A1-8BBA-4CF7-9B4A-6BBEF7E20FA8}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
+                <Reference
+                    Name = "Spring2.DataTierGenerator.Nant"
+                    Project = "{2844DE77-37C4-4DD5-A1B2-F217D40EEEFE}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+                />
             </References>
         </Build>
         <Files>
             <Include>
+                <File
+                    RelPath = "AssemblyVersionInfo.cs"
+                    BuildAction = "Compile"
+                />
                 <File
                     RelPath = "ConsoleRunner\App.ico"
                     BuildAction = "Content"
                 />
                 <File
                     RelPath = "ConsoleRunner\AssemblyInfo.cs"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File

@@ -112,6 +112,10 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "AssemblyVersionInfo.cs"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Config\sqltypes.inc.xml"
                     BuildAction = "EmbeddedResource"
                 />

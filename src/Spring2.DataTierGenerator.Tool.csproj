@@ -77,6 +77,10 @@
         <Files>
             <Include>
                 <File
+                    RelPath = "AssemblyVersionInfo.cs"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Tool\AssemblyInfo.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
