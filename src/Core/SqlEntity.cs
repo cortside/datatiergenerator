@@ -77,20 +77,23 @@ namespace Spring2.DataTierGenerator.Core {
 	    return null;
 	}
 
-	public static ArrayList ParseFromXml(Database database, XmlDocument doc, Hashtable sqltypes, Hashtable types) {
+	public static ArrayList ParseFromXml(Database database, XmlNode databaseNode, Hashtable sqltypes, Hashtable types) {
 	    ArrayList sqlentities = new ArrayList();
-	    XmlNodeList elements = doc.DocumentElement.GetElementsByTagName("sqlentity");
-	    foreach (XmlNode node in elements) {
-		SqlEntity sqlentity = new SqlEntity(database);
-		ParseNodeAttributes(node, sqlentity);
-		sqlentity.View = "vw" + sqlentity.Name;
-		if (node.Attributes["view"] != null) {
-		    sqlentity.View = node.Attributes["view"].Value;
+	    foreach (XmlNode node in databaseNode.ChildNodes) {
+		if (node.Name.Equals("sqlentity")) 
+		{
+		    SqlEntity sqlentity = new SqlEntity(database);
+		    ParseNodeAttributes(node, sqlentity);
+		    sqlentity.View = "vw" + sqlentity.Name;
+		    if (node.Attributes["view"] != null) 
+		    {
+			sqlentity.View = node.Attributes["view"].Value;
+		    }
+		    sqlentity.Columns = Column.ParseFromXml(node, sqlentity, sqltypes, types);
+		    sqlentity.Constraints = Constraint.ParseFromXml(node, sqlentity, sqltypes, types);
+		    sqlentity.Indexes = Index.ParseFromXml(node, sqlentity, sqltypes, types);
+		    sqlentities.Add(sqlentity);
 		}
-		sqlentity.Columns = Column.ParseFromXml(node, sqlentity, sqltypes, types);
-		sqlentity.Constraints = Constraint.ParseFromXml(node, sqlentity, sqltypes, types);
-		sqlentity.Indexes = Index.ParseFromXml(node, sqlentity, sqltypes, types);
-		sqlentities.Add(sqlentity);
 	    }
 	    return sqlentities;
 	}

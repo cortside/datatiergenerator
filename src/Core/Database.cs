@@ -43,6 +43,23 @@ namespace Spring2.DataTierGenerator.Core {
 	    set { this.sqlentities = value; }
 	}
 
+	/// <summary>
+	/// Gets the sqlentites node given a database node.
+	/// </summary>
+	/// <param name="node">the xml node for the database entry.</param>
+	/// <returns>the xml node for the sql entities entry.</returns>
+	/// <exception cref="ArgumentException">if a sql entities node is
+	/// not found.</exception>
+	private static XmlNode GetSqlEntitiesNode(XmlNode node) {
+	    foreach (XmlNode childNode in node.ChildNodes) {
+		if (childNode.Name.Equals("sqlentities")) {
+		    return childNode;
+		}
+	    }
+
+	    throw new ArgumentException("The given node does not contain a sql entities tag.");
+	}
+
 	public static ArrayList ParseFromXml(Configuration options, XmlDocument doc, Hashtable sqltypes, Hashtable types) {
 	    Database defaults = new Database();
 	    XmlNodeList elements = doc.DocumentElement.GetElementsByTagName("databases");
@@ -63,7 +80,7 @@ namespace Spring2.DataTierGenerator.Core {
 		if (node.Attributes["key"] != null) {
 		    database.Key = node.Attributes["key"].Value;
 		}
-		database.SqlEntities = SqlEntity.ParseFromXml(database, doc, sqltypes, types);
+		database.SqlEntities = SqlEntity.ParseFromXml(database, GetSqlEntitiesNode(node), sqltypes, types);
 		list.Add(database);
 	    }
 	    return list;
