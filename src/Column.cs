@@ -19,6 +19,7 @@ namespace Spring2.DataTierGenerator {
 	private String description = String.Empty;
 	private String foreignColumn = String.Empty;
 	private String sortDirection = String.Empty;
+	private Boolean viewColumn = false;
 
 	public String Name {
 	    get { return this.name; }
@@ -78,6 +79,11 @@ namespace Spring2.DataTierGenerator {
 	public String SortDirection {
 	    get { return this.sortDirection; }
 	    set { this.sortDirection = value; }
+	}
+
+	public Boolean ViewColumn {
+	    get { return this.viewColumn; }
+	    set { this.viewColumn = value; }
 	}
 
 	public Object Clone() {
@@ -150,6 +156,6 @@ namespace Spring2.DataTierGenerator {
 	    get { return "@" + name + "\t" + sqlType.Declaration; }
 	}
 
-    
+   
     }
 }
