@@ -82,11 +82,9 @@ GO
 if not exists (select * from sysindexes where name='$index.Name' and id=object_id(N'[$element.Name]'))
     CREATE#if ($index.Unique) UNIQUE#end INDEX $index.EscapedName ON $element.EscapedName (
 #foreach ($column in $index.Columns)
-#if ($velocityCount>1),
+        $column.EscapedName#if ($column.SortDirection.Length>0) $column.SortDirection#end#if ($velocityCount!=$index.Columns.Count),#end
+        
 #end
-        $column.EscapedName $column.SortDirection
-#end
-
     )
 GO
 #end
