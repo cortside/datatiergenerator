@@ -31,8 +31,8 @@ namespace Spring2.DataTierGenerator {
 	private Configuration config;
 	private System.Windows.Forms.Button generateEntitesXML;
         private System.Windows.Forms.OpenFileDialog openFileDialog;
-
-
+	private Boolean isXmlLoaded = false;
+	
 	#region stuff that cort does not want to see
 	/// <summary>
 	/// Required designer variable.
@@ -281,7 +281,7 @@ namespace Spring2.DataTierGenerator {
 
 	#region Button click handlers
 	private void EnableOK()	{
-	    if (txtServerName.Text.Length == 0 || txtDatabaseName.Text.Length == 0 || txtUserID.Text.Length == 0)
+	    if ((txtServerName.Text.Length == 0 || txtDatabaseName.Text.Length == 0 || txtUserID.Text.Length == 0) && !isXmlLoaded)
 		btnOK.Enabled = false;
 	    else
 		btnOK.Enabled = true;
@@ -440,6 +440,8 @@ namespace Spring2.DataTierGenerator {
 	//clicked on from file browser, clicking cancel wil return from the showDialog
 	private void BrowserSelection(object sender, System.ComponentModel.CancelEventArgs e) {			
 	    xmlConfigFilename.Text = openFileDialog.FileName;
+	    isXmlLoaded = true;
+	    EnableOK();
 	    openFileDialog.Dispose();
 	}
 
