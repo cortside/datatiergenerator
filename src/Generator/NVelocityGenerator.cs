@@ -85,6 +85,7 @@ namespace Spring2.DataTierGenerator.Generator {
 		    if (s == null) {
 			s = new NoStyler();
 		    }
+		    s.File = file.FullName;
 		    IWriter w = parser.GetWriter(task.Writer);
 		    try {
 			if (w.Write(file, s.Style(content))) {

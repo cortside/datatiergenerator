@@ -21,5 +21,13 @@ namespace Spring2.DataTierGenerator.Generator.Styler {
 	    get;
 	}
 
+	/// <summary>
+	/// File name being styled.
+	/// </summary>
+	String File {
+	    get;
+	    set;
+	}
+
     }
 }

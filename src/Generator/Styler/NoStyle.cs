@@ -10,6 +10,8 @@ namespace Spring2.DataTierGenerator.Generator.Styler {
     /// </summary>
     public class NoStyler : BaseStyler, IStyler {
 
+	private String file = String.Empty;
+
 	/// <summary>
 	/// Create an instance of NoStyler with the default options.
 	/// </summary>
@@ -30,6 +32,15 @@ namespace Spring2.DataTierGenerator.Generator.Styler {
 	/// <returns></returns>
 	public String Style(String input) {
 	    return input;
+	}
+
+	/// <summary>
+	/// File being styled.
+	/// </summary>
+	public String File
+	{
+	    get { return file; }
+	    set { file = value; }
 	}
 
     }
