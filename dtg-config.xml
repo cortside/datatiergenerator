@@ -2,7 +2,7 @@
 <DataTierGenerator xmlns="http://www.spring2.com/xsd/datatiergenerator.xsd">
 	<config>
 		<setting name="Server" value="hal" />
-		<setting name="Database" value="cort_seamless" />
+		<setting name="Database" value="cort_project" />
 		<setting name="User" value="sa" />
 		<setting name="Password" value="" />
 		<setting name="RootDirectory" value="c:\data\work\spring2\DataTierGenerator\" />
@@ -22,9 +22,9 @@
 		<setting name="GenerateSelectStoredProcs" value="False" />
 		<setting name="GenerateOnlyPrimaryDeleteStoredProc" value="True" />
 		<setting name="AllowUpdateOfPrimaryKey" value="False" />
-		<setting name="AutoDiscoverEntities" value="False" />
-		<setting name="AutoDiscoverProperties" value="False" />
-		<setting name="AutoDiscoverAttributes" value="False" />
+		<setting name="AutoDiscoverEntities" value="True" />
+		<setting name="AutoDiscoverProperties" value="True" />
+		<setting name="AutoDiscoverAttributes" value="True" />
 		<setting name="DataObjectBaseClass" value="Spring2.Core.DataObject.DataObject" />
 		<setting name="DAOBaseClass" value="Spring2.Core.DAO.EntityDAO" />
 		<setting name="DataObjectNameFormat" value="{0}Data" />
@@ -32,7 +32,9 @@
 	</config>
 	<entities>
 		<entity name="Configuration">
-			<property name="Server" type="String" accessmodifier="protected" />
+			<property name="Server" type="String" accessmodifier="protected">
+				Name of database server.
+			</property>
 			<property name="Database" type="String" accessmodifier="protected" />
 			<property name="User" type="String" accessmodifier="protected" />
 			<property name="Password" type="String" accessmodifier="protected" />
@@ -93,9 +95,23 @@
 			<property name="Precision" type="Int32" />
 			<property name="ReaderMethodFormat" type="String" />
 		</entity>
+		<entity name="Address">
+			<property name="Address1" sqlname="" type="StringType" />
+			<property name="Address2" sqlname="" type="StringType" />
+			<property name="City" sqlname="" type="StringType" />
+			<property name="State" sqlname="" type="StringType" />
+			<property name="PostalCode" sqlname="" type="StringType" />
+			<property name="Country" sqlname="" type="StringType" />
+		</entity>
 		<entity name="TestSqlObject" sqlobject="TestSqlObject">
 			<property name="StringColumn" sqltype="varchar" />
 			<property name="Int32Column" sqltype="int" type="IdType" isidentity="True" />
+			<property name="Address" sqlname="" type="AddressData" />
+			<property name="Address.Address1" sqlname="addr1" sqltype="varchar" type="StringType" />
+			<property name="Address.Address2" sqlname="addr2" sqltype="varchar" type="StringType" />
+			<property name="Address.City" sqlname="city" sqltype="varchar" type="StringType" />
+			<property name="Address.State" sqlname="state" sqltype="varchar" type="StringType" />
+			<property name="Address.PostalCode" sqlname="zip" sqltype="varchar" type="StringType" />
 		</entity>
 	</entities>
 	<enums>
@@ -176,13 +192,16 @@
 		<type name="IList" namespace="System.Collections" />
 		<type name="ArrayList" namespace="System.Collections" newinstanceformat="new ArrayList()" />
 		<type name="Hashtable" namespace="System.Collections" newinstanceformat="new Hashtable()" />
+		<type name="StringType" namespace="Spring2.Core.Types" converttosqltypeformat="{0}.{1}.DBValue" convertfromsqltypeformat="StringType.NewInstance({2})" newinstanceformat="StringType.DEFAULT" nullinstanceformat="StringType.UNSET" />
 		<type name="IdType" namespace="Spring2.Core.Types" converttosqltypeformat="{0}.{1}.DBValue" convertfromsqltypeformat="IdType.NewInstance({2})" newinstanceformat="IdType.DEFAULT" nullinstanceformat="IdType.UNSET" >
 			0=data object variable name
 			1=Property name (properly cased)
 			2=sqltype's readermethod (formatted by readermethodformat) (for convert from sql type, otherwise blank)
 			3=reader variable name (for convert from sql type, otherwise blank)
+			4=sqlname
 		</type>
 		<type name="TypeData" namespace="Spring2.DataTierGenerator" newinstanceformat="new TypeData()" />
 		<type name="SqlTypeData" namespace="Spring2.DataTierGenerator" newinstanceformat="new SqlTypeData()" />
+		<type name="AddressData" namespace="Spring2.DataTierGenerator" newinstanceformat="new AddressData()" />
 	</types>
 </DataTierGenerator>

@@ -123,7 +123,7 @@
 			<property name="OptionGroupID" sqltype="int" scale="0" precision="10" type="IdType" />
 			<property name="Price" sqltype="smallmoney" scale="4" precision="10" type="CurrencyType" />
 		</entity>
-		<entity name="OrderHeader" sqlobject="Orders">
+		<entity name="OrderHeader" sqlobject="Orders" sqlview="vwOrder">
 			<property name="OrderID" sqltype="int" scale="0" precision="10" type="IdType" isidentity="True" isprimarykey="True" />
 			<property name="OrderTime" sqltype="smalldatetime" type="DateType" />
 			<property name="UserID" sqltype="int" scale="0" precision="10" type="IdType" />
