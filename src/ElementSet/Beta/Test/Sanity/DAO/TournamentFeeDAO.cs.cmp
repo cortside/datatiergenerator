@@ -1,0 +1,191 @@
+using System;
+using System.Collections;
+using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
+
+using Spring2.Core.DAO;
+using Spring2.Core.Types;
+
+using Golf.Tournament.DataObject;
+
+
+namespace Golf.Tournament.DAO {
+    public class TournamentFeeDAO : Spring2.Core.DAO.EntityDAO {
+
+	private static readonly String VIEW = "vwTournamentFee";
+	private static readonly String CONNECTION_STRING_KEY = "ConnectionString";
+	private static readonly Int32 COMMAND_TIMEOUT = 15;
+
+	/// <summary>
+	/// Returns a list of all TournamentFee rows.
+	/// </summary>
+	/// <returns>List of TournamentFeeData objects.</returns>
+	/// <exception cref="Spring2.Core.DAO.FinderException">Thrown when no rows are found.</exception>
+	public static IList GetList() { 
+	    return GetList(null, null);
+	}
+
+	/// <summary>
+	/// Returns a filtered list of TournamentFee rows.
+	/// </summary>
+	/// <param name="whereClause">Filtering criteria.</param>
+	/// <returns>List of TournamentFeeData objects.</returns>
+	/// <exception cref="Spring2.Core.DAO.FinderException">Thrown when no rows are found matching the where criteria.</exception>
+	public static IList GetList(IWhere whereClause) { 
+	    return GetList(whereClause, null);
+	}
+
+	/// <summary>
+	/// Returns an ordered list of TournamentFee rows.  All rows in the database are returned
+	/// </summary>
+	/// <param name="orderByClause">Ordering criteria.</param>
+	/// <returns>List of TournamentFeeData objects.</returns>
+	/// <exception cref="Spring2.Core.DAO.FinderException">Thrown when no rows are found.</exception>
+	public static IList GetList(IOrderBy orderByClause) { 
+	    return GetList(null, orderByClause);
+	}
+
+	/// <summary>
+	/// Returns an ordered and filtered list of TournamentFee rows.
+	/// </summary>
+	/// <param name="whereClause">Filtering criteria.</param>
+	/// <param name="orderByClause">Ordering criteria.</param>
+	/// <returns>List of TournamentFeeData objects.</returns>
+	/// <exception cref="Spring2.Core.DAO.FinderException">Thrown when no rows are found matching the where criteria.</exception>
+	public static IList GetList(IWhere whereClause, IOrderBy orderByClause) { 
+	    SqlDataReader dataReader = GetListReader(CONNECTION_STRING_KEY, VIEW, whereClause, orderByClause); 
+
+	    ArrayList list = new ArrayList(); 
+	    while (dataReader.Read()) { 
+		list.Add(GetDataObjectFromReader(dataReader)); 
+	    }
+	    dataReader.Close();
+	    return list; 
+	}
+
+	/// <summary>
+	/// Finds a TournamentFee entity using it's primary key.
+	/// </summary>
+	/// <param name="TournamentFeeId">A key field.</param>
+	/// <returns>A TournamentFeeData object.</returns>
+	/// <exception cref="Spring2.Core.DAO.FinderException">Thrown when no entity exists witht he specified primary key..</exception>
+	public static TournamentFeeData Load(IdType tournamentFeeId) {
+	    WhereClause w = new WhereClause();
+	    w.And("TournamentFeeId", tournamentFeeId.DBValue);
+	    SqlDataReader dataReader = GetListReader(CONNECTION_STRING_KEY, VIEW, w, null);
+
+	    if (!dataReader.Read()) {
+		dataReader.Close();
+		throw new FinderException("Load found no rows for TournamentFee.");
+	    }
+	    TournamentFeeData data = GetDataObjectFromReader(dataReader);
+	    dataReader.Close();
+	    return data;
+	}
+
+	/// <summary>
+	/// Builds a data object from the current row in a data reader..
+	/// </summary>
+	/// <param name="dataReader">Container for database row.</param>
+	/// <returns>Data object built from current row.</returns>
+	private static TournamentFeeData GetDataObjectFromReader(SqlDataReader dataReader) {
+	    TournamentFeeData data = new TournamentFeeData();
+	    if (dataReader.IsDBNull(dataReader.GetOrdinal("TournamentFeeId"))) { 
+		data.TournamentFeeId = IdType.UNSET;
+	    } else {
+		data.TournamentFeeId = new IdType(dataReader.GetInt32(dataReader.GetOrdinal("TournamentFeeId")));
+	    }
+	    if (dataReader.IsDBNull(dataReader.GetOrdinal("TournamentId"))) { 
+		data.TournamentId = IdType.UNSET;
+	    } else {
+		data.TournamentId = new IdType(dataReader.GetInt32(dataReader.GetOrdinal("TournamentId")));
+	    }
+	    if (dataReader.IsDBNull(dataReader.GetOrdinal("Key"))) { 
+		data.Key = StringType.UNSET;
+	    } else {
+		data.Key = StringType.Parse(dataReader.GetString(dataReader.GetOrdinal("Key")));
+	    }
+	    if (dataReader.IsDBNull(dataReader.GetOrdinal("Fee"))) { 
+		data.Fee = CurrencyType.UNSET;
+	    } else {
+		data.Fee = new CurrencyType(dataReader.GetDecimal(dataReader.GetOrdinal("Fee")));
+	    }
+
+	    return data;
+	}
+
+	/// <summary>
+	/// Inserts a record into the TournamentFee table.
+	/// </summary>
+	/// <param name=""></param>
+	public static IdType Insert(TournamentFeeData data) {
+	    // Create and execute the command
+	    SqlCommand cmd = GetSqlCommand(CONNECTION_STRING_KEY, "spTournamentFee_Insert", CommandType.StoredProcedure, COMMAND_TIMEOUT);
+
+	    SqlParameter rv = cmd.Parameters.Add("RETURN_VALUE", SqlDbType.Int);
+	    rv.Direction = ParameterDirection.ReturnValue;
+	    //Create the parameters and append them to the command object
+	    cmd.Parameters.Add(new SqlParameter("@TournamentId", SqlDbType.Int, 0, ParameterDirection.Input, false, 10, 0, "TournamentId", DataRowVersion.Proposed, data.TournamentId.DBValue));
+	    cmd.Parameters.Add(new SqlParameter("@Key", SqlDbType.VarChar, 50, ParameterDirection.Input, false, 0, 0, "Key", DataRowVersion.Proposed, data.Key.DBValue));
+	    cmd.Parameters.Add(new SqlParameter("@Fee", SqlDbType.Money, 0, ParameterDirection.Input, false, 0, 0, "Fee", DataRowVersion.Proposed, data.Fee.DBValue));
+
+	    // Execute the query
+	    cmd.ExecuteNonQuery();
+	    cmd.Connection.Close();
+	    // Set the output paramter value(s)
+	    return new IdType((Int32)(cmd.Parameters["RETURN_VALUE"].Value));
+	}
+
+	/// <summary>
+	/// Updates a record in the TournamentFee table.
+	/// </summary>
+	/// <param name=""></param>
+	public static void Update(TournamentFeeData data) {
+	    // Create and execute the command
+	    SqlCommand cmd = GetSqlCommand(CONNECTION_STRING_KEY, "spTournamentFee_Update", CommandType.StoredProcedure, COMMAND_TIMEOUT);
+
+	    //Create the parameters and append them to the command object
+	    cmd.Parameters.Add(new SqlParameter("@TournamentFeeId", SqlDbType.Int, 0, ParameterDirection.Input, false, 10, 0, "TournamentFeeId", DataRowVersion.Proposed, data.TournamentFeeId.DBValue));
+	    cmd.Parameters.Add(new SqlParameter("@TournamentId", SqlDbType.Int, 0, ParameterDirection.Input, false, 10, 0, "TournamentId", DataRowVersion.Proposed, data.TournamentId.DBValue));
+	    cmd.Parameters.Add(new SqlParameter("@Key", SqlDbType.VarChar, 50, ParameterDirection.Input, false, 0, 0, "Key", DataRowVersion.Proposed, data.Key.DBValue));
+	    cmd.Parameters.Add(new SqlParameter("@Fee", SqlDbType.Money, 0, ParameterDirection.Input, false, 0, 0, "Fee", DataRowVersion.Proposed, data.Fee.DBValue));
+
+	    // Execute the query
+	    cmd.ExecuteNonQuery();
+	    cmd.Connection.Close();
+	}
+
+	/// <summary>
+	/// Deletes a record from the TournamentFee table by TournamentFeeId.
+	/// </summary>
+	/// <param name=""></param>
+	public static void Delete(IdType tournamentFeeId) {
+	    // Create and execute the command
+	    SqlCommand cmd = GetSqlCommand(CONNECTION_STRING_KEY, "spTournamentFee_Delete", CommandType.StoredProcedure, COMMAND_TIMEOUT);
+
+	    // Create and append the parameters
+	    cmd.Parameters.Add(new SqlParameter("@TournamentFeeId", SqlDbType.Int, 0, ParameterDirection.Input, false, 10, 0, "TournamentFeeId", DataRowVersion.Proposed, tournamentFeeId.DBValue));
+
+	    // Execute the query and return the result
+	    cmd.ExecuteNonQuery();
+	    cmd.Connection.Close();
+	}
+
+
+	/// <summary>
+	/// Returns a list of objects which match the values for the fields specified.
+	/// </summary>
+	/// <param name="TournamentId">A field value to be matched.</param>
+	/// <returns>The list of TournamentFeeDAO objects found.</returns>
+	/// <exception cref="Spring2.Core.DAO.FinderException">Thrown when no rows are found.</exception>
+	public static IList FindByTournamentId(IdType tournamentId) {
+		WhereClause filter = new WhereClause();
+		OrderByClause sort = new OrderByClause("TournamentId");
+		filter.And("TournamentId", tournamentId.DBValue);
+
+		return GetList(filter, sort);
+	}
+
+    }
+}

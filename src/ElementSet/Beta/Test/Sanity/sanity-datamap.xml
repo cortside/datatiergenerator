@@ -1,0 +1,229 @@
+<?xml version="1.0" ?>
+<DataTierGenerator xmlns:xinc="http://www.w3.org/1999/XML/xinclude" version="2.0">
+    <!-- 
+    
+    -->
+    <generator class="Spring2.DataTierGenerator.Generator.GeneratorTaskManager,Spring2.DataTierGenerator">
+	<tasks>
+	    <task name="dataobject" element="entity" template="Template\DataObject.vm" directory="DataObject" filenameformat="{0}Data.cs" />
+	    <task name="dao" element="entity" template="Template\DAO.vm" directory="DAO" filenameformat="{0}DAO.cs" />
+	    <task name="enum" element="enum" template="Template\enum.vm" directory="Types" filenameformat="{0}.cs" />
+	    <task name="enum" element="enum" template="Template\EnumTest.vm" directory="Test" filenameformat="{0}Test.cs" />
+	    <task name="collection" element="collection" template="Template\collection.vm" directory="DataObject" filenameformat="{0}.cs" />
+	    <task name="table" element="sqlentity" template="Template\sql_table.vm" directory="sql\table" filenameformat="{0}.table.sql" />
+	    <task name="view" element="sqlentity" template="Template\sql_view.vm" directory="sql\view" filenameformat="vw{0}.view.sql" />
+	    <task name="delete procs" element="sqlentity" template="Template\sql_delete.vm" directory="sql\proc" filenameformat="sp{0}_Delete.proc.sql" />
+	    <task name="insert procs" element="sqlentity" template="Template\sql_insert.vm" directory="sql\proc" filenameformat="sp{0}_Insert.proc.sql" />
+	    <task name="update procs" element="sqlentity" template="Template\sql_update.vm" directory="sql\proc" filenameformat="sp{0}_Update.proc.sql" />
+	    <task name="enum table data scripts" element="enum" template="Template\enum_sql_data.vm" directory="sql\data" filenameformat="{0}.data.sql">
+		<includes>
+		    <include name="GolferStatusEnum" />
+		</includes>
+		<parameters>
+		    <parameter name="table" value="GolferStatus" />
+		    <parameter name="codeColumn" value="Code" />
+		    <parameter name="nameColumn" value="Name" />
+		</parameters>
+	    </task>
+	    <task name="enum table data scripts" element="enum" template="Template\enum_sql_data.vm" directory="sql\data" filenameformat="{0}.data.sql">
+		<includes>
+		    <include name="FunctionEnum" />
+		</includes>
+		<parameters>
+		    <parameter name="table" value="Function" />
+		    <parameter name="codeColumn" value="FunctionID" />
+		    <parameter name="nameColumn" value="FunctionName" />
+		    <parameter name="descriptionColumn" value="Description" />
+		</parameters>
+	    </task>
+	</tasks>
+	<tools>
+	    <tool name="sql" class="Spring2.DataTierGenerator.Tool.MSSqlServerTool,Spring2.DataTierGenerator.Tool" />
+	</tools>
+    </generator>
+    <!-- 
+    
+    -->
+    <config>
+	<setting name="RootDirectory" value=".\SanityTest\" />
+	<setting name="RootNameSpace" value="Golf.Tournament" />
+	<setting name="DataObjectBaseClass" value="Spring2.Core.DataObject.DataObject" />
+	<setting name="DAOBaseClass" value="Spring2.Core.DAO.EntityDAO" />
+    </config>
+    <!-- 
+    
+    -->
+    <sqltypes-ref xinc:href="config\sqltypes.inc.xml" />
+    <types-ref xinc:href="config\types.inc.xml" />
+    <!-- 
+    
+    -->
+    <entities>
+	<entity name="Address">
+	    <properties>
+		<property name="Address" type="StringType" />
+		<property name="City" type="StringType" />
+		<property name="State" type="StringType" />
+		<property name="PostalCode" type="StringType" />
+	    </properties>
+	</entity>
+	<entity name="Vendor">
+	    <properties>
+		<property name="VendorId" type="IdType" />
+		<property name="Name" type="StringType" />
+	    </properties>
+	</entity>
+	<entity name="User">
+	    <properties>
+		<property name="UserId" type="IdType" />
+		<property name="Name" type="StringType" />
+	    </properties>
+	</entity>
+	<entity name="Order">
+	    <properties>
+		<property name="OrderId" type="IdType" />
+		<property name="OrderDate" type="DateType" />
+		<property name="Description" type="StringType" />
+		<property name="Amount" type="CurrencyType" />
+		<property name="DeliveryAddress" entity="Address" />
+		<property name="Vendor" entity="Vendor" />
+		<property name="User" entity="User" />
+		<property name="Lines" collection="OrderLineList" />
+		<property name="State" enum="OrderStateEnum" />
+	    </properties>
+	</entity>
+	<entity name="OrderLine">
+	    <properties>
+		<property name="OrderLineId" type="IdType" />
+		<property name="OrderId" type="IdType" />
+		<property name="Item" type="StringType" />
+		<property name="Quantity" type="IntegerType" />
+	    </properties>
+	</entity>
+    </entities>
+    <!-- 
+    
+    -->
+    <datamaps>
+	<datamap name="Order" entity="Order">
+	    <sqlentities>
+		<sqlentity name="Order">
+		    <columnmap property="OrderId" />
+		    <columnmap property="OrderDate" />
+		    <columnmap property="Description" />
+		    <columnmap property="Amount" />
+		    <columnmap property="DeliveryAddress.Address" column="Address" />
+		    <columnmap property="DeliveryAddress.City" column="City" />
+		    <columnmap property="DeliveryAddress.State" column="State" />
+		    <columnmap property="DeliveryAddress.PostalCode" column="ZipCode" />
+		    <collectionmap property="Lines" datamap="OrderLine" />
+		    <dmapref name="vendor" loadmethod="lazy" />
+		    <dmapref name="user" />
+		</sqlentity>
+		<sqlentity name="Vendor" loadmethod="lazy">
+		    <columnmap property="Vendor.VendorId" column="*" />
+		    <columnmap property="Vendor.Name" column="*" />
+		</sqlentity>
+		<sqlentity name="User" loadmethod="lazy">
+		    <columnmap property="User.UserId" column="*" />
+		    <columnmap property="User.Name" column="*" />
+		</sqlentity>
+	    </sqlentities>
+	</datamap>
+	<datamap name="OrderLine" entity="OrderLine">
+	    <sqlentities>
+		<sqlentity name="OrderLine">
+		    <columnmap property="OrderLineId" />
+		    <columnmap property="OrderId" />
+		    <columnmap property="Item" />
+		    <columnmap property="Amount" />
+		</sqlentity>
+	    </sqlentities>
+	</datamap>
+	<datamap name="User" entity="User">
+	    <sqlentities>
+		<sqlentity name="User">
+		    <columnmap property="UserId" />
+		    <columnmap property="Name" />
+		</sqlentity>
+	    </sqlentities>
+	</datamap>
+	<datamap name="Vendor" entity="Vendor">
+	    <sqlentities>
+		<sqlentity name="Vendor">
+		    <columnmap property="VendorId" />
+		    <columnmap property="Name" />
+		</sqlentity>
+	    </sqlentities>
+	</datamap>
+    </datamaps>
+    <!-- 
+    
+    -->
+    <databases server="olympus" database="dtg_datamap" user="sa" password="1qaz2wsx" generateviewscript="True" generatetablescript="True" generateinsertstoredprocscript="True" generateupdatestoredprocscript="True" generatedeletestoredprocscript="True" commandtimeout="15">
+	<database name="database" key="ConnectionString">
+	    <sqlentities>
+		<sqlentity name="Vendor" view="vwVendor">
+		    <columns>
+			<column name="VendorId" sqltype="int" identity="True" />
+			<column name="Name" sqltype="varchar" length="50" />
+		    </columns>
+		    <constraints>
+			<constraint name="PK_Vendor" type="PRIMARY KEY">
+			    <column name="VendorId" />
+			</constraint>
+		    </constraints>
+		</sqlentity>
+		<sqlentity name="User" view="vwUser">
+		    <columns>
+			<column name="UserId" sqltype="int" identity="True" />
+			<column name="Name" sqltype="varchar" length="50" />
+		    </columns>
+		    <constraints>
+			<constraint name="PK_User" type="PRIMARY KEY">
+			    <column name="UserId" />
+			</constraint>
+		    </constraints>
+		</sqlentity>
+		<sqlentity name="Order" view="vwOrder">
+		    <columns>
+			<column name="OrderId" sqltype="int" identity="True" />
+			<column name="OrderDate" sqltype="datetime" />
+			<column name="Description" sqltype="varchar" length="50" />
+			<column name="Amount" sqltype="money" />
+			<column name="Address" sqltype="varchar" length="50" />
+			<column name="City" sqltype="varchar" length="50" />
+			<column name="State" sqltype="varchar" length="50" />
+			<column name="ZipCode" sqltype="varchar" length="50" />
+			<column name="VendorId" sqltype="int" />
+			<column name="UserId" sqltype="int" />
+		    </columns>
+		    <constraints>
+			<constraint name="PK_Order" type="PRIMARY KEY">
+			    <column name="OrderId" />
+			</constraint>
+		    </constraints>
+		</sqlentity>
+		<sqlentity name="OrderLine" view="vwOrderLine">
+		    <columns>
+			<column name="OrderLineId" sqltype="int" identity="True" />
+			<column name="OrderId" sqltype="int" required="True" />
+			<column name="Item" sqltype="varchar" length="50" />
+			<column name="Quantity" sqltype="int" />
+		    </columns>
+		    <constraints>
+			<constraint name="PK_OrderLine" type="PRIMARY KEY">
+			    <column name="OrderLineId" />
+			</constraint>
+			<constraint name="FK_OrderLine_Order" type="FOREIGN KEY" foreignentity="Order">
+			    <column name="OrderId" foreigncolumn="OrderId" />
+			</constraint>
+		    </constraints>
+		</sqlentity>
+	    </sqlentities>
+	</database>
+    </databases>
+    <!-- 
+    
+    -->
+</DataTierGenerator>

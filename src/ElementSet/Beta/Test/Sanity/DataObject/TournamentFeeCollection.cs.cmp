@@ -1,0 +1,103 @@
+using System;
+
+namespace Golf.Tournament.DataObject {
+
+    /// <summary>
+    /// TournamentFeeData generic collection
+    /// </summary>
+    public class TournamentFeeCollection : System.Collections.CollectionBase {
+
+	public static readonly TournamentFeeCollection UNSET = new TournamentFeeCollection(true);
+	public static readonly TournamentFeeCollection DEFAULT = new TournamentFeeCollection(true);
+
+	private Boolean immutable = false;
+
+	private TournamentFeeCollection (Boolean immutable) {
+	        this.immutable = immutable;
+	}
+
+	public TournamentFeeCollection() {
+	}
+
+	// Indexer implementation.
+	public TournamentFeeData this[int index] {
+	    get { return (TournamentFeeData) List[index]; }
+	    set { 
+		if (!immutable) {
+		    List[index] = value;
+		} else {
+		    throw new System.Data.ReadOnlyException();
+		}
+	    }
+	}
+
+	public void Add(TournamentFeeData value) {
+	    if (!immutable) {
+		List.Add(value);
+	    } else {
+		throw new System.Data.ReadOnlyException();
+	    }
+	}
+
+	public Boolean Contains(TournamentFeeData value) {
+	    return List.Contains(value);
+	}
+	
+	public Int32 IndexOf(TournamentFeeData value) {
+	    return List.IndexOf(value);
+	}
+	
+	public void Insert(Int32 index, TournamentFeeData value) {
+	    if (!immutable) {
+	    	List.Insert(index, value);
+	    } else {
+		throw new System.Data.ReadOnlyException();
+	    }
+	}
+
+	public void Remove(int index) {
+	    if (!immutable) {
+		if (index > Count - 1 || index < 0) {
+		    throw new IndexOutOfRangeException();
+		} else {
+		    List.RemoveAt(index); 
+		}
+	    } else {
+		throw new System.Data.ReadOnlyException();
+	    }
+	}
+
+	public void Remove(TournamentFeeData value) {
+	    if (!immutable) {
+		List.Remove(value); 
+	    } else {
+		throw new System.Data.ReadOnlyException();
+	    }
+	}
+
+	public void AddRange(System.Collections.IList list) {
+	    foreach(Object o in list) {
+		if (o is TournamentFeeData) {
+		    Add((TournamentFeeData)o);
+		} else {
+		    throw new System.InvalidCastException("object in list could not be cast to TournamentFeeData");
+		}
+	    }
+	}
+	
+	public Boolean IsDefault {
+	    get { return Object.ReferenceEquals(this, DEFAULT); }
+	}
+
+	public Boolean IsUnset {
+	    get { return Object.ReferenceEquals(this, UNSET); }
+	}
+	
+	public Boolean IsValid {
+	    get {
+		return !(IsDefault || IsUnset);
+	    }
+	}
+
+    }
+}

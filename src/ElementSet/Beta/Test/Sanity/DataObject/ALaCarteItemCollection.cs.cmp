@@ -1,0 +1,103 @@
+using System;
+
+namespace Golf.Tournament.DataObject {
+
+    /// <summary>
+    /// ALaCarteItemData generic collection
+    /// </summary>
+    public class ALaCarteItemCollection : System.Collections.CollectionBase {
+
+	public static readonly ALaCarteItemCollection UNSET = new ALaCarteItemCollection(true);
+	public static readonly ALaCarteItemCollection DEFAULT = new ALaCarteItemCollection(true);
+
+	private Boolean immutable = false;
+
+	private ALaCarteItemCollection (Boolean immutable) {
+	        this.immutable = immutable;
+	}
+
+	public ALaCarteItemCollection() {
+	}
+
+	// Indexer implementation.
+	public ALaCarteItemData this[int index] {
+	    get { return (ALaCarteItemData) List[index]; }
+	    set { 
+		if (!immutable) {
+		    List[index] = value;
+		} else {
+		    throw new System.Data.ReadOnlyException();
+		}
+	    }
+	}
+
+	public void Add(ALaCarteItemData value) {
+	    if (!immutable) {
+		List.Add(value);
+	    } else {
+		throw new System.Data.ReadOnlyException();
+	    }
+	}
+
+	public Boolean Contains(ALaCarteItemData value) {
+	    return List.Contains(value);
+	}
+	
+	public Int32 IndexOf(ALaCarteItemData value) {
+	    return List.IndexOf(value);
+	}
+	
+	public void Insert(Int32 index, ALaCarteItemData value) {
+	    if (!immutable) {
+	    	List.Insert(index, value);
+	    } else {
+		throw new System.Data.ReadOnlyException();
+	    }
+	}
+
+	public void Remove(int index) {
+	    if (!immutable) {
+		if (index > Count - 1 || index < 0) {
+		    throw new IndexOutOfRangeException();
+		} else {
+		    List.RemoveAt(index); 
+		}
+	    } else {
+		throw new System.Data.ReadOnlyException();
+	    }
+	}
+
+	public void Remove(ALaCarteItemData value) {
+	    if (!immutable) {
+		List.Remove(value); 
+	    } else {
+		throw new System.Data.ReadOnlyException();
+	    }
+	}
+
+	public void AddRange(System.Collections.IList list) {
+	    foreach(Object o in list) {
+		if (o is ALaCarteItemData) {
+		    Add((ALaCarteItemData)o);
+		} else {
+		    throw new System.InvalidCastException("object in list could not be cast to ALaCarteItemData");
+		}
+	    }
+	}
+	
+	public Boolean IsDefault {
+	    get { return Object.ReferenceEquals(this, DEFAULT); }
+	}
+
+	public Boolean IsUnset {
+	    get { return Object.ReferenceEquals(this, UNSET); }
+	}
+	
+	public Boolean IsValid {
+	    get {
+		return !(IsDefault || IsUnset);
+	    }
+	}
+
+    }
+}

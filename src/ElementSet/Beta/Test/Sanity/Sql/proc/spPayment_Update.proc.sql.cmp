@@ -1,0 +1,67 @@
+if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[spPayment_Update]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+drop procedure [dbo].[spPayment_Update]
+GO
+
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE spPayment_Update
+
+	@PaymentId	int,
+	@TournamentId	int,
+	@GolferId	int,
+	@AuthorizationNumber	varchar(50),
+	@ReferenceNumber	varchar(50),
+	@TransactionNumber	varchar(50),
+	@Amount	money,
+	@ProcessDate	datetime,
+	@PaymentStatus	varchar(10),
+	@CreditCardNumber	varchar(25),
+	@ExpirationDate	varchar(4),
+	@CardholderName	varchar(50),
+	@Address1	varchar(50),
+	@Address2	varchar(50),
+	@City	varchar(50),
+	@State	char(2),
+	@Country	varchar(50),
+	@PostalCode	varchar(10),
+	@ConfirmationCode	varchar(50),
+	@PaymentDate	datetime
+
+AS
+
+
+UPDATE
+	Payment
+SET
+	TournamentId = @TournamentId,
+	GolferId = @GolferId,
+	AuthorizationNumber = @AuthorizationNumber,
+	ReferenceNumber = @ReferenceNumber,
+	TransactionNumber = @TransactionNumber,
+	Amount = @Amount,
+	ProcessDate = @ProcessDate,
+	PaymentStatus = @PaymentStatus,
+	CreditCardNumber = @CreditCardNumber,
+	ExpirationDate = @ExpirationDate,
+	CardholderName = @CardholderName,
+	Address1 = @Address1,
+	Address2 = @Address2,
+	City = @City,
+	State = @State,
+	Country = @Country,
+	PostalCode = @PostalCode,
+	ConfirmationCode = @ConfirmationCode,
+	PaymentDate = @PaymentDate
+WHERE
+PaymentId = @PaymentId
+
+
+if @@ROWCOUNT <> 1
+    BEGIN
+        RAISERROR  ('spPayment_Update:  update was expected to update a single row and updated %d rows', 16,1, @@ROWCOUNT)
+        RETURN(-1)
+    END
+GO
+
