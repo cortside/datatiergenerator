@@ -1,0 +1,31 @@
+if exists (select * from sysobjects where id = object_id(N'[vwGolfer]') and OBJECTPROPERTY(id, N'IsView') = 1)
+drop view [vwGolfer]
+GO
+
+CREATE VIEW vwGolfer
+
+AS
+
+SELECT 	GolferId,
+	FirstName,
+	MiddleInitial,
+	LastName,
+	Phone,
+	Email,
+	Address1,
+	Address2,
+	City,
+	State,
+	Country,
+	PostalCode,
+	DateOfBirth,
+	Handicap,
+	CourseNumber,
+	PlayerNumber,
+	Gender,
+	GolferStatus
+FROM
+	Golfer
+
+GO
+

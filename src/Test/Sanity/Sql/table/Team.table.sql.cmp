@@ -1,0 +1,55 @@
+if not exists (select * from dbo.sysobjects where id = object_id(N'[Team]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+CREATE TABLE Team (
+	TeamId int IDENTITY(1,1) NOT NULL,
+	RegistrationKey varchar(6) NULL,
+	Status char(1) NULL,
+	TournamentId int NULL
+)
+GO
+
+if not exists(select * from syscolumns where id=object_id('Team') and name = 'TeamId')
+  BEGIN
+	ALTER TABLE Team ADD
+	    TeamId int IDENTITY(1,1) NOT NULL
+  END
+GO
+
+if not exists(select * from syscolumns where id=object_id('Team') and name = 'RegistrationKey')
+  BEGIN
+	ALTER TABLE Team ADD
+	    RegistrationKey varchar(6) NULL
+  END
+GO
+
+if not exists(select * from syscolumns where id=object_id('Team') and name = 'Status')
+  BEGIN
+	ALTER TABLE Team ADD
+	    Status char(1) NULL
+  END
+GO
+
+if not exists(select * from syscolumns where id=object_id('Team') and name = 'TournamentId')
+  BEGIN
+	ALTER TABLE Team ADD
+	    TournamentId int NULL
+  END
+GO
+
+if not exists (select * from dbo.sysobjects where id = object_id(N'PK_Team') and OBJECTPROPERTY(id, N'IsPrimaryKey') = 1)
+ALTER TABLE Team WITH NOCHECK ADD 
+	CONSTRAINT PK_Team PRIMARY KEY NONCLUSTERED 
+	(
+		TeamId
+	)
+GO
+
+if not exists (select * from dbo.sysobjects where id = object_id(N'FK_Team_Tournament') and OBJECTPROPERTY(id, N'IsForeignKey') = 1)
+ALTER TABLE Team ADD 
+	CONSTRAINT FK_Team_Tournament FOREIGN KEY 
+	(
+		TournamentId
+	) REFERENCES Tournament (
+		TournamentId
+	)
+GO
+

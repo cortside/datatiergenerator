@@ -1,0 +1,17 @@
+if exists (select * from sysobjects where id = object_id(N'[vwTournamentFee]') and OBJECTPROPERTY(id, N'IsView') = 1)
+drop view [vwTournamentFee]
+GO
+
+CREATE VIEW vwTournamentFee
+
+AS
+
+SELECT 	TournamentFeeId,
+	TournamentId,
+	[Key],
+	Fee
+FROM
+	TournamentFee
+
+GO
+

@@ -1,0 +1,289 @@
+using System;
+using System.Collections;
+using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
+
+using Spring2.Core.DAO;
+using Spring2.Core.Types;
+
+using Golf.Tournament.DataObject;
+using Golf.Tournament.Types;
+
+
+namespace Golf.Tournament.DAO {
+    public class PaymentDAO : Spring2.Core.DAO.EntityDAO {
+
+	private static readonly String VIEW = "vwPayment";
+	private static readonly String CONNECTION_STRING_KEY = "ConnectionString";
+	private static readonly Int32 COMMAND_TIMEOUT = 15;
+
+	/// <summary>
+	/// Returns a list of all Payment rows.
+	/// </summary>
+	/// <returns>List of PaymentData objects.</returns>
+	/// <exception cref="Spring2.Core.DAO.FinderException">Thrown when no rows are found.</exception>
+	public static IList GetList() { 
+	    return GetList(null, null);
+	}
+
+	/// <summary>
+	/// Returns a filtered list of Payment rows.
+	/// </summary>
+	/// <param name="whereClause">Filtering criteria.</param>
+	/// <returns>List of PaymentData objects.</returns>
+	/// <exception cref="Spring2.Core.DAO.FinderException">Thrown when no rows are found matching the where criteria.</exception>
+	public static IList GetList(IWhere whereClause) { 
+	    return GetList(whereClause, null);
+	}
+
+	/// <summary>
+	/// Returns an ordered list of Payment rows.  All rows in the database are returned
+	/// </summary>
+	/// <param name="orderByClause">Ordering criteria.</param>
+	/// <returns>List of PaymentData objects.</returns>
+	/// <exception cref="Spring2.Core.DAO.FinderException">Thrown when no rows are found.</exception>
+	public static IList GetList(IOrderBy orderByClause) { 
+	    return GetList(null, orderByClause);
+	}
+
+	/// <summary>
+	/// Returns an ordered and filtered list of Payment rows.
+	/// </summary>
+	/// <param name="whereClause">Filtering criteria.</param>
+	/// <param name="orderByClause">Ordering criteria.</param>
+	/// <returns>List of PaymentData objects.</returns>
+	/// <exception cref="Spring2.Core.DAO.FinderException">Thrown when no rows are found matching the where criteria.</exception>
+	public static IList GetList(IWhere whereClause, IOrderBy orderByClause) { 
+	    SqlDataReader dataReader = GetListReader(CONNECTION_STRING_KEY, VIEW, whereClause, orderByClause); 
+
+	    ArrayList list = new ArrayList(); 
+	    while (dataReader.Read()) { 
+		list.Add(GetDataObjectFromReader(dataReader)); 
+	    }
+	    dataReader.Close();
+	    return list; 
+	}
+
+	/// <summary>
+	/// Finds a Payment entity using it's primary key.
+	/// </summary>
+	/// <param name="PaymentId">A key field.</param>
+	/// <returns>A PaymentData object.</returns>
+	/// <exception cref="Spring2.Core.DAO.FinderException">Thrown when no entity exists witht he specified primary key..</exception>
+	public static PaymentData Load(IdType paymentId) {
+	    WhereClause w = new WhereClause();
+	    w.And("PaymentId", paymentId.DBValue);
+	    SqlDataReader dataReader = GetListReader(CONNECTION_STRING_KEY, VIEW, w, null);
+
+	    if (!dataReader.Read()) {
+		dataReader.Close();
+		throw new FinderException("Load found no rows for Payment.");
+	    }
+	    PaymentData data = GetDataObjectFromReader(dataReader);
+	    dataReader.Close();
+	    return data;
+	}
+
+	/// <summary>
+	/// Builds a data object from the current row in a data reader..
+	/// </summary>
+	/// <param name="dataReader">Container for database row.</param>
+	/// <returns>Data object built from current row.</returns>
+	private static PaymentData GetDataObjectFromReader(SqlDataReader dataReader) {
+	    PaymentData data = new PaymentData();
+	    if (dataReader.IsDBNull(dataReader.GetOrdinal("PaymentId"))) { 
+		data.PaymentId = IdType.UNSET;
+	    } else {
+		data.PaymentId = IdType.NewInstance(dataReader.GetInt32(dataReader.GetOrdinal("PaymentId")));
+	    }
+	    if (dataReader.IsDBNull(dataReader.GetOrdinal("TournamentId"))) { 
+		data.Tournament.TournamentId = IdType.UNSET;
+	    } else {
+		data.Tournament.TournamentId = IdType.NewInstance(dataReader.GetInt32(dataReader.GetOrdinal("TournamentId")));
+	    }
+	    if (dataReader.IsDBNull(dataReader.GetOrdinal("AuthorizationNumber"))) { 
+		data.AuthorizationNumber = StringType.UNSET;
+	    } else {
+		data.AuthorizationNumber = StringType.NewInstance(dataReader.GetString(dataReader.GetOrdinal("AuthorizationNumber")));
+	    }
+	    if (dataReader.IsDBNull(dataReader.GetOrdinal("ReferenceNumber"))) { 
+		data.ReferenceNumber = StringType.UNSET;
+	    } else {
+		data.ReferenceNumber = StringType.NewInstance(dataReader.GetString(dataReader.GetOrdinal("ReferenceNumber")));
+	    }
+	    if (dataReader.IsDBNull(dataReader.GetOrdinal("TransactionNumber"))) { 
+		data.TransactionNumber = StringType.UNSET;
+	    } else {
+		data.TransactionNumber = StringType.NewInstance(dataReader.GetString(dataReader.GetOrdinal("TransactionNumber")));
+	    }
+	    if (dataReader.IsDBNull(dataReader.GetOrdinal("Amount"))) { 
+		data.Amount = CurrencyType.UNSET;
+	    } else {
+		data.Amount = CurrencyType.NewInstance(dataReader.GetDecimal(dataReader.GetOrdinal("Amount")));
+	    }
+	    if (dataReader.IsDBNull(dataReader.GetOrdinal("ProcessDate"))) { 
+		data.ProcessDate = DateType.UNSET;
+	    } else {
+		data.ProcessDate = DateType.NewInstance(dataReader.GetDateTime(dataReader.GetOrdinal("ProcessDate")));
+	    }
+	    if (dataReader.IsDBNull(dataReader.GetOrdinal("PaymentStatus"))) { 
+		data.PaymentStatus = PaymentStatusEnum.UNSET;
+	    } else {
+		data.PaymentStatus = PaymentStatusEnum.GetInstance(dataReader.GetString(dataReader.GetOrdinal("PaymentStatus")));
+	    }
+	    if (dataReader.IsDBNull(dataReader.GetOrdinal("GolferId"))) { 
+		data.Golfer.GolferId = IdType.UNSET;
+	    } else {
+		data.Golfer.GolferId = IdType.NewInstance(dataReader.GetInt32(dataReader.GetOrdinal("GolferId")));
+	    }
+	    if (dataReader.IsDBNull(dataReader.GetOrdinal("CreditCardNumber"))) { 
+		data.CreditCard.Number = StringType.UNSET;
+	    } else {
+		data.CreditCard.Number = StringType.NewInstance(dataReader.GetString(dataReader.GetOrdinal("CreditCardNumber")));
+	    }
+	    if (dataReader.IsDBNull(dataReader.GetOrdinal("ExpirationDate"))) { 
+		data.CreditCard.ExpirationDate = DateType.UNSET;
+	    } else {
+		data.CreditCard.ExpirationDate = DateType.NewInstance(Spring2.Core.Util.DateUtil.ToDateTimeFromCreditCardDate(dataReader.GetString(dataReader.GetOrdinal("ExpirationDate"))));
+	    }
+	    if (dataReader.IsDBNull(dataReader.GetOrdinal("CardholderName"))) { 
+		data.CreditCard.Name = StringType.UNSET;
+	    } else {
+		data.CreditCard.Name = StringType.NewInstance(dataReader.GetString(dataReader.GetOrdinal("CardholderName")));
+	    }
+	    if (dataReader.IsDBNull(dataReader.GetOrdinal("Address1"))) { 
+		data.CreditCard.Address.Address1 = StringType.UNSET;
+	    } else {
+		data.CreditCard.Address.Address1 = StringType.NewInstance(dataReader.GetString(dataReader.GetOrdinal("Address1")));
+	    }
+	    if (dataReader.IsDBNull(dataReader.GetOrdinal("Address2"))) { 
+		data.CreditCard.Address.Address2 = StringType.UNSET;
+	    } else {
+		data.CreditCard.Address.Address2 = StringType.NewInstance(dataReader.GetString(dataReader.GetOrdinal("Address2")));
+	    }
+	    if (dataReader.IsDBNull(dataReader.GetOrdinal("City"))) { 
+		data.CreditCard.Address.City = StringType.UNSET;
+	    } else {
+		data.CreditCard.Address.City = StringType.NewInstance(dataReader.GetString(dataReader.GetOrdinal("City")));
+	    }
+	    if (dataReader.IsDBNull(dataReader.GetOrdinal("State"))) { 
+		data.CreditCard.Address.State = USStateCodeEnum.UNSET;
+	    } else {
+		data.CreditCard.Address.State = USStateCodeEnum.GetInstance(dataReader.GetString(dataReader.GetOrdinal("State")));
+	    }
+	    if (dataReader.IsDBNull(dataReader.GetOrdinal("Country"))) { 
+		data.CreditCard.Address.Country = StringType.UNSET;
+	    } else {
+		data.CreditCard.Address.Country = StringType.NewInstance(dataReader.GetString(dataReader.GetOrdinal("Country")));
+	    }
+	    if (dataReader.IsDBNull(dataReader.GetOrdinal("PostalCode"))) { 
+		data.CreditCard.Address.PostalCode = StringType.UNSET;
+	    } else {
+		data.CreditCard.Address.PostalCode = StringType.NewInstance(dataReader.GetString(dataReader.GetOrdinal("PostalCode")));
+	    }
+	    if (dataReader.IsDBNull(dataReader.GetOrdinal("ConfirmationCode"))) { 
+		data.ConfirmationCode = StringType.UNSET;
+	    } else {
+		data.ConfirmationCode = StringType.NewInstance(dataReader.GetString(dataReader.GetOrdinal("ConfirmationCode")));
+	    }
+	    if (dataReader.IsDBNull(dataReader.GetOrdinal("PaymentDate"))) { 
+		data.PaymentDate = DateType.UNSET;
+	    } else {
+		data.PaymentDate = DateType.NewInstance(dataReader.GetDateTime(dataReader.GetOrdinal("PaymentDate")));
+	    }
+
+	    return data;
+	}
+
+	/// <summary>
+	/// Inserts a record into the Payment table.
+	/// </summary>
+	/// <param name=""></param>
+	public static IdType Insert(PaymentData data) {
+	    // Create and execute the command
+	    SqlCommand cmd = GetSqlCommand(CONNECTION_STRING_KEY, "spPayment_Insert", CommandType.StoredProcedure, COMMAND_TIMEOUT);
+
+	    SqlParameter rv = cmd.Parameters.Add("RETURN_VALUE", SqlDbType.Int);
+	    rv.Direction = ParameterDirection.ReturnValue;
+	    //Create the parameters and append them to the command object
+	    cmd.Parameters.Add(new SqlParameter("@TournamentId", SqlDbType.Int, 0, ParameterDirection.Input, false, 10, 0, "Tournament.TournamentId", DataRowVersion.Proposed, data.Tournament.TournamentId.DBValue));
+	    cmd.Parameters.Add(new SqlParameter("@AuthorizationNumber", SqlDbType.VarChar, 50, ParameterDirection.Input, false, 0, 0, "AuthorizationNumber", DataRowVersion.Proposed, data.AuthorizationNumber.DBValue));
+	    cmd.Parameters.Add(new SqlParameter("@ReferenceNumber", SqlDbType.VarChar, 50, ParameterDirection.Input, false, 0, 0, "ReferenceNumber", DataRowVersion.Proposed, data.ReferenceNumber.DBValue));
+	    cmd.Parameters.Add(new SqlParameter("@TransactionNumber", SqlDbType.VarChar, 50, ParameterDirection.Input, false, 0, 0, "TransactionNumber", DataRowVersion.Proposed, data.TransactionNumber.DBValue));
+	    cmd.Parameters.Add(new SqlParameter("@Amount", SqlDbType.Money, 0, ParameterDirection.Input, false, 0, 0, "Amount", DataRowVersion.Proposed, data.Amount.DBValue));
+	    cmd.Parameters.Add(new SqlParameter("@ProcessDate", SqlDbType.DateTime, 0, ParameterDirection.Input, false, 0, 0, "ProcessDate", DataRowVersion.Proposed, data.ProcessDate.DBValue));
+	    cmd.Parameters.Add(new SqlParameter("@PaymentStatus", SqlDbType.VarChar, 10, ParameterDirection.Input, false, 0, 0, "PaymentStatus", DataRowVersion.Proposed, data.PaymentStatus.DBValue));
+	    cmd.Parameters.Add(new SqlParameter("@GolferId", SqlDbType.Int, 0, ParameterDirection.Input, false, 10, 0, "Golfer.GolferId", DataRowVersion.Proposed, data.Golfer.GolferId.DBValue));
+	    cmd.Parameters.Add(new SqlParameter("@CreditCardNumber", SqlDbType.VarChar, 25, ParameterDirection.Input, false, 0, 0, "CreditCard.Number", DataRowVersion.Proposed, data.CreditCard.Number.DBValue));
+	    cmd.Parameters.Add(new SqlParameter("@ExpirationDate", SqlDbType.VarChar, 4, ParameterDirection.Input, false, 0, 0, "CreditCard.ExpirationDate", DataRowVersion.Proposed, data.CreditCard.ExpirationDate.ToString("MMyy")));
+	    cmd.Parameters.Add(new SqlParameter("@CardholderName", SqlDbType.VarChar, 50, ParameterDirection.Input, false, 0, 0, "CreditCard.Name", DataRowVersion.Proposed, data.CreditCard.Name.DBValue));
+	    cmd.Parameters.Add(new SqlParameter("@Address1", SqlDbType.VarChar, 50, ParameterDirection.Input, false, 0, 0, "CreditCard.Address.Address1", DataRowVersion.Proposed, data.CreditCard.Address.Address1.DBValue));
+	    cmd.Parameters.Add(new SqlParameter("@Address2", SqlDbType.VarChar, 50, ParameterDirection.Input, false, 0, 0, "CreditCard.Address.Address2", DataRowVersion.Proposed, data.CreditCard.Address.Address2.DBValue));
+	    cmd.Parameters.Add(new SqlParameter("@City", SqlDbType.VarChar, 50, ParameterDirection.Input, false, 0, 0, "CreditCard.Address.City", DataRowVersion.Proposed, data.CreditCard.Address.City.DBValue));
+	    cmd.Parameters.Add(new SqlParameter("@State", SqlDbType.Char, 2, ParameterDirection.Input, false, 0, 0, "CreditCard.Address.State", DataRowVersion.Proposed, data.CreditCard.Address.State.DBValue));
+	    cmd.Parameters.Add(new SqlParameter("@Country", SqlDbType.VarChar, 50, ParameterDirection.Input, false, 0, 0, "CreditCard.Address.Country", DataRowVersion.Proposed, data.CreditCard.Address.Country.DBValue));
+	    cmd.Parameters.Add(new SqlParameter("@PostalCode", SqlDbType.VarChar, 10, ParameterDirection.Input, false, 0, 0, "CreditCard.Address.PostalCode", DataRowVersion.Proposed, data.CreditCard.Address.PostalCode.DBValue));
+	    cmd.Parameters.Add(new SqlParameter("@ConfirmationCode", SqlDbType.VarChar, 50, ParameterDirection.Input, false, 0, 0, "ConfirmationCode", DataRowVersion.Proposed, data.ConfirmationCode.DBValue));
+	    cmd.Parameters.Add(new SqlParameter("@PaymentDate", SqlDbType.DateTime, 0, ParameterDirection.Input, false, 0, 0, "PaymentDate", DataRowVersion.Proposed, data.PaymentDate.DBValue));
+
+	    // Execute the query
+	    cmd.ExecuteNonQuery();
+	    cmd.Connection.Close();
+	    // Set the output paramter value(s)
+	    return IdType.NewInstance(cmd.Parameters["RETURN_VALUE"].Value);
+	}
+
+	/// <summary>
+	/// Updates a record in the Payment table.
+	/// </summary>
+	/// <param name=""></param>
+	public static void Update(PaymentData data) {
+	    // Create and execute the command
+	    SqlCommand cmd = GetSqlCommand(CONNECTION_STRING_KEY, "spPayment_Update", CommandType.StoredProcedure, COMMAND_TIMEOUT);
+
+	    //Create the parameters and append them to the command object
+	    cmd.Parameters.Add(new SqlParameter("@PaymentId", SqlDbType.Int, 0, ParameterDirection.Input, false, 10, 0, "PaymentId", DataRowVersion.Proposed, data.PaymentId.DBValue));
+	    cmd.Parameters.Add(new SqlParameter("@TournamentId", SqlDbType.Int, 0, ParameterDirection.Input, false, 10, 0, "Tournament.TournamentId", DataRowVersion.Proposed, data.Tournament.TournamentId.DBValue));
+	    cmd.Parameters.Add(new SqlParameter("@AuthorizationNumber", SqlDbType.VarChar, 50, ParameterDirection.Input, false, 0, 0, "AuthorizationNumber", DataRowVersion.Proposed, data.AuthorizationNumber.DBValue));
+	    cmd.Parameters.Add(new SqlParameter("@ReferenceNumber", SqlDbType.VarChar, 50, ParameterDirection.Input, false, 0, 0, "ReferenceNumber", DataRowVersion.Proposed, data.ReferenceNumber.DBValue));
+	    cmd.Parameters.Add(new SqlParameter("@TransactionNumber", SqlDbType.VarChar, 50, ParameterDirection.Input, false, 0, 0, "TransactionNumber", DataRowVersion.Proposed, data.TransactionNumber.DBValue));
+	    cmd.Parameters.Add(new SqlParameter("@Amount", SqlDbType.Money, 0, ParameterDirection.Input, false, 0, 0, "Amount", DataRowVersion.Proposed, data.Amount.DBValue));
+	    cmd.Parameters.Add(new SqlParameter("@ProcessDate", SqlDbType.DateTime, 0, ParameterDirection.Input, false, 0, 0, "ProcessDate", DataRowVersion.Proposed, data.ProcessDate.DBValue));
+	    cmd.Parameters.Add(new SqlParameter("@PaymentStatus", SqlDbType.VarChar, 10, ParameterDirection.Input, false, 0, 0, "PaymentStatus", DataRowVersion.Proposed, data.PaymentStatus.DBValue));
+	    cmd.Parameters.Add(new SqlParameter("@GolferId", SqlDbType.Int, 0, ParameterDirection.Input, false, 10, 0, "Golfer.GolferId", DataRowVersion.Proposed, data.Golfer.GolferId.DBValue));
+	    cmd.Parameters.Add(new SqlParameter("@CreditCardNumber", SqlDbType.VarChar, 25, ParameterDirection.Input, false, 0, 0, "CreditCard.Number", DataRowVersion.Proposed, data.CreditCard.Number.DBValue));
+	    cmd.Parameters.Add(new SqlParameter("@ExpirationDate", SqlDbType.VarChar, 4, ParameterDirection.Input, false, 0, 0, "CreditCard.ExpirationDate", DataRowVersion.Proposed, data.CreditCard.ExpirationDate.ToString("MMyy")));
+	    cmd.Parameters.Add(new SqlParameter("@CardholderName", SqlDbType.VarChar, 50, ParameterDirection.Input, false, 0, 0, "CreditCard.Name", DataRowVersion.Proposed, data.CreditCard.Name.DBValue));
+	    cmd.Parameters.Add(new SqlParameter("@Address1", SqlDbType.VarChar, 50, ParameterDirection.Input, false, 0, 0, "CreditCard.Address.Address1", DataRowVersion.Proposed, data.CreditCard.Address.Address1.DBValue));
+	    cmd.Parameters.Add(new SqlParameter("@Address2", SqlDbType.VarChar, 50, ParameterDirection.Input, false, 0, 0, "CreditCard.Address.Address2", DataRowVersion.Proposed, data.CreditCard.Address.Address2.DBValue));
+	    cmd.Parameters.Add(new SqlParameter("@City", SqlDbType.VarChar, 50, ParameterDirection.Input, false, 0, 0, "CreditCard.Address.City", DataRowVersion.Proposed, data.CreditCard.Address.City.DBValue));
+	    cmd.Parameters.Add(new SqlParameter("@State", SqlDbType.Char, 2, ParameterDirection.Input, false, 0, 0, "CreditCard.Address.State", DataRowVersion.Proposed, data.CreditCard.Address.State.DBValue));
+	    cmd.Parameters.Add(new SqlParameter("@Country", SqlDbType.VarChar, 50, ParameterDirection.Input, false, 0, 0, "CreditCard.Address.Country", DataRowVersion.Proposed, data.CreditCard.Address.Country.DBValue));
+	    cmd.Parameters.Add(new SqlParameter("@PostalCode", SqlDbType.VarChar, 10, ParameterDirection.Input, false, 0, 0, "CreditCard.Address.PostalCode", DataRowVersion.Proposed, data.CreditCard.Address.PostalCode.DBValue));
+	    cmd.Parameters.Add(new SqlParameter("@ConfirmationCode", SqlDbType.VarChar, 50, ParameterDirection.Input, false, 0, 0, "ConfirmationCode", DataRowVersion.Proposed, data.ConfirmationCode.DBValue));
+	    cmd.Parameters.Add(new SqlParameter("@PaymentDate", SqlDbType.DateTime, 0, ParameterDirection.Input, false, 0, 0, "PaymentDate", DataRowVersion.Proposed, data.PaymentDate.DBValue));
+
+	    // Execute the query
+	    cmd.ExecuteNonQuery();
+	    cmd.Connection.Close();
+	}
+
+	/// <summary>
+	/// Deletes a record from the Payment table by PaymentId.
+	/// </summary>
+	/// <param name=""></param>
+	public static void Delete(IdType paymentId) {
+	    // Create and execute the command
+	    SqlCommand cmd = GetSqlCommand(CONNECTION_STRING_KEY, "spPayment_Delete", CommandType.StoredProcedure, COMMAND_TIMEOUT);
+
+	    // Create and append the parameters
+	    cmd.Parameters.Add(new SqlParameter("@PaymentId", SqlDbType.Int, 0, ParameterDirection.Input, false, 10, 0, "PaymentId", DataRowVersion.Proposed, paymentId.DBValue));
+
+	    // Execute the query and return the result
+	    cmd.ExecuteNonQuery();
+	    cmd.Connection.Close();
+	}
+
+    }
+}

@@ -1,0 +1,33 @@
+if exists (select * from sysobjects where id = object_id(N'[vwPayment]') and OBJECTPROPERTY(id, N'IsView') = 1)
+drop view [vwPayment]
+GO
+
+CREATE VIEW vwPayment
+
+AS
+
+SELECT 	PaymentId,
+	TournamentId,
+	GolferId,
+	AuthorizationNumber,
+	ReferenceNumber,
+	TransactionNumber,
+	Amount,
+	ProcessDate,
+	PaymentStatus,
+	CreditCardNumber,
+	ExpirationDate,
+	CardholderName,
+	Address1,
+	Address2,
+	City,
+	State,
+	Country,
+	PostalCode,
+	ConfirmationCode,
+	PaymentDate
+FROM
+	Payment
+
+GO
+

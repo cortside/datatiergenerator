@@ -1,0 +1,78 @@
+if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[spTournament_Insert]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+drop procedure [dbo].[spTournament_Insert]
+GO
+
+CREATE PROCEDURE spTournament_Insert
+	@Name	varchar(50),
+	@Description	varchar(500),
+	@NumberOfTeams	int,
+	@TeamSize	char(1),
+	@Format	char(1),
+	@RegistrationBeginDate	datetime,
+	@RegistrationEndDate	datetime,
+	@RegistrationFee	money,
+	@OrganizerId	int,
+	@CancellationCutoffDate	datetime,
+	@RegistrationFeeDescription	varchar(250),
+	@DatesText	varchar(50),
+	@PrizesText	varchar(1000),
+	@SponsorsText	varchar(1000),
+	@LocationsText	varchar(250),
+	@MaximumHandicap	int,
+	@Host	varchar(30),
+	@ShowPercentFull	char(1),
+	@ShowParticipants	char(1)
+
+AS
+
+INSERT INTO Tournament (
+	Name,
+	Description,
+	NumberOfTeams,
+	TeamSize,
+	Format,
+	RegistrationBeginDate,
+	RegistrationEndDate,
+	RegistrationFee,
+	OrganizerId,
+	CancellationCutoffDate,
+	RegistrationFeeDescription,
+	DatesText,
+	PrizesText,
+	SponsorsText,
+	LocationsText,
+	MaximumHandicap,
+	Host,
+	ShowPercentFull,
+	ShowParticipants)
+VALUES (
+	@Name,
+	@Description,
+	@NumberOfTeams,
+	@TeamSize,
+	@Format,
+	@RegistrationBeginDate,
+	@RegistrationEndDate,
+	@RegistrationFee,
+	@OrganizerId,
+	@CancellationCutoffDate,
+	@RegistrationFeeDescription,
+	@DatesText,
+	@PrizesText,
+	@SponsorsText,
+	@LocationsText,
+	@MaximumHandicap,
+	@Host,
+	@ShowPercentFull,
+	@ShowParticipants)
+
+
+if @@rowcount <> 1 or @@error!=0
+    BEGIN
+        RAISERROR  20000 'spTournament_Insert: Unable to insert new row into Tournament table '
+        RETURN(-1)
+    END
+
+return @@IDENTITY
+GO
+

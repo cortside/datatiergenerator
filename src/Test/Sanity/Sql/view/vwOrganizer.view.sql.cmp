@@ -1,0 +1,27 @@
+if exists (select * from sysobjects where id = object_id(N'[vwOrganizer]') and OBJECTPROPERTY(id, N'IsView') = 1)
+drop view [vwOrganizer]
+GO
+
+CREATE VIEW vwOrganizer
+
+AS
+
+SELECT 	OrganizerId,
+	Name,
+	Address1,
+	Address2,
+	City,
+	State,
+	Country,
+	PostalCode,
+	OrganizerContactName,
+	OrganizerContactPhone,
+	OrganizerContactEmail,
+	TechnicalContactName,
+	TechnicalContactPhone,
+	TechnicalContactEmail
+FROM
+	Organizer
+
+GO
+

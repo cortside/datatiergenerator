@@ -1,0 +1,199 @@
+if not exists (select * from dbo.sysobjects where id = object_id(N'[Payment]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+CREATE TABLE Payment (
+	PaymentId int IDENTITY(1,1) NOT NULL,
+	TournamentId int NULL,
+	GolferId int NULL,
+	AuthorizationNumber varchar(50) NULL,
+	ReferenceNumber varchar(50) NULL,
+	TransactionNumber varchar(50) NULL,
+	Amount money NULL,
+	ProcessDate datetime NULL,
+	PaymentStatus varchar(10) NULL,
+	CreditCardNumber varchar(25) NULL,
+	ExpirationDate varchar(4) NULL,
+	CardholderName varchar(50) NULL,
+	Address1 varchar(50) NULL,
+	Address2 varchar(50) NULL,
+	City varchar(50) NULL,
+	State char(2) NULL,
+	Country varchar(50) NULL,
+	PostalCode varchar(10) NULL,
+	ConfirmationCode varchar(50) NULL,
+	PaymentDate datetime NULL
+)
+GO
+
+if not exists(select * from syscolumns where id=object_id('Payment') and name = 'PaymentId')
+  BEGIN
+	ALTER TABLE Payment ADD
+	    PaymentId int IDENTITY(1,1) NOT NULL
+  END
+GO
+
+if not exists(select * from syscolumns where id=object_id('Payment') and name = 'TournamentId')
+  BEGIN
+	ALTER TABLE Payment ADD
+	    TournamentId int NULL
+  END
+GO
+
+if not exists(select * from syscolumns where id=object_id('Payment') and name = 'GolferId')
+  BEGIN
+	ALTER TABLE Payment ADD
+	    GolferId int NULL
+  END
+GO
+
+if not exists(select * from syscolumns where id=object_id('Payment') and name = 'AuthorizationNumber')
+  BEGIN
+	ALTER TABLE Payment ADD
+	    AuthorizationNumber varchar(50) NULL
+  END
+GO
+
+if not exists(select * from syscolumns where id=object_id('Payment') and name = 'ReferenceNumber')
+  BEGIN
+	ALTER TABLE Payment ADD
+	    ReferenceNumber varchar(50) NULL
+  END
+GO
+
+if not exists(select * from syscolumns where id=object_id('Payment') and name = 'TransactionNumber')
+  BEGIN
+	ALTER TABLE Payment ADD
+	    TransactionNumber varchar(50) NULL
+  END
+GO
+
+if not exists(select * from syscolumns where id=object_id('Payment') and name = 'Amount')
+  BEGIN
+	ALTER TABLE Payment ADD
+	    Amount money NULL
+  END
+GO
+
+if not exists(select * from syscolumns where id=object_id('Payment') and name = 'ProcessDate')
+  BEGIN
+	ALTER TABLE Payment ADD
+	    ProcessDate datetime NULL
+  END
+GO
+
+if not exists(select * from syscolumns where id=object_id('Payment') and name = 'PaymentStatus')
+  BEGIN
+	ALTER TABLE Payment ADD
+	    PaymentStatus varchar(10) NULL
+  END
+GO
+
+if not exists(select * from syscolumns where id=object_id('Payment') and name = 'CreditCardNumber')
+  BEGIN
+	ALTER TABLE Payment ADD
+	    CreditCardNumber varchar(25) NULL
+  END
+GO
+
+if not exists(select * from syscolumns where id=object_id('Payment') and name = 'ExpirationDate')
+  BEGIN
+	ALTER TABLE Payment ADD
+	    ExpirationDate varchar(4) NULL
+  END
+GO
+
+if not exists(select * from syscolumns where id=object_id('Payment') and name = 'CardholderName')
+  BEGIN
+	ALTER TABLE Payment ADD
+	    CardholderName varchar(50) NULL
+  END
+GO
+
+if not exists(select * from syscolumns where id=object_id('Payment') and name = 'Address1')
+  BEGIN
+	ALTER TABLE Payment ADD
+	    Address1 varchar(50) NULL
+  END
+GO
+
+if not exists(select * from syscolumns where id=object_id('Payment') and name = 'Address2')
+  BEGIN
+	ALTER TABLE Payment ADD
+	    Address2 varchar(50) NULL
+  END
+GO
+
+if not exists(select * from syscolumns where id=object_id('Payment') and name = 'City')
+  BEGIN
+	ALTER TABLE Payment ADD
+	    City varchar(50) NULL
+  END
+GO
+
+if not exists(select * from syscolumns where id=object_id('Payment') and name = 'State')
+  BEGIN
+	ALTER TABLE Payment ADD
+	    State char(2) NULL
+  END
+GO
+
+if not exists(select * from syscolumns where id=object_id('Payment') and name = 'Country')
+  BEGIN
+	ALTER TABLE Payment ADD
+	    Country varchar(50) NULL
+  END
+GO
+
+if not exists(select * from syscolumns where id=object_id('Payment') and name = 'PostalCode')
+  BEGIN
+	ALTER TABLE Payment ADD
+	    PostalCode varchar(10) NULL
+  END
+GO
+
+if not exists(select * from syscolumns where id=object_id('Payment') and name = 'ConfirmationCode')
+  BEGIN
+	ALTER TABLE Payment ADD
+	    ConfirmationCode varchar(50) NULL
+  END
+GO
+
+if not exists(select * from syscolumns where id=object_id('Payment') and name = 'PaymentDate')
+  BEGIN
+	ALTER TABLE Payment ADD
+	    PaymentDate datetime NULL
+  END
+GO
+
+if not exists (select * from dbo.sysobjects where id = object_id(N'PK_Payment') and OBJECTPROPERTY(id, N'IsPrimaryKey') = 1)
+ALTER TABLE Payment WITH NOCHECK ADD 
+	CONSTRAINT PK_Payment PRIMARY KEY NONCLUSTERED 
+	(
+		PaymentId
+	)
+GO
+
+if not exists (select * from dbo.sysobjects where id = object_id(N'FK_Payment_Tournament') and OBJECTPROPERTY(id, N'IsForeignKey') = 1)
+ALTER TABLE Payment ADD 
+	CONSTRAINT FK_Payment_Tournament FOREIGN KEY 
+	(
+		TournamentId
+	) REFERENCES Tournament (
+		TournamentId
+	)
+GO
+
+if not exists (select * from dbo.sysobjects where id = object_id(N'FK_Payment_Golfer') and OBJECTPROPERTY(id, N'IsForeignKey') = 1)
+ALTER TABLE Payment ADD 
+	CONSTRAINT FK_Payment_Golfer FOREIGN KEY 
+	(
+		GolferId
+	) REFERENCES Golfer (
+		GolferId
+	)
+GO
+
+if not exists (select * from sysindexes where name='IX_Payment_ConfirmationCode' and id=object_id(N'[Payment]'))
+CREATE UNIQUE INDEX IX_Payment_ConfirmationCode ON Payment
+    (
+		ConfirmationCode 
+    )
+GO

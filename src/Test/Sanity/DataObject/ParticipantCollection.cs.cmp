@@ -1,0 +1,57 @@
+using System;
+
+namespace Golf.Tournament.DataObject {
+    /// <summary>
+    /// ParticipantData generic collection
+    /// </summary>
+    public class ParticipantCollection : System.Collections.CollectionBase {
+	public static readonly ParticipantCollection UNSET = new ParticipantCollection(true);
+	public static readonly ParticipantCollection DEFAULT = new ParticipantCollection(true);
+
+	private Boolean immutable = false;
+
+	private ParticipantCollection (Boolean immutable) {
+	        this.immutable = immutable;
+	}
+
+	public ParticipantCollection() {
+	}
+
+	// Indexer implementation.
+	public ParticipantData this[int index] {
+	    get { return (ParticipantData) List[index]; }
+	}
+
+	public void Add(ParticipantData a) {
+	    if (!immutable) {
+		List.Add(a);
+	    } else {
+		throw new System.Data.ReadOnlyException();
+	    }
+	}
+
+	public void Remove(int index) {
+	    if (!immutable) {
+		if (index > Count - 1 || index < 0) {
+		    throw new IndexOutOfRangeException();
+		} else {
+		    List.RemoveAt(index); 
+		}
+	    } else {
+		throw new System.Data.ReadOnlyException();
+	    }
+	}
+
+	public void AddRange(System.Collections.IList list) {
+	    foreach(Object o in list) {
+		if (o is ParticipantData) {
+		    Add((ParticipantData)o);
+		} else {
+		    throw new System.InvalidCastException("object in list could not be cast to ParticipantData");
+		}
+	    }
+	}
+
+    }
+}
+

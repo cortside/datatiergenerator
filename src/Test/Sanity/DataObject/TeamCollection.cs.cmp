@@ -1,0 +1,57 @@
+using System;
+
+namespace Golf.Tournament.DataObject {
+    /// <summary>
+    /// TeamData generic collection
+    /// </summary>
+    public class TeamCollection : System.Collections.CollectionBase {
+	public static readonly TeamCollection UNSET = new TeamCollection(true);
+	public static readonly TeamCollection DEFAULT = new TeamCollection(true);
+
+	private Boolean immutable = false;
+
+	private TeamCollection (Boolean immutable) {
+	        this.immutable = immutable;
+	}
+
+	public TeamCollection() {
+	}
+
+	// Indexer implementation.
+	public TeamData this[int index] {
+	    get { return (TeamData) List[index]; }
+	}
+
+	public void Add(TeamData a) {
+	    if (!immutable) {
+		List.Add(a);
+	    } else {
+		throw new System.Data.ReadOnlyException();
+	    }
+	}
+
+	public void Remove(int index) {
+	    if (!immutable) {
+		if (index > Count - 1 || index < 0) {
+		    throw new IndexOutOfRangeException();
+		} else {
+		    List.RemoveAt(index); 
+		}
+	    } else {
+		throw new System.Data.ReadOnlyException();
+	    }
+	}
+
+	public void AddRange(System.Collections.IList list) {
+	    foreach(Object o in list) {
+		if (o is TeamData) {
+		    Add((TeamData)o);
+		} else {
+		    throw new System.InvalidCastException("object in list could not be cast to TeamData");
+		}
+	    }
+	}
+
+    }
+}
+

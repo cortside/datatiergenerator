@@ -1,0 +1,193 @@
+if not exists (select * from dbo.sysobjects where id = object_id(N'[Tournament]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+CREATE TABLE Tournament (
+	TournamentId int IDENTITY(1,1) NOT NULL,
+	Name varchar(50) NOT NULL,
+	Description varchar(500) NULL,
+	NumberOfTeams int NULL,
+	TeamSize char(1) NULL,
+	Format char(1) NULL,
+	RegistrationBeginDate datetime NULL,
+	RegistrationEndDate datetime NULL,
+	RegistrationFee money NULL,
+	OrganizerId int NULL,
+	CancellationCutoffDate datetime NULL,
+	RegistrationFeeDescription varchar(250) NULL,
+	DatesText varchar(50) NULL,
+	PrizesText varchar(1000) NULL,
+	SponsorsText varchar(1000) NULL,
+	LocationsText varchar(250) NULL,
+	MaximumHandicap int NULL,
+	Host varchar(30) NULL,
+	ShowPercentFull char(1) NULL,
+	ShowParticipants char(1) NULL
+)
+GO
+
+if not exists(select * from syscolumns where id=object_id('Tournament') and name = 'TournamentId')
+  BEGIN
+	ALTER TABLE Tournament ADD
+	    TournamentId int IDENTITY(1,1) NOT NULL
+  END
+GO
+
+/* -- commented out because column does not have default value and is required
+if not exists(select * from syscolumns where id=object_id('Tournament') and name = 'Name')
+  BEGIN
+	ALTER TABLE Tournament ADD
+	    Name varchar(50) NOT NULL
+  END
+*/
+GO
+
+if not exists(select * from syscolumns where id=object_id('Tournament') and name = 'Description')
+  BEGIN
+	ALTER TABLE Tournament ADD
+	    Description varchar(500) NULL
+  END
+GO
+
+if not exists(select * from syscolumns where id=object_id('Tournament') and name = 'NumberOfTeams')
+  BEGIN
+	ALTER TABLE Tournament ADD
+	    NumberOfTeams int NULL
+  END
+GO
+
+if not exists(select * from syscolumns where id=object_id('Tournament') and name = 'TeamSize')
+  BEGIN
+	ALTER TABLE Tournament ADD
+	    TeamSize char(1) NULL
+  END
+GO
+
+if not exists(select * from syscolumns where id=object_id('Tournament') and name = 'Format')
+  BEGIN
+	ALTER TABLE Tournament ADD
+	    Format char(1) NULL
+  END
+GO
+
+if not exists(select * from syscolumns where id=object_id('Tournament') and name = 'RegistrationBeginDate')
+  BEGIN
+	ALTER TABLE Tournament ADD
+	    RegistrationBeginDate datetime NULL
+  END
+GO
+
+if not exists(select * from syscolumns where id=object_id('Tournament') and name = 'RegistrationEndDate')
+  BEGIN
+	ALTER TABLE Tournament ADD
+	    RegistrationEndDate datetime NULL
+  END
+GO
+
+if not exists(select * from syscolumns where id=object_id('Tournament') and name = 'RegistrationFee')
+  BEGIN
+	ALTER TABLE Tournament ADD
+	    RegistrationFee money NULL
+  END
+GO
+
+if not exists(select * from syscolumns where id=object_id('Tournament') and name = 'OrganizerId')
+  BEGIN
+	ALTER TABLE Tournament ADD
+	    OrganizerId int NULL
+  END
+GO
+
+if not exists(select * from syscolumns where id=object_id('Tournament') and name = 'CancellationCutoffDate')
+  BEGIN
+	ALTER TABLE Tournament ADD
+	    CancellationCutoffDate datetime NULL
+  END
+GO
+
+if not exists(select * from syscolumns where id=object_id('Tournament') and name = 'RegistrationFeeDescription')
+  BEGIN
+	ALTER TABLE Tournament ADD
+	    RegistrationFeeDescription varchar(250) NULL
+  END
+GO
+
+if not exists(select * from syscolumns where id=object_id('Tournament') and name = 'DatesText')
+  BEGIN
+	ALTER TABLE Tournament ADD
+	    DatesText varchar(50) NULL
+  END
+GO
+
+if not exists(select * from syscolumns where id=object_id('Tournament') and name = 'PrizesText')
+  BEGIN
+	ALTER TABLE Tournament ADD
+	    PrizesText varchar(1000) NULL
+  END
+GO
+
+if not exists(select * from syscolumns where id=object_id('Tournament') and name = 'SponsorsText')
+  BEGIN
+	ALTER TABLE Tournament ADD
+	    SponsorsText varchar(1000) NULL
+  END
+GO
+
+if not exists(select * from syscolumns where id=object_id('Tournament') and name = 'LocationsText')
+  BEGIN
+	ALTER TABLE Tournament ADD
+	    LocationsText varchar(250) NULL
+  END
+GO
+
+if not exists(select * from syscolumns where id=object_id('Tournament') and name = 'MaximumHandicap')
+  BEGIN
+	ALTER TABLE Tournament ADD
+	    MaximumHandicap int NULL
+  END
+GO
+
+if not exists(select * from syscolumns where id=object_id('Tournament') and name = 'Host')
+  BEGIN
+	ALTER TABLE Tournament ADD
+	    Host varchar(30) NULL
+  END
+GO
+
+if not exists(select * from syscolumns where id=object_id('Tournament') and name = 'ShowPercentFull')
+  BEGIN
+	ALTER TABLE Tournament ADD
+	    ShowPercentFull char(1) NULL
+  END
+GO
+
+if not exists(select * from syscolumns where id=object_id('Tournament') and name = 'ShowParticipants')
+  BEGIN
+	ALTER TABLE Tournament ADD
+	    ShowParticipants char(1) NULL
+  END
+GO
+
+if not exists (select * from dbo.sysobjects where id = object_id(N'PK_Tournament') and OBJECTPROPERTY(id, N'IsPrimaryKey') = 1)
+ALTER TABLE Tournament WITH NOCHECK ADD 
+	CONSTRAINT PK_Tournament PRIMARY KEY NONCLUSTERED 
+	(
+		TournamentId
+	)
+GO
+
+if not exists (select * from dbo.sysobjects where id = object_id(N'FK_Tournament_Organizer') and OBJECTPROPERTY(id, N'IsForeignKey') = 1)
+ALTER TABLE Tournament ADD 
+	CONSTRAINT FK_Tournament_Organizer FOREIGN KEY 
+	(
+		OrganizerId
+	) REFERENCES Organizer (
+		OrganizerId
+	)
+GO
+
+if not exists (select * from dbo.sysobjects where id = object_id(N'UN_Tournament_Host') and OBJECTPROPERTY(id, N'IsUniqueCnst') = 1)
+ALTER TABLE Tournament ADD 
+	CONSTRAINT UN_Tournament_Host UNIQUE 
+	(
+		Host
+	)
+GO
+
