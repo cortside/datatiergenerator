@@ -1,10 +1,10 @@
 #set ($namespaces = "")
+#set ($namespaces1 = "")
 #if($element.Entity.Name.Length>0)
 #set ($namespaces = "#nameSpaces($options $element.Entity false)")
 #end
-#if ($namespaces.Length ==0)
-using System;
-
+#if ($element.CollectedClass.Comparers.Count > 0)
+#set ($namespaces1 = "#nameSpaces($options $element.CollectedClass true)")
 #end
 using Spring2.DataTierGenerator.Attribute;
 
@@ -12,12 +12,15 @@ using Spring2.DataTierGenerator.Attribute;
 #if($namespaces.Length>0)
 $namespaces
 #end
-#if ($element.CollectedClass.Comparers.Count > 0)
-#nameSpaces($options $element.CollectedClass true)
+#if($namespaces1.Length>0)
+$namespaces1
+#end
+#if ($namespaces.Length ==0 && $namespaces1.Length == 0)
+using System;
 
 #end
 ## add the name space for the Type if it is not in the namespace
-#if ($element.Type.Package != $options.GetCollectionNameSpace($element.Name))
+#if ($element.Type.Package != $options.GetCollectionNameSpace($element.Name) && $element.Type.Package.Length > 0)
 using $element.Type.Package;
 
 #end
@@ -232,8 +235,8 @@ namespace $options.GetCollectionNameSpace($element.Name) {
 
 #foreach($field in $element.Entity.Fields) 
 #if($field.Name.IndexOf(".")<0 && !$field.Type.Name.EndsWith("Enum") && !$field.Type.Name.EndsWith("Data") && !$field.Type.Name.EndsWith("List") && $field.Type.Name!="BooleanType" && $field.Type.Name!="Hashtable")
-	[Generate]
 	public class ${field.Name.Replace(".","_")}Sorter : System.Collections.IComparer {
+	    [Generate]
 	    public Int32 Compare(Object a, Object b) {
 		${element.Type.Name} o1 = (${element.Type.Name})a;
 		${element.Type.Name} o2 = (${element.Type.Name})b;
@@ -265,7 +268,6 @@ namespace $options.GetCollectionNameSpace($element.Name) {
         /// <summary>
         /// Used to sort or search an ArrayList of $element.Type.Name objects on the #foreach($field in $comparer.Fields)#if($velocityCount > 1),#end$field.Name#end properties
         /// </summary>
-	[Generate]
         public class $comparer.Name : IComparer {
             /// <summary>
             /// Compares two $element.Type.Name objects.
@@ -273,6 +275,7 @@ namespace $options.GetCollectionNameSpace($element.Name) {
             /// <param name="o1">First object</param>
             /// <param name="o2">Second Object</param>
             /// <returns>0 if equal, -1 if first less than second and 1 if first greater than second.  Note that null is always less than non-null.</returns>
+			[Generate]
             public int Compare(object o1, object o2) {
                 if (o1 == null && o2 == null) {
 		    return 0;
@@ -302,7 +305,7 @@ namespace $options.GetCollectionNameSpace($element.Name) {
 #else
                     return -1;
 #end
-                } else if (g1.${field.GetMethodFormat()}.IsValid && g2.${field.GetMethodFormat()}.IsValid && ${field.CreateCompareString("g1", "g2")} != 0 {
+                } else if (g1.${field.GetMethodFormat()}.IsValid && g2.${field.GetMethodFormat()}.IsValid && ${field.CreateCompareString("g1", "g2")} != 0) {
                     return ${field.CreateCompareString("g1", "g2")}#if ($field.Direction == "descending") * -1#end;
                 }
 #end    
