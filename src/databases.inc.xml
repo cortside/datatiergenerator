@@ -22,8 +22,9 @@
     <databases generateinsertstoredprocscript="True" 
 	       generateupdatestoredprocscript="True" 
 	       generatedeletestoredprocscript="True" 
-	       generateselectstoredprocscript="False" >
-	<database name="database1" key="con1">
+	       generateselectstoredprocscript="False"
+	       commandtimeout="20" >
+	<database name="database1" key="con1" commandtimeout="25">
 	    <sqlentities>
 		<sqlentity name="Testsqlentity" generatedeletestoredprocscript="False" >
 		    <columns>
@@ -43,7 +44,7 @@
 			</constraint>
 		    </constraints>
 		</sqlentity>
-		<sqlentity name="Testsqlentity2" >
+		<sqlentity name="Testsqlentity2" commandtimeout="33" >
 		    <columns>
 			<column name="sqlstringcolumn" sqltype="varchar" required="True" />
 			<column name="sqlintcolumn" sqltype="int" required="True" />
