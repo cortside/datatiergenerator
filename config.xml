@@ -1,38 +1,56 @@
 <?xml version="1.0" ?>
 <DataTierGenerator xmlns="http://www.spring2.com/xsd/datatiergenerator.xsd">
 	<config>
-		<server>hal</server>
-		<database>cort_seamless</database>
-		<user>sa</user>
-		<password></password>
-		<rootDirectory>c:\data\work\seamlessweb\manhattan\src\</rootDirectory>
-		<sqlScriptDirectory>sql</sqlScriptDirectory>
-		<daoClassDirectory>DAO</daoClassDirectory>
-		<doClassDirectory>DataObject</doClassDirectory>
-		<singleFile>False</singleFile>
-		<createViews>True</createViews>
-		<useViews>True</useViews>
-		<createDataObjects>True</createDataObjects>
-		<scriptDropStatement>True</scriptDropStatement>
-		<storedProcNameFormat>proc{%TABLE_NAME%}{%PROC_TYPE%}</storedProcNameFormat>
-		<projectNameSpace>Seamless.Manhattan</projectNameSpace>
-		<generateProcsForForeignKey>False</generateProcsForForeignKey>
-		<generateSelectStoredProcs>False</generateSelectStoredProcs>
-		<generateOnlyPrimaryDeleteStoredProc>True</generateOnlyPrimaryDeleteStoredProc>
-		<allowUpdateOfPrimaryKey>False</allowUpdateOfPrimaryKey>
-		<useDataTypes>True</useDataTypes>
-		<AutoDiscoverEntities>False</AutoDiscoverEntities>
-		<AutoDiscoverProperties>True</AutoDiscoverProperties>
-		<AutoDiscoverAttributes>True</AutoDiscoverAttributes>
+		<setting name="Server" value="olympus" />
+		<setting name="Database" value="cort_seamless" />
+		<setting name="User" value="sa" />
+		<setting name="Password" value="1qaz2wsx" />
+		<setting name="RootDirectory" value="c:\data\work\seamlessweb\manhattan\src\" />
+		<setting name="SqlScriptDirectory" value="sql" />
+		<setting name="DaoClassDirectory" value="DAO" />
+		<setting name="DoClassDirectory" value="DataObject" />
+		<setting name="TypesClassDirectory" value="Types" />
+		<setting name="SingleFile" value="False" />
+		<setting name="CreateViews" value="True" />
+		<setting name="UseViews" value="True" />
+		<setting name="CreateDataObjects" value="True" />
+		<setting name="ScriptDropStatement" value="True" />
+		<setting name="StoredProcNameFormat" value="proc{%TABLE_NAME%}{%PROC_TYPE%}" />
+		<setting name="ProjectNameSpace" value="Seamless.Manhattan" />
+		<setting name="GenerateProcsForForeignKey" value="False" />
+		<setting name="GenerateSelectStoredProcs" value="False" />
+		<setting name="GenerateOnlyPrimaryDeleteStoredProc" value="True" />
+		<setting name="AllowUpdateOfPrimaryKey" value="False" />
+		<setting name="UseDataTypes" value="True" />
+		<setting name="AutoDiscoverEntities" value="False" />
+		<setting name="AutoDiscoverProperties" value="True" />
+		<setting name="AutoDiscoverAttributes" value="True" />
+		<setting name="DataObjectBaseClass" value="Spring2.Core.DataObject.DataObject" />
+		<setting name="DAOBaseClass" value="Spring2.Core.DAO.EntityDAO" />
 	</config>
 	<entities>
-		<entity name="Foo" sqlobject="">
-			<property name="Bar" sqltype="varchar" />
+		<entity name="Foo" sqlobject="" dataobjectbaseclass="Spring2.Core.DataObject.DataObject" daobaseclass="Spring2.Core.DAO.EntityDAO" sqltable="Firm" sqlview="vwFirm" useview="True" autodiscoverproperties="True" autodiscoverattributes="True">
+			<collection name="Items" />
+			<property name="Bar" sqlname="" sqltype="varchar" />
+			<nestedentity name="Address" type="AddressData" sqlobject="Address">
+				<property name="AddressBar1" sqltype="varchar" />
+				<property name="AddressBar2" sqltype="varchar" />
+			</nestedentity>
+		</entity>
+		<entity name="Order" sqlobject="">
+			<property name="Header" type="OrderHeaderData" />
+			<property name="Vendor" type="OrderVendorData" />
+			<property name="Delivery" type="OrderDeliveryData" />
+			<property name="Allocations" concretetype="System.Collections.ArrayList" type="System.Collections.IList" />
+			<property name="Payments" concretetype="ArrayList" type="IList" />
+			<property name="Details" concretetype="ArrayList" type="IList" />
 		</entity>
 		<entity name="Firm" sqlobject="Firm">
-			<property name="FirmID" sqltype="int" scale="0" precision="10" datatype="Spring2.Core.Types.IdType" isidentity="True" isprimarykey="True" />
+			<property name="FirmID" sqltype="int" scale="0" precision="10" datatype="Spring2.Core.Types.IdType" isidentity="True" isprimarykey="True">
+				this is the unique column for this table.  this is some description.
+			</property>
 			<property name="FirmName" sqltype="varchar" length="40" datatype="Spring2.Core.Types.StringType" />
-			<property name="LineOfCreditFlag" sqltype="char" length="1" datatype="Spring2.Core.Types.BooleanType" constructor="GetInstance"  />
+			<property name="LineOfCreditFlag" sqltype="char" length="1" datatype="Spring2.Core.Types.BooleanType" constructor="GetInstance" />
 			<property name="ChangeOrderLocFlag" sqltype="char" length="1" datatype="Spring2.Core.Types.BooleanType" constructor="GetInstance" />
 			<property name="CreditCardNumber" sqltype="varchar" length="30" datatype="Spring2.Core.Types.StringType" />
 			<property name="CreditCardExpire" sqltype="smalldatetime" datatype="Spring2.Core.Types.DateType" />
@@ -72,8 +90,9 @@
 			<property name="SelectFirmLocationOnOrder" sqltype="char" length="1" datatype="Spring2.Core.Types.BooleanType" constructor="GetInstance" />
 			<property name="SendWelcomeMessage" sqltype="char" length="1" datatype="Spring2.Core.Types.BooleanType" constructor="GetInstance" />
 			<property name="ShowTransactionFee" sqltype="char" length="1" datatype="Spring2.Core.Types.BooleanType" constructor="GetInstance" />
-			<property name="AllocationHeaderText" sqltype="varchar" length="25" datatype="Spring2.Core.Types.BooleanType" constructor="GetInstance" />
-			<property name="IsCCEmailRequired" sqltype="char" length="1" datatype="Spring2.Core.Types.BooleanType" constructor="GetInstance" />
+			<property name="AllocationHeaderText" sqlname="*" sqltype="varchar" length="25" datatype="Spring2.Core.Types.BooleanType" constructor="GetInstance" />
+			<property name="IsCCEmailRequired" sqlname="IsCCEmailRequired" sqltype="char" length="1" datatype="Spring2.Core.Types.BooleanType" constructor="GetInstance" />
+			<property name="FirmLocations" type="F1Data" concretetype="ArrayList" />
 		</entity>
 		<entity name="OrderAllocation" sqlobject="OrderAllocation">
 			<property name="OrderID" sqltype="int" scale="0" precision="10" datatype="Spring2.Core.Types.IdType" isprimarykey="True" isforeignkey="True" />
@@ -171,9 +190,6 @@
 			<property name="DeliveryFee" sqltype="smallmoney" scale="4" precision="10" datatype="Spring2.Core.Types.CurrencyType" />
 			<property name="PickupTime" sqltype="varchar" length="50" datatype="Spring2.Core.Types.StringType" />
 		</entity>
-
-
-
 		<entity name="OrderPayment" sqlobject="ordpmt">
 			<property name="pmt_id" sqltype="int" scale="0" precision="10" datatype="Spring2.Core.Types.NumberType" isprimarykey="True" />
 			<property name="OrderID" sqltype="int" scale="0" precision="10" datatype="Spring2.Core.Types.NumberType" />
@@ -305,4 +321,18 @@
 			<value name="Firm" internalvalue="F" dbvalue="F" />
 		</enum>
 	</enums>
+	<datatypes>
+		<datatype name="IdType" namespace="Spring2.Core.Types" />
+		<datatype name="BooleanType" namespace="Spring2.Core.Types" constructor="GetInstance" />
+		<datatype name="OrderType" constructor="GetInstance" baseclass="Spring2.Core.Types.EnumDataType">
+			<value name="Personal" internalvalue="P" dbvalue="P" />
+			<value name="Firm" internalvalue="F" dbvalue="F" />
+		</datatype>
+	</datatypes>
+	<sqltypes>
+		<sqltype name="varchar" length="50" type="String" datatype="StringType" />
+	</sqltypes>
+	<types>
+		<type name="IList" namespace="System.Collections" />
+	</types>
 </DataTierGenerator>
