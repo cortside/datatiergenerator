@@ -52,11 +52,18 @@ namespace Spring2.DataTierGenerator {
 		    }
 		    String sort = String.Empty;
 		    foreach (XmlNode n in node.ChildNodes[0].ChildNodes) {
-			Field field = (Field)entity.FindFieldByName(n.Attributes["name"].Value).Clone();
-			if (!sort.Equals(String.Empty)) {
-			    sort += ", ";
+			Field field = entity.FindFieldByName(n.Attributes["name"].Value);
+			if (field != null) {
+			    field = (Field)field.Clone();
+			    if (!sort.Equals(String.Empty)) {
+				sort += ", ";
+			    }
+			    sort += field.Column.Name;
+			} else {
+			    field = new Field();
+			    field.Name = n.Attributes["name"].Value;
+			    Console.Out.WriteLine("ERROR: property (" + field.Name + ") defined in finder method " + finder.Name + " was not defined as a property");
 			}
-			sort += field.Column.Name;
 			finder.Fields.Add(entity.FindFieldByName(n.Attributes["name"].Value).Clone());
 		    }
 		    if (finder.Sort.Equals(String.Empty) && !sort.Equals(String.Empty)) {
