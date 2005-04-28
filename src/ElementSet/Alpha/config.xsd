@@ -307,6 +307,7 @@
 								    <xs:attribute name="derived" type="BooleanEnum" />
 								    <xs:attribute name="log" type="BooleanEnum" />
 								    <xs:attribute name="returnasidentity" type="BooleanEnum" />
+								    <xs:attribute name="useentitydao" type="BooleanEnum" />
 								</xs:extension>
 							    </xs:simpleContent>
 							</xs:complexType>

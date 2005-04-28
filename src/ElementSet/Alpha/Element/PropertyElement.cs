@@ -32,6 +32,7 @@ namespace Spring2.DataTierGenerator.Element {
 	protected static readonly String RETURNASIDENTITY = "returnasidentity";
 	protected static readonly String DIRECTION = "direction";
 	protected static readonly String CONVERT_FOR_COMPARE = "convertforcompare";
+	protected static readonly String USE_ENTITY_DAO = "useentitydao";
 
 	protected static readonly string ASCENDING = "ascending";
 	protected static readonly string DESCENDING = "descending";
@@ -51,11 +52,12 @@ namespace Spring2.DataTierGenerator.Element {
 	protected TypeElement dataObjectType = new TypeElement();
 	protected String convertFromSqlTypeFormat = String.Empty;
 	protected String convertToSqlTypeFormat = String.Empty;
-	protected TypeElement entity = new TypeElement();
+	protected EntityElement entity = new EntityElement();
 	protected String prefix = String.Empty;
 	protected Boolean readable = true;
 	protected Boolean writable = true;
 	protected Boolean derived = false;
+	protected Boolean useEntityDao = false;
 
 	protected String accessModifier = "private";
 
@@ -99,7 +101,7 @@ namespace Spring2.DataTierGenerator.Element {
 	    set { this.convertToSqlTypeFormat = value; }
 	}
 
-	public TypeElement Entity {
+	public EntityElement Entity {
 	    get { return this.entity; }
 	    set { this.entity = value; }
 	}
@@ -132,6 +134,11 @@ namespace Spring2.DataTierGenerator.Element {
 	public String AccessModifier {
 	    get { return this.accessModifier; }
 	    set { this.accessModifier = value; }
+	}
+
+	public Boolean UseEntityDao {
+	    get { return this.useEntityDao; }
+	    set { this.useEntityDao = value; }
 	}
 
 	/// <summary>
@@ -239,6 +246,7 @@ namespace Spring2.DataTierGenerator.Element {
 	    propertyElement.Derived = Boolean.Parse(GetAttributeValue(propertyNode, DERIVED, propertyElement.Derived.ToString()));
 	    propertyElement.Direction = GetAttributeValue (propertyNode, DIRECTION, propertyElement.Direction.ToString ());
 	    propertyElement.Type.ConvertForCompare = GetAttributeValue (propertyNode, CONVERT_FOR_COMPARE, propertyElement.Type.ConvertForCompare);
+	    propertyElement.useEntityDao = Boolean.Parse(GetAttributeValue(propertyNode, USE_ENTITY_DAO, propertyElement.UseEntityDao.ToString()));
 	}
 
 	public static ArrayList ParseFromXml(XmlDocument doc, IList entities, EntityElement entity, Hashtable sqltypes, Hashtable types, ParserValidationDelegate vd) {
@@ -282,7 +290,7 @@ namespace Spring2.DataTierGenerator.Element {
 		fields.Add(field);
 
 		// Add in any subfields...
-		if (node.Attributes["entity"] != null) {
+		if (field.Entity.Name.Length > 0 && !field.UseEntityDao) {
 		    String subEntityName = node.Attributes["entity"].Value;
 		    EntityElement subentity = EntityElement.FindEntityByName((ArrayList)entities, subEntityName);
 
@@ -471,6 +479,20 @@ namespace Spring2.DataTierGenerator.Element {
 		    
 	    if (node.Attributes[CONVERT_FOR_COMPARE] != null) {
 		field.Type.ConvertForCompare = node.Attributes[CONVERT_FOR_COMPARE].Value;
+	    }
+
+	    if (node.Attributes[USE_ENTITY_DAO] != null) {
+		field.UseEntityDao = Boolean.Parse(node.Attributes[USE_ENTITY_DAO].Value);
+	    }
+
+	    if (node.Attributes["entity"] != null) {
+		field.Entity.Name = node.Attributes["entity"].Value;
+	    }
+
+	    if (node.Attributes["prefix"] != null) {
+		field.Prefix = node.Attributes["prefix"].Value;
+	    } else {
+	    	field.Prefix = field.Entity.Name + "_";
 	    }
 
 	    return field;
