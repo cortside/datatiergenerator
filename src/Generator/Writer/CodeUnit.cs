@@ -299,7 +299,7 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 			    foreach(CodeTypeMember mergeMember in mergeType.Members) {
 				if (!HasMember(type, mergeMember)) {
 				    if (IsMemberGenerated(mergeMember)) {
-					log.Add("removing member with [Generate] attribute that is no longer in generated code: " + mergeType.Name + "." + mergeMember.Name);
+					//log.Add("removing member with [Generate] attribute that is no longer in generated code: " + mergeType.Name + "." + mergeMember.Name);
 					remove.Add(mergeMember);
 				    }
 				}
@@ -411,7 +411,7 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 		type.Members[index] = mergeMember;
 	    } else {
 		if (IsMemberGenerated(mergeMember)) {
-		    log.Add("member " + type.Name + "." + member.Name + " was found in generated source but was not overwritten because it does not have the Generate attribute.");
+		    //log.Add("member " + type.Name + "." + member.Name + " was found in generated source but was not overwritten because it does not have the Generate attribute.");
 		}
 	    }
 	}
