@@ -484,5 +484,19 @@ namespace Spring2.DataTierGenerator.Element {
 	public override Boolean IsEmpty() {
 	    return this == EMPTY;
 	}
+
+    	public Boolean HasEntityMappedColumn(ColumnElement column) {
+	    foreach (PropertyElement property in Fields) {
+		if (property.Entity.Name.Length > 0) {
+		    foreach(PropertyElement p in property.Entity.Fields) {
+		    	if (column.Name.EndsWith(property.Prefix + p.Name)) {
+		    	    return true;
+		    	}
+		    }
+		}
+	    }   	
+
+	    return false;
+	}
     }
 }
