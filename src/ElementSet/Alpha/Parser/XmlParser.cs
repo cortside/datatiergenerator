@@ -131,6 +131,19 @@ namespace Spring2.DataTierGenerator.Parser {
 		}
 	    }
 
+	    foreach(EntityElement entity in entities) {
+	    	foreach (PropertyElement property in entity.Fields) {
+	    	    if (property.Entity.Name.Length > 0) {
+	    	    	EntityElement e = EntityElement.FindEntityByName(entities, property.Entity.Name);
+			if (e != null) {
+			    property.Entity = e;
+			} else {
+			    vd(ParserValidationArgs.NewError("Property (" + property.Name + ") specifies an entity " + property.Entity.Name + " that could not be found as an defined entity"));			
+			}
+	    	    }
+	    	}
+	    }
+
 	    Validate(vd);
 	}
 
