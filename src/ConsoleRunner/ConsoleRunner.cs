@@ -35,9 +35,9 @@ namespace Spring2.DataTierGenerator.ConsoleRunner {
 		return;
 	    }
 	    try {
-		Console.Out.WriteLine(String.Empty.PadLeft(20,'='));
+		Console.Out.WriteLine(String.Empty.PadLeft(40,'='));
 		Console.Out.WriteLine("Start :: " + DateTime.Now.ToString());
-		Console.Out.WriteLine(String.Empty.PadLeft(20,'='));
+		Console.Out.WriteLine(String.Empty.PadLeft(40,'='));
 
 		XmlDocument doc = new XmlDocument();
 		// while this might seem silly, extended ASCII chararcter encoding does not happen if just the filename 
@@ -88,9 +88,9 @@ namespace Spring2.DataTierGenerator.ConsoleRunner {
 		    Console.Out.WriteLine("ERROR: class " + parserClassname + " does not support IParser interface.\n");
 		}
 
-		Console.Out.WriteLine(String.Empty.PadLeft(20,'='));
+		Console.Out.WriteLine(String.Empty.PadLeft(40,'='));
 		Console.Out.WriteLine("Done :: " + DateTime.Now.ToString());
-		Console.Out.WriteLine(String.Empty.PadLeft(20,'='));
+		Console.Out.WriteLine(String.Empty.PadLeft(40,'='));
 	    } catch (Exception ex) {
 		Console.Out.WriteLine("An error occcurred while generating.\n\n" + ex.ToString());
 	    }

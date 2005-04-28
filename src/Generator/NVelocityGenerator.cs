@@ -67,14 +67,16 @@ namespace Spring2.DataTierGenerator.Generator {
 	    if (parser.IsValid && !hasErrors) {
 		Timer timer = new Timer();
 		WriteToLog("Starting generation");
+		WriteToLog(parser.Tasks.Count.ToString() + " generator tasks");
 		if (parser.Log.Count>0) {
+		    WriteToLog(String.Empty.PadLeft(40,'-'));
 		    WriteToLog("The parser is in a valid state, but reported the following issues:");
 		    foreach(String s in parser.Log) {
 			WriteToLog(s);
 		    }
 		}
 
-		WriteToLog(parser.Tasks.Count.ToString() + " generator tasks");
+		WriteToLog(String.Empty.PadLeft(40,'-'));
 		foreach(ITask task in parser.Tasks) {
 		    Template template = Velocity.GetTemplate(task.Template);
 		    foreach(IElement element in task.Elements) {
@@ -83,6 +85,7 @@ namespace Spring2.DataTierGenerator.Generator {
 		}
 
 		timer.Stop();
+		WriteToLog(String.Empty.PadLeft(40,'-'));
 		WriteToLog("files processed: " + files);
 		WriteToLog("       generate: " + new TimeSpan(generateTicks).TotalMilliseconds.ToString("####0.000").PadLeft(9) + "ms (" + (new TimeSpan(generateTicks).TotalMilliseconds / timer.TimeSpan.TotalMilliseconds).ToString("P") + ")");
 		WriteToLog(" template merge: " + new TimeSpan(mergeTicks).TotalMilliseconds.ToString("####0.000").PadLeft(9) + "ms (" + (new TimeSpan(mergeTicks).TotalMilliseconds / timer.TimeSpan.TotalMilliseconds).ToString("P") + ")");
