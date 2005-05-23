@@ -1,0 +1,36 @@
+#if(!$element.JoinTable && !$element.IsAbstract && $element.SqlEntity.Name.Length > 0)
+using System;
+using System.Collections;
+
+using NUnit.Framework;
+
+using Spring2.Core.DAO;
+using Spring2.Core.Message;
+using Spring2.Core.Types;
+using Spring2.DataTierGenerator.Attribute;
+
+using ${options.RootNameSpace}.BusinessLogic;
+using ${options.RootNameSpace}.Dao;
+using ${options.RootNameSpace}.DataObject;
+using ${options.RootNameSpace}.Types;
+
+namespace ${options.RootNameSpace}.Test {
+
+    /// <summary>
+    /// Summary description for ${element.Name}Test.
+    /// </summary>
+    [TestFixture]
+    public class ${element.Name}Test {
+
+	[Generate()]
+	[Test()]
+	public void ToStringTest() {
+	    IList list = ${element.Name}DAO.DAO.GetList(1);
+	    foreach(I${element.Name} entity in list) {
+		Assert.AreNotEqual(entity.GetType().ToString(), entity.ToString());
+	    }
+	}
+
+    }
+}
+#end
