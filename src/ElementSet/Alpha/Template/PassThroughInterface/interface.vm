@@ -4,12 +4,14 @@
         interface.vm - default data object templates (replaces DataObjectGenerator class)
 
 *###
-using System;
-using System.Collections;
-
-using Spring2.Core.Types;
-
+#set ($namespaces = "#nameSpaces($options $element true)")
+#set ($namespaces = $namespaces.Replace("using ${options.RootNameSpace}.BusinessLogic;", ""))
+$namespaces
+#if ($namespaces.IndexOf("${options.RootNameSpace}.Types") < 0)
 using ${options.RootNameSpace}.Types;
+
+#end
+using Spring2.Core.BusinessEntity;
 
 #set ($directory = $task.Directory)
 #if($directory.StartsWith('.\'))
