@@ -59,7 +59,7 @@ if not exists(select * from syscolumns where id=object_id('$sql.Escape($element.
 #end
   END
 GO
-#if (!$column.SqlType.Declaration.Equals("text") && !$column.SqlType.Declaration.Equals("timestamp"))
+#if (!$column.SqlType.Declaration.ToLower().Equals("text") && !$column.SqlType.Declaration.ToLower().Equals("timestamp"))
 
 if exists(select * from syscolumns where id=object_id('$sql.Escape($element.Name)') and name = '$column.Name')
   BEGIN
