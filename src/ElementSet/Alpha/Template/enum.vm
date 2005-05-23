@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using Spring2.Core.Types;
 
 ##
 ## formulate the namespace, class name and the collected class name
@@ -13,7 +14,7 @@ namespace $namespace {
 
     public class $element.Name : $options.EnumBaseClass {
 
-	private static readonly ArrayList OPTIONS = new ArrayList();
+	private static readonly EnumDataTypeList OPTIONS = new EnumDataTypeList();
 
 	public static readonly new $element.Name DEFAULT = new ${element.Name}();
 	public static readonly new $element.Name UNSET = new ${element.Name}();
@@ -68,7 +69,7 @@ namespace $namespace {
 	    get { return Object.ReferenceEquals(this, UNSET); }
 	}
 
-	public static IList Options {
+	public static EnumDataTypeList Options {
 	    get { return OPTIONS; }
 	}
 #if ( $element.IntegerBased )
