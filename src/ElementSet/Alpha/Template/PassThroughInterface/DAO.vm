@@ -231,13 +231,58 @@ namespace $options.GetDAONameSpace($element.Name) {
 	}
 
 	/// <summary>
+	/// Repopulates an existing business entity instance
+	/// </summary>
+	public void Reload($s instance) {
+	    WhereClause w = new WhereClause();
+#foreach ($field in $element.GetPrimaryKeyFields())
+	    w.And("$field.GetSqlAlias()", instance.${field.Name});
+#end
+	    IDataReader dataReader = GetListReader(CONNECTION_STRING_KEY, VIEW, w, null);
+
+	    if (!dataReader.Read()) {
+		dataReader.Close();
+		throw new FinderException("Reload found no rows for $element.Name.");
+	    }
+	    $s data = GetDataObjectFromReader(instance, dataReader);
+	    dataReader.Close();
+	}
+
+	/// <summary>
 	/// Builds a data object from the current row in a data reader..
 	/// </summary>
 	/// <param name="dataReader">Container for database row.</param>
 	/// <returns>Data object built from current row.</returns>
-	private static $s GetDataObjectFromReader(IDataReader dataReader) {
-	    $s data = new $s();
+	internal static $s GetDataObjectFromReader($s data, IDataReader dataReader) {
+	    return GetDataObjectFromReader(data, dataReader, String.Empty);
+	}
 
+	/// <summary>
+	/// Builds a data object from the current row in a data reader..
+	/// </summary>
+	/// <param name="dataReader">Container for database row.</param>
+	/// <returns>Data object built from current row.</returns>
+	internal static $s GetDataObjectFromReader(IDataReader dataReader) {
+	    $s data = new $s(#if(!$element.JoinTable)false#end);
+	    return GetDataObjectFromReader(data, dataReader, String.Empty);
+	}
+	
+	/// <summary>
+	/// Builds a data object from the current row in a data reader..
+	/// </summary>
+	/// <param name="dataReader">Container for database row.</param>
+	/// <returns>Data object built from current row.</returns>
+	internal static $s GetDataObjectFromReader(IDataReader dataReader, String prefix) {
+	    $s data = new $s(#if(!$element.JoinTable)false#end);
+	    return GetDataObjectFromReader(data, dataReader, prefix);
+	}
+	
+	/// <summary>
+	/// Builds a data object from the current row in a data reader..
+	/// </summary>
+	/// <param name="dataReader">Container for database row.</param>
+	/// <returns>Data object built from current row.</returns>
+	internal static $s GetDataObjectFromReader($s data, IDataReader dataReader, String prefix) {
 #foreach($field in $element.Fields)
 #if($field.Column.SqlType.Name.Length>0)
 	    if (dataReader.IsDBNull(dataReader.GetOrdinal("$field.GetSqlAlias()"))) { 
@@ -246,10 +291,13 @@ namespace $options.GetDAONameSpace($element.Name) {
 		data.$field.GetMethodFormat() = $options.GetReaderString($field);
 	    }
 #end
+#if($field.Entity.Name.Length>0 && $field.Joined)
+	    data.${field.GetMethodFormat()} = ${field.Entity.Name}DAO.GetDataObjectFromReader(dataReader, "$field.Prefix");
 #end
-#if(!$element.JoinTable)
-	    data.isNew = false;
 #end
+###if(!$element.JoinTable)
+##	    data.isNew = false;
+###end
 	    return data;
 	}
 
