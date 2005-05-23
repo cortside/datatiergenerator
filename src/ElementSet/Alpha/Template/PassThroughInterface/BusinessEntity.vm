@@ -1,12 +1,14 @@
 #if(!$element.JoinTable)
 using System;
 
+using Spring2.Core.BusinessEntity;
 using Spring2.Core.Message;
 using Spring2.Core.Types;
 using Spring2.DataTierGenerator.Attribute;
 
 using ${options.RootNameSpace}.Dao;
 using ${options.RootNameSpace}.DataObject;
+using ${options.RootNameSpace}.Types;
 
 namespace ${options.RootNameSpace}.BusinessLogic {
     public #if($element.IsAbstract)abstract #end class $element.Name#if(!$element.JoinTable) :#if($element.IsDerived) $element.BaseEntity.Name,#else BusinessEntity,#end I$element.Name#end {
@@ -18,13 +20,18 @@ namespace ${options.RootNameSpace}.BusinessLogic {
 	/// <summary>Protected member</summary>
 	protected $field.Type.ConcreteType $field.GetFieldFormat() = $field.Type.NewInstanceFormat;
 	#else
-	$field.AccessModifier $field.Type.Name $field.GetFieldFormat() = $field.Type.NewInstanceFormat;
+	$field.AccessModifier $field.Type.ConcreteType $field.GetFieldFormat() = $field.Type.NewInstanceFormat;
 	#end
 #end
 #end
 
         [Generate]
         internal ${element.Name}() {}
+
+        [Generate]
+        internal ${element.Name}(Boolean isNew) {
+	    this.isNew = isNew;
+        }
 
 #if(!$element.IsAbstract)
         [Generate]
@@ -40,12 +47,22 @@ namespace ${options.RootNameSpace}.BusinessLogic {
 
 #if($element.WritableFields.Count>0)
 	[Generate]
-	public#if($element.IsDerived) override#end void Update(${element.Name}Data data) {
+	public#if($element.IsDerived && !$element.BaseEntity.IsAbstract) override#end void Update(${element.Name}Data data) {
 #foreach($field in $element.WritableFields) 
-	    $field.GetFieldFormat() = data.${field.Name}.IsDefault ? $field.GetFieldFormat : data.${field.Name};
+	    $field.GetFieldFormat().Replace("_", ".") = data.${field.Name}.IsDefault ? $field.GetFieldFormat.Replace("_", ".") : data.${field.Name};
 #end
 	    Store();
 	}
+## commented out because this signature of create is not always good and there is currently no way to have a method matching without argument and there is no way to signify that a method only be generated when the file is first create
+##
+##	[Generate]
+##	public#if($element.IsDerived && !$element.BaseEntity.IsAbstract) override#end $element.Name Create(${element.Name}Data data) {
+###set($entityVariable = "$element.Name.Substring(0,1).ToLower()$element.Name.Substring(1)")	
+##	    $element.Name $entityVariable = new ${element.Name}();
+##	    ${entityVariable}.Update(data);
+##	    
+##	    return $entityVariable;
+##	}
 #end
 
 	[Generate]
@@ -53,6 +70,9 @@ namespace ${options.RootNameSpace}.BusinessLogic {
 	    MessageList errors = Validate();
 
 	    if (errors.Count > 0) {
+		if (!isNew) {
+		    this.Reload();
+		}
 		throw new MessageListException(errors);
             }
 
@@ -80,11 +100,22 @@ namespace ${options.RootNameSpace}.BusinessLogic {
 #if($field.Name.IndexOf('.')<0 && !$field.IsDerived)
 #if ($field.Type.ConcreteType.Equals("") || $field.Type.ConcreteType.Equals($field.Type.Name))
 
+#if ($field.Derived)
+	public $field.Type.Name $field.GetMethodFormat() {
+#if ($field.Readable)
+	    get { throw new System.NotImplementedException(); }
+#end	    
+#if ($field.Writable)
+	    set { throw new System.NotImplementedException(); }
+#end	    
+	}
+#else
 	[Generate]
 	public $field.Type.Name $field.GetMethodFormat() {
 	    get { return this.$field.GetFieldFormat(); }
 	    set { this.$field.GetFieldFormat() = value; }
 	}
+#end
 #else
 	[Generate]
 	public $field.Type.ConcreteType $field.GetMethodFormat() {
@@ -97,12 +128,36 @@ namespace ${options.RootNameSpace}.BusinessLogic {
 #if ($field.Readable)
 	    get { return this.$field.GetMethodFormat(); }
 #end
-#if ($field.Writable)
-	    set { this.$field.GetFieldFormat() = value; }
-#end
+###if ($field.Writable)
+##	    set { this.$field.GetFieldFormat() = value; }
+###end
         }
 #end
 #end
+#end
+
+	[Generate]    
+	public#if($element.IsDerived) new#end void Reload() {
+#if($element.IsDerived)
+	    base.Reload();
+#end
+#if(!$element.IsAbstract && !$element.SqlEntity.Name.Equals(""))
+	    ${element.Name}DAO.DAO.Reload(this);
+#end
+#foreach($field in $element.PrivateFields)
+#if($field.Name.IndexOf('.')<0 && !$field.Derived && $field.Column.Name.Length == 0)
+	    $field.GetFieldFormat() = $field.Type.NewInstanceFormat;
+#end
+#end
+    }
+    
+
+#if($element.IsAbstract)
+
+	public abstract void Store();
+
+##	public abstract void Update(${element.Name}Data data);
+
 #end
     }
 }
