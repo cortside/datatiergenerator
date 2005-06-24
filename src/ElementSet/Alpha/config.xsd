@@ -240,6 +240,7 @@
 							    <xs:attribute name="sort" type="xs:string" />
 							    <xs:attribute name="unique" type="BooleanEnum" />
 							    <xs:attribute name="expression" type="xs:string" />
+							    <xs:attribute name="limit" type="BooleanEnum" />
 							</xs:complexType>
 						    </xs:element>
 						</xs:sequence>
