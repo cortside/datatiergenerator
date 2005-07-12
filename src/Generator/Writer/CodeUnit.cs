@@ -87,49 +87,25 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 
 	    ArrayList source = GetSourceLines(s);
 
-	    // Remove the comment and attribute lines that belong to the next method.
-	    while (source[source.Count-1].ToString().Trim().StartsWith("#region") || source[source.Count-1].ToString().Trim().StartsWith("//") || source[source.Count-1].ToString().Trim().StartsWith("[") || source[source.Count-1].ToString().Trim().Equals(String.Empty)) {
-		if (source[source.Count-1].ToString().Trim().StartsWith("#region")) {
-		    member.HasBeginRegion = true;
-		    member.RegionName = source[source.Count-1].ToString().Trim().Substring(7).Trim();
+	    // Remove stuff that belongs to the next method.
+	    int openBrackets = 0;
+	    int lastLine = source.Count;
+	    for(int i =0;i<source.Count;i++) {
+		string line = source[i].ToString();
+		if (line.IndexOf('{') >= 0) {
+		    openBrackets++;
 		}
-		source.RemoveAt(source.Count-1);
-	    }
-
-	    if (source[source.Count-1].ToString().Trim().Equals("}")) {
-		source.RemoveAt(source.Count-1);
-	    } else {
-		String line = source[source.Count-1].ToString();
-		if (line.LastIndexOf("}")>=0) {
-		    source[source.Count-1] = line.Substring(0, line.LastIndexOf("}")-1);
-		} else {
-		    throw new Exception("could not find closing brace: " + hold);
+		if (line.IndexOf('}') >= 0) {
+		    openBrackets--;
+		}
+		if (openBrackets < 0) {
+		    lastLine = i-1;
+		    break;
 		}
 	    }
 
-	    // If this is the last member, remove the extra curly brace.
-	    if (member.LastLine >= 9999) {
-		// Remove emtpy lines at the end of the method block.
-		while (source[source.Count-1].ToString().Trim().Equals(String.Empty)) {
-		    source.RemoveAt(source.Count-1);
-		}
-
-		if (source[source.Count-1].ToString().Trim().Equals("}")) {
-		    source.RemoveAt(source.Count-1);
-		} else {
-		    // remove #endregion lines
-		    while (source[source.Count-1].ToString().Trim().StartsWith("#endregion")) {
-			member.HasEndRegion = true;
-			source.RemoveAt(source.Count-1);
-		    }
-
-		    String line = source[source.Count-1].ToString();
-		    if (line.LastIndexOf("}")>=0) {
-			source[source.Count-1] = line.Substring(0,line.LastIndexOf("}")-1);
-		    } else {
-			throw new Exception(">>>" + s + "<<<");
-		    }
-		}
+	    while (source.Count > lastLine + 1) {
+		source.RemoveAt(source.Count - 1);
 	    }
 
 	    // Remove emtpy lines at the beginning of the method block.
@@ -213,7 +189,10 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 
 	private void ExtractMemberBodies() {
 	    ArrayList members1 = GetMembers(unit);
+	    ExtractMemberBodies(members1);
+	}
 
+	private void ExtractMemberBodies(ArrayList members1) {
 	    foreach(Member member in members1) {
 		//log.Add("found " + (member.Generate ? "[generate] " : "") + member.Element.GetType().FullName + ": " + member.Element.Name + " starting at line " + member.FirstLine.ToString() + " and ending on line " + member.LastLine.ToString());
 		if (member.Element is CodeMemberMethod) {
@@ -241,8 +220,11 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 		    if (!set.Equals(String.Empty)) {
 			((CodeMemberProperty)member.Element).SetStatements.Add(new CodeSnippetStatement(set));
 		    }
+		} else if (member.Element is CodeTypeDeclaration) {
+		    ExtractMemberBodies(GetMembers((CodeTypeDeclaration)member.Element, member.LastLine));
+		    
 		} else {
-		    throw new Exception("Can't exctract body from unknown member type: " + member.Element.GetType().FullName);
+		    throw new Exception("Can't extract body from unknown member type: " + member.Element.GetType().FullName);
 		}
 	    }
 	}
@@ -269,19 +251,7 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 			    ns.Types.Add(mergeType);
 			} else {
 			    CodeTypeDeclaration type = GetType(ns, mergeType.Name);
-			    // TODO: attributes
-			    // TODO: basetypes
-			    // TODO: comments
-			    // TODO: custom attributes
-			    // TODO: type attributes
-			    foreach(CodeTypeMember mergeMember in mergeType.Members) {
-				if (!HasMember(type, mergeMember)) {
-				    //log.Add("adding member: " + mergeMember.Name);
-				    type.Members.Add(mergeMember);
-				} else {
-				    UpdateMember(type, mergeMember);
-				}
-			    }
+			    Merge(type, mergeType);
 			}
 		    }
 
@@ -289,6 +259,7 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 	    }
 
 	    // search for members with the Generate attribute that are no longer in the in the generated code
+	    // Note that we probably need to do something more here to remove members of nested types. (I.E. internal classes like ColumnOrdinals)
 	    foreach(CodeNamespace mergeNamespace in unit.Namespaces) {
 		if (HasNamespace(mergeUnit.Unit, mergeNamespace.Name)) {
 		    CodeNamespace ns = GetNamespace(mergeUnit.Unit, mergeNamespace.Name);
@@ -314,6 +285,28 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 	    }
 
 	    
+	}
+
+	private void Merge(CodeTypeDeclaration type, CodeTypeDeclaration mergeType) {
+	    // TODO: attributes
+	    // TODO: basetypes
+	    // TODO: comments
+	    // TODO: custom attributes
+	    // TODO: type attributes
+	    foreach(CodeTypeMember mergeMember in mergeType.Members) {
+		if (!HasMember(type, mergeMember)) {
+		    //log.Add("adding member: " + mergeMember.Name);
+		    type.Members.Add(mergeMember);
+		} else {
+		    if (mergeMember is CodeTypeDeclaration) {
+			// For now don't merge nested classes.  We need to have a way of getting the type from the class instead of the namespace.
+			CodeTypeDeclaration nestedType = (CodeTypeDeclaration)GetMember(type, mergeMember);
+			Merge(nestedType, (CodeTypeDeclaration)mergeMember);
+		    } else {
+			UpdateMember(type, mergeMember);
+		    }
+		}
+	    }
 	}
 
 	private CodeNamespace GetNamespace(CodeCompileUnit unit, String name) {
@@ -362,6 +355,8 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 		    } else if (member is CodeMemberProperty) {
 			match = true;
 		    } else if (member is CodeMemberField) {
+			match = true;
+		    } else if (member is CodeTypeDeclaration) {
 			match = true;
 		    } else {
 			throw new Exception("unable to get member of type: " + mergeMember.GetType().FullName);
@@ -444,29 +439,37 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 	    ArrayList members = new ArrayList();
 	    foreach(CodeNamespace ns in unit.Namespaces) {
 		foreach(CodeTypeDeclaration type in ns.Types) {
-		    Member member = null;
-		    foreach(CodeTypeMember m in type.Members) {
-			CodeLinePragma line = (CodeLinePragma)m.UserData["Location"];
-			if (member != null) {
-			    member.LastLine = line.LineNumber - 1;
-			    members.Add(member);
-			    member = null;
-			}
-			if (m is CodeMemberField) {
-			} else if (m is CodeMemberMethod || m is CodeMemberProperty || m is CodeConstructor || m is CodeTypeConstructor) {
-			    member = new Member();
-			    member.FirstLine = line.LineNumber;
-			    member.Element = m;
-			    member.Type = type;
-			} else {
-			    throw new Exception("unknown type member type: " + m.GetType().FullName);
-			}
-		    }
-		    if (member!=null) {
-			member.LastLine = 9999;
-			members.Add(member);
-		    }
+		    members.AddRange(GetMembers(type, 9999));
 		}
+	    }
+
+	    return members;
+	}
+
+	private ArrayList GetMembers(CodeTypeDeclaration type, int lastLine) {
+	    ArrayList members = new ArrayList();
+	    Member member = null;
+	    foreach(CodeTypeMember m in type.Members) {
+		CodeLinePragma line = (CodeLinePragma)m.UserData["Location"];
+		if (member != null) {
+		    member.LastLine = line.LineNumber - 1;
+		    members.Add(member);
+		    member = null;
+		}
+		if (m is CodeMemberField) {
+		} else if (m is CodeMemberMethod || m is CodeMemberProperty || m is CodeConstructor || m is CodeTypeConstructor || m is CodeTypeDeclaration) {
+		    member = new Member();
+		    member.FirstLine = line.LineNumber;
+		    member.Element = m;
+		    member.Type = type;
+		} else {
+		    throw new Exception("unknown type member type: " + m.GetType().FullName);
+		}
+	    }
+	    if (member!=null) {
+		member.LastLine = lastLine;
+		member.IsLastMethod = true;
+		members.Add(member);
 	    }
 
 	    return members;
@@ -480,6 +483,7 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 	    public Boolean HasBeginRegion = false;
 	    public Boolean HasEndRegion = false;
 	    public String RegionName = String.Empty;
+	    public Boolean IsLastMethod = false;
 
 	    public Boolean Generate {
 		get {

@@ -59,8 +59,9 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 		    writer.Close();
 		    return true;
 		} catch (Exception ex) {
+		    Console.Out.WriteLine("Error in File Name " + file.Name);
 		    Console.Out.WriteLine(ex);
-		    Log.Add(ex.ToString());
+		    Log.Add("Error in File Name " + file.Name + ":" + ex.ToString());
 		    return false;
 		}
 	    } else {
@@ -101,8 +102,9 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 			return true;
 		    }
 		} catch (Exception ex) {
+		    Console.Out.WriteLine("Error in File Name " + file.Name);
 		    Console.Out.WriteLine(ex);
-		    Log.Add(ex.ToString());
+		    Log.Add("Error in File Name " + file.Name + ":" + ex.ToString());
 		} finally {
 		    if (fs != null) {
 			fs.Close();
