@@ -645,6 +645,34 @@
 			<xs:attribute name="user" type="xs:string" />
 		    </xs:complexType>
 		</xs:element>
+		<xs:element name="messages">
+		    <xs:complexType>
+			<xs:sequence>
+			    <xs:element name="message" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+				    <xs:sequence>
+					<xs:element name="properties" minOccurs="1" maxOccurs="unbounded">
+					    <xs:complexType>
+						<xs:sequence>
+						    <xs:element name="property" minOccurs="1" maxOccurs="unbounded">
+							<xs:complexType>
+							    <xs:sequence />
+							    <xs:attribute name="name" type="xs:string" />
+							    <xs:attribute name="type" type="xs:string" />
+							</xs:complexType>
+						    </xs:element>
+						</xs:sequence>
+					    </xs:complexType>
+					</xs:element>
+				    </xs:sequence>
+				    <xs:attribute name="name" type="xs:string" />
+				    <xs:attribute name="text" type="xs:string" />
+				    <xs:attribute name="dbtext" type="xs:string" />
+				</xs:complexType>
+			    </xs:element>
+			</xs:sequence>
+		    </xs:complexType>
+		</xs:element>
 	    </xs:sequence>
 	</xs:complexType>
     </xs:element>
