@@ -106,6 +106,7 @@ namespace Spring2.DataTierGenerator.Parser {
 	    enumtypes = EnumElement.ParseFromXml(options,doc,sqltypes,types, vd);
 	    databases = DatabaseElement.ParseFromXml(options, doc, sqltypes, types, vd);
 	    entities = EntityElement.ParseFromXml(options, doc, sqltypes, types, DatabaseElement.GetAllSqlEntities(databases), vd);
+	    messages = MessageElement.ParseFromXml(options, doc, sqltypes, types, DatabaseElement.GetAllSqlEntities(databases), vd);
 	    reportExtractions = ReportExtractionElement.ParseFromXml(options, doc, sqltypes, types, entities, vd);
 	    ArrayList collectableClasses = new ArrayList();
 	    ArrayList autoGenerateClasses = new ArrayList();

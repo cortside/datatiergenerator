@@ -25,6 +25,7 @@ namespace Spring2.DataTierGenerator.Parser {
 	protected Configuration options = new Configuration();
 
 	protected IList entities = new ArrayList();
+	protected IList messages = new ArrayList();
 	protected IList enumtypes = new ArrayList();
 	protected IList collections = new ArrayList();
 	protected IList databases = new ArrayList();
@@ -40,6 +41,9 @@ namespace Spring2.DataTierGenerator.Parser {
 
 	public IList Entities {
 	    get { return entities; }
+	}
+	public IList Messages {
+	    get { return messages; }
 	}
 	public IList Enums {
 	    get { return enumtypes; }

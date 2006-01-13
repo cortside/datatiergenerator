@@ -54,17 +54,21 @@ namespace Spring2.DataTierGenerator.Parser {
 		    }
 		}
 
-		if (task.Element.Equals("reportextraction")) 
-		{
-		    foreach (ReportExtractionElement reportExtraction in parser.ReportExtractions) 
-		    {
-			if (task.IsIncluded(reportExtraction.Name)) 
-			{
+		if (task.Element.Equals("reportextraction")) {
+		    foreach (ReportExtractionElement reportExtraction in parser.ReportExtractions) {
+			if (task.IsIncluded(reportExtraction.Name)) {
 			    list.Add(reportExtraction);
 			}
 		    }
 		}
 
+		if (task.Element.Equals("message")) {
+		    foreach (MessageElement message in parser.Messages) {
+			if (task.IsIncluded(message.Name)) {
+			    list.Add(message);
+			}
+		    }
+		}
 
 		// the entire list of entities as a list
 		if (task.Element.Equals("entities")) {
@@ -100,6 +104,14 @@ namespace Spring2.DataTierGenerator.Parser {
 		    ListElement element = new ListElement();
 		    element.Name = "enums";
 		    element.List = parser.Enums;
+		    list.Add(element);
+		}
+
+		// the entire list of messasges as a list
+		if (task.Element.Equals("messages")) {
+		    ListElement element = new ListElement();
+		    element.Name = "messages";
+		    element.List = parser.Messages;
 		    list.Add(element);
 		}
 
