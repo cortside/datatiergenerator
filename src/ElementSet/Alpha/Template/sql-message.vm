@@ -1,0 +1,26 @@
+
+DECLARE @ResourceID as int
+IF NOT Exists (SELECT [ResourceId]  FROM [JustMenus].[dbo].[Resource] WHERE Context='TestException')
+BEGININSERT INTO [JustMenus].[dbo].[Resource]([Context],[Field],[Identity]) VALUES('TestException','TestException' ,NULL) SET @ResourceID = (SELECT @@IDENTITY FROM Resource)
+END ELSE
+
+SET @ResourceID = (SELECT [ResourceId]  FROM [JustMenus].[dbo].[Resource] WHERE Context='TestException') 
+IF NOT Exists (SELECT LocalizedResourceId From LocalizedResource WHERE ResourceID = @ResourceID)
+BEGIN 
+	INSERT INTO [JustMenus].[dbo].[LocalizedResource]([ResourceId] ,[Locale] ,[Language] ,[Content]) VALUES (@ResourceID ,'US' ,'EN' , 'The user $User has been fired.' )	INSERT INTO [JustMenus].[dbo].[LocalizedResource]([ResourceId],[Locale],[Language],[Content]) VALUES (@ResourceID,'UK' ,'EN', 'The user $User has been sacked.' )
+END
+
+
+#foreach($message in $element.List)
+    if exists (select * from Resource where Context = '${message.Name}')
+	  begin	    Update localizedResource set Content = '${message.DBText}' where resourceId = (select resourceId from Resource where Context = '${message.Name}')
+    end
+    else
+    begin
+	 insert into Resource (Context,Field)values('${message.Name}','${message.Name}')
+	 insert into localizedResource(ResourceId,Locale,[language],[Content]) values(@@Identity,'us','en','${message.DBText}')
+    end
+
+#end
+
+

@@ -1,0 +1,37 @@
+
+using System;
+using System.Text;
+using System.Collections.Generic;
+
+using Spring2.Core.Message;
+using Spring2.Core.Types;
+
+namespace ${options.RootNameSpace}.Exceptions {
+    public class $element.Name : Message {
+
+#foreach($property in $element.Fields)
+#if ($property.Type)
+       private $property.Type.Name $property.GetFieldFormat() = $property.Type.NewInstanceFormat ;
+#end
+#end
+
+#foreach($property in $element.Fields)
+#if ($property.Type)
+        public $property.Type.Name $property.GetMethodFormat() {
+#end
+	    get { return this.$property.GetFieldFormat(); }
+	    set { this.$property.GetFieldFormat() = value; }
+	}
+#end  
+  
+	public $element.Name (#foreach($property in $element.Fields)#if($velocityCount>1), #end$property.Type.Name ${property.GetFieldFormat()}#end) : base(String.Format("$element.Text", #foreach($property in $element.Fields)#if($velocityCount>1), #end${property.GetFieldFormat()}.ToString()#end)) {
+#foreach($property in $element.Fields)
+#if ($property.Type)
+	    this.$property.GetFieldFormat() = $property.GetFieldFormat() ;
+#end
+#end       
+	} 
+    }     
+}
+
+
