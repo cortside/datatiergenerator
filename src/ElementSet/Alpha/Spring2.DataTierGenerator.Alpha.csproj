@@ -233,6 +233,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Element\MessageElement.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Element\OptionElement.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -454,6 +459,10 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "Template\sql-message.vm"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "Template\SUDAO.vm"
                     BuildAction = "EmbeddedResource"
                 />
@@ -479,6 +488,10 @@
                 />
                 <File
                     RelPath = "Template\PassThroughInterface\interface.vm"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Template\PassThroughInterface\Message.vm"
                     BuildAction = "EmbeddedResource"
                 />
                 <File
