@@ -5,6 +5,7 @@ SRCDIR :=	../src
 CLASSDIR := 	../classes
 LIBDIR :=	../lib
 BUILDDIR :=     ../build
+RELEASEDIR	:= ../release
 
 PS ?= \;
 
@@ -44,9 +45,9 @@ docs:
 	@rm -rf ../docs/api
 	../bin/NDoc/NDocConsole.exe -documenter=MSDN -project=Spring2.DataTierGenerator.ndoc
 
-package: clean build regress changelog docs
+package: clean build
 	rm -rf ${BUILDDIR}/Core
-	cp ../docs/api/Spring2.DataTierGenerator.chm ${BUILDDIR}
+	#cp ../docs/api/Spring2.DataTierGenerator.chm ${BUILDDIR}
 	jar -cMvf ${RELEASEDIR}/Spring2.DataTierGenerator.$(shell getversion.sh).zip -C ${BUILDDIR} .
 
 release: package
