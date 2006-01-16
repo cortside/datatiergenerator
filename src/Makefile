@@ -24,13 +24,11 @@ debug:
 	@echo MODULES = $(MODULES)
 
 build:
-	@-rm build.log
-	@-devenv DataTierGenerator.sln /rebuild Debug /out build.log /nologo
-	@cat build.log
+	..\bin\NAnt\NAnt build
 
 regress:
 	chmod a+x ../bin/NUnit/*
-	../bin/NUnit/nunit-console.exe ../build/Test/Spring2.DataTierGenerator.Test.dll ../build/Spring2.DataTierGenerator.Alpha.dll
+	../bin/NUnit/nunit-console.exe ../build/Test/Spring2.DataTierGenerator.Test.dll ../build/Test/Spring2.DataTierGenerator.Alpha.dll
 
 
 clean:
