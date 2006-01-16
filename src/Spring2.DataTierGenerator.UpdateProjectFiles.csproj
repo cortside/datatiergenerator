@@ -84,6 +84,10 @@
         <Files>
             <Include>
                 <File
+                    RelPath = "AssemblyVersionInfo.cs"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "UpdateProjectFiles\App.ico"
                     BuildAction = "Content"
                 />
