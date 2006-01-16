@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<project name="eSchaefer.NAnt" default="compile" basedir=".">
+<project name="Spring2.DataTierGenerator" default="build" basedir=".">
     <property name="debug" value="true" />
     <property name="build.root" value="c:\data\work\spring2\DataTierGenerator" />
     <property name="build.dir" value="${build.root}\build" />
@@ -8,19 +8,9 @@
 	<delete dir="${build.dir}" failonerror="false" />
     </target>    
 
-    <target name="fxcop">
-	<exec program="C:\Apps\Microsoft\FxCop 1.30\fxcopcmd.exe" commandline="/p:MedQuest.InstaScript.FxCop /o:ccnet-fxcop-results.xml" failonerror="false" />
-    </target>
-
     <!-- NOTE: this is specified in ccnet.config -->
     <target name="regress" description="runs unit tests">
 	<exec program="..\bin\NUnit\nunit-console.exe" commandline="..\build\Spring2.DataTierGenerator.Test.dll /xml=ccnet-nunit-results.xml" failonerror="true" />
-    </target>
-
-    <target name="buildall" depends="updateversion,build" />
-
-    <target name="build" >
-	<exec program="make" commandline="buildall" />
     </target>
 
     <target name="updateversion">
@@ -32,17 +22,6 @@
         <exec program="..\bin\UpdateVersion.exe" commandline="-i AssemblyVersionInfo.vb -o AssemblyVersionInfo.vb -rp ${label-to-apply}" />
 	<exec program="make" commandline="copyversion" />
     </target>
-
-    <target name="commitversion">
-	<exec program="make" commandline="commitversion" />
-    </target>
-
-
-    <target name="package" depends="clean,compile">
-	<echo message="Starting package" />
-	<!-- <exec program="make" commandline="version packageonly" /> -->
-    </target>
-
 
     <target name="gen" depends="generate, updateprojects" />
     <target name="generate">
@@ -71,8 +50,8 @@
     </target>
 
 
-    <target name="compile">
-	<solution solutionfile="DataTierGenerator.sln" configuration="debug"/>
+    <target name="build">
+	<solution solutionfile="DataTierGenerator.sln" configuration="debug" />
 	<copy todir="${build.dir}">
             <fileset basedir="..\lib">
             	<include name="*.dll" />
