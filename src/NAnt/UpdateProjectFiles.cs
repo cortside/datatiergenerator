@@ -30,7 +30,7 @@ namespace Spring2.DataTierGenerator.NAntTasks {
 	/// <summary>
 	/// The set of files to be checked
 	/// </summary>
-	[FileSet("fileset")]
+	[BuildElement("fileset")]
 	public FileSet FileSet { 
 	    get { return fileset; } 
 	    set { this.fileset = value; }
