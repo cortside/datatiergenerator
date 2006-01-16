@@ -13,10 +13,10 @@ namespace Spring2.DataTierGenerator.Test {
 	[Test]
 	public void Escape() {
 	    MSSqlServerTool tool = new MSSqlServerTool();
-	    Assertion.AssertEquals("[Contains]", tool.Escape("Contains"));
-	    Assertion.AssertEquals("Contain", tool.Escape("Contain"));
-	    Assertion.AssertEquals("[Patient Id]", tool.Escape("Patient Id"));
-	    Assertion.AssertEquals("[Foo/Bar]", tool.Escape("Foo/Bar"));
+	    Assert.AreEqual("[Contains]", tool.Escape("Contains"));
+	    Assert.AreEqual("Contain", tool.Escape("Contain"));
+	    Assert.AreEqual("[Patient Id]", tool.Escape("Patient Id"));
+	    Assert.AreEqual("[Foo/Bar]", tool.Escape("Foo/Bar"));
 	}
     }
 }

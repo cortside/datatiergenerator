@@ -144,7 +144,7 @@ namespace Spring2.DataTierGenerator.Test {
 	    pass = pass && CompareFile(compareRoot, "Types", "USStateEnum.cs");
 
 	    if (!pass) {
-		Assertion.Fail("more than 1 output file did not match it's compare file.  Sanity is just an illusion.");
+		Assert.Fail("more than 1 output file did not match it's compare file.  Sanity is just an illusion.");
 	    }
 	}
 

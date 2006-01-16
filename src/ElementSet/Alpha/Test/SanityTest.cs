@@ -42,7 +42,7 @@ namespace Spring2.DataTierGenerator.Test {
 		    Console.Out.WriteLine(s);
 		    message += s + "\n";
 		}
-		Assertion.Fail(message);
+		Assert.Fail(message);
 	    } else {
 		IGenerator gen = new NVelocityGenerator();
 		if (Directory.Exists(outputPath)) {
@@ -56,7 +56,7 @@ namespace Spring2.DataTierGenerator.Test {
 		}
 
 		if (message.IndexOf("ERROR") >=0) {
-		    Assertion.Fail(message);
+		    Assert.Fail(message);
 		}
 
 		CompareResults(root, outputPath);
@@ -88,7 +88,7 @@ namespace Spring2.DataTierGenerator.Test {
 	    }
 
 	    if (!pass) {
-		Assertion.Fail("more than 1 output file did not match it's compare file.  Sanity is just an illusion.\n" + message);
+		Assert.Fail("more than 1 output file did not match it's compare file.  Sanity is just an illusion.\n" + message);
 	    }
 	}
 

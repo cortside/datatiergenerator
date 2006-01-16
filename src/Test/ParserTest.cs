@@ -46,7 +46,7 @@ namespace Spring2.DataTierGenerator.Test {
 	    // make sure new file matches compare file
 	    if (!file3.OpenText().ReadToEnd().Equals(file1.OpenText().ReadToEnd())) {
 		Console.Out.WriteLine(Environment.NewLine + file1.OpenText().ReadToEnd());
-		Assertion.Fail();
+		Assert.Fail();
 	    }
 	}
 
