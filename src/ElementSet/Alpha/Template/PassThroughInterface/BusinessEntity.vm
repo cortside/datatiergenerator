@@ -152,7 +152,7 @@ namespace ${options.RootNameSpace}.BusinessLogic {
     }
     
 
-#if($element.IsAbstract)
+#if($element.IsAbstract  && $element.BaseEntity.Name.Length == 0)
 
 	public abstract void Store();
 
