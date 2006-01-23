@@ -13,7 +13,7 @@ SET ANSI_NULLS ON
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE PROCEDURE $sql.Escape("sp${element.Name}_Update")
+CREATE PROCEDURE dbo.$sql.Escape("sp${element.Name}_Update")
 
 #set($id = $element.GetIdentityColumn())
 #set($cols = 0)

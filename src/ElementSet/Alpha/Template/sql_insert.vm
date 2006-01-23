@@ -13,7 +13,7 @@ SET ANSI_NULLS ON
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE PROCEDURE $sql.Escape("sp${element.Name}_Insert")
+CREATE PROCEDURE dbo.$sql.Escape("sp${element.Name}_Insert")
 #set($cols = 0)
 #foreach($column in $element.Columns)#if(!$column.ViewColumn && (!$column.Identity || $doBoth))#set($cols = $cols + 1)#if($cols>1),
 #end	@${column.CodeSafeName}	${column.SqlType.Declaration} = null#end
