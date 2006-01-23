@@ -313,6 +313,60 @@ namespace $namespace {
             }
         }
 #end
+#foreach($comparer in $element.Comparers)
+
+        /// <summary>
+        /// Used to sort or search an ArrayList of $dataObjectClass objects on the #foreach($field in $comparer.Fields)#if($velocityCount > 1),#end$field.Name#end properties
+        /// </summary>
+	[Generate]
+        public class $comparer.Name : System.Collections.IComparer {
+            /// <summary>
+            /// Compares two $dataObjectClass objects.
+            /// </summary>
+            /// <param name="o1">First object</param>
+            /// <param name="o2">Second Object</param>
+            /// <returns>0 if equal, -1 if first less than second and 1 if first greater than second.  Note that null is always less than non-null.</returns>
+            public int Compare(object o1, object o2) {
+                if (o1 == null && o2 == null) {
+		    return 0;
+                }
+
+                if (o1 == null) {
+		    return -1;
+                }
+
+                if (o2 == null) {
+		    return 1;
+                }
+
+                $dataObjectClass g1 = ($dataObjectClass)o1;
+                $dataObjectClass g2 = ($dataObjectClass)o2;
+
+#foreach($field in $comparer.Fields)
+                if (g1.${field.GetMethodFormat()}.IsValid && !g2.${field.GetMethodFormat()}.IsValid) {
+#if ($field.Direction == "descending")
+                    return -1;
+#else
+                    return 1;
+#end
+                }
+                if (!g1.${field.GetMethodFormat()}.IsValid && g2.${field.GetMethodFormat()}.IsValid) {
+#if ($field.Direction == "descending")
+                    return 1;
+#else
+                    return -1;
+#end
+                }
+                if (g1.${field.GetMethodFormat()}.IsValid && g2.${field.GetMethodFormat()}.IsValid && ${field.CreateCompareString("g1", "g2")} != 0) {
+                    return ${field.CreateCompareString("g1", "g2")}#if ($field.Direction == "descending") * -1#end;
+                }
+#end    
+
+                // No inequalities found, so they must be equal.
+                return 0;
+            }
+        }
+#end
     }
 }
 #end
