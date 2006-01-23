@@ -31,7 +31,7 @@ namespace ${options.RootNameSpace}.Test {
 	    foreach(I${entity.Name} entity in list) {
 		Assert.IsFalse(entity.IsNew);
 #foreach($property in $entity.Fields)
-#if(!$property.Type.Name.EndsWith("Enum") && !$property.Type.Name.EndsWith("Data") && !$property.Type.Name.EndsWith("List") && $property.Type.Name!="BooleanType" && $property.Type.Name!="Hashtable" && $property.Readable)
+#if(!$property.Type.Name.EndsWith("Data") && !$property.Type.Name.EndsWith("List") && $property.Type.Name!="Hashtable" && $property.Readable)
 #if(!$property.Column.Name.Equals(""))
 		Assert.IsFalse(entity.${property.GetMethodFormat()}.IsDefault);
 #end
