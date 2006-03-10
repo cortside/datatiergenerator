@@ -475,7 +475,15 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "Template\PassThroughInterface\BusinessEntityUnitTest.vm"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "Template\PassThroughInterface\DAO.vm"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Template\PassThroughInterface\dao-test.vm"
                     BuildAction = "EmbeddedResource"
                 />
                 <File
