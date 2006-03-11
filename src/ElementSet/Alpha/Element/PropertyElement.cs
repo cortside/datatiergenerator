@@ -282,51 +282,53 @@ namespace Spring2.DataTierGenerator.Element {
 
 	public static ArrayList ParseFromXml(XmlNode propertiesNode, IList entities, IPropertyContainer entity, Hashtable sqltypes, Hashtable types, bool isReference, ParserValidationDelegate vd) {
 	    ArrayList fields = new ArrayList();
-	    foreach (XmlNode node in propertiesNode.ChildNodes) {
-		if (node.NodeType == XmlNodeType.Comment) {
-		    continue;
-		}
-		PropertyElement field = BuildElement(node, types, sqltypes, entity, isReference, vd);
-		fields.Add(field);
-
-		// Add in any subfields...
-		if (field.Entity.Name.Length > 0 && !field.UseEntityDao) {
-		    String subEntityName = node.Attributes["entity"].Value;
-		    EntityElement subentity = EntityElement.FindEntityByName((ArrayList)entities, subEntityName);
-
-		    // check to see if subentity is self
-		    if (subentity == null && entity.Name == subEntityName) {
-			subentity = (EntityElement)entity;
+	    if (propertiesNode != null){
+		foreach (XmlNode node in propertiesNode.ChildNodes) {
+		    if (node.NodeType == XmlNodeType.Comment) {
+			continue;
 		    }
+		    PropertyElement field = BuildElement(node, types, sqltypes, entity, isReference, vd);
+		    fields.Add(field);
 
-		    if (subentity != null) {
-			// Only entity elements have entity atttribute
-			SqlEntityElement sqlEntity = ((EntityElement)entity).SqlEntity;
+		    // Add in any subfields...
+		    if (field.Entity.Name.Length > 0 && !field.UseEntityDao) {
+			String subEntityName = node.Attributes["entity"].Value;
+			EntityElement subentity = EntityElement.FindEntityByName((ArrayList)entities, subEntityName);
 
-			String prefix = subentity.Name + "_";
-			if (node.Attributes["prefix"]!=null) {
-			    prefix = node.Attributes["prefix"].Value;
+			// check to see if subentity is self
+			if (subentity == null && entity.Name == subEntityName) {
+			    subentity = (EntityElement)entity;
 			}
-				    
-			foreach(PropertyElement f in subentity.Fields) {
-			    PropertyElement subfield = (PropertyElement)f.Clone();
-			    subfield.Name = field.Name + "." + subfield.Name;
 
-			    // if field has sql column defined
-			    if (!f.Column.Name.Equals(String.Empty)) {
-				ColumnElement column = sqlEntity.FindColumnByName(prefix + subfield.Column.Name);
-				if (column != null) {
-				    subfield.Column = (ColumnElement)column.Clone();
-				} else {
-				    vd(ParserValidationArgs.NewError("column (" + prefix + subfield.Column.Name + ") specified for property (" + subfield.Name + ") on entity (" + entity.Name + ") was not found in sql entity (" + sqlEntity.Name + ")"));
-				}
+			if (subentity != null) {
+			    // Only entity elements have entity atttribute
+			    SqlEntityElement sqlEntity = ((EntityElement)entity).SqlEntity;
+
+			    String prefix = subentity.Name + "_";
+			    if (node.Attributes["prefix"]!=null) {
+				prefix = node.Attributes["prefix"].Value;
 			    }
-			    fields.Add(subfield);
+				    
+			    foreach(PropertyElement f in subentity.Fields) {
+				PropertyElement subfield = (PropertyElement)f.Clone();
+				subfield.Name = field.Name + "." + subfield.Name;
+
+				// if field has sql column defined
+				if (!f.Column.Name.Equals(String.Empty)) {
+				    ColumnElement column = sqlEntity.FindColumnByName(prefix + subfield.Column.Name);
+				    if (column != null) {
+					subfield.Column = (ColumnElement)column.Clone();
+				    } else {
+					vd(ParserValidationArgs.NewError("column (" + prefix + subfield.Column.Name + ") specified for property (" + subfield.Name + ") on entity (" + entity.Name + ") was not found in sql entity (" + sqlEntity.Name + ")"));
+				    }
+				}
+				fields.Add(subfield);
+			    }
+			} else {
+			    vd(ParserValidationArgs.NewError("Entity " + entity.Name + " referenced another entity that was not defined (or defined below this one): " + node.Attributes["entity"].Value));
 			}
-		    } else {
-			vd(ParserValidationArgs.NewError("Entity " + entity.Name + " referenced another entity that was not defined (or defined below this one): " + node.Attributes["entity"].Value));
-		    }
-		} 
+		    } 
+		}
 	    }
 	    return fields;
 	}

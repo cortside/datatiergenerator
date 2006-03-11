@@ -24,7 +24,7 @@ namespace ${options.RootNameSpace}.Exceptions {
 	}
 #end  
   
-	public $element.Name (#foreach($property in $element.Fields)#if($velocityCount>1), #end$property.Type.Name ${property.GetFieldFormat()}#end) : base(String.Format("$element.Text", #foreach($property in $element.Fields)#if($velocityCount>1), #end${property.GetFieldFormat()}.ToString()#end)) {
+	public $element.Name (#foreach($property in $element.Fields)#if($velocityCount>1), #end$property.Type.Name ${property.GetFieldFormat()}#end) : base("$element.Text") {
 #foreach($property in $element.Fields)
 #if ($property.Type)
 	    this.$property.GetFieldFormat() = $property.GetFieldFormat() ;

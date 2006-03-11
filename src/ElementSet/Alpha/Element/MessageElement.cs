@@ -15,13 +15,11 @@ namespace Spring2.DataTierGenerator.Element {
 
 	protected static readonly String PROPERTIES = "properties";
 	protected static readonly String TEXT = "text";
-	protected static readonly String DBTEXT = "dbtext";
 
 	private ArrayList fields = new ArrayList();
 	private ArrayList properties = new ArrayList();
 	private IPropertyContainer container = new EntityElement();
 	private String text = String.Empty;
-	private String dbtext = String.Empty;
 
 
 	public ArrayList Fields {
@@ -39,10 +37,6 @@ namespace Spring2.DataTierGenerator.Element {
 	    set { this.text = value; }
 	}
 
-	public String DBText {
-	    get { return this.dbtext; }
-	    set { this.dbtext = value; }
-	}
 
 	public PropertyElement FindFieldByName(String name) {
 	    foreach (PropertyElement field in Fields) {
@@ -76,7 +70,6 @@ namespace Spring2.DataTierGenerator.Element {
 	public static void BuildElement(XmlNode messageNode, MessageElement messageElement) {
 	    messageElement.Name = GetAttributeValue(messageNode, NAME, messageElement.Name);
 	    messageElement.Text = GetAttributeValue(messageNode, TEXT, messageElement.Text);
-	    messageElement.DBText = GetAttributeValue(messageNode, DBTEXT, messageElement.DBText);
 	    PropertyElement.ParseFromXml(GetChildNodeByName(messageNode, PROPERTIES), messageElement.Fields);
 	}
 
@@ -87,7 +80,6 @@ namespace Spring2.DataTierGenerator.Element {
 		MessageElement message = new MessageElement();
 		message.Name = node.Attributes["name"].Value;
 		message.Text = node.Attributes["text"].Value;
-		message.DBText = node.Attributes["dbtext"].Value;
 		message.fields = PropertyElement.ParseFromXml(GetChildNodeByName(node, PROPERTIES), messages, message, sqltypes, types,false,vd);
 		messages.Add(message);
 	    }
@@ -107,10 +99,6 @@ namespace Spring2.DataTierGenerator.Element {
 	public static void BuildElement(XmlNode node, IPropertyContainer entity, MessageElement message, ParserValidationDelegate vd) {
 	    if (node.Attributes["text"] != null) {
 		message.Text = node.Attributes["text"].Value;
-	    }
-
-	    if (node.Attributes["dbtext"] != null) {
-		message.DBText = node.Attributes["dbtext"].Value;
 	    }
 
 	    message.container = entity;

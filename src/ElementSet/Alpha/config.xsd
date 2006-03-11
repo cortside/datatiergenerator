@@ -651,7 +651,7 @@
 			    <xs:element name="message" minOccurs="0" maxOccurs="unbounded">
 				<xs:complexType>
 				    <xs:sequence>
-					<xs:element name="properties" minOccurs="1" maxOccurs="unbounded">
+					<xs:element name="properties" minOccurs="0" maxOccurs="unbounded">
 					    <xs:complexType>
 						<xs:sequence>
 						    <xs:element name="property" minOccurs="1" maxOccurs="unbounded">
@@ -667,7 +667,6 @@
 				    </xs:sequence>
 				    <xs:attribute name="name" type="xs:string" />
 				    <xs:attribute name="text" type="xs:string" />
-				    <xs:attribute name="dbtext" type="xs:string" />
 				</xs:complexType>
 			    </xs:element>
 			</xs:sequence>

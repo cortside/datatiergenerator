@@ -1,24 +1,18 @@
-
-DECLARE @ResourceID as int
-IF NOT Exists (SELECT [ResourceId]  FROM [JustMenus].[dbo].[Resource] WHERE Context='TestException')
-BEGININSERT INTO [JustMenus].[dbo].[Resource]([Context],[Field],[Identity]) VALUES('TestException','TestException' ,NULL) SET @ResourceID = (SELECT @@IDENTITY FROM Resource)
-END ELSE
-
-SET @ResourceID = (SELECT [ResourceId]  FROM [JustMenus].[dbo].[Resource] WHERE Context='TestException') 
-IF NOT Exists (SELECT LocalizedResourceId From LocalizedResource WHERE ResourceID = @ResourceID)
-BEGIN 
-	INSERT INTO [JustMenus].[dbo].[LocalizedResource]([ResourceId] ,[Locale] ,[Language] ,[Content]) VALUES (@ResourceID ,'US' ,'EN' , 'The user $User has been fired.' )	INSERT INTO [JustMenus].[dbo].[LocalizedResource]([ResourceId],[Locale],[Language],[Content]) VALUES (@ResourceID,'UK' ,'EN', 'The user $User has been sacked.' )
-END
-
+declare @resourceId as int
 
 #foreach($message in $element.List)
-    if exists (select * from Resource where Context = '${message.Name}')
-	  begin	    Update localizedResource set Content = '${message.DBText}' where resourceId = (select resourceId from Resource where Context = '${message.Name}')
-    end
+    if not exists (select * from Resource where Context = '${message.Name}' and Field = 'Message' and ContextIdentity is null)
+	begin	    
+	insert into Resource (Context,Field)values('${message.Name}','Message')
+	insert into localizedResource(ResourceId,Locale,[language],[Content]) values(@@Identity,'us','en','${message.Text}')
+	end
     else
     begin
-	 insert into Resource (Context,Field)values('${message.Name}','${message.Name}')
-	 insert into localizedResource(ResourceId,Locale,[language],[Content]) values(@@Identity,'us','en','${message.DBText}')
+	SET @resourceId = (select resourceid from Resource where Context = '${message.Name}' and Field = 'Message' and ContextIdentity is null)
+    	if not exists (select * from LocalizedResource where Locale = 'us' and language = 'en' and resourceid = @resourceId)
+	begin
+		insert into localizedResource(ResourceId,Locale,[language],[Content]) values(@resourceId,'us','en','${message.Text}')
+	end
     end
 
 #end

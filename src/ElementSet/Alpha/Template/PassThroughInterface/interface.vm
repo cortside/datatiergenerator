@@ -22,6 +22,8 @@ namespace $namespace {
 
     public class ${element.Name}Fields {
 	private ${element.Name}Fields() {}
+	public static readonly String ${element.Name} = "${element.Name}"; //Entity Name
+	
 #foreach($propertyName in $element.GetPropertyNames($options, $elements))
 	public static readonly String $propertyName.FieldName = $propertyName.FieldValue;
 #end
