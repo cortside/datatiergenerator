@@ -17,14 +17,14 @@ namespace ${options.RootNameSpace}.Exceptions {
 
 #foreach($property in $element.Fields)
 #if ($property.Type)
-        public $property.Type.Name $property.GetMethodFormat() {
+        public $property.Type.Name $property.GetMethodFormat() { 
 #end
 	    get { return this.$property.GetFieldFormat(); }
 	    set { this.$property.GetFieldFormat() = value; }
 	}
 #end  
   
-	public $element.Name (#foreach($property in $element.Fields)#if($velocityCount>1), #end$property.Type.Name ${property.GetFieldFormat()}#end) : base("$element.Text") {
+	public $element.Name (#foreach($property in $element.Fields)#if($velocityCount>1), #end$property.Type.Name ${property.GetFieldFormat()}#end) : base("$element.Text" #foreach($property in $element.Fields), ${property.GetFieldFormat()}#end) {
 #foreach($property in $element.Fields)
 #if ($property.Type)
 	    this.$property.GetFieldFormat() = $property.GetFieldFormat() ;
