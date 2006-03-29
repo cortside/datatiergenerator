@@ -20,9 +20,8 @@ using ${options.RootNameSpace}.Types;
 namespace $options.GetDAONameSpace($element.Name) {
     public class $options.GetDAOClassName($element.Name) : $options.DaoBaseClass {
 
-#if($element.SqlEntity.UseView)
-
 	public static readonly ${element.Name}DAO DAO = new ${element.Name}DAO(); 
+#if($element.SqlEntity.UseView)
 	private static readonly String VIEW = "$element.SqlEntity.View";
 #else
 	private static readonly String VIEW = "[$element.SqlEntity.Name]";
