@@ -85,6 +85,7 @@
             <Include>
                 <File
                     RelPath = "AssemblyVersionInfo.cs"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
