@@ -85,11 +85,6 @@
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
                 <Reference
-                    Name = "Spring2.DataTierGenerator.Nant"
-                    Project = "{2844DE77-37C4-4DD5-A1B2-F217D40EEEFE}"
-                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
-                />
-                <Reference
                     Name = "Spring2.DataTierGenerator.Alpha"
                     Project = "{069AFE42-50D3-48D3-A12B-FAE1D8A2A44A}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
