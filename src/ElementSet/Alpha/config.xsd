@@ -306,6 +306,7 @@
 								    <xs:attribute name="readable" type="BooleanEnum" />
 								    <xs:attribute name="writable" type="BooleanEnum" />
 								    <xs:attribute name="derived" type="BooleanEnum" />
+								    <xs:attribute name="encrypted" type="BooleanEnum" />
 								    <xs:attribute name="log" type="BooleanEnum" />
 								    <xs:attribute name="returnasidentity" type="BooleanEnum" />
 								    <xs:attribute name="useentitydao" type="BooleanEnum" />

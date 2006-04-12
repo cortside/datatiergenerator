@@ -28,6 +28,7 @@ namespace Spring2.DataTierGenerator.Element {
 	protected static readonly String READABLE = "readable";
 	protected static readonly String WRITABLE = "writable";
 	protected static readonly String DERIVED = "derived";
+	protected static readonly String ENCRYPTED = "encrypted";
 	protected static readonly String LOG = "log";
 	protected static readonly String RETURNASIDENTITY = "returnasidentity";
 	protected static readonly String DIRECTION = "direction";
@@ -57,6 +58,7 @@ namespace Spring2.DataTierGenerator.Element {
 	protected Boolean readable = true;
 	protected Boolean writable = true;
 	protected Boolean derived = false;
+	protected Boolean encrypted = false;
 	protected Boolean useEntityDao = false;
 
 	protected String accessModifier = "private";
@@ -124,6 +126,11 @@ namespace Spring2.DataTierGenerator.Element {
 	public Boolean Derived {
 	    get { return this.derived; }
 	    set { this.derived = value; }
+	}
+
+	public Boolean Encrypted {
+	    get { return this.encrypted; }
+	    set { this.encrypted = value; }
 	}
 
 	public String ParameterName {
@@ -244,6 +251,7 @@ namespace Spring2.DataTierGenerator.Element {
 	    propertyElement.Readable = Boolean.Parse(GetAttributeValue(propertyNode, READABLE, propertyElement.Readable.ToString()));
 	    propertyElement.Writable = Boolean.Parse(GetAttributeValue(propertyNode, WRITABLE, propertyElement.Writable.ToString()));
 	    propertyElement.Derived = Boolean.Parse(GetAttributeValue(propertyNode, DERIVED, propertyElement.Derived.ToString()));
+	    propertyElement.Encrypted = Boolean.Parse(GetAttributeValue(propertyNode, ENCRYPTED, propertyElement.Encrypted.ToString()));
 	    propertyElement.Direction = GetAttributeValue (propertyNode, DIRECTION, propertyElement.Direction.ToString ());
 	    propertyElement.Type.ConvertForCompare = GetAttributeValue (propertyNode, CONVERT_FOR_COMPARE, propertyElement.Type.ConvertForCompare);
 	    propertyElement.useEntityDao = Boolean.Parse(GetAttributeValue(propertyNode, USE_ENTITY_DAO, propertyElement.UseEntityDao.ToString()));
@@ -457,8 +465,13 @@ namespace Spring2.DataTierGenerator.Element {
 	    if (node.Attributes["writable"] != null) {
 		field.Writable = Boolean.Parse(node.Attributes["writable"].Value);
 	    }
+
 	    if (node.Attributes["derived"] != null) {
 		field.Derived = Boolean.Parse(node.Attributes["derived"].Value);
+	    }
+
+	    if (node.Attributes["encrypted"] != null) {
+		field.Encrypted = Boolean.Parse(node.Attributes["encrypted"].Value);
 	    }
 
 	    if (node.Attributes["log"] != null) {
@@ -652,6 +665,7 @@ namespace Spring2.DataTierGenerator.Element {
 	    this.Type = (TypeElement)element.Type.Clone();
 	    this.Writable = element.Writable;
 	    this.Derived = element.Derived;
+	    this.Encrypted = element.Encrypted;
 	}
 
     }
