@@ -86,15 +86,17 @@ namespace ${options.RootNameSpace}.BusinessLogic {
 #end
 	}
 #end
+#end
 
 	[Generate]
-	public MessageList Validate() 	{
+	public#if($element.IsDerived) override#else virtual#end MessageList Validate() {
 
 	    MessageList errors = new MessageList();
-
+#if($element.IsDerived)
+	    errors.AddRange(base.Validate());		
+#end
 	    return errors;
 	}
-#end
 
 #foreach($field in $element.PrivateFields)
 #if($field.Name.IndexOf('.')<0 && !$field.IsDerived)
