@@ -232,7 +232,7 @@ namespace $namespace {
 	}
 
 #foreach($field in $element.Fields) 
-#if($field.Name.IndexOf(".")<0 && !$field.Type.Name.EndsWith("Enum") && !$field.Type.Name.StartsWith("I") && !$field.Type.Name.EndsWith("List") && $field.Type.Name!="BooleanType" && $field.Type.Name!="Hashtable" && $field.Type.Name!="Message" && $field.Readable)
+#if($field.Name.IndexOf(".")<0 && !$field.Type.Name.EndsWith("Enum") && !$field.Type.Name.StartsWith("I") && !$field.Type.Name.EndsWith("List") && $field.Type.Name!="BooleanType" && $field.Type.Name!="Hashtable" && $field.Type.Name!="Message" && $field.Type.Name!="Bitmap" && $field.Readable)
 	[Generate]
 	public class ${field.Name.Replace(".","_")}Sorter : System.Collections.IComparer {
 	    public Int32 Compare(Object a, Object b) {
