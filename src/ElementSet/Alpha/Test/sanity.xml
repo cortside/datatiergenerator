@@ -78,6 +78,9 @@
     <types-ref xinc:href="config\types.inc.xml" />
     <entities>
 	<entity name="TournamentFee" sqlentity="TournamentFee">
+	    <description>
+		The fee for a tournament.
+	    </description>
 	    <properties>
 		<property name="TournamentFeeId" type="IdType" column="*" />
 		<property name="TournamentId" type="IdType" column="*" />
