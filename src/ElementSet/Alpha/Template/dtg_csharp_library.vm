@@ -11,7 +11,7 @@
 #macro(parameterComments $includeIf $fieldList $comment)
 #foreach($field in $fieldList)
 #if($includeIf)
-	/// <param name="$field.GetSqlAlias()">$comment</param>
+	/// <param name="$field.GetSqlAlias().Substring(0,1).ToLower()$field.GetSqlAlias().Substring(1)">$comment</param>
 #end
 #end
 #end
