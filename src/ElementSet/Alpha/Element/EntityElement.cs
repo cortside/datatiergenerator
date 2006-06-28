@@ -22,6 +22,7 @@ namespace Spring2.DataTierGenerator.Element {
 	private static readonly String PREPAREFORINSERT = "prepareforinsert";
 	private static readonly String JOINTABLE = "jointable";
 	private static readonly String DEPENDENTENTITY = "dependententity";
+    	private static readonly String DESCRIPTION = "description";
 
 	/// <summary>
 	/// Handles creation of the static readonly property names and values.  Creates
@@ -94,7 +95,7 @@ namespace Spring2.DataTierGenerator.Element {
 	private Boolean prepareForInsert = false;
 	private Boolean joinTable = false;
 	private Boolean dependentEntity = false;
-
+    	
 	public SqlEntityElement SqlEntity {
 	    get { return this.sqlEntity; }
 	    set { this.sqlEntity = value; }
@@ -242,7 +243,6 @@ namespace Spring2.DataTierGenerator.Element {
 	/// <param name="node"></param>
 	/// <param name="entityElements"></param>
 	public static void ParseFromXml(XmlNode node, IList entityElements) {
-
 	    if (node != null && entityElements != null) {
 		XmlNodeList entities = node.SelectNodes("entities/entity");
 		foreach (XmlNode entityNode in entities) {
@@ -320,6 +320,11 @@ namespace Spring2.DataTierGenerator.Element {
 		if (node.Attributes["jointable"] != null) {
 		    entity.JoinTable = Boolean.Parse (node.Attributes["jointable"].Value);
 		}
+	    	
+	    	XmlNode descriptionNode = node.SelectSingleNode(DESCRIPTION);
+	    	if (descriptionNode != null) {
+	    	    entity.Description = descriptionNode.InnerText.Trim();
+	    	}
 
 		entity.fields = PropertyElement.ParseFromXml(doc, entities, entity, sqltypes, types, vd);
 		entity.finders = FinderElement.ParseFromXml(doc, node, entities, entity, sqltypes, types, vd);
