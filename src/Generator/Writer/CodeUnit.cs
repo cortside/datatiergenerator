@@ -2,17 +2,12 @@ using System;
 using System.Collections;
 using System.IO;
 
-using IvanZ.CSParser;
 using Mono.CSharp;
 using System.CodeDom;
 
 using System.CodeDom.Compiler;
 using Microsoft.CSharp;
 using System.Text;
-
-using Spring2.DataTierGenerator;
-using Spring2.DataTierGenerator.Attribute;
-
 
 namespace Spring2.DataTierGenerator.Generator.Writer {
 
@@ -27,30 +22,34 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 	private CodeGeneratorOptions cgOptions = new CodeGeneratorOptions ();
 
 	public CodeUnit(String filename, Stream stream, IList log, CodeGeneratorOptions options) {
-	    this.log = log;
-	    this.cgOptions = options;
+	    try {
+		this.log = log;
+		this.cgOptions = options;
 
-	    StringWriter sw = new StringWriter();
-	    System.IO.TextWriter cout = Console.Out;
-	    System.IO.TextWriter cerr = Console.Error;
-	    Console.SetOut(sw);
-	    Console.SetError(sw);
-	    CSharpParser p = new CSharpParser(filename, stream, null);
+		StringWriter sw = new StringWriter();
+		System.IO.TextWriter cout = Console.Out;
+		System.IO.TextWriter cerr = Console.Error;
+		Console.SetOut(sw);
+		Console.SetError(sw);
+		CSharpParser p = new CSharpParser(filename, stream, null);
 
-	    Console.SetOut(cout);
-	    Console.SetError(cerr);
+		Console.SetOut(cout);
+		Console.SetError(cerr);
 			
-	    int errno= p.parse();
+		int errno= p.parse();
 
-	    if (errno>0 || Report.Warnings>0) {
-		log.Add(sw.ToString());
+		if (errno>0 || Report.Warnings>0) {
+		    log.Add(sw.ToString());
+		}
+
+		unit = p.Builder.CurrCompileUnit;
+		stream.Position=0;
+		src = GetSourceLines(new StreamReader(stream).ReadToEnd());
+
+		ExtractMemberBodies();
+	    } catch (Exception ex) {
+		Console.Out.WriteLine("Unhandled exception parsing file: " + filename, ex);
 	    }
-
-	    unit = p.Builder.CurrCompileUnit;
-	    stream.Position=0;
-	    src = GetSourceLines(new StreamReader(stream).ReadToEnd());
-
-	    ExtractMemberBodies();
 	}
 
 	public CodeCompileUnit Unit {
@@ -69,7 +68,7 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 	    return lines;
 	}
 
-	private String GetSource(Member member) {
+	private String GetSource(Member member, Int32 nestingLevel) {
 
 	    if ((member.Element.Attributes & MemberAttributes.ScopeMask) == MemberAttributes.Abstract) {
 		return String.Empty;
@@ -87,29 +86,57 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 
 	    ArrayList source = GetSourceLines(s);
 
-	    // Remove stuff that belongs to the next method.
-	    int openBrackets = 0;
-	    int lastLine = source.Count;
-	    for(int i =0;i<source.Count;i++) {
-		string line = source[i].ToString();
-		if (line.IndexOf('{') >= 0) {
-		    openBrackets++;
+	    // Remove the comment and attribute lines that belong to the next method.
+	    while (source[source.Count-1].ToString().Trim().StartsWith("#region") || source[source.Count-1].ToString().Trim().StartsWith("//") || source[source.Count-1].ToString().Trim().StartsWith("[") || source[source.Count-1].ToString().Trim().Length == 0) {
+		if (source[source.Count-1].ToString().Trim().StartsWith("#region")) {
+		    member.HasBeginRegion = true;
+		    member.RegionName = source[source.Count-1].ToString().Trim().Substring(7).Trim();
 		}
-		if (line.IndexOf('}') >= 0) {
-		    openBrackets--;
-		}
-		if (openBrackets < 0) {
-		    lastLine = i-1;
-		    break;
+		source.RemoveAt(source.Count-1);
+	    }
+
+	    if (source[source.Count-1].ToString().Trim().Equals("}")) {
+		source.RemoveAt(source.Count-1);
+	    } else {
+		String line = source[source.Count-1].ToString();
+		if (line.LastIndexOf("}")>=0) {
+		    source[source.Count-1] = line.Substring(0, line.LastIndexOf("}")-1);
+		} else {
+		    throw new Exception("could not find closing brace: " + hold);
 		}
 	    }
 
-	    while (source.Count > lastLine + 1) {
-		source.RemoveAt(source.Count - 1);
+	    // If this is the last member, remove the extra curly brace.
+	    if (member.LastLine >= 9999) {
+		// Remove emtpy lines at the end of the method block.
+		while (source[source.Count-1].ToString().Trim().Length == 0) {
+		    source.RemoveAt(source.Count-1);
+		}
+
+		if (source[source.Count-1].ToString().Trim().Equals("}")) {
+		    Int32 removed = 0;
+		    while(source[source.Count-1].ToString().Trim().Equals("}") && removed <= nestingLevel) {
+		    	source.RemoveAt(source.Count-1);
+		    	removed++;
+		    }
+		} else {
+		    // remove #endregion lines
+		    while (source[source.Count-1].ToString().Trim().StartsWith("#endregion")) {
+			member.HasEndRegion = true;
+			source.RemoveAt(source.Count-1);
+		    }
+
+		    String line = source[source.Count-1].ToString();
+		    if (line.LastIndexOf("}")>=0) {
+			source[source.Count-1] = line.Substring(0,line.LastIndexOf("}")-1);
+		    } else {
+			throw new Exception(">>>" + s + "<<<");
+		    }
+		}
 	    }
 
 	    // Remove emtpy lines at the beginning of the method block.
-	    while (source.Count > 0 && source[0].ToString().Trim().Equals(String.Empty)) {
+	    while (source.Count > 0 && source[0].ToString().Trim().Length == 0) {
 		source.RemoveAt(0);
 	    }
 
@@ -123,7 +150,7 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 	}
 
 	private String GetGetSource(Member member) {
-	    String body = GetSource(member);
+	    String body = GetSource(member, 0);
 
 	    // no get statement
 	    if (!body.StartsWith("get")) {
@@ -150,7 +177,7 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 	}
 
 	private String GetSetSource(Member member) {
-	    String body = GetSource(member).Trim();
+	    String body = GetSource(member, 0).Trim();
 
 	    // no get statement
 	    if (!body.StartsWith("get")) {
@@ -189,19 +216,18 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 
 	private void ExtractMemberBodies() {
 	    ArrayList members1 = GetMembers(unit);
-	    ExtractMemberBodies(members1);
+	    ExtractMemberBodies(members1, 0);
 	}
 
-	private void ExtractMemberBodies(ArrayList members1) {
+	private void ExtractMemberBodies(ArrayList members1, Int32 nestingLevel) {
 	    foreach(Member member in members1) {
 		//log.Add("found " + (member.Generate ? "[generate] " : "") + member.Element.GetType().FullName + ": " + member.Element.Name + " starting at line " + member.FirstLine.ToString() + " and ending on line " + member.LastLine.ToString());
 		if (member.Element is CodeMemberMethod) {
-		    String s = GetSource(member);
-		    Int32 index = member.Type.Members.IndexOf(member.Element);
+		    String s = GetSource(member, nestingLevel);
 		    if (member.HasBeginRegion) {
 			//log.Add("found #region " + member.RegionName);
+			//Int32 index = member.Type.Members.IndexOf(member.Element);
 			//member.Type.Members.Insert(index, new CodeSnippetTypeMember("#region " + member.RegionName));
-
 		    }
 		    ((CodeMemberMethod)member.Element).Statements.Clear();
 		    ((CodeMemberMethod)member.Element).Statements.Add(new CodeSnippetStatement(s));
@@ -213,16 +239,15 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 		    ((CodeMemberProperty)member.Element).GetStatements.Clear();
 		    ((CodeMemberProperty)member.Element).SetStatements.Clear();
 		    String get = GetGetSource(member);
-		    if (!get.Equals(String.Empty)) {
+		    if (get.Length > 0) {
 			((CodeMemberProperty)member.Element).GetStatements.Add(new CodeSnippetStatement(get));
 		    }
 		    String set = GetSetSource(member);
-		    if (!set.Equals(String.Empty)) {
+		    if (set.Length > 0) {
 			((CodeMemberProperty)member.Element).SetStatements.Add(new CodeSnippetStatement(set));
 		    }
 		} else if (member.Element is CodeTypeDeclaration) {
-		    ExtractMemberBodies(GetMembers((CodeTypeDeclaration)member.Element, member.LastLine));
-		    
+		    ExtractMemberBodies(GetMembers((CodeTypeDeclaration)member.Element, member.LastLine), ++nestingLevel);
 		} else {
 		    throw new Exception("Can't extract body from unknown member type: " + member.Element.GetType().FullName);
 		}
