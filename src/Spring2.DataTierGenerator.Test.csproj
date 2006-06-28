@@ -124,6 +124,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Test\CodeUnitTest.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Test\ParserTest.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -163,6 +168,25 @@
                 <File
                     RelPath = "Test\CodeDomMerge\Vendor.generated.cs"
                     SubType = "Code"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\TestFiles\ClassComment.cs"
+                    SubType = "Code"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\TestFiles\InternalClass.cs"
+                    SubType = "Code"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\TestFiles\LastMemberEndsInMultipleCurlyBraces.cs"
+                    SubType = "Code"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Test\TestFiles\RegEx.cs"
                     BuildAction = "None"
                 />
             </Include>
