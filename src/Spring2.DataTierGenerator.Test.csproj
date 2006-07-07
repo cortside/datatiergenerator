@@ -189,6 +189,11 @@
                     RelPath = "Test\TestFiles\RegEx.cs"
                     BuildAction = "None"
                 />
+                <File
+                    RelPath = "Test\TestFiles\StaticProperties.cs"
+                    SubType = "Code"
+                    BuildAction = "None"
+                />
             </Include>
         </Files>
     </CSHARP>

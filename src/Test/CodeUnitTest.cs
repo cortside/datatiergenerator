@@ -37,6 +37,16 @@ namespace Spring2.DataTierGenerator.Test {
 	    ParseAndCompare("..\\..\\src\\Test\\TestFiles\\ClassComment.cs");
 	}
     	
+	[Test]
+	public void ShouldHandleBlankLinesBeforeEndRegionOnLastMethod() {
+	    Parse("..\\..\\src\\Test\\TestFiles\\StaticProperties.cs");
+	}
+	
+	[Test]
+	public void ShouldHandleRegionWithOnlyComments() {
+	    Parse("..\\..\\src\\Test\\TestFiles\\StaticProperties.cs");
+	}
+	
     	[Test]
 	[Ignore()]
 	public void ShouldMergeNewClassComments() {
@@ -91,6 +101,8 @@ namespace Spring2.DataTierGenerator.Test {
 	    CodeUnit unit = new CodeUnit(file.Name, fs, log, cgOptions);
 	    fs.Close();
     	    OutputLog(log);
+    		
+	    Assert.IsFalse(unit.HadError);
 	
     	    if (Strip(source) != Strip(unit.Generate())) {
     	    	Console.Out.WriteLine(unit.Generate());
@@ -99,6 +111,21 @@ namespace Spring2.DataTierGenerator.Test {
 	    Assert.AreEqual(Strip(source), Strip(unit.Generate()));
 	}
     	
+	private void Parse(String filename) {
+	    FileInfo file = new FileInfo(filename);
+	    TextReader reader = file.OpenText();
+	    String source = reader.ReadToEnd();
+	    reader.Close();
+
+	    FileStream fs = file.OpenRead();
+	    CodeGeneratorOptions cgOptions = new CodeGeneratorOptions ();
+	    ArrayList log = new ArrayList();
+	    CodeUnit unit = new CodeUnit(file.Name, fs, log, cgOptions);
+	    fs.Close();
+	    OutputLog(log);
+    		
+	    Assert.IsFalse(unit.HadError);
+	}
     	
     	private void OutputLog(IList log) {
     	    foreach(String s in log) {
