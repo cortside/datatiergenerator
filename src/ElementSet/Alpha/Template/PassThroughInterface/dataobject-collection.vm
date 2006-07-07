@@ -3,13 +3,6 @@
     DTG template for dataobject collections
 
 *###
-using System;
-
-using Spring2.Core.Types;
-using Spring2.DataTierGenerator.Attribute;
-
-using ${options.RootNameSpace}.Types;
-
 ##
 ## formulate the namespace, class name and the collected class name
 ##
@@ -22,13 +15,25 @@ using ${options.RootNameSpace}.Types;
 #set ($len = $class.Length - 3)
 #set ($class = $class.Substring(0, $len))
 #set ($dataObjectClass = "I${element.Name}")
+#set($identity = $element.GetIdentityField())
+##
+##
+##
+using System;
+using System.Collections;
+
+using Spring2.Core.Types;
+using Spring2.DataTierGenerator.Attribute;
+
+using ${options.RootNameSpace}.Types;
+
 namespace $namespace {
 
     /// <summary>
     /// $dataObjectClass generic collection
     /// </summary>
-    public class $class : System.Collections.CollectionBase {
-	
+    public class $class : CollectionBase {
+
 	[Generate]
 	public static readonly $class UNSET = new ${class}(true);
 	[Generate]
@@ -36,23 +41,42 @@ namespace $namespace {
 
 	[Generate]
 	private Boolean immutable = false;
-	
+
+#if($identity)
 	[Generate]
-	private $class (Boolean immutable) {
-	        this.immutable = immutable;
+	private Hashtable keys = new Hashtable();
+
+#end
+	[Generate]
+	private ${class}(Boolean immutable) {
+	    this.immutable = immutable;
 	}
 
 	[Generate]
 	public ${class}() {
 	}
 
+#if($identity)
+	[Generate]
+	public ICollection Keys {
+	    get {
+		return new ArrayList(keys.Keys);
+	    }
+	}
+
+#end
 	// Indexer implementation.
 	[Generate]
 	public $dataObjectClass this[int index] {
-	    get { return (${dataObjectClass}) List[index]; }
-	    set { 
+	    get {
+		return (${dataObjectClass})List[index];
+	    }
+	    set {
 		if (!immutable) {
 		    List[index] = value;
+#if($identity)
+		    keys[value.${identity.GetMethodFormat()}] = value;
+#end
 		} else {
 		    throw new System.Data.ReadOnlyException();
 		}
@@ -63,6 +87,9 @@ namespace $namespace {
 	public void Add(${dataObjectClass} value) {
 	    if (!immutable) {
 		List.Add(value);
+#if($identity)
+		keys[value.$identity.GetMethodFormat()] = value;
+#end
 	    } else {
 		throw new System.Data.ReadOnlyException();
 	    }
@@ -72,16 +99,19 @@ namespace $namespace {
 	public Boolean Contains(${dataObjectClass} value) {
 	    return List.Contains(value);
 	}
-	
+
 	[Generate]
 	public Int32 IndexOf(${dataObjectClass} value) {
 	    return List.IndexOf(value);
 	}
-	
+
 	[Generate]
 	public void Insert(Int32 index, ${dataObjectClass} value) {
 	    if (!immutable) {
-	    	List.Insert(index, value);
+		List.Insert(index, value);
+#if($identity)
+		keys[value.$identity.GetMethodFormat()] = value;
+#end
 	    } else {
 		throw new System.Data.ReadOnlyException();
 	    }
@@ -93,7 +123,11 @@ namespace $namespace {
 		if (index > Count - 1 || index < 0) {
 		    throw new IndexOutOfRangeException();
 		} else {
-		    List.RemoveAt(index); 
+#if($identity)
+		    ${dataObjectClass} value = this[index];
+		    keys.Remove(value.$identity.GetMethodFormat());
+#end
+		    List.RemoveAt(index);
 		}
 	    } else {
 		throw new System.Data.ReadOnlyException();
@@ -103,33 +137,40 @@ namespace $namespace {
 	[Generate]
 	public void Remove(${dataObjectClass} value) {
 	    if (!immutable) {
-		List.Remove(value); 
+		List.Remove(value);
+#if($identity)
+		keys.Remove(value.$identity.GetMethodFormat());
+#end
 	    } else {
 		throw new System.Data.ReadOnlyException();
 	    }
 	}
 
 	[Generate]
-	public void AddRange(System.Collections.IList list) {
+	public void AddRange(IList list) {
 	    foreach(Object o in list) {
 		if (o is ${dataObjectClass}) {
 		    Add((${dataObjectClass})o);
 		} else {
-		    throw new System.InvalidCastException("object in list could not be cast to ${dataObjectClass}");
+		    throw new InvalidCastException("object in list could not be cast to ${dataObjectClass}");
 		}
 	    }
 	}
-	
+
 	[Generate]
 	public Boolean IsDefault {
-	    get { return Object.ReferenceEquals(this, DEFAULT); }
+	    get {
+		return ReferenceEquals(this, DEFAULT);
+	    }
 	}
 
 	[Generate]
 	public Boolean IsUnset {
-	    get { return Object.ReferenceEquals(this, UNSET); }
+	    get {
+		return ReferenceEquals(this, UNSET);
+	    }
 	}
-	
+
 	[Generate]
 	public Boolean IsValid {
 	    get {
@@ -138,19 +179,13 @@ namespace $namespace {
 	}
 
 ## generate Contains method and indexer property by identity field, if one exists
-#set($identity = $element.GetIdentityField())
 #if($identity)
 	/// <summary>
 	/// See if the list contains an instance by identity
 	/// </summary>
 	[Generate]
 	public Boolean Contains($identity.Type.Name $identity.GetFieldFormat()) {
-	    foreach(${dataObjectClass} o in List) {
-		if (o.${identity.Name}.Equals($identity.GetFieldFormat())) {
-		    return true;
-		}
-	    }
-	    return false;
+	    return keys.Contains($identity.GetFieldFormat());
 	}
 
 	/// <summary>
@@ -158,18 +193,11 @@ namespace $namespace {
 	/// </summary>
 	[Generate]
 	public $dataObjectClass this[$identity.Type.Name $identity.GetFieldFormat()] {
-	    get { 
-		foreach($dataObjectClass o in List) {
-		    if (o.${identity.Name}.Equals($identity.GetFieldFormat())) {
-			return o;
-		    }
-		}
-
-		// not found
-		return null;
+	    get {
+		return keys[$identity.GetFieldFormat()] as $dataObjectClass;
 	    }
 	}
-	
+
 	/// <summary>
 	/// Returns a new list that contains all of the elements that are in both lists
 	/// </summary>
@@ -209,8 +237,8 @@ namespace $namespace {
 	/// Sort a list by a column
 	/// </summary>
 	[Generate]
-	public void Sort(System.Collections.IComparer comparer) {
-	    this.InnerList.Sort(comparer);
+	public void Sort(IComparer comparer) {
+	    InnerList.Sort(comparer);
 	}
 
 	/// <summary>
@@ -220,21 +248,21 @@ namespace $namespace {
 	public void Sort(String comparerName) {
 	    Type type = GetType().GetNestedType(comparerName);
 	    if (type == null) {
-		throw new System.ArgumentException(String.Format("Comparer {0} not found in class {1}.", comparerName, GetType().Name));
+		throw new ArgumentException(String.Format("Comparer {0} not found in class {1}.", comparerName, GetType().Name));
 	    }
 
-	    System.Collections.IComparer comparer = Activator.CreateInstance(type) as System.Collections.IComparer;
+	    IComparer comparer = Activator.CreateInstance(type) as IComparer;
 	    if (comparer == null) {
-		throw new System.ArgumentException("compareName must be the name of class that implements IComparer.");
+		throw new ArgumentException("compareName must be the name of class that implements IComparer.");
 	    }
 
-	    this.InnerList.Sort(comparer);
+	    InnerList.Sort(comparer);
 	}
 
-#foreach($field in $element.Fields) 
+#foreach($field in $element.Fields)
 #if($field.Name.IndexOf(".")<0 && !$field.Type.Name.EndsWith("Enum") && !$field.Type.Name.StartsWith("I") && !$field.Type.Name.EndsWith("List") && $field.Type.Name!="BooleanType" && $field.Type.Name!="Hashtable" && $field.Type.Name!="Message" && $field.Type.Name!="Bitmap" && $field.Readable)
 	[Generate]
-	public class ${field.Name.Replace(".","_")}Sorter : System.Collections.IComparer {
+	public class ${field.Name.Replace(".","_")}Sorter : IComparer {
 	    public Int32 Compare(Object a, Object b) {
 		${dataObjectClass} o1 = (${dataObjectClass})a;
 		${dataObjectClass} o2 = (${dataObjectClass})b;
@@ -256,8 +284,7 @@ namespace $namespace {
         /// </summary>
         /// <param name="comparer">comparer to use for sorting the list.</param>
 	[Generate]
-        public void Sort(IComparer comparer)
-        {
+        public void Sort(IComparer comparer) {
             InnerList.Sort(comparer);
         }
 #end
@@ -306,7 +333,7 @@ namespace $namespace {
                 } else if (g1.${field.GetMethodFormat()}.IsValid && g2.${field.GetMethodFormat()}.IsValid && ${field.CreateCompareString("g1", "g2")} != 0 {
                     return ${field.CreateCompareString("g1", "g2")}#if ($field.Direction == "descending") * -1#end;
                 }
-#end    
+#end
 
                 // No inequalities found, so they must be equal.
                 return 0;
@@ -319,7 +346,7 @@ namespace $namespace {
         /// Used to sort or search an ArrayList of $dataObjectClass objects on the #foreach($field in $comparer.Fields)#if($velocityCount > 1),#end$field.Name#end properties
         /// </summary>
 	[Generate]
-        public class $comparer.Name : System.Collections.IComparer {
+        public class $comparer.Name : IComparer {
             /// <summary>
             /// Compares two $dataObjectClass objects.
             /// </summary>
@@ -360,7 +387,7 @@ namespace $namespace {
                 if (g1.${field.GetMethodFormat()}.IsValid && g2.${field.GetMethodFormat()}.IsValid && ${field.CreateCompareString("g1", "g2")} != 0) {
                     return ${field.CreateCompareString("g1", "g2")}#if ($field.Direction == "descending") * -1#end;
                 }
-#end    
+#end
 
                 // No inequalities found, so they must be equal.
                 return 0;
