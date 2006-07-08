@@ -503,5 +503,26 @@ namespace Spring2.DataTierGenerator.Element {
 
 	    return false;
 	}
+    	
+    	/// <summary>
+    	/// Returns the unique collection of columns from entity and base entity
+    	/// </summary>
+	public ArrayList Columns {
+	    get {
+	    	if (MultipleSqlEntities) {
+	    	    ArrayList columns = new ArrayList();
+	    	    columns.AddRange(BaseEntity.SqlEntity.Columns);
+		    foreach(ColumnElement column in SqlEntity.Columns) {
+			if (BaseEntity.SqlEntity.FindColumnByName(column.Name) == null) {
+			    columns.Add(column);
+			}		    	
+		    }
+	    	    return columns;
+	    	} else {
+	    	    return SqlEntity.Columns;
+	    	}
+	    }
+	}
+
     }
 }
