@@ -78,9 +78,19 @@ namespace Spring2.DataTierGenerator.Generator {
 
 		WriteToLog(String.Empty.PadLeft(40,'-'));
 		foreach(ITask task in parser.Tasks) {
-		    Template template = Velocity.GetTemplate(task.Template);
-		    foreach(IElement element in task.Elements) {
-			GenerateFile(parser, element, task, template);
+		    try {
+			Template template = Velocity.GetTemplate(task.Template);
+			foreach(IElement element in task.Elements) {
+			    try {
+				GenerateFile(parser, element, task, template);
+			    } catch (Exception ex) {
+				WriteToLog(String.Format("Unhandled exception in generating file for element '{0}' of task '{1}'", element.Name, task.Name));
+				WriteToLog(ex.ToString());
+			    }
+			}
+		    } catch (Exception ex) {
+			WriteToLog(String.Format("Unhandled exception in task '{0}'", task.Name));
+			WriteToLog(ex.ToString());
 		    }
 		}
 
@@ -155,7 +165,8 @@ namespace Spring2.DataTierGenerator.Generator {
 		    }
 		}
 	    } catch (Exception ex) {
-		WriteToLog(ex.ToString());                                                                      
+		WriteToLog(String.Format("Unhandled exception in generating file for element '{0}' of task '{1}'", element.Name, task.Name));
+	    	WriteToLog(ex.ToString());                                                                      
 	    }
 	    
 	    generateTimer.Stop();
