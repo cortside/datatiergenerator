@@ -1,0 +1,691 @@
+##
+##      dao.vm - pass through interface dao template for C#
+##		 Must be used with Spring2.Core version 1.1.28.0 or higher
+##		 This template expect that the readermethodformat in sqltypes.xml be formated like:
+##		 	readermethodformat='{0}.GetString({2})'
+##
+##
+#if(!$element.SqlEntity.Name.Equals("") && !$element.IsAbstract)
+using System;
+using System.Collections;
+using System.Configuration;
+using System.Data;
+
+using Spring2.Core.DAO;
+using Spring2.Core.Types;
+
+using ${options.RootNameSpace}.BusinessLogic;
+using ${options.RootNameSpace}.DataObject;
+using ${options.RootNameSpace}.Types;
+
+namespace $options.GetDAONameSpace($element.Name) {
+
+    /// <summary>
+    /// Data access class for $element.Name business entity.
+    /// </summary>
+    public class $options.GetDAOClassName($element.Name) : $options.DaoBaseClass {
+
+	public static readonly ${element.Name}DAO DAO = new ${element.Name}DAO();
+#if($element.SqlEntity.UseView)
+	private static readonly String VIEW = "$element.SqlEntity.View";
+#else
+	private static readonly String VIEW = "[$element.SqlEntity.Name]";
+#end
+	private static readonly String CONNECTION_STRING_KEY = "$element.SqlEntity.Key";
+#if($element.SqlEntity.GenerateInsertStoredProcScript || $element.SqlEntity.GenerateUpdateStoredProcScript || $element.SqlEntity.GenerateDeleteStoredProcScript)
+	private static readonly Int32 COMMAND_TIMEOUT = $element.SqlEntity.CommandTimeout;
+#end
+#set ($listtype = "void")
+#if($element.JoinTable)
+#set ($listtype="IList")
+#elseif ($element.IsDerived)
+#set ($listtype="${element.BaseEntity.Name}List")
+#else
+#set ($listtype = "${element.Name}List")
+#end
+	private static ColumnOrdinals columnOrdinals = null;
+
+	internal sealed class ColumnOrdinals {
+	    public String Prefix = String.Empty;
+#foreach($column in $element.Columns)
+#if($column.SqlType.Name.Length>0)
+	    public Int32 ${column.Name};
+#end
+#end
+
+	    internal ColumnOrdinals(IDataReader reader) {
+#foreach($column in $element.Columns)
+#if($column.SqlType.Name.Length>0)
+		${column.Name} = reader.GetOrdinal("$column.Name");
+#end
+#end
+	    }
+
+	    internal ColumnOrdinals(IDataReader reader, String prefix) {
+		Prefix = prefix;
+#foreach($column in $element.Columns)
+#if($column.SqlType.Name.Length>0)
+		${column.Name} = reader.GetOrdinal(prefix + "$column.Name");
+#end
+#end
+	    }
+	}
+
+	/// <summary>
+	/// Initializes the static map of property names to sql expressions.
+	/// </summary>
+	static ${options.GetDAOClassName($element.Name)}() {
+#foreach($field in $element.fields)
+#if($field.Column.SqlType.Name.Length>0)
+	    AddPropertyMapping("$field.GetMethodFormat()", @"$field.GetSqlExpression(true)");
+#end
+#end
+	}
+
+	private $options.GetDAOClassName($element.Name)() {
+	}
+
+	protected override String ConnectionStringKey {
+	    get {
+		return CONNECTION_STRING_KEY;
+	    }
+	}
+
+	/// <summary>
+	/// Returns a list of all $element.Name rows.
+	/// </summary>
+	/// <returns>List of $element.Name objects.</returns>
+	/// <exception cref="Spring2.Core.DAO.FinderException">Thrown when no rows are found.</exception>
+	public $listtype GetList() {
+	    return GetList(null, null);
+	}
+
+	/// <summary>
+	/// Returns a filtered list of $element.Name rows.
+	/// </summary>
+	/// <param name="filter">Filtering criteria.</param>
+	/// <returns>List of $element.Name objects.</returns>
+	/// <exception cref="Spring2.Core.DAO.FinderException">Thrown when no rows are found matching the where criteria.</exception>
+	public $listtype GetList(SqlFilter filter) {
+	    return GetList(filter, null);
+	}
+
+	/// <summary>
+	/// Returns an ordered list of $element.Name rows.  All rows in the database are returned
+	/// </summary>
+	/// <param name="orderByClause">Ordering criteria.</param>
+	/// <returns>List of $element.Name objects.</returns>
+	/// <exception cref="Spring2.Core.DAO.FinderException">Thrown when no rows are found.</exception>
+	public $listtype GetList(IOrderBy orderByClause) {
+	    return GetList(null, orderByClause);
+	}
+
+	/// <summary>
+	/// Returns an ordered and filtered list of $element.Name rows.
+	/// </summary>
+	/// <param name="filter">Filtering criteria.</param>
+	/// <param name="orderByClause">Ordering criteria.</param>
+	/// <returns>List of $element.Name objects.</returns>
+	/// <exception cref="Spring2.Core.DAO.FinderException">Thrown when no rows are found matching the where criteria.</exception>
+	public $listtype GetList(SqlFilter filter, IOrderBy orderByClause) {
+	    IDataReader dataReader = GetListReader(CONNECTION_STRING_KEY, VIEW, filter, orderByClause);
+
+	    $listtype list = new #if($listtype=="IList")ArrayList#else$listtype#end();
+	    while (dataReader.Read()) {
+		list.Add(GetDataObjectFromReader(dataReader));
+	    }
+	    dataReader.Close();
+	    return list;
+	}
+
+	/// <summary>
+	/// Returns a list of all $element.Name rows.
+	/// </summary>
+	/// <param name="maxRows">Uses TOP to limit results to specified number of rows</param>
+	/// <returns>List of $element.Name objects.</returns>
+	/// <exception cref="Spring2.Core.DAO.FinderException">Thrown when no rows are found.</exception>
+	public $listtype GetList(Int32 maxRows) {
+	    return GetList(null, null, maxRows);
+	}
+
+	/// <summary>
+	/// Returns a filtered list of $element.Name rows.
+	/// </summary>
+	/// <param name="filter">Filtering criteria.</param>
+	/// <param name="maxRows">Uses TOP to limit results to specified number of rows</param>
+	/// <returns>List of $element.Name objects.</returns>
+	/// <exception cref="Spring2.Core.DAO.FinderException">Thrown when no rows are found matching the where criteria.</exception>
+	public $listtype GetList(SqlFilter filter, Int32 maxRows) {
+	    return GetList(filter, null, maxRows);
+	}
+
+	/// <summary>
+	/// Returns an ordered list of $element.Name rows.  All rows in the database are returned
+	/// </summary>
+	/// <param name="orderByClause">Ordering criteria.</param>
+	/// <param name="maxRows">Uses TOP to limit results to specified number of rows</param>
+	/// <returns>List of $element.Name objects.</returns>
+	/// <exception cref="Spring2.Core.DAO.FinderException">Thrown when no rows are found.</exception>
+	public $listtype GetList(IOrderBy orderByClause, Int32 maxRows) {
+	    return GetList(null, orderByClause, maxRows);
+	}
+
+	/// <summary>
+	/// Returns an ordered and filtered list of $element.Name rows.
+	/// </summary>
+	/// <param name="filter">Filtering criteria.</param>
+	/// <param name="orderByClause">Ordering criteria.</param>
+	/// <param name="maxRows">Uses TOP to limit results to specified number of rows</param>
+	/// <returns>List of $element.Name objects.</returns>
+	/// <exception cref="Spring2.Core.DAO.FinderException">Thrown when no rows are found matching the where criteria.</exception>
+	public $listtype GetList(SqlFilter filter, IOrderBy orderByClause, Int32 maxRows) {
+	    IDataReader dataReader = GetListReader(CONNECTION_STRING_KEY, VIEW, filter, orderByClause, maxRows);
+
+	    $listtype list = new #if($listtype=="IList")ArrayList#else$listtype#end();
+	    while (dataReader.Read()) {
+		list.Add(GetDataObjectFromReader(dataReader));
+	    }
+	    dataReader.Close();
+	    return list;
+	}
+
+#if($element.JoinTable)
+#set($s="${element.Name}Data")
+#else
+#set($s=$element.Name)
+#end
+	/// <summary>
+	/// Finds a $element.Name entity using it's primary key.
+	/// </summary>
+#parameterComments(true $element.GetPrimaryKeyFields() "A key field.")
+	/// <returns>A $element.Name object.</returns>
+	/// <exception cref="Spring2.Core.DAO.FinderException">Thrown when no entity exists witht he specified primary key..</exception>
+	public $s Load(#parameterList(true $element.GetPrimaryKeyFields())) {
+	    SqlFilter filter = new SqlFilter();
+#foreach ($field in $element.GetPrimaryKeyFields())
+	    filter.And(new SqlEqualityPredicate("$field.GetSqlAlias()", EqualityOperatorEnum.Equal, $options.GetSqlConversion($field)));
+#end
+	    IDataReader dataReader = GetListReader(CONNECTION_STRING_KEY, VIEW, filter, null);	
+	    return GetDataObject(dataReader);
+	}
+
+	/// <summary>
+	/// Repopulates an existing business entity instance
+	/// </summary>
+	public void Reload($s instance) {
+	    SqlFilter filter = new SqlFilter();
+#foreach ($field in $element.GetPrimaryKeyFields())
+	    filter.And(new SqlEqualityPredicate("$field.GetSqlAlias()", EqualityOperatorEnum.Equal, $options.GetSqlConversion($field, "instance.$field.GetMethodFormat()")));
+#end
+	    IDataReader dataReader = GetListReader(CONNECTION_STRING_KEY, VIEW, filter, null);	
+
+	    if (!dataReader.Read()) {
+		dataReader.Close();
+		throw new FinderException("Reload found no rows for ${element.Name}.");
+	    }
+	    GetDataObjectFromReader(instance, dataReader);
+	    dataReader.Close();
+	}
+
+	/// <summary>
+	/// Read through the reader and return a data object list
+	/// </summary>
+	private $listtype GetList(IDataReader reader) {
+	    $listtype list = new #if($listtype=="IList")ArrayList#else$listtype#end();
+	    while (reader.Read()) {
+		list.Add(GetDataObjectFromReader(reader));
+	    }
+	    reader.Close();
+	    return list;
+	}
+
+	/// <summary>
+	/// Read from reader and return a single data object
+	/// </summary>
+	private $s GetDataObject(IDataReader reader) {
+	    if (columnOrdinals == null) {
+		columnOrdinals = new ColumnOrdinals(reader);
+	    }
+	    return GetDataObject(reader, columnOrdinals);
+	}
+
+	/// <summary>
+	/// Read from reader and return a single data object
+	/// </summary>
+	private $s GetDataObject(IDataReader reader, ColumnOrdinals ordinals) {
+	    if (!reader.Read()) {
+		reader.Close();
+		throw new FinderException("Reader contained no rows.");
+	    }
+	    $s data = GetDataObjectFromReader(reader, ordinals);
+	    reader.Close();
+	    return data;
+	}
+
+	/// <summary>
+	/// Builds a data object from the current row in a data reader..
+	/// </summary>
+	/// <param name="data">Entity to be populated from data reader</param>
+	/// <param name="dataReader">Container for database row.</param>
+	/// <returns>Data object built from current row.</returns>
+	internal $s GetDataObjectFromReader($s data, IDataReader dataReader) {
+	    if (columnOrdinals == null) {
+		columnOrdinals = new ColumnOrdinals(dataReader);
+	    }
+	    return GetDataObjectFromReader(data, dataReader, columnOrdinals);
+	}
+
+	/// <summary>
+	/// Builds a data object from the current row in a data reader..
+	/// </summary>
+	/// <param name="dataReader">Container for database row.</param>
+	/// <returns>Data object built from current row.</returns>
+	internal $s GetDataObjectFromReader(IDataReader dataReader) {
+	    if (columnOrdinals == null) {
+		columnOrdinals = new ColumnOrdinals(dataReader);
+	    }
+	    $s data = new $s(#if(!$element.JoinTable)false#end);
+	    return GetDataObjectFromReader(data, dataReader, columnOrdinals);
+	}
+
+	/// <summary>
+	/// Builds a data object from the current row in a data reader..
+	/// </summary>
+	/// <param name="dataReader">Container for database row.</param>
+	/// <param name="ordinals">An instance of ColumnOrdinals initialized for this data reader</param>
+	/// <returns>Data object built from current row.</returns>
+	internal $s GetDataObjectFromReader(IDataReader dataReader, ColumnOrdinals ordinals) {
+	    $s data = new $s(#if(!$element.JoinTable)false#end);
+	    return GetDataObjectFromReader(data, dataReader, ordinals);
+	}
+
+	/// <summary>
+	/// Builds a data object from the current row in a data reader..
+	/// </summary>
+	/// <param name="data">Entity to be populated from data reader</param>
+	/// <param name="dataReader">Container for database row.</param>
+	/// <param name="ordinals">An instance of ColumnOrdinals initialized for this data reader</param>
+	/// <returns>Data object built from current row.</returns>
+	internal $s GetDataObjectFromReader($s data, IDataReader dataReader, ColumnOrdinals ordinals) {
+#foreach($field in $element.Fields)
+#set ($alias = $field.Alias)
+#if ($alias.Length==0)
+#set ($alias = $field.Column.Name)
+#if($field.Column.SqlType.Name.Length>0)
+	    if (dataReader.IsDBNull(ordinals.${field.GetSqlAlias()})) {
+		data.${field.GetMethodFormat()} = ${field.Type.NullInstanceFormat};
+	    } else {
+#set ($readerMethod = $field.Column.SqlType.ReaderMethodFormat.Replace("{0}", "dataReader").Replace("{1}", $alias).Replace("{2}", "ordinals.${field.Column.Name}"))
+#if ($field.Type.ConvertFromSqlTypeFormat.Length >0)
+#if ($field.Encrypted)
+		Spring2.Core.Cryptography.CryptoUtil crypto = new Spring2.Core.Cryptography.CryptoUtil();
+#set ($readerMethod = $field.Type.ConvertFromSqlTypeFormat.Replace("{0}", "data").Replace("{1}", $field.GetMethodFormat()).Replace("{2}", "crypto.Decrypt($readerMethod)").Replace("{3}", "dataReader").Replace("{4}", $alias))
+#else		
+#set ($readerMethod = $field.Type.ConvertFromSqlTypeFormat.Replace("{0}", "data").Replace("{1}", $field.GetMethodFormat()).Replace("{2}", $readerMethod).Replace("{3}", "dataReader").Replace("{4}", $alias))
+#end
+#end		
+#if ($field.Type.Name == "Byte[]")
+ 		Byte[] b = new Byte[(dataReader.GetBytes(ordinals.${field.Column.Name}, 0, null, 0, int.MaxValue))]; 	
+ 		dataReader.GetBytes(ordinals.${field.Column.Name}, 0, b, 0, b.Length);
+ 		data.$field.GetMethodFormat() = b;
+#else
+		data.$field.GetMethodFormat() = $readerMethod;
+#end
+	    }
+#end
+#end
+#if($field.Entity.Name.Length>0 && $field.UseEntityDao)
+#set($ordinalsVariableName = "${field.Prefix.ToLower().Substring(0,1)}${field.Prefix.Substring(1)}ColumnOrdinals")
+## TODO: an entity that points back to itself is not supported -- i.e. a Category that has a reference to a parent Category
+#if($field.Entity.Name != $element.Name)
+	    ${field.Entity.Name}DAO.ColumnOrdinals $ordinalsVariableName = new ${field.Entity.Name}DAO.ColumnOrdinals(dataReader, ordinals.Prefix + "$field.Prefix");
+	    data.${field.GetMethodFormat()} = ${field.Entity.Name}DAO.DAO.GetDataObjectFromReader(dataReader,#if($field.Entity.Name != $element.Name) $ordinalsVariableName#else ordinals#**##end);
+#end
+#end
+#end
+###if(!$element.JoinTable)
+##	    data.isNew = false;
+###end
+	    return data;
+	}
+
+## Begin insert methods.
+#if($element.SqlEntity.GenerateInsertStoredProcScript)
+
+	/// <summary>
+	/// Inserts a record into the $element.SqlEntity.Name table.
+	/// </summary>
+	/// <param name="data"></param>
+#set($returnType="void")
+#if($element.GetIdentityField())
+#set($returnType=${element.GetIdentityField().Type.Name})
+#end
+	public $returnType Insert($s data) {
+	    #if($element.GetIdentityField())return #end#**#Insert(data, null);
+	}
+
+#if ($element.MultipleSqlEntities)
+	/// <summary>
+	/// Inserts a record into the $element.SqlEntity.Name table.
+	/// </summary>
+	/// <param name="data"></param>
+	/// <param name="transaction"></param>
+	public $returnType Insert($s data, IDbTransaction transaction) {
+	    // Create and execute the command
+#set($t="Insert")
+	    IDbCommand cmd = GetDbCommand(CONNECTION_STRING_KEY, "$options.GetProcName($element.BaseEntity.SqlEntity.Name, $t)", CommandType.StoredProcedure, COMMAND_TIMEOUT, transaction);
+#if($element.GetIdentityField())
+	    IDbDataParameter idParam = CreateDataParameter("RETURN_VALUE", DbType.Int32, ParameterDirection.ReturnValue);
+	    cmd.Parameters.Add(idParam);
+#foreach($field in $element.BaseEntity.Fields)
+#if(!$field.Column.ViewColumn && $field.GetSqlAlias().Length > 0 && !$field.Column.Identity && !$field.Column.RowGuidCol)
+#if ($field.Encrypted)
+		if (data.${field.Name}.IsValid) {
+			Spring2.Core.Cryptography.CryptoUtil crypto = new Spring2.Core.Cryptography.CryptoUtil();
+			cmd.Parameters.Add(CreateDataParameter("@$field.GetSqlAlias()", DbType.AnsiString, ParameterDirection.Input, crypto.EncryptNoTimestamp(data.${field.Name}.ToString()) as Object));
+		} else {
+			cmd.Parameters.Add(CreateDataParameter("@$field.GetSqlAlias()", DbType.AnsiString, ParameterDirection.Input, DBNull.Value));
+		}
+#else
+	    cmd.Parameters.Add(CreateDataParameter("@$field.GetSqlAlias()", DbType.$field.Column.SqlType.DbType, ParameterDirection.Input, $options.GetSqlConversion($field, "data.$field.GetMethodFormat()")));
+#end
+#end
+#end
+#end
+
+	    // Execute the query
+	    cmd.ExecuteNonQuery();
+
+	    // Do not close the connection if it is part of a transaction.
+	    if (transaction == null) {
+ 		cmd.Connection.Close();
+	    }
+
+#if($element.GetIdentityField())
+	    // Set the output paramter value(s)
+	    data.$element.GetIdentityField().Name = new IdType((Int32)idParam.Value);
+#end
+
+	    cmd = GetDbCommand(CONNECTION_STRING_KEY, "$options.GetProcName($element.SqlEntity.Name, $t)", CommandType.StoredProcedure, COMMAND_TIMEOUT, transaction);
+
+	    // Create the parameters and append them to the command object.
+	    cmd.Parameters.Add(CreateDataParameter("@$element.GetIdentityField().GetSqlAlias()", DbType.$element.GetIdentityField().Column.SqlType.DbType, ParameterDirection.Input, $options.GetSqlConversion($element.GetIdentityField(), "data.$element.GetIdentityField().GetMethodFormat()")));
+#foreach($field in $element.PrivateFields)
+#if(!$field.Column.ViewColumn && $field.GetSqlAlias().Length > 0 && !$field.Column.RowGuidCol)
+#if ($field.Encrypted)
+		if (data.${field.Name}.IsValid) {
+			Spring2.Core.Cryptography.CryptoUtil crypto = new Spring2.Core.Cryptography.CryptoUtil();
+			cmd.Parameters.Add(CreateDataParameter("@$field.GetSqlAlias()", DbType.AnsiString, ParameterDirection.Input, crypto.EncryptNoTimestamp(data.${field.Name}.ToString()) as Object));
+		} else {
+			cmd.Parameters.Add(CreateDataParameter("@$field.GetSqlAlias()", DbType.AnsiString, ParameterDirection.Input, DBNull.Value));
+		}
+#else
+	    cmd.Parameters.Add(CreateDataParameter("@$field.GetSqlAlias()", DbType.$field.Column.SqlType.DbType, ParameterDirection.Input, $options.GetSqlConversion($field, "data.$field.GetMethodFormat()")));
+#end
+#end
+#end
+
+	    // Execute the query
+	    cmd.ExecuteNonQuery();
+
+	    // Do not close the connection if it is part of a transaction.
+	    if (transaction == null) {
+		cmd.Connection.Close();
+	    }
+
+#if($element.GetIdentityField())
+	    return data.$element.GetIdentityField().Name;
+#end
+	}
+#else
+	/// <summary>
+	/// Inserts a record into the $element.SqlEntity.Name table.
+	/// </summary>
+	/// <param name="data"></param>
+	/// <param name="transaction"></param>
+	public $returnType Insert($s data, IDbTransaction transaction) {
+	    // Create and execute the command
+#set($t="Insert")
+	    IDbCommand cmd = GetDbCommand(CONNECTION_STRING_KEY, "$options.GetProcName($element.SqlEntity.Name, $t)", CommandType.StoredProcedure, COMMAND_TIMEOUT, transaction);
+
+#if($element.GetIdentityField())
+	    IDbDataParameter idParam = CreateDataParameter("RETURN_VALUE", DbType.Int32, ParameterDirection.ReturnValue);
+	    cmd.Parameters.Add(idParam);
+#end
+
+	    //Create the parameters and append them to the command object
+#foreach($field in $element.Fields)
+#if(!$field.Column.ViewColumn && $field.GetSqlAlias().Length>0 && !$field.Column.Identity && !$field.Column.RowGuidCol)	    
+#if ($field.Encrypted)
+		if (data.${field.Name}.IsValid) {
+			Spring2.Core.Cryptography.CryptoUtil crypto = new Spring2.Core.Cryptography.CryptoUtil();
+			cmd.Parameters.Add(CreateDataParameter("@$field.GetSqlAlias()", DbType.AnsiString, ParameterDirection.Input, crypto.EncryptNoTimestamp(data.${field.Name}.ToString()) as Object));
+		} else {
+			cmd.Parameters.Add(CreateDataParameter("@$field.GetSqlAlias()", DbType.AnsiString, ParameterDirection.Input, DBNull.Value));
+		}
+#else
+	    cmd.Parameters.Add(CreateDataParameter("@$field.GetSqlAlias()", DbType.$field.Column.SqlType.DbType, ParameterDirection.Input, $options.GetSqlConversion($field, "data.$field.GetMethodFormat()")));
+#end
+#end
+#end
+
+	    // Execute the query
+	    cmd.ExecuteNonQuery();
+
+	    // do not close the connection if it is part of a transaction
+	    if (transaction == null) {
+		cmd.Connection.Close();
+	    }
+
+#if($element.GetIdentityField())
+	    // Set the output paramter value(s)
+	    return new IdType((Int32)idParam.Value);
+#end
+	}
+#end
+#end
+## End insert methods
+
+#if($element.SqlEntity.HasUpdatableColumns() && $element.SqlEntity.GenerateUpdateStoredProcScript)
+
+	/// <summary>
+	/// Updates a record in the $element.SqlEntity.Name table.
+	/// </summary>
+	/// <param name="data"></param>
+	public void Update($s data) {
+	    Update(data, null);
+	}
+
+#set($t="Update")
+#if ($element.MultipleSqlEntities)
+	public void Update($s data, IDbTransaction transaction) {
+	    IDbCommand cmd = GetDbCommand(CONNECTION_STRING_KEY, "$options.GetProcName($element.BaseEntity.SqlEntity.Name, $t)", CommandType.StoredProcedure, COMMAND_TIMEOUT, transaction);
+#foreach($field in $element.BaseEntity.Fields)
+#if(!$field.Column.ViewColumn && $field.GetSqlAlias().Length>0)	    cmd.Parameters.Add(CreateDataParameter("@$field.GetSqlAlias()", DbType.$field.Column.SqlType.DbType, ParameterDirection.Input, $options.GetSqlConversion($field, "data.$field.GetMethodFormat()")));
+#end
+#end
+	    cmd.ExecuteNonQuery();
+
+	    if (transaction == null) {
+		cmd.Connection.Close();
+	    }
+
+	    cmd = GetDbCommand(CONNECTION_STRING_KEY, "$options.GetProcName($element.SqlEntity.Name, $t)", CommandType.StoredProcedure, COMMAND_TIMEOUT, transaction);
+	    cmd.Parameters.Add(CreateDataParameter("@$element.GetIdentityField().GetSqlAlias()", DbType.$element.GetIdentityField().Column.SqlType.DbType, ParameterDirection.Input, $options.GetSqlConversion($element.GetIdentityField(), "data.$element.GetIdentityField().GetMethodFormat()")));
+#foreach($field in $element.PrivateFields)
+#if(!$field.Column.ViewColumn && $field.GetSqlAlias().Length>0)	    cmd.Parameters.Add(CreateDataParameter("@$field.GetSqlAlias()", DbType.$field.Column.SqlType.DbType, ParameterDirection.Input, $options.GetSqlConversion($field, "data.$field.GetMethodFormat()")));
+#end
+#end
+	    cmd.ExecuteNonQuery();
+
+	    if (transaction == null) {
+		cmd.Connection.Close();
+	    }
+	}
+#else
+	/// <summary>
+	/// Updates a record in the $element.SqlEntity.Name table.
+	/// </summary>
+	/// <param name="data"></param>
+	/// <param name="transaction"></param>
+	public void Update($s data, IDbTransaction transaction) {
+	    // Create and execute the command
+	    IDbCommand cmd = GetDbCommand(CONNECTION_STRING_KEY, "$options.GetProcName($element.SqlEntity.Name, $t)", CommandType.StoredProcedure, COMMAND_TIMEOUT, transaction);
+
+	    //Create the parameters and append them to the command object
+#foreach($field in $element.Fields)
+#if(!$field.Column.ViewColumn && $field.GetSqlAlias().Length>0)	    
+#if ($field.Encrypted)
+		if (data.${field.Name}.IsValid) {
+			Spring2.Core.Cryptography.CryptoUtil crypto = new Spring2.Core.Cryptography.CryptoUtil();
+			cmd.Parameters.Add(CreateDataParameter("@$field.GetSqlAlias()", DbType.AnsiString, ParameterDirection.Input, crypto.EncryptNoTimestamp(data.${field.Name}.ToString()) as Object));
+		} else {
+			cmd.Parameters.Add(CreateDataParameter("@$field.GetSqlAlias()", DbType.AnsiString, ParameterDirection.Input, DBNull.Value));
+		}
+#else
+	    cmd.Parameters.Add(CreateDataParameter("@$field.GetSqlAlias()", DbType.$field.Column.SqlType.DbType, ParameterDirection.Input, $options.GetSqlConversion($field, "data.$field.GetMethodFormat()")));
+#end
+#end
+#end
+
+	    // Execute the query
+	    cmd.ExecuteNonQuery();
+
+	    // do not close the connection if it is part of a transaction
+	    if (transaction == null) {
+		cmd.Connection.Close();
+	    }
+	}
+#end
+#end
+
+## Begin delete methods.
+#if($element.SqlEntity.GenerateDeleteStoredProcScript)
+
+	/// <summary>
+	/// Deletes a record from the $element.SqlEntity.Name table by#if($element.GetPrimaryKeyFields().Count == 1 && $element.GetPrimaryKeyFields().get_Item(0).Column.Identity) $element.GetPrimaryKeyFields().get_Item(0).Name#else a composite primary key#end.
+	/// </summary>
+#parameterComments(true $element.GetPrimaryKeyFields() "A key field.")
+	public void Delete(#foreach( $field in $element.GetPrimaryKeyFields() )#if($velocityCount>1), #end$field.CreateMethodParameter()#end) {
+	    Delete(#foreach( $field in $element.GetPrimaryKeyFields() )#if($velocityCount>1), #end$field.GetFieldFormat()#end, null);
+	}
+
+#if ($element.MultipleSqlEntities)
+	/// <summary>
+	/// Deletes a record from the $element.SqlEntity.Name table by#if($element.GetPrimaryKeyFields().Count == 1 && $element.GetPrimaryKeyFields().get_Item(0).Column.Identity) $element.GetPrimaryKeyFields().get_Item(0).Name#else a composite primary key#end.
+	/// </summary>
+#parameterComments(true $element.GetPrimaryKeyFields() "A key field.")
+	/// <param name="transaction"></param>
+	public void Delete(#foreach( $field in $element.GetPrimaryKeyFields() )#if($velocityCount>1), #end$field.CreateMethodParameter()#end, IDbTransaction transaction) {
+	    // Create and execute the command
+	    IDbCommand cmd = GetDbCommand(CONNECTION_STRING_KEY, "$options.GetProcName($element.SqlEntity.Name, "Delete")", CommandType.StoredProcedure, COMMAND_TIMEOUT, transaction);
+
+	    // Create and append the parameters
+#foreach( $field in $element.GetPrimaryKeyFields() )
+	    cmd.Parameters.Add(CreateDataParameter("@$field.GetSqlAlias()", DbType.$field.Column.SqlType.DbType, ParameterDirection.Input, $options.GetSqlConversion($field)));
+#end
+
+	    // Execute the query and return the result
+	    cmd.ExecuteNonQuery();
+
+	    cmd = GetDbCommand(CONNECTION_STRING_KEY, "$options.GetProcName($element.BaseEntity.SqlEntity.Name, "Delete")", CommandType.StoredProcedure, COMMAND_TIMEOUT, transaction);
+
+#foreach( $field in $element.GetPrimaryKeyFields() )
+	    cmd.Parameters.Add(CreateDataParameter("@$field.GetSqlAlias()", DbType.$field.Column.SqlType.DbType, ParameterDirection.Input, $options.GetSqlConversion($field)));
+#end
+
+	    cmd.ExecuteNonQuery();
+
+	    // Do not close the connection if it is part of a transaction.
+	    if (transaction == null) {
+		cmd.Connection.Close();
+	    }
+	}
+#else
+	/// <summary>
+	/// Deletes a record from the $element.SqlEntity.Name table by#if($element.GetPrimaryKeyFields().Count == 1 && $element.GetPrimaryKeyFields().get_Item(0).Column.Identity) $element.GetPrimaryKeyFields().get_Item(0).Name#else a composite primary key#end.
+	/// </summary>
+#parameterComments(true $element.GetPrimaryKeyFields() "A key field.")
+	/// <param name="transaction"></param>
+	public void Delete(#foreach( $field in $element.GetPrimaryKeyFields() )#if($velocityCount>1), #end$field.CreateMethodParameter()#end, IDbTransaction transaction) {
+	    // Create and execute the command
+	    IDbCommand cmd = GetDbCommand(CONNECTION_STRING_KEY, "$options.GetProcName($element.SqlEntity.Name, "Delete")", CommandType.StoredProcedure, COMMAND_TIMEOUT, transaction);
+
+	    // Create and append the parameters
+#foreach( $field in $element.GetPrimaryKeyFields() )
+	    cmd.Parameters.Add(CreateDataParameter("@$field.GetSqlAlias()", DbType.$field.Column.SqlType.DbType, ParameterDirection.Input, $options.GetSqlConversion($field)));#end
+#if($element.GetPrimaryKeyFields().Count == 1 && $element.GetPrimaryKeyFields().get_Item(0).Column.Identity)
+
+#end
+	    // Execute the query and return the result
+	    cmd.ExecuteNonQuery();
+
+	    // do not close the connection if it is part of a transaction
+	    if (transaction == null) {
+		cmd.Connection.Close();
+	    }
+	}
+#end
+#end
+## End delete methods.
+#if($element.SqlEntity.GenerateSelectStoredProcScript)
+##Not implemented
+#end
+#foreach($finder in $element.Finders)
+
+	/// <summary>
+#if($finder.Unique)
+	/// Returns an object which matches the values for the fields specified.
+#else
+	/// Returns a list of objects which match the values for the fields specified.
+#end
+	/// </summary>
+#parameterComments(true $finder.Fields "A field value to be matched.")
+#if($finder.Unique)
+	/// <returns>The object found.</returns>
+#else
+	/// <returns>The list of $options.GetDAOClassName($element.Name) objects found.</returns>
+#end
+#if($finder.Unique)
+	/// <exception cref="Spring2.Core.DAO.FinderException">Thrown when no rows are found.</exception>
+#end
+#if($finder.Unique)
+#if($element.JoinTable)
+#set($s="${element.Name}Data")
+#else
+#set($s=$element.Name)
+#end
+#else
+#set($s=$listtype)
+#end
+	public $s ${finder.Name}(#parameterList(true $finder.Fields)#if($finder.Limit), Int32 limit#end) {
+#if($finder.Sort != "")
+	    OrderByClause sort = new OrderByClause("$finder.Sort");
+#end
+#if($finder.Expression == "")
+	    SqlFilter filter = new SqlFilter();
+#foreach ($field in $finder.Fields)
+	    filter.And(new SqlEqualityPredicate("$field.GetSqlAlias()", EqualityOperatorEnum.Equal, $options.GetSqlConversion($field)));
+#end
+	    IDataReader dataReader = GetListReader(CONNECTION_STRING_KEY, VIEW, filter, sort#if($finder.Limit), limit#end);	
+
+#else
+	    SqlFilter filter = new SqlFilter(new SqlLiteralPredicate("$finder.Expression"));
+	    String sql = "SELECT #if($finder.Limit)TOP " + limit.ToString() + " #end* from " + VIEW + filter.Statement + sort.FormatSql();
+	    IDbCommand cmd = GetDbCommand(CONNECTION_STRING_KEY, sql, CommandType.Text);
+#foreach($field in $finder.Fields)
+	    cmd.Parameters.Add(CreateDataParameter("@$field.GetPropertyName().Replace(".", "_")", DbType.$field.Column.SqlType.DbType, ParameterDirection.Input, $options.GetSqlConversion($field)));
+
+#end
+	    IDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+#end
+#if($finder.Unique)
+	    return GetDataObject(dataReader);
+#else
+	    return GetList(dataReader);
+#end
+	}
+#end
+    }
+}
+#end
