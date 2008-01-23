@@ -1,526 +1,346 @@
-<VisualStudioProject>
-    <CSHARP
-        ProjectType = "Local"
-        ProductVersion = "7.10.3077"
-        SchemaVersion = "2.0"
-        ProjectGuid = "{069AFE42-50D3-48D3-A12B-FAE1D8A2A44A}"
-    >
-        <Build>
-            <Settings
-                ApplicationIcon = ""
-                AssemblyKeyContainerName = ""
-                AssemblyName = "Spring2.DataTierGenerator.Alpha"
-                AssemblyOriginatorKeyFile = ""
-                DefaultClientScript = "JScript"
-                DefaultHTMLPageLayout = "Grid"
-                DefaultTargetSchema = "IE50"
-                DelaySign = "false"
-                OutputType = "Library"
-                PreBuildEvent = ""
-                PostBuildEvent = ""
-                RootNamespace = ""
-                RunPostBuildEvent = "OnBuildSuccess"
-                StartupObject = ""
-            >
-                <Config
-                    Name = "Debug"
-                    AllowUnsafeBlocks = "false"
-                    BaseAddress = "285212672"
-                    CheckForOverflowUnderflow = "false"
-                    ConfigurationOverrideFile = ""
-                    DefineConstants = "DEBUG;TRACE"
-                    DocumentationFile = ""
-                    DebugSymbols = "true"
-                    FileAlignment = "4096"
-                    IncrementalBuild = "true"
-                    NoStdLib = "false"
-                    NoWarn = ""
-                    Optimize = "false"
-                    OutputPath = "..\..\..\build\Alpha\"
-                    RegisterForComInterop = "false"
-                    RemoveIntegerChecks = "false"
-                    TreatWarningsAsErrors = "false"
-                    WarningLevel = "4"
-                />
-                <Config
-                    Name = "Release"
-                    AllowUnsafeBlocks = "false"
-                    BaseAddress = "285212672"
-                    CheckForOverflowUnderflow = "false"
-                    ConfigurationOverrideFile = ""
-                    DefineConstants = "TRACE"
-                    DocumentationFile = ""
-                    DebugSymbols = "false"
-                    FileAlignment = "4096"
-                    IncrementalBuild = "false"
-                    NoStdLib = "false"
-                    NoWarn = ""
-                    Optimize = "true"
-                    OutputPath = "bin\Release\"
-                    RegisterForComInterop = "false"
-                    RemoveIntegerChecks = "false"
-                    TreatWarningsAsErrors = "false"
-                    WarningLevel = "4"
-                />
-            </Settings>
-            <References>
-                <Reference
-                    Name = "System"
-                    AssemblyName = "System"
-                    HintPath = "..\..\..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.0.3705\System.dll"
-                />
-                <Reference
-                    Name = "System.Data"
-                    AssemblyName = "System.Data"
-                    HintPath = "..\..\..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.0.3705\System.Data.dll"
-                />
-                <Reference
-                    Name = "System.XML"
-                    AssemblyName = "System.Xml"
-                    HintPath = "..\..\..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.0.3705\System.XML.dll"
-                />
-                <Reference
-                    Name = "Spring2.Core"
-                    AssemblyName = "Spring2.Core"
-                    HintPath = "..\..\..\lib\Spring2.Core.dll"
-                />
-                <Reference
-                    Name = "nunit.framework"
-                    AssemblyName = "nunit.framework"
-                    HintPath = "..\..\..\lib\nunit.framework.dll"
-                />
-                <Reference
-                    Name = "Spring2.DataTierGenerator"
-                    Project = "{8BE555A1-8BBA-4CF7-9B4A-6BBEF7E20FA8}"
-                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
-                />
-                <Reference
-                    Name = "Spring2.DataTierGenerator.Tool"
-                    Project = "{0AFCF054-A3E0-4502-B41C-347AD69DBFA5}"
-                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
-                />
-            </References>
-        </Build>
-        <Files>
-            <Include>
-                <File
-                    RelPath = "AssemblyInfo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "AssemblyVersionInfo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "config.xsd"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "config.xsx"
-                    DependentUpon = "config.xsd"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Configuration.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ConfigurationData.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Element\ArgumentElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Element\CollectionElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Element\ColumnElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Element\ComparerElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Element\ConstraintElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Element\DatabaseElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Element\ElementSkeleton.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Element\EntityElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Element\EntityReferenceElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Element\EnumElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Element\EnumValueElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Element\ExcludeElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Element\FinderElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Element\GeneratorElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Element\ICollectable.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Element\IExpressionContainer.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Element\IncludeElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Element\IndexElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Element\IPropertyContainer.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Element\ListElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Element\MessageElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Element\OptionElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Element\ParameterElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Element\PropertyElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Element\ReportExtractionElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Element\ReportExtractionFinderElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Element\RootElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Element\SqlElementSkeleton.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Element\SqlEntityData.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Element\SqlEntityElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Element\SqlTypeElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Element\StylerElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Element\TaskElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Element\ToolElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Element\TypeElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Element\ViewElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Element\WriterElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Parser\AbstractParser.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Parser\DatabaseCompareParser.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Parser\DatabaseParser.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Parser\ParserValidationArgs.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Parser\ParserValidationDelegate.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Parser\ParserValidationSeverity.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Parser\Task.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Parser\XmlParser.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Template\BusinessEntity.vm"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Template\collection.vm"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Template\config_entities.vm"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Template\config_entity.vm"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Template\config_sqlentities.vm"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Template\config_sqlentity.vm"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Template\DAO.vm"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Template\dao-test.vm"
-                    SubType = "Code"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Template\datadictionary.vm"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Template\dataobject.vm"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Template\dataobject-collection.vm"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Template\dtg_csharp_library.vm"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Template\dtg_java_library.vm"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Template\enum.vm"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Template\enum_sql_data.vm"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Template\enum-collection.vm"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Template\EnumTest.vm"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Template\header.vm"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Template\ReportExtractionDAO.vm"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Template\sql_delete.vm"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Template\sql_insert.vm"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Template\sql_table.vm"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Template\sql_update.vm"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Template\sql_view.vm"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Template\sql-dependencies.vm"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Template\sql-message.vm"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Template\SUDAO.vm"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Template\SUReportExtractionDAO.vm"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Template\PassThroughInterface\BusinessEntity.vm"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Template\PassThroughInterface\BusinessEntityUnitTest.vm"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Template\PassThroughInterface\DAO.vm"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Template\PassThroughInterface\dao-test.vm"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Template\PassThroughInterface\dataobject.vm"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Template\PassThroughInterface\dataobject-collection.vm"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Template\PassThroughInterface\interface.vm"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Template\PassThroughInterface\Message.vm"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Test\regress.xml"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "Test\sanity.xml"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "Test\SanityTest.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Test\su.xml"
-                    BuildAction = "Content"
-                />
-            </Include>
-        </Files>
-    </CSHARP>
-</VisualStudioProject>
-
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+    <ProjectType>Local</ProjectType>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{069AFE42-50D3-48D3-A12B-FAE1D8A2A44A}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ApplicationIcon>
+    </ApplicationIcon>
+    <AssemblyKeyContainerName>
+    </AssemblyKeyContainerName>
+    <AssemblyName>Spring2.DataTierGenerator.Alpha</AssemblyName>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+    <DefaultClientScript>JScript</DefaultClientScript>
+    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+    <DefaultTargetSchema>IE50</DefaultTargetSchema>
+    <DelaySign>false</DelaySign>
+    <OutputType>Library</OutputType>
+    <RootNamespace>
+    </RootNamespace>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <StartupObject>
+    </StartupObject>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>2.0</OldToolsVersion>
+    <PublishUrl>http://localhost/Spring2.DataTierGenerator.Alpha/</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Web</InstallFrom>
+    <UpdateEnabled>true</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>true</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>..\..\..\build\Alpha\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>false</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>none</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="nunit.framework">
+      <Name>nunit.framework</Name>
+      <HintPath>..\..\..\lib\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="Spring2.Core">
+      <Name>Spring2.Core</Name>
+      <HintPath>..\..\..\lib\Spring2.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="System">
+      <Name>System</Name>
+    </Reference>
+    <Reference Include="System.Data">
+      <Name>System.Data</Name>
+    </Reference>
+    <Reference Include="System.Xml">
+      <Name>System.XML</Name>
+    </Reference>
+    <ProjectReference Include="..\..\Spring2.DataTierGenerator.csproj">
+      <Name>Spring2.DataTierGenerator</Name>
+      <Project>{8BE555A1-8BBA-4CF7-9B4A-6BBEF7E20FA8}</Project>
+      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Spring2.DataTierGenerator.Tool.csproj">
+      <Name>Spring2.DataTierGenerator.Tool</Name>
+      <Project>{0AFCF054-A3E0-4502-B41C-347AD69DBFA5}</Project>
+      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="AssemblyVersionInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Configuration.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ConfigurationData.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Element\ArgumentElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Element\CollectionElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Element\ColumnElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Element\ComparerElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Element\ConstraintElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Element\DatabaseElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Element\ElementSkeleton.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Element\EntityElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Element\EntityReferenceElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Element\EnumElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Element\EnumValueElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Element\ExcludeElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Element\FinderElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Element\GeneratorElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Element\ICollectable.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Element\IExpressionContainer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Element\IncludeElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Element\IndexElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Element\IPropertyContainer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Element\ListElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Element\MessageElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Element\OptionElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Element\ParameterElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Element\PropertyElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Element\ReportExtractionElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Element\ReportExtractionFinderElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Element\RootElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Element\SqlElementSkeleton.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Element\SqlEntityData.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Element\SqlEntityElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Element\SqlTypeElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Element\StylerElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Element\TaskElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Element\ToolElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Element\TypeElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Element\ViewElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Element\WriterElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Parser\AbstractParser.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Parser\DatabaseCompareParser.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Parser\DatabaseParser.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Parser\ParserValidationArgs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Parser\ParserValidationDelegate.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Parser\ParserValidationSeverity.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Parser\Task.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Parser\XmlParser.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Test\SanityTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <EmbeddedResource Include="config.xsd">
+      <SubType>
+      </SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Template\BusinessEntity.vm" />
+    <EmbeddedResource Include="Template\collection.vm" />
+    <EmbeddedResource Include="Template\config_entities.vm" />
+    <EmbeddedResource Include="Template\config_entity.vm" />
+    <EmbeddedResource Include="Template\config_sqlentities.vm" />
+    <EmbeddedResource Include="Template\config_sqlentity.vm" />
+    <EmbeddedResource Include="Template\dao-test.vm">
+      <SubType>Code</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Template\DAO.vm" />
+    <EmbeddedResource Include="Template\datadictionary.vm" />
+    <EmbeddedResource Include="Template\dataobject-collection.vm" />
+    <EmbeddedResource Include="Template\dataobject.vm" />
+    <EmbeddedResource Include="Template\dtg_csharp_library.vm" />
+    <EmbeddedResource Include="Template\dtg_java_library.vm" />
+    <EmbeddedResource Include="Template\enum-collection.vm" />
+    <EmbeddedResource Include="Template\enum.vm" />
+    <EmbeddedResource Include="Template\EnumTest.vm" />
+    <EmbeddedResource Include="Template\enum_sql_data.vm" />
+    <EmbeddedResource Include="Template\header.vm" />
+    <EmbeddedResource Include="Template\PassThroughInterface\BusinessEntity.vm" />
+    <EmbeddedResource Include="Template\PassThroughInterface\BusinessEntityUnitTest.vm" />
+    <EmbeddedResource Include="Template\PassThroughInterface\dao-test.vm" />
+    <EmbeddedResource Include="Template\PassThroughInterface\DAO.vm" />
+    <EmbeddedResource Include="Template\PassThroughInterface\dataobject-collection.vm" />
+    <EmbeddedResource Include="Template\PassThroughInterface\dataobject.vm" />
+    <EmbeddedResource Include="Template\PassThroughInterface\interface.vm" />
+    <EmbeddedResource Include="Template\PassThroughInterface\Message.vm" />
+    <EmbeddedResource Include="Template\ReportExtractionDAO.vm" />
+    <EmbeddedResource Include="Template\sql-dependencies.vm" />
+    <EmbeddedResource Include="Template\sql-message.vm" />
+    <EmbeddedResource Include="Template\sql_delete.vm" />
+    <EmbeddedResource Include="Template\sql_insert.vm" />
+    <EmbeddedResource Include="Template\sql_table.vm" />
+    <EmbeddedResource Include="Template\sql_update.vm" />
+    <EmbeddedResource Include="Template\sql_view.vm" />
+    <EmbeddedResource Include="Template\SUDAO.vm" />
+    <EmbeddedResource Include="Template\SUReportExtractionDAO.vm" />
+    <None Include="config.xsx">
+      <DependentUpon>config.xsd</DependentUpon>
+    </None>
+    <Content Include="Test\regress.xml" />
+    <Content Include="Test\sanity.xml" />
+    <Content Include="Test\su.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+</Project>

@@ -1,85 +1,7 @@
-Microsoft Visual Studio Solution File, Format Version 8.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spring2.DataTierGenerator", "Spring2.DataTierGenerator.csproj", "{8BE555A1-8BBA-4CF7-9B4A-6BBEF7E20FA8}"
-	ProjectSection(ProjectDependencies) = postProject
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spring2.DataTierGenerator.Test", "Spring2.DataTierGenerator.Test.csproj", "{50037EF4-B0A4-4044-8638-E94A6D090CAB}"
-	ProjectSection(ProjectDependencies) = postProject
-		{8BE555A1-8BBA-4CF7-9B4A-6BBEF7E20FA8} = {8BE555A1-8BBA-4CF7-9B4A-6BBEF7E20FA8}
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spring2.DataTierGenerator.Tool", "Spring2.DataTierGenerator.Tool.csproj", "{0AFCF054-A3E0-4502-B41C-347AD69DBFA5}"
-	ProjectSection(ProjectDependencies) = postProject
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spring2.DataTierGenerator.Attribute", "Spring2.DataTierGenerator.Attribute.csproj", "{3131371A-6B4B-4B39-9DB0-18B9F955E0BD}"
-	ProjectSection(ProjectDependencies) = postProject
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spring2.DataTierGenerator.Alpha", "ElementSet\Alpha\Spring2.DataTierGenerator.Alpha.csproj", "{069AFE42-50D3-48D3-A12B-FAE1D8A2A44A}"
-	ProjectSection(ProjectDependencies) = postProject
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spring2.DataTierGenerator.ConsoleRunner", "Spring2.DataTierGenerator.ConsoleRunner.csproj", "{C49BE045-C72A-43DD-8DAC-CE11F08C6A6F}"
-	ProjectSection(ProjectDependencies) = postProject
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spring2.DataTierGenerator.Beta", "ElementSet\Beta\Spring2.DataTierGenerator.Beta.csproj", "{715E64DD-2DAD-4DA8-ACC5-2BAEBA573487}"
-	ProjectSection(ProjectDependencies) = postProject
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spring2.DataTierGenerator.CSharpStyler", "Spring2.DataTierGenerator.CSharpStyler.csproj", "{2001988D-69BC-4D0D-BA21-19A98E89CADC}"
-	ProjectSection(ProjectDependencies) = postProject
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spring2.DataTierGenerator.UpdateProjectFiles", "Spring2.DataTierGenerator.UpdateProjectFiles.csproj", "{B6CB9D43-AD25-41E3-892E-242844DD6A7A}"
-	ProjectSection(ProjectDependencies) = postProject
-	EndProjectSection
-EndProject
-Global
-	GlobalSection(SolutionConfiguration) = preSolution
-		Debug = Debug
-		Release = Release
-	EndGlobalSection
-	GlobalSection(ProjectConfiguration) = postSolution
-		{8BE555A1-8BBA-4CF7-9B4A-6BBEF7E20FA8}.Debug.ActiveCfg = Debug|.NET
-		{8BE555A1-8BBA-4CF7-9B4A-6BBEF7E20FA8}.Debug.Build.0 = Debug|.NET
-		{8BE555A1-8BBA-4CF7-9B4A-6BBEF7E20FA8}.Release.ActiveCfg = Release|.NET
-		{8BE555A1-8BBA-4CF7-9B4A-6BBEF7E20FA8}.Release.Build.0 = Release|.NET
-		{50037EF4-B0A4-4044-8638-E94A6D090CAB}.Debug.ActiveCfg = Debug|.NET
-		{50037EF4-B0A4-4044-8638-E94A6D090CAB}.Debug.Build.0 = Debug|.NET
-		{50037EF4-B0A4-4044-8638-E94A6D090CAB}.Release.ActiveCfg = Release|.NET
-		{50037EF4-B0A4-4044-8638-E94A6D090CAB}.Release.Build.0 = Release|.NET
-		{0AFCF054-A3E0-4502-B41C-347AD69DBFA5}.Debug.ActiveCfg = Debug|.NET
-		{0AFCF054-A3E0-4502-B41C-347AD69DBFA5}.Debug.Build.0 = Debug|.NET
-		{0AFCF054-A3E0-4502-B41C-347AD69DBFA5}.Release.ActiveCfg = Release|.NET
-		{0AFCF054-A3E0-4502-B41C-347AD69DBFA5}.Release.Build.0 = Release|.NET
-		{3131371A-6B4B-4B39-9DB0-18B9F955E0BD}.Debug.ActiveCfg = Debug|.NET
-		{3131371A-6B4B-4B39-9DB0-18B9F955E0BD}.Debug.Build.0 = Debug|.NET
-		{3131371A-6B4B-4B39-9DB0-18B9F955E0BD}.Release.ActiveCfg = Release|.NET
-		{3131371A-6B4B-4B39-9DB0-18B9F955E0BD}.Release.Build.0 = Release|.NET
-		{069AFE42-50D3-48D3-A12B-FAE1D8A2A44A}.Debug.ActiveCfg = Debug|.NET
-		{069AFE42-50D3-48D3-A12B-FAE1D8A2A44A}.Debug.Build.0 = Debug|.NET
-		{069AFE42-50D3-48D3-A12B-FAE1D8A2A44A}.Release.ActiveCfg = Release|.NET
-		{069AFE42-50D3-48D3-A12B-FAE1D8A2A44A}.Release.Build.0 = Release|.NET
-		{C49BE045-C72A-43DD-8DAC-CE11F08C6A6F}.Debug.ActiveCfg = Debug|.NET
-		{C49BE045-C72A-43DD-8DAC-CE11F08C6A6F}.Debug.Build.0 = Debug|.NET
-		{C49BE045-C72A-43DD-8DAC-CE11F08C6A6F}.Release.ActiveCfg = Release|.NET
-		{C49BE045-C72A-43DD-8DAC-CE11F08C6A6F}.Release.Build.0 = Release|.NET
-		{715E64DD-2DAD-4DA8-ACC5-2BAEBA573487}.Debug.ActiveCfg = Debug|.NET
-		{715E64DD-2DAD-4DA8-ACC5-2BAEBA573487}.Debug.Build.0 = Debug|.NET
-		{715E64DD-2DAD-4DA8-ACC5-2BAEBA573487}.Release.ActiveCfg = Release|.NET
-		{715E64DD-2DAD-4DA8-ACC5-2BAEBA573487}.Release.Build.0 = Release|.NET
-		{2001988D-69BC-4D0D-BA21-19A98E89CADC}.Debug.ActiveCfg = Debug|.NET
-		{2001988D-69BC-4D0D-BA21-19A98E89CADC}.Debug.Build.0 = Debug|.NET
-		{2001988D-69BC-4D0D-BA21-19A98E89CADC}.Release.ActiveCfg = Release|.NET
-		{2001988D-69BC-4D0D-BA21-19A98E89CADC}.Release.Build.0 = Release|.NET
-		{B6CB9D43-AD25-41E3-892E-242844DD6A7A}.Debug.ActiveCfg = Debug|.NET
-		{B6CB9D43-AD25-41E3-892E-242844DD6A7A}.Debug.Build.0 = Debug|.NET
-		{B6CB9D43-AD25-41E3-892E-242844DD6A7A}.Release.ActiveCfg = Release|.NET
-		{B6CB9D43-AD25-41E3-892E-242844DD6A7A}.Release.Build.0 = Release|.NET
-	EndGlobalSection
-	GlobalSection(SolutionItems) = postSolution
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{EDED8FD4-E378-4BCF-9837-01BFF20A6492}"
+	ProjectSection(SolutionItems) = preProject
 		collections.inc.xml = collections.inc.xml
 		config.inc.xml = config.inc.xml
 		config.xml = config.xml
@@ -94,10 +16,74 @@ Global
 		sqltypes.inc.xml = sqltypes.inc.xml
 		ToDo.txt = ToDo.txt
 		types.inc.xml = types.inc.xml
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spring2.DataTierGenerator", "Spring2.DataTierGenerator.csproj", "{8BE555A1-8BBA-4CF7-9B4A-6BBEF7E20FA8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spring2.DataTierGenerator.Test", "Spring2.DataTierGenerator.Test.csproj", "{50037EF4-B0A4-4044-8638-E94A6D090CAB}"
+	ProjectSection(ProjectDependencies) = postProject
+		{8BE555A1-8BBA-4CF7-9B4A-6BBEF7E20FA8} = {8BE555A1-8BBA-4CF7-9B4A-6BBEF7E20FA8}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spring2.DataTierGenerator.Tool", "Spring2.DataTierGenerator.Tool.csproj", "{0AFCF054-A3E0-4502-B41C-347AD69DBFA5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spring2.DataTierGenerator.Attribute", "Spring2.DataTierGenerator.Attribute.csproj", "{3131371A-6B4B-4B39-9DB0-18B9F955E0BD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spring2.DataTierGenerator.Alpha", "ElementSet\Alpha\Spring2.DataTierGenerator.Alpha.csproj", "{069AFE42-50D3-48D3-A12B-FAE1D8A2A44A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spring2.DataTierGenerator.ConsoleRunner", "Spring2.DataTierGenerator.ConsoleRunner.csproj", "{C49BE045-C72A-43DD-8DAC-CE11F08C6A6F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spring2.DataTierGenerator.Beta", "ElementSet\Beta\Spring2.DataTierGenerator.Beta.csproj", "{715E64DD-2DAD-4DA8-ACC5-2BAEBA573487}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spring2.DataTierGenerator.CSharpStyler", "Spring2.DataTierGenerator.CSharpStyler.csproj", "{2001988D-69BC-4D0D-BA21-19A98E89CADC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spring2.DataTierGenerator.UpdateProjectFiles", "Spring2.DataTierGenerator.UpdateProjectFiles.csproj", "{B6CB9D43-AD25-41E3-892E-242844DD6A7A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8BE555A1-8BBA-4CF7-9B4A-6BBEF7E20FA8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8BE555A1-8BBA-4CF7-9B4A-6BBEF7E20FA8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8BE555A1-8BBA-4CF7-9B4A-6BBEF7E20FA8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8BE555A1-8BBA-4CF7-9B4A-6BBEF7E20FA8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{50037EF4-B0A4-4044-8638-E94A6D090CAB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{50037EF4-B0A4-4044-8638-E94A6D090CAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{50037EF4-B0A4-4044-8638-E94A6D090CAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{50037EF4-B0A4-4044-8638-E94A6D090CAB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0AFCF054-A3E0-4502-B41C-347AD69DBFA5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0AFCF054-A3E0-4502-B41C-347AD69DBFA5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0AFCF054-A3E0-4502-B41C-347AD69DBFA5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0AFCF054-A3E0-4502-B41C-347AD69DBFA5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3131371A-6B4B-4B39-9DB0-18B9F955E0BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3131371A-6B4B-4B39-9DB0-18B9F955E0BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3131371A-6B4B-4B39-9DB0-18B9F955E0BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3131371A-6B4B-4B39-9DB0-18B9F955E0BD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{069AFE42-50D3-48D3-A12B-FAE1D8A2A44A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{069AFE42-50D3-48D3-A12B-FAE1D8A2A44A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{069AFE42-50D3-48D3-A12B-FAE1D8A2A44A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{069AFE42-50D3-48D3-A12B-FAE1D8A2A44A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C49BE045-C72A-43DD-8DAC-CE11F08C6A6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C49BE045-C72A-43DD-8DAC-CE11F08C6A6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C49BE045-C72A-43DD-8DAC-CE11F08C6A6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C49BE045-C72A-43DD-8DAC-CE11F08C6A6F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{715E64DD-2DAD-4DA8-ACC5-2BAEBA573487}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{715E64DD-2DAD-4DA8-ACC5-2BAEBA573487}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{715E64DD-2DAD-4DA8-ACC5-2BAEBA573487}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{715E64DD-2DAD-4DA8-ACC5-2BAEBA573487}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2001988D-69BC-4D0D-BA21-19A98E89CADC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2001988D-69BC-4D0D-BA21-19A98E89CADC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2001988D-69BC-4D0D-BA21-19A98E89CADC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2001988D-69BC-4D0D-BA21-19A98E89CADC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B6CB9D43-AD25-41E3-892E-242844DD6A7A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B6CB9D43-AD25-41E3-892E-242844DD6A7A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B6CB9D43-AD25-41E3-892E-242844DD6A7A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B6CB9D43-AD25-41E3-892E-242844DD6A7A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
-	GlobalSection(ExtensibilityAddIns) = postSolution
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(DevPartner) = postSolution
 	EndGlobalSection

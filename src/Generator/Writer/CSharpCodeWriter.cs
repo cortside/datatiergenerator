@@ -51,11 +51,13 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 	    stream.Position = 0;
 
 	    if (!file.Exists) {
-		CodeUnit unit1 = null;
+		//CodeUnit unit1 = null;
 		try {
-		    unit1 = new CodeUnit(file.Name, stream, Log, cgOptions);
+		    //unit1 = new CodeUnit(file.Name, stream, Log, cgOptions);
+		    //String mergedContent = unit1.Generate();
+		    String mergedContent = contents;
 		    StreamWriter writer = new StreamWriter(file.FullName, false);
-		    writer.Write(unit1.Generate());
+		    writer.Write(mergedContent);
 		    writer.Close();
 		    return true;
 		} catch (Exception ex) {
@@ -65,21 +67,26 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 		    return false;
 		}
 	    } else {
-		FileStream fs = null;
-		CodeUnit unit1 = null;
-		CodeUnit unit2 = null;
+		//FileStream fs = null;
+		//CodeUnit unit1 = null;
+		//CodeUnit unit2 = null;
 		try {
-		    fs = file.OpenRead();
-		    unit1 = new CodeUnit(file.Name, fs, Log, cgOptions);
-		    fs.Close();
-		    fs = null;
-		    unit2 = new CodeUnit(file.Name, stream, Log, cgOptions);
-		    unit1.Merge(unit2);
+		    //fs = file.OpenRead();
+		    //unit1 = new CodeUnit(file.Name, fs, Log, cgOptions);
+		    //fs.Close();
+		    //fs = null;
+		    //unit2 = new CodeUnit(file.Name, stream, Log, cgOptions);
+		    //unit1.Merge(unit2);
 
 		    StreamReader sr = file.OpenText();
 		    String exitingContents = sr.ReadToEnd();
 		    sr.Close();
-		    if (!unit1.Generate().Equals(exitingContents)) {
+
+		    //String mergedContent = unit1.Generate();
+		    String mergedContent = NRefactoryUtil.Merge(exitingContents, contents);
+
+		    // only write out if the formatted contents of both are different (avoids the "DTG reformatting" commit messages, at least some of the time)
+		    if (!mergedContent.Equals(NRefactoryUtil.FixSourceFormatting(exitingContents))) {
 			// make backup
 			if (file.Exists && backupFilePath != "") {
 			    FileInfo backup = new FileInfo(backupFilePath);
@@ -97,7 +104,7 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 			}
 
 			StreamWriter writer = new StreamWriter(file.FullName, false);
-			writer.Write(unit1.Generate());
+			writer.Write(mergedContent);
 			writer.Close();
 			return true;
 		    }
@@ -106,9 +113,9 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 		    Console.Out.WriteLine(ex);
 		    Log.Add("Error in File Name " + file.Name + ":" + ex.ToString());
 		} finally {
-		    if (fs != null) {
-			fs.Close();
-		    }
+		    //if (fs != null) {
+		    //    fs.Close();
+		    //}
 		}
 
 		return false;

@@ -1,786 +1,394 @@
-<VisualStudioProject>
-    <CSHARP
-        ProjectType = "Local"
-        ProductVersion = "7.10.3077"
-        SchemaVersion = "2.0"
-        ProjectGuid = "{715E64DD-2DAD-4DA8-ACC5-2BAEBA573487}"
-    >
-        <Build>
-            <Settings
-                ApplicationIcon = ""
-                AssemblyKeyContainerName = ""
-                AssemblyName = "Spring2.DataTierGenerator.Beta"
-                AssemblyOriginatorKeyFile = ""
-                DefaultClientScript = "JScript"
-                DefaultHTMLPageLayout = "Grid"
-                DefaultTargetSchema = "IE50"
-                DelaySign = "false"
-                OutputType = "Library"
-                PreBuildEvent = ""
-                PostBuildEvent = ""
-                RootNamespace = "Spring2.DataTierGenerator"
-                RunPostBuildEvent = "OnBuildSuccess"
-                StartupObject = ""
-            >
-                <Config
-                    Name = "Debug"
-                    AllowUnsafeBlocks = "false"
-                    BaseAddress = "285212672"
-                    CheckForOverflowUnderflow = "false"
-                    ConfigurationOverrideFile = ""
-                    DefineConstants = "DEBUG;TRACE"
-                    DocumentationFile = ""
-                    DebugSymbols = "true"
-                    FileAlignment = "4096"
-                    IncrementalBuild = "true"
-                    NoStdLib = "false"
-                    NoWarn = ""
-                    Optimize = "false"
-                    OutputPath = "..\..\..\build\Beta\"
-                    RegisterForComInterop = "false"
-                    RemoveIntegerChecks = "false"
-                    TreatWarningsAsErrors = "false"
-                    WarningLevel = "4"
-                />
-                <Config
-                    Name = "Release"
-                    AllowUnsafeBlocks = "false"
-                    BaseAddress = "285212672"
-                    CheckForOverflowUnderflow = "false"
-                    ConfigurationOverrideFile = ""
-                    DefineConstants = "TRACE"
-                    DocumentationFile = ""
-                    DebugSymbols = "false"
-                    FileAlignment = "4096"
-                    IncrementalBuild = "false"
-                    NoStdLib = "false"
-                    NoWarn = ""
-                    Optimize = "true"
-                    OutputPath = "bin\Release\"
-                    RegisterForComInterop = "false"
-                    RemoveIntegerChecks = "false"
-                    TreatWarningsAsErrors = "false"
-                    WarningLevel = "4"
-                />
-            </Settings>
-            <References>
-                <Reference
-                    Name = "System"
-                    AssemblyName = "System"
-                    HintPath = "..\..\..\..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.0.3705\System.dll"
-                />
-                <Reference
-                    Name = "System.Data"
-                    AssemblyName = "System.Data"
-                    HintPath = "..\..\..\..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.0.3705\System.Data.dll"
-                />
-                <Reference
-                    Name = "System.XML"
-                    AssemblyName = "System.Xml"
-                    HintPath = "..\..\..\..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.0.3705\System.XML.dll"
-                />
-                <Reference
-                    Name = "Spring2.Core"
-                    AssemblyName = "Spring2.Core"
-                    HintPath = "..\..\..\lib\Spring2.Core.dll"
-                />
-                <Reference
-                    Name = "nunit.framework"
-                    AssemblyName = "nunit.framework"
-                    HintPath = "..\..\..\lib\nunit.framework.dll"
-                />
-                <Reference
-                    Name = "Spring2.DataTierGenerator"
-                    Project = "{8BE555A1-8BBA-4CF7-9B4A-6BBEF7E20FA8}"
-                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
-                />
-            </References>
-        </Build>
-        <Files>
-            <Include>
-                <File
-                    RelPath = "AssemblyInfo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "AssemblyVersionInfo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "config.xsd"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "Configuration.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ConfigurationData.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Element\ArgumentElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Element\CheckConstraintElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Element\CollectionElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Element\ColumnElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Element\ColumnMapElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Element\ConfigurationElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Element\ConstraintElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Element\DatabaseElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Element\DataMapElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Element\ElementSkeleton.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Element\EntityElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Element\EnumElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Element\EnumValueElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Element\ExcludeElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Element\FinderElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Element\ForeignKeyConstraintElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Element\GeneratorElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Element\IncludeElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Element\IndexElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Element\ParameterElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Element\PrimaryKeyConstraintElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Element\PropertyElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Element\RootElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Element\SqlElementSkeleton.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Element\SqlEntityData.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Element\SqlEntityElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Element\SqlTypeElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Element\TaskElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Element\ToolElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Element\TypeElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Element\UniqueConstraintElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Element\ViewElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Parser\AbstractParser.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Parser\DatabaseCompareParser.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Parser\DatabaseParser.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Parser\ParserValidationArgs.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Parser\ParserValidationDelegate.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Parser\ParserValidationMessage.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Parser\ParserValidationSeverity.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Parser\XmlParser.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Template\collection.vm"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Template\config_entities.vm"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Template\config_entity.vm"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Template\config_sqlentities.vm"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Template\config_sqlentity.vm"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Template\DAO.vm"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Template\dataobject.vm"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Template\dtg_csharp_library.vm"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Template\dtg_java_library.vm"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Template\enum.vm"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Template\enum_sql_data.vm"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Template\EnumTest.vm"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Template\header.vm"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Template\sql_delete.vm"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Template\sql_insert.vm"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Template\sql_table.vm"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Template\sql_update.vm"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Template\sql_view.vm"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\SanityTest.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Test\Sanity\sanity.xml"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "Test\Sanity\sanity-datamap.xml"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "Test\Sanity\DAO\GolferDAO.cs.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\DAO\OrganizerDAO.cs.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\DAO\ParticipantDAO.cs.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\DAO\PaymentDAO.cs.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\DAO\TeamDAO.cs.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\DAO\TestSqlEntitiesDAO.cs.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\DAO\TournamentDAO.cs.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\DAO\TournamentFeeDAO.cs.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\DataObject\AddressData.cs.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\DataObject\ALaCarteItemCollection.cs.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\DataObject\ALaCarteItemData.cs.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\DataObject\ContactData.cs.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\DataObject\CreditCardData.cs.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\DataObject\FlightData.cs.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\DataObject\GolferData.cs.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\DataObject\LocationData.cs.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\DataObject\NotificationData.cs.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\DataObject\OrganizationData.cs.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\DataObject\OrganizerData.cs.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\DataObject\PairingData.cs.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\DataObject\ParticipantCollection.cs.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\DataObject\ParticipantData.cs.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\DataObject\PaymentData.cs.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\DataObject\PrizeData.cs.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\DataObject\ProfileData.cs.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\DataObject\RoundData.cs.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\DataObject\ScorecardData.cs.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\DataObject\SponsorData.cs.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\DataObject\TeamCollection.cs.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\DataObject\TeamData.cs.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\DataObject\TestSqlEntitiesData.cs.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\DataObject\TournamentData.cs.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\DataObject\TournamentFeeCollection.cs.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\DataObject\TournamentFeeData.cs.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\DataObject\WaitListData.cs.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\Sql\data\FunctionEnum.data.sql.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\Sql\data\GolferStatusEnum.data.sql.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\Sql\proc\spGolfer_Delete.proc.sql.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\Sql\proc\spGolfer_Insert.proc.sql.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\Sql\proc\spGolfer_Update.proc.sql.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\Sql\proc\spOrganizer_Delete.proc.sql.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\Sql\proc\spOrganizer_Insert.proc.sql.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\Sql\proc\spOrganizer_Update.proc.sql.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\Sql\proc\spParticipant_Delete.proc.sql.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\Sql\proc\spParticipant_Insert.proc.sql.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\Sql\proc\spParticipant_Update.proc.sql.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\Sql\proc\spPayment_Delete.proc.sql.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\Sql\proc\spPayment_Insert.proc.sql.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\Sql\proc\spPayment_Update.proc.sql.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\Sql\proc\spTeam_Delete.proc.sql.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\Sql\proc\spTeam_Insert.proc.sql.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\Sql\proc\spTeam_Update.proc.sql.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\Sql\proc\spTestSqlEntities_Delete.proc.sql.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\Sql\proc\spTestSqlEntities_Insert.proc.sql.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\Sql\proc\spTestSqlEntities_Update.proc.sql.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\Sql\proc\spTournament_Delete.proc.sql.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\Sql\proc\spTournament_Insert.proc.sql.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\Sql\proc\spTournament_Update.proc.sql.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\Sql\proc\spTournamentFee_Delete.proc.sql.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\Sql\proc\spTournamentFee_Insert.proc.sql.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\Sql\proc\spTournamentFee_Update.proc.sql.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\Sql\table\Golfer.table.sql.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\Sql\table\Organizer.table.sql.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\Sql\table\Participant.table.sql.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\Sql\table\Payment.table.sql.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\Sql\table\Team.table.sql.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\Sql\table\TestSqlEntities.table.sql.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\Sql\table\Tournament.table.sql.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\Sql\table\TournamentFee.table.sql.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\Sql\view\vwGolfer.view.sql.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\Sql\view\vwOrganizer.view.sql.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\Sql\view\vwPayment.view.sql.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\Sql\view\vwTeam.view.sql.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\Sql\view\vwTestSqlEntities.view.sql.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\Sql\view\vwTournamentFee.view.sql.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\Test\CreditCardTypeEnumTest.cs.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\Test\ExpMonthEnumTest.cs.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\Test\ExpYearEnumTest.cs.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\Test\GolferStatusEnumTest.cs.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\Test\PaymentStatusEnumTest.cs.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\Test\TeamSizeEnumTest.cs.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\Test\TeamStatusEnumTest.cs.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\Test\TournamentFormatEnumTest.cs.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\Test\USStateEnumTest.cs.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\Types\CreditCardTypeEnum.cs.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\Types\ExpMonthEnum.cs.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\Types\ExpYearEnum.cs.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\Types\GolferStatusEnum.cs.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\Types\PaymentStatusEnum.cs.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\Types\TeamSizeEnum.cs.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\Types\TeamStatusEnum.cs.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\Types\TournamentFormatEnum.cs.cmp"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Test\Sanity\Types\USStateEnum.cs.cmp"
-                    BuildAction = "None"
-                />
-            </Include>
-        </Files>
-    </CSHARP>
-</VisualStudioProject>
-
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+    <ProjectType>Local</ProjectType>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{715E64DD-2DAD-4DA8-ACC5-2BAEBA573487}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ApplicationIcon>
+    </ApplicationIcon>
+    <AssemblyKeyContainerName>
+    </AssemblyKeyContainerName>
+    <AssemblyName>Spring2.DataTierGenerator.Beta</AssemblyName>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+    <DefaultClientScript>JScript</DefaultClientScript>
+    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+    <DefaultTargetSchema>IE50</DefaultTargetSchema>
+    <DelaySign>false</DelaySign>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Spring2.DataTierGenerator</RootNamespace>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <StartupObject>
+    </StartupObject>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>2.0</OldToolsVersion>
+    <PublishUrl>http://localhost/Spring2.DataTierGenerator.Beta/</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Web</InstallFrom>
+    <UpdateEnabled>true</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>true</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>..\..\..\build\Beta\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>false</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>none</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="nunit.framework">
+      <Name>nunit.framework</Name>
+      <HintPath>..\..\..\lib\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="Spring2.Core">
+      <Name>Spring2.Core</Name>
+      <HintPath>..\..\..\lib\Spring2.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="System">
+      <Name>System</Name>
+    </Reference>
+    <Reference Include="System.Data">
+      <Name>System.Data</Name>
+    </Reference>
+    <Reference Include="System.Xml">
+      <Name>System.XML</Name>
+    </Reference>
+    <ProjectReference Include="..\..\Spring2.DataTierGenerator.csproj">
+      <Name>Spring2.DataTierGenerator</Name>
+      <Project>{8BE555A1-8BBA-4CF7-9B4A-6BBEF7E20FA8}</Project>
+      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="AssemblyVersionInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Configuration.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ConfigurationData.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Element\ArgumentElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Element\CheckConstraintElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Element\CollectionElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Element\ColumnElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Element\ColumnMapElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Element\ConfigurationElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Element\ConstraintElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Element\DatabaseElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Element\DataMapElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Element\ElementSkeleton.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Element\EntityElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Element\EnumElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Element\EnumValueElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Element\ExcludeElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Element\FinderElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Element\ForeignKeyConstraintElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Element\GeneratorElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Element\IncludeElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Element\IndexElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Element\ParameterElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Element\PrimaryKeyConstraintElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Element\PropertyElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Element\RootElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Element\SqlElementSkeleton.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Element\SqlEntityData.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Element\SqlEntityElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Element\SqlTypeElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Element\TaskElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Element\ToolElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Element\TypeElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Element\UniqueConstraintElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Element\ViewElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Parser\AbstractParser.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Parser\DatabaseCompareParser.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Parser\DatabaseParser.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Parser\ParserValidationArgs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Parser\ParserValidationDelegate.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Parser\ParserValidationMessage.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Parser\ParserValidationSeverity.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Parser\XmlParser.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Test\SanityTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Content Include="config.xsd">
+      <SubType>
+      </SubType>
+    </Content>
+    <Content Include="Test\Sanity\sanity-datamap.xml" />
+    <Content Include="Test\Sanity\sanity.xml" />
+    <None Include="Template\collection.vm" />
+    <None Include="Template\config_entities.vm" />
+    <None Include="Template\config_entity.vm" />
+    <None Include="Template\config_sqlentities.vm" />
+    <None Include="Template\config_sqlentity.vm" />
+    <None Include="Template\DAO.vm" />
+    <None Include="Template\dataobject.vm" />
+    <None Include="Template\dtg_csharp_library.vm" />
+    <None Include="Template\dtg_java_library.vm" />
+    <None Include="Template\enum.vm" />
+    <None Include="Template\EnumTest.vm" />
+    <None Include="Template\enum_sql_data.vm" />
+    <None Include="Template\header.vm" />
+    <None Include="Template\sql_delete.vm" />
+    <None Include="Template\sql_insert.vm" />
+    <None Include="Template\sql_table.vm" />
+    <None Include="Template\sql_update.vm" />
+    <None Include="Template\sql_view.vm" />
+    <None Include="Test\Sanity\DAO\GolferDAO.cs.cmp" />
+    <None Include="Test\Sanity\DAO\OrganizerDAO.cs.cmp" />
+    <None Include="Test\Sanity\DAO\ParticipantDAO.cs.cmp" />
+    <None Include="Test\Sanity\DAO\PaymentDAO.cs.cmp" />
+    <None Include="Test\Sanity\DAO\TeamDAO.cs.cmp" />
+    <None Include="Test\Sanity\DAO\TestSqlEntitiesDAO.cs.cmp" />
+    <None Include="Test\Sanity\DAO\TournamentDAO.cs.cmp" />
+    <None Include="Test\Sanity\DAO\TournamentFeeDAO.cs.cmp" />
+    <None Include="Test\Sanity\DataObject\AddressData.cs.cmp" />
+    <None Include="Test\Sanity\DataObject\ALaCarteItemCollection.cs.cmp" />
+    <None Include="Test\Sanity\DataObject\ALaCarteItemData.cs.cmp" />
+    <None Include="Test\Sanity\DataObject\ContactData.cs.cmp" />
+    <None Include="Test\Sanity\DataObject\CreditCardData.cs.cmp" />
+    <None Include="Test\Sanity\DataObject\FlightData.cs.cmp" />
+    <None Include="Test\Sanity\DataObject\GolferData.cs.cmp" />
+    <None Include="Test\Sanity\DataObject\LocationData.cs.cmp" />
+    <None Include="Test\Sanity\DataObject\NotificationData.cs.cmp" />
+    <None Include="Test\Sanity\DataObject\OrganizationData.cs.cmp" />
+    <None Include="Test\Sanity\DataObject\OrganizerData.cs.cmp" />
+    <None Include="Test\Sanity\DataObject\PairingData.cs.cmp" />
+    <None Include="Test\Sanity\DataObject\ParticipantCollection.cs.cmp" />
+    <None Include="Test\Sanity\DataObject\ParticipantData.cs.cmp" />
+    <None Include="Test\Sanity\DataObject\PaymentData.cs.cmp" />
+    <None Include="Test\Sanity\DataObject\PrizeData.cs.cmp" />
+    <None Include="Test\Sanity\DataObject\ProfileData.cs.cmp" />
+    <None Include="Test\Sanity\DataObject\RoundData.cs.cmp" />
+    <None Include="Test\Sanity\DataObject\ScorecardData.cs.cmp" />
+    <None Include="Test\Sanity\DataObject\SponsorData.cs.cmp" />
+    <None Include="Test\Sanity\DataObject\TeamCollection.cs.cmp" />
+    <None Include="Test\Sanity\DataObject\TeamData.cs.cmp" />
+    <None Include="Test\Sanity\DataObject\TestSqlEntitiesData.cs.cmp" />
+    <None Include="Test\Sanity\DataObject\TournamentData.cs.cmp" />
+    <None Include="Test\Sanity\DataObject\TournamentFeeCollection.cs.cmp" />
+    <None Include="Test\Sanity\DataObject\TournamentFeeData.cs.cmp" />
+    <None Include="Test\Sanity\DataObject\WaitListData.cs.cmp" />
+    <None Include="Test\Sanity\Sql\data\FunctionEnum.data.sql.cmp" />
+    <None Include="Test\Sanity\Sql\data\GolferStatusEnum.data.sql.cmp" />
+    <None Include="Test\Sanity\Sql\proc\spGolfer_Delete.proc.sql.cmp" />
+    <None Include="Test\Sanity\Sql\proc\spGolfer_Insert.proc.sql.cmp" />
+    <None Include="Test\Sanity\Sql\proc\spGolfer_Update.proc.sql.cmp" />
+    <None Include="Test\Sanity\Sql\proc\spOrganizer_Delete.proc.sql.cmp" />
+    <None Include="Test\Sanity\Sql\proc\spOrganizer_Insert.proc.sql.cmp" />
+    <None Include="Test\Sanity\Sql\proc\spOrganizer_Update.proc.sql.cmp" />
+    <None Include="Test\Sanity\Sql\proc\spParticipant_Delete.proc.sql.cmp" />
+    <None Include="Test\Sanity\Sql\proc\spParticipant_Insert.proc.sql.cmp" />
+    <None Include="Test\Sanity\Sql\proc\spParticipant_Update.proc.sql.cmp" />
+    <None Include="Test\Sanity\Sql\proc\spPayment_Delete.proc.sql.cmp" />
+    <None Include="Test\Sanity\Sql\proc\spPayment_Insert.proc.sql.cmp" />
+    <None Include="Test\Sanity\Sql\proc\spPayment_Update.proc.sql.cmp" />
+    <None Include="Test\Sanity\Sql\proc\spTeam_Delete.proc.sql.cmp" />
+    <None Include="Test\Sanity\Sql\proc\spTeam_Insert.proc.sql.cmp" />
+    <None Include="Test\Sanity\Sql\proc\spTeam_Update.proc.sql.cmp" />
+    <None Include="Test\Sanity\Sql\proc\spTestSqlEntities_Delete.proc.sql.cmp" />
+    <None Include="Test\Sanity\Sql\proc\spTestSqlEntities_Insert.proc.sql.cmp" />
+    <None Include="Test\Sanity\Sql\proc\spTestSqlEntities_Update.proc.sql.cmp" />
+    <None Include="Test\Sanity\Sql\proc\spTournamentFee_Delete.proc.sql.cmp" />
+    <None Include="Test\Sanity\Sql\proc\spTournamentFee_Insert.proc.sql.cmp" />
+    <None Include="Test\Sanity\Sql\proc\spTournamentFee_Update.proc.sql.cmp" />
+    <None Include="Test\Sanity\Sql\proc\spTournament_Delete.proc.sql.cmp" />
+    <None Include="Test\Sanity\Sql\proc\spTournament_Insert.proc.sql.cmp" />
+    <None Include="Test\Sanity\Sql\proc\spTournament_Update.proc.sql.cmp" />
+    <None Include="Test\Sanity\Sql\table\Golfer.table.sql.cmp" />
+    <None Include="Test\Sanity\Sql\table\Organizer.table.sql.cmp" />
+    <None Include="Test\Sanity\Sql\table\Participant.table.sql.cmp" />
+    <None Include="Test\Sanity\Sql\table\Payment.table.sql.cmp" />
+    <None Include="Test\Sanity\Sql\table\Team.table.sql.cmp" />
+    <None Include="Test\Sanity\Sql\table\TestSqlEntities.table.sql.cmp" />
+    <None Include="Test\Sanity\Sql\table\Tournament.table.sql.cmp" />
+    <None Include="Test\Sanity\Sql\table\TournamentFee.table.sql.cmp" />
+    <None Include="Test\Sanity\Sql\view\vwGolfer.view.sql.cmp" />
+    <None Include="Test\Sanity\Sql\view\vwOrganizer.view.sql.cmp" />
+    <None Include="Test\Sanity\Sql\view\vwPayment.view.sql.cmp" />
+    <None Include="Test\Sanity\Sql\view\vwTeam.view.sql.cmp" />
+    <None Include="Test\Sanity\Sql\view\vwTestSqlEntities.view.sql.cmp" />
+    <None Include="Test\Sanity\Sql\view\vwTournamentFee.view.sql.cmp" />
+    <None Include="Test\Sanity\Test\CreditCardTypeEnumTest.cs.cmp" />
+    <None Include="Test\Sanity\Test\ExpMonthEnumTest.cs.cmp" />
+    <None Include="Test\Sanity\Test\ExpYearEnumTest.cs.cmp" />
+    <None Include="Test\Sanity\Test\GolferStatusEnumTest.cs.cmp" />
+    <None Include="Test\Sanity\Test\PaymentStatusEnumTest.cs.cmp" />
+    <None Include="Test\Sanity\Test\TeamSizeEnumTest.cs.cmp" />
+    <None Include="Test\Sanity\Test\TeamStatusEnumTest.cs.cmp" />
+    <None Include="Test\Sanity\Test\TournamentFormatEnumTest.cs.cmp" />
+    <None Include="Test\Sanity\Test\USStateEnumTest.cs.cmp" />
+    <None Include="Test\Sanity\Types\CreditCardTypeEnum.cs.cmp" />
+    <None Include="Test\Sanity\Types\ExpMonthEnum.cs.cmp" />
+    <None Include="Test\Sanity\Types\ExpYearEnum.cs.cmp" />
+    <None Include="Test\Sanity\Types\GolferStatusEnum.cs.cmp" />
+    <None Include="Test\Sanity\Types\PaymentStatusEnum.cs.cmp" />
+    <None Include="Test\Sanity\Types\TeamSizeEnum.cs.cmp" />
+    <None Include="Test\Sanity\Types\TeamStatusEnum.cs.cmp" />
+    <None Include="Test\Sanity\Types\TournamentFormatEnum.cs.cmp" />
+    <None Include="Test\Sanity\Types\USStateEnum.cs.cmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+</Project>
