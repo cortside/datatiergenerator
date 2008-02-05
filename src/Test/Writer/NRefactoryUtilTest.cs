@@ -225,6 +225,18 @@ namespace Test {
 }
 ";
 
+	private static readonly string CODE11 = @"using System;
+namespace Test {
+    class MainClass {
+
+	#region some region
+	public void Foo() {
+	}
+	#endregion
+    }
+}
+";
+
 	#endregion
 
 	[Test]
@@ -331,6 +343,12 @@ namespace Test {
 	public void ShouldRemoveGeneratedMethods() {
 	    String output = NRefactoryUtil.Merge(CODE10, "");
 	    Assert.AreEqual(CODE10_OUTPUT, output, output);
+	}
+
+	[Test]
+	public void ShouldKeepRegion() {
+	    String output = NRefactoryUtil.Merge("", CODE11);
+	    Assert.AreEqual(CODE11, output, output);
 	}
 
     }

@@ -56,7 +56,7 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 	}
 
 	public void Merge(SourceUnit rightUnit) {
-	    RemoveGeneratedMembers(this.unit.Children);
+	    RemoveGeneratedMembers(rightUnit.unit.Children);
 
 	    foreach (INode child in rightUnit.unit.Children) {
 		// need to have a wrapper for the CompilationUnit that has
@@ -289,13 +289,21 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 
 	private void MergeMember(List<INode> collection, MemberNode child) {
 	    Boolean add = true;
+	    Boolean replace = false;
+	    Int32 index = -1;
 	    foreach (INode node in collection) {
 		if (node is MemberNode) {
 		    MemberNode element = node as MemberNode;
 		    if (element.Name == child.Name) {
 			add = false;
+		    	replace = true;
+		    	index = collection.IndexOf(element);
 		    }
 		}
+	    }
+	    if (replace) {
+		collection.RemoveAt(index);
+		collection.Insert(index, child);
 	    }
 	    if (add) {
 		collection.Add(child);

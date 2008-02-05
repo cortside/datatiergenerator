@@ -111,7 +111,26 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 	    using (SpecialNodesUserDataInserter.Install(specials, outputVisitor)) {
 		unit.AcceptVisitor(outputVisitor, null);
 	    }
+
+	    List<ISpecial> collectedSpecials = new List<ISpecial>();
+	    CollectSpecials(collectedSpecials, unit.Children);
+
+	    if (collectedSpecials.Count != specials.Count) {
+		Console.Out.WriteLine(collectedSpecials.Count);
+		Console.Out.WriteLine(specials.Count);
+
+	    }
 	}
 
+    	private static void CollectSpecials(List<ISpecial> specials, List<INode> children) {
+    	    foreach(INode node in children) {
+		if (node.UserData != null && node.UserData is SpecialsContainer) {
+		    SpecialsContainer container = node.UserData as SpecialsContainer;
+		    specials.AddRange(container.NodeStart);
+		    specials.AddRange(container.NodeEnd);
+		} 	
+    		CollectSpecials(specials, node.Children);
+       	    }
+    	}
     }
 }

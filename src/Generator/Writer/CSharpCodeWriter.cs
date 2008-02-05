@@ -83,7 +83,7 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 		    sr.Close();
 
 		    //String mergedContent = unit1.Generate();
-		    String mergedContent = NRefactoryUtil.Merge(exitingContents, contents);
+		    String mergedContent = NRefactoryUtil.Merge(contents, exitingContents);
 
 		    // only write out if the formatted contents of both are different (avoids the "DTG reformatting" commit messages, at least some of the time)
 		    if (!mergedContent.Equals(NRefactoryUtil.FixSourceFormatting(exitingContents))) {
