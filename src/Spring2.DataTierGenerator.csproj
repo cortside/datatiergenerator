@@ -93,7 +93,10 @@
       <Name>Commons</Name>
       <HintPath>..\lib\Commons.dll</HintPath>
     </Reference>
-    <Reference Include="ICSharpCode.NRefactory, Version=3.0.0.2871, Culture=neutral, PublicKeyToken=efe927acf176eea2, processorArchitecture=MSIL" />
+    <Reference Include="ICSharpCode.NRefactory, Version=3.0.0.2871, Culture=neutral, PublicKeyToken=efe927acf176eea2, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\ICSharpCode.NRefactory.dll</HintPath>
+    </Reference>
     <Reference Include="NVelocity">
       <Name>NVelocity</Name>
       <HintPath>..\lib\NVelocity.dll</HintPath>
