@@ -281,6 +281,10 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 		    MergeMember(left.Children, node as MemberNode);
 		} else if (node is FieldDeclaration) {
 		    MergeField(left.Children, node as FieldDeclaration);
+		} else if (node is ConstructorDeclaration) {
+		    System.Diagnostics.Debug.WriteLine(node.GetType());
+		} else if (node is TypeDeclaration) { // subclasses, for example
+		    MergeType(left.Children, node as TypeDeclaration);
 		} else {
 		    System.Diagnostics.Debug.WriteLine(node.GetType());
 		}
@@ -292,12 +296,58 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 	    Boolean replace = false;
 	    Int32 index = -1;
 	    foreach (INode node in collection) {
+
 		if (node is MemberNode) {
 		    MemberNode element = node as MemberNode;
-		    if (element.Name == child.Name) {
-			add = false;
-		    	replace = true;
-		    	index = collection.IndexOf(element);
+
+		    // Check for duplicates as MemberNode (typical case immediately below, Method-specific checks after)
+		    if (element.Name == child.Name && element.InterfaceImplementations.Count == child.InterfaceImplementations.Count) {
+			bool elementAndChildAreTheSame = true; // assume it is true unless we find proof otherwise
+
+			// verify that the interface implementations (if any) are the same
+			foreach(InterfaceImplementation elementInterfaceImpl in element.InterfaceImplementations){
+			    // find the same interfaceImple value in child
+			    Type elementType = elementInterfaceImpl.GetType();
+			    bool bThisInterfaceIsFound = false;
+			    foreach(InterfaceImplementation childInterfaceImpl in child.InterfaceImplementations){
+				if (childInterfaceImpl.GetType() == elementType) {
+				    bThisInterfaceIsFound = true;
+				    break;
+				}
+			    }
+			    elementAndChildAreTheSame &= bThisInterfaceIsFound;
+			    if(!elementAndChildAreTheSame){
+				break;
+			    }
+			}
+
+
+			// Check for duplicates as MemberNode, including compare of parameter lists
+			if(elementAndChildAreTheSame && element is MethodDeclaration) {
+			    MethodDeclaration elementAsMethod = element as MethodDeclaration;
+			    MethodDeclaration childAsMethod = child as MethodDeclaration;
+			    elementAndChildAreTheSame &= elementAsMethod.Parameters.Count == childAsMethod.Parameters.Count;
+
+			    // method name and parameter count are the same, so compare specific parameters
+			    if(elementAndChildAreTheSame){
+				int elementParamCount = element.Parameters.Count;
+				for(int curElementParamPos = 0; curElementParamPos < elementParamCount; curElementParamPos++) {
+				    ParameterDeclarationExpression curElementParam = elementAsMethod.Parameters[curElementParamPos];
+				    ParameterDeclarationExpression curChildParam = childAsMethod.Parameters[curElementParamPos];
+				    elementAndChildAreTheSame &= (curChildParam.ParameterName == curElementParam.ParameterName);
+				    elementAndChildAreTheSame &= (curChildParam.GetType() == curElementParam.GetType());
+				    if(!elementAndChildAreTheSame) {
+					break;
+				    }
+				}
+			    }
+			}
+
+			if (elementAndChildAreTheSame) {
+			    add = false;
+			    replace = true;
+			    index = collection.IndexOf(element);
+			}
 		    }
 		}
 	    }
