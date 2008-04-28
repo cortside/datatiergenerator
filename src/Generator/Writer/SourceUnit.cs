@@ -259,6 +259,9 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 		    TypeDeclaration element = node as TypeDeclaration;
 		    if (element.Name == child.Name) {
 			add = false;
+			if (child.BaseTypes.Count > 0) {
+			    element.BaseTypes = child.BaseTypes; // any inheritance rules come from the original file
+			}
 			MergeMembers(element, child);
 		    }
 		}
@@ -282,12 +285,40 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 		} else if (node is FieldDeclaration) {
 		    MergeField(left.Children, node as FieldDeclaration);
 		} else if (node is ConstructorDeclaration) {
-		    System.Diagnostics.Debug.WriteLine(node.GetType());
+		    MergeConstructor(left.Children, node as ConstructorDeclaration);
 		} else if (node is TypeDeclaration) { // subclasses, for example
 		    MergeType(left.Children, node as TypeDeclaration);
 		} else {
 		    System.Diagnostics.Debug.WriteLine(node.GetType());
 		}
+	    }
+	}
+
+	private void MergeConstructor(List<INode> collection, ConstructorDeclaration child) {
+	    Boolean add = true;
+	    Int32 index = -1;
+	    foreach (INode node in collection) {
+		if (node is ConstructorDeclaration) {
+		    ConstructorDeclaration element = node as ConstructorDeclaration;
+		    bool paramsAreTheSame = IsParamListTheSame(element.Parameters, child.Parameters);
+		    bool modifySettingIsTheSame = ( element.Modifier == child.Modifier );
+
+		    // for this particular case, we accept an old, private constructor over the new, internal one, rather than both
+		    modifySettingIsTheSame |= ( element.Modifier == Modifiers.Internal && child.Modifier == Modifiers.Private );
+
+		    if ( (element.Name == child.Name) && (paramsAreTheSame) && modifySettingIsTheSame) {
+			index = collection.IndexOf(element);
+			add = false;
+			break;
+		    }
+		}
+	    }
+	    if (add) {
+		collection.Add(child);
+	    } else {
+		// need to get rid of the [Generate()] metadata
+		collection.RemoveAt(index);
+		collection.Insert(index, child);
 	    }
 	}
 
@@ -301,46 +332,31 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 		    MemberNode element = node as MemberNode;
 
 		    // Check for duplicates as MemberNode (typical case immediately below, Method-specific checks after)
-		    if (element.Name == child.Name && element.InterfaceImplementations.Count == child.InterfaceImplementations.Count) {
+		    if ( (element.Name == child.Name) && (element.InterfaceImplementations.Count == child.InterfaceImplementations.Count) ) {
 			bool elementAndChildAreTheSame = true; // assume it is true unless we find proof otherwise
 
 			// verify that the interface implementations (if any) are the same
-			foreach(InterfaceImplementation elementInterfaceImpl in element.InterfaceImplementations){
-			    // find the same interfaceImple value in child
-			    Type elementType = elementInterfaceImpl.GetType();
+			foreach (InterfaceImplementation elementInterfaceImpl in element.InterfaceImplementations) {
+			    // find the same interfaceImpl value in child
 			    bool bThisInterfaceIsFound = false;
-			    foreach(InterfaceImplementation childInterfaceImpl in child.InterfaceImplementations){
-				if (childInterfaceImpl.GetType() == elementType) {
+			    foreach (InterfaceImplementation childInterfaceImpl in child.InterfaceImplementations) {
+				if (childInterfaceImpl.InterfaceType.Type == elementInterfaceImpl.InterfaceType.Type) {
 				    bThisInterfaceIsFound = true;
 				    break;
 				}
 			    }
 			    elementAndChildAreTheSame &= bThisInterfaceIsFound;
-			    if(!elementAndChildAreTheSame){
+			    if (!elementAndChildAreTheSame) {
 				break;
 			    }
 			}
 
 
 			// Check for duplicates as MemberNode, including compare of parameter lists
-			if(elementAndChildAreTheSame && element is MethodDeclaration) {
+			if (elementAndChildAreTheSame && element is MethodDeclaration) {
 			    MethodDeclaration elementAsMethod = element as MethodDeclaration;
 			    MethodDeclaration childAsMethod = child as MethodDeclaration;
-			    elementAndChildAreTheSame &= elementAsMethod.Parameters.Count == childAsMethod.Parameters.Count;
-
-			    // method name and parameter count are the same, so compare specific parameters
-			    if(elementAndChildAreTheSame){
-				int elementParamCount = element.Parameters.Count;
-				for(int curElementParamPos = 0; curElementParamPos < elementParamCount; curElementParamPos++) {
-				    ParameterDeclarationExpression curElementParam = elementAsMethod.Parameters[curElementParamPos];
-				    ParameterDeclarationExpression curChildParam = childAsMethod.Parameters[curElementParamPos];
-				    elementAndChildAreTheSame &= (curChildParam.ParameterName == curElementParam.ParameterName);
-				    elementAndChildAreTheSame &= (curChildParam.GetType() == curElementParam.GetType());
-				    if(!elementAndChildAreTheSame) {
-					break;
-				    }
-				}
-			    }
+			    elementAndChildAreTheSame &= IsParamListTheSame(elementAsMethod.Parameters, child.Parameters);
 			}
 
 			if (elementAndChildAreTheSame) {
@@ -350,6 +366,7 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 			}
 		    }
 		}
+		
 	    }
 	    if (replace) {
 		collection.RemoveAt(index);
@@ -362,17 +379,41 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 
 	private void MergeField(List<INode> collection, FieldDeclaration child) {
 	    Boolean add = true;
+	    Int32 index = -1;
 	    foreach (INode node in collection) {
 		if (node is FieldDeclaration) {
 		    FieldDeclaration element = node as FieldDeclaration;
 		    if (element.Fields[0].Name == child.Fields[0].Name) {
+			index = collection.IndexOf(element);
 			add = false;
+			break;
 		    }
 		}
 	    }
 	    if (add) {
 		collection.Add(child);
+	    } else {
+		// need to get rid of the [Generate()] metadata
+		collection.RemoveAt(index);
+		collection.Insert(index, child);
 	    }
+	}
+
+	private bool IsParamListTheSame(List<ParameterDeclarationExpression> params1, List<ParameterDeclarationExpression> params2) {
+	    int params1Count = params1.Count;
+	    int params2Count = params2.Count;
+	    bool paramsAreTheSame = (params1Count == params2Count);
+	    if (paramsAreTheSame) {
+		for (int curParamPos = 0; curParamPos < params1Count; curParamPos++) {
+		    ParameterDeclarationExpression curParam1 = params1[curParamPos];
+		    ParameterDeclarationExpression curParam2 = params2[curParamPos];
+		    paramsAreTheSame &= (curParam2.TypeReference.Type == curParam1.TypeReference.Type);
+		    if (!paramsAreTheSame) {
+			break;
+		    }
+		}
+	    }
+	    return paramsAreTheSame;
 	}
 
     }
