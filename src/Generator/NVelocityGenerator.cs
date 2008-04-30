@@ -154,11 +154,15 @@ namespace Spring2.DataTierGenerator.Generator {
 			Boolean changed = w.Write(file, styledContent);
 			timer.Stop();
 			writerTicks += timer.TimeSpan.Ticks;
-			
+
 			if (changed) {
 			    WriteToLog(w.Log);
 			    w.Log.Clear();
 			    WriteToLog("generating " + file.FullName);
+
+			    // touch the backup file so the timestamp is later than the newly generated file
+			    FileInfo backupFile = new FileInfo(w.BackupFilePath);
+			    backupFile.LastWriteTime = DateTime.Now;
 			} 
 		    } catch(Exception ex) { 
 			WriteToLog("error generating " + file.FullName + " -- " + ex.Message);

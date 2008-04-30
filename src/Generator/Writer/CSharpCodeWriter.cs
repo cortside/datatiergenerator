@@ -66,7 +66,7 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 		    Log.Add("Error in File Name " + file.Name + ":" + ex.ToString());
 		    return false;
 		}
-	    } else {
+	    } else if(HasFileChanged(file)){
 		//FileStream fs = null;
 		//CodeUnit unit1 = null;
 		//CodeUnit unit2 = null;
@@ -120,6 +120,25 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 
 		return false;
 	    }
+
+	    else {
+		return false;
+	    }
+	}
+
+	private bool HasFileChanged(FileInfo file) {
+	    DirectoryInfo curDir = file.Directory;
+	    FileInfo[] backupFiles = curDir.GetFiles(Path.GetFileNameWithoutExtension(file.Name) + ".*.cs~");
+	    DateTime mostRecentBackupTime = new DateTime(1900,1,1);
+
+	    foreach (FileInfo backupFile in backupFiles) {
+		if (backupFile.LastWriteTime > mostRecentBackupTime) {
+		    mostRecentBackupTime = backupFile.LastWriteTime;
+		}
+	    }
+
+	    bool hasFileChanged = backupFiles.Length == 0 || file.LastWriteTime > mostRecentBackupTime;
+	    return hasFileChanged;
 	}
 
     }
