@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1.1 $</version>
+//     <version>$Revision: 1.2 $</version>
 // </file>
 
 using System;
@@ -29,31 +29,57 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 
     public class SpecialOutputVisitor : ISpecialVisitor {
 	readonly IOutputFormatter formatter;
+	private SpecialsContainer startAndEndContainer;
 
 	public SpecialOutputVisitor(IOutputFormatter formatter) {
 	    this.formatter = formatter;
+	    startAndEndContainer = new SpecialsContainer();
 	}
 
 	public bool ForceWriteInPreviousLine;
 
 	public object Visit(ISpecial special, object data) {
-	    Console.WriteLine("Warning: SpecialOutputVisitor.Visit(ISpecial) called with " + special);
+	    if (!specialHasBeenHandled(special)) {
+		Console.WriteLine("Warning: SpecialOutputVisitor.Visit(ISpecial) called with " + special);
+		considerSpecialAsHandled(special);
+	    }
 	    return data;
 	}
 
 	public object Visit(BlankLine special, object data) {
-	    formatter.PrintBlankLine(ForceWriteInPreviousLine);
+	    if (!specialHasBeenHandled(special)) {
+		formatter.PrintBlankLine(ForceWriteInPreviousLine);
+		considerSpecialAsHandled(special);
+	    }
 	    return data;
 	}
 
 	public object Visit(Comment special, object data) {
-	    formatter.PrintComment(special, ForceWriteInPreviousLine);
+	    if (!specialHasBeenHandled(special)) {
+		formatter.PrintComment(special, ForceWriteInPreviousLine);
+		considerSpecialAsHandled(special);
+	    }
 	    return data;
 	}
 
 	public object Visit(PreprocessingDirective special, object data) {
-	    formatter.PrintPreprocessingDirective(special, ForceWriteInPreviousLine);
+	    if (!specialHasBeenHandled(special)) {
+		formatter.PrintPreprocessingDirective(special, ForceWriteInPreviousLine);
+		considerSpecialAsHandled(special);
+	    }
 	    return data;
+	}
+
+	private bool specialHasBeenHandled(ISpecial special) {
+	    int posOfStart = startAndEndContainer.NodeStart.IndexOf(special);
+	    int posOfEnd = startAndEndContainer.NodeEnd.IndexOf(special);
+	    bool alreadyHandled = (posOfStart == posOfEnd) && (posOfStart != -1);
+	    return alreadyHandled;
+	}
+
+	private void considerSpecialAsHandled(ISpecial special) {
+	    startAndEndContainer.NodeStart.Add(special);
+	    startAndEndContainer.NodeEnd.Add(special);
 	}
     }
 

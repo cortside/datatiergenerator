@@ -66,7 +66,7 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 		    Log.Add("Error in File Name " + file.Name + ":" + ex.ToString());
 		    return false;
 		}
-	    } else if(HasFileChanged(file)){
+	    } else {
 		//FileStream fs = null;
 		//CodeUnit unit1 = null;
 		//CodeUnit unit2 = null;
@@ -82,31 +82,41 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 		    String exitingContents = sr.ReadToEnd();
 		    sr.Close();
 
-		    //String mergedContent = unit1.Generate();
 		    String mergedContent = NRefactoryUtil.Merge(contents, exitingContents);
 
-		    // only write out if the formatted contents of both are different (avoids the "DTG reformatting" commit messages, at least some of the time)
-		    if (!mergedContent.Equals(NRefactoryUtil.FixSourceFormatting(exitingContents))) {
-			// make backup
-			if (file.Exists && backupFilePath != "") {
-			    FileInfo backup = new FileInfo(backupFilePath);
-			    if (!backup.Directory.Exists) {
-				backup.Directory.Create();
-			    }
-			    if (File.Exists(backupFilePath) && (File.GetAttributes(backupFilePath) & FileAttributes.ReadOnly) == FileAttributes.ReadOnly) 
-			    {
-				File.SetAttributes(backupFilePath, File.GetAttributes(backupFilePath) ^ FileAttributes.ReadOnly);
-			    }
-			    file.CopyTo(backupFilePath, true);
-			    if ((File.GetAttributes(backupFilePath) & FileAttributes.ReadOnly) == FileAttributes.ReadOnly) {
-				File.SetAttributes(backupFilePath, File.GetAttributes(backupFilePath) ^ FileAttributes.ReadOnly);
-			    }
-			}
+		    // determine whether anything has actually changed in the file
+		    bool fileHasChanged = false;
+		    String mergedContentIgnoreWhitespace = mergedContent.Replace("\r","").Replace("\n","").Replace("\t","").Replace(" ","");
+		    String exitingContentsIgnoreWhitespace = exitingContents.Replace("\r","").Replace("\n","").Replace("\t","").Replace(" ","");
+		    if( mergedContentIgnoreWhitespace != exitingContentsIgnoreWhitespace) {
+			fileHasChanged = true;
+		    }
 
-			StreamWriter writer = new StreamWriter(file.FullName, false);
-			writer.Write(mergedContent);
-			writer.Close();
-			return true;
+		    if (fileHasChanged) {
+			// only write out if the formatted contents of both are different (avoids the "DTG reformatting" commit messages, at least some of the time)
+			String fixedFormattingExitingContents = NRefactoryUtil.FixSourceFormatting(exitingContents);
+			String fixedFormattingMergedContents = NRefactoryUtil.FixSourceFormatting(mergedContent);
+			if (!fixedFormattingMergedContents.Equals(fixedFormattingExitingContents)) {
+			    // make backup
+			    if (file.Exists && backupFilePath != "") {
+				FileInfo backup = new FileInfo(backupFilePath);
+				if (!backup.Directory.Exists) {
+				    backup.Directory.Create();
+				}
+				if (File.Exists(backupFilePath) && (File.GetAttributes(backupFilePath) & FileAttributes.ReadOnly) == FileAttributes.ReadOnly) {
+				    File.SetAttributes(backupFilePath, File.GetAttributes(backupFilePath) ^ FileAttributes.ReadOnly);
+				}
+				file.CopyTo(backupFilePath, true);
+				if ((File.GetAttributes(backupFilePath) & FileAttributes.ReadOnly) == FileAttributes.ReadOnly) {
+				    File.SetAttributes(backupFilePath, File.GetAttributes(backupFilePath) ^ FileAttributes.ReadOnly);
+				}
+			    }
+
+			    StreamWriter writer = new StreamWriter(file.FullName, false);
+			    writer.Write(mergedContent);
+			    writer.Close();
+			    return true;
+			}
 		    }
 		} catch (Exception ex) {
 		    Console.Out.WriteLine("Error in File Name " + file.Name);
@@ -121,25 +131,8 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 		return false;
 	    }
 
-	    else {
-		return false;
-	    }
 	}
 
-	private bool HasFileChanged(FileInfo file) {
-	    DirectoryInfo curDir = file.Directory;
-	    FileInfo[] backupFiles = curDir.GetFiles(Path.GetFileNameWithoutExtension(file.Name) + ".*.cs~");
-	    DateTime mostRecentBackupTime = new DateTime(1900,1,1);
-
-	    foreach (FileInfo backupFile in backupFiles) {
-		if (backupFile.LastWriteTime > mostRecentBackupTime) {
-		    mostRecentBackupTime = backupFile.LastWriteTime;
-		}
-	    }
-
-	    bool hasFileChanged = backupFiles.Length == 0 || file.LastWriteTime > mostRecentBackupTime;
-	    return hasFileChanged;
-	}
 
     }
 }

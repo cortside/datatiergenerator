@@ -1,23 +1,5 @@
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{EDED8FD4-E378-4BCF-9837-01BFF20A6492}"
-	ProjectSection(SolutionItems) = preProject
-		collections.inc.xml = collections.inc.xml
-		config.inc.xml = config.inc.xml
-		config.xml = config.xml
-		databases.inc.xml = databases.inc.xml
-		bin\DataTierGenerator.log = bin\DataTierGenerator.log
-		dtg-config.xml = dtg-config.xml
-		entities.inc.xml = entities.inc.xml
-		enums.inc.xml = enums.inc.xml
-		golf.config.xml = golf.config.xml
-		project.config.xml = project.config.xml
-		seamless.config.xml = seamless.config.xml
-		sqltypes.inc.xml = sqltypes.inc.xml
-		ToDo.txt = ToDo.txt
-		types.inc.xml = types.inc.xml
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spring2.DataTierGenerator", "Spring2.DataTierGenerator.csproj", "{8BE555A1-8BBA-4CF7-9B4A-6BBEF7E20FA8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spring2.DataTierGenerator.Test", "Spring2.DataTierGenerator.Test.csproj", "{50037EF4-B0A4-4044-8638-E94A6D090CAB}"

@@ -40,7 +40,7 @@ namespace Spring2.DataTierGenerator.ConsoleRunner {
 		Console.Out.WriteLine(String.Empty.PadLeft(40,'='));
 
 		XmlDocument doc = new XmlDocument();
-		// while this might seem silly, extended ASCII chararcter encoding does not happen if just the filename 
+		// while this might seem silly, extended ASCII character encoding does not happen if just the filename 
 		// is passed to the Load method
 		StreamReader reader = file.OpenText();
 		doc.Load(reader);
@@ -59,7 +59,7 @@ namespace Spring2.DataTierGenerator.ConsoleRunner {
 		    if (parser.IsValid) {
 			IGenerator generator = null;
 			try {
-			    // locate and instanciate the Generator class specified by the parser
+			    // locate and instantiate the Generator class specified by the parser
 			    clazz = System.Type.GetType(parser.Generator, true);
 			    o = System.Activator.CreateInstance(clazz);
 			    if (o is IGenerator) {
@@ -68,7 +68,7 @@ namespace Spring2.DataTierGenerator.ConsoleRunner {
 				Console.Out.WriteLine("ERROR: class " + parser.Generator + " does not support IGenerator interface.\n");
 			    }
 			} catch (Exception ex) {
-			    Console.Out.WriteLine("ERROR: could not instanciate generator class " + parser.Generator + "\n" + ex);
+			    Console.Out.WriteLine("ERROR: could not instantiate generator class " + parser.Generator + "\n" + ex);
 			}
 
 			// if the generator is not null, generate
@@ -92,7 +92,7 @@ namespace Spring2.DataTierGenerator.ConsoleRunner {
 		Console.Out.WriteLine("Done :: " + DateTime.Now.ToString());
 		Console.Out.WriteLine(String.Empty.PadLeft(40,'='));
 	    } catch (Exception ex) {
-		Console.Out.WriteLine("An error occcurred while generating.\n\n" + ex.ToString());
+		Console.Out.WriteLine("An error occurred while generating.\n\n" + ex.ToString());
 	    }
 	}
 

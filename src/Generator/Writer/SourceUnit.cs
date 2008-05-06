@@ -352,7 +352,7 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 			}
 
 
-			// Check for duplicates as MemberNode, including compare of parameter lists
+			// Check for duplicates as MethodNode, including compare of parameter lists
 			if (elementAndChildAreTheSame && element is MethodDeclaration) {
 			    MethodDeclaration elementAsMethod = element as MethodDeclaration;
 			    MethodDeclaration childAsMethod = child as MethodDeclaration;
