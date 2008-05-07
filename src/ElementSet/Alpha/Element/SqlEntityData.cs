@@ -37,6 +37,7 @@ namespace Spring2.DataTierGenerator.Element {
 	protected static readonly String ALLOW_UPDATE_OF_PRIMARY_KEY = "allowupdateofprimarykey";
 	protected static readonly String COMMAND_TIMEOUT = "commandtimeout";
 	protected static readonly String SCRIPT_FOR_INDEXED_VIEWS = "scriptforindexedviews";
+	protected static readonly String AUDIT = "audit";
 			    
 	protected String key = "ConnectionString";
 	protected String server = String.Empty;
@@ -67,6 +68,7 @@ namespace Spring2.DataTierGenerator.Element {
 	protected Boolean autoDiscoverAttributes = true;
 	protected Int32 commandTimeout = 15;
 	protected Boolean scriptForIndexedViews = false;
+	protected Boolean audit = false;
 
 	public String Key {
 	    get { return this.key; }
@@ -209,6 +211,11 @@ namespace Spring2.DataTierGenerator.Element {
 	public Boolean ScriptForIndexedViews {
 	    get { return this.scriptForIndexedViews; }
 	    set { this.scriptForIndexedViews = value; }
+	}
+
+	public Boolean Audit {
+	    get { return this.audit; }
+	    set { this.audit = value; }
 	}
 
 	public String ConnectionString {

@@ -48,6 +48,7 @@ namespace Spring2.DataTierGenerator.Element {
 	    this.UseView = data.UseView;
 	    this.CommandTimeout = data.CommandTimeout;
 	    this.ScriptForIndexedViews = data.ScriptForIndexedViews;
+	    this.Audit = data.Audit;
 	}
 
 	public ArrayList SqlEntities {
@@ -87,6 +88,7 @@ namespace Spring2.DataTierGenerator.Element {
 			DatabaseElement databaseElement = new DatabaseElement();
 
 			databaseElement.Name = GetAttributeValue(databaseNode, NAME, databaseElement.Name);
+			databaseElement.Audit = Boolean.Parse(GetAttributeValue(databaseNode, AUDIT, databaseElement.Audit.ToString()));
 			databaseElement.SingleFile = Boolean.Parse(GetAttributeValue(databaseNode, SCRIPT_SINGLE_FILE, databaseElement.SingleFile.ToString()));
 			databaseElement.Server = GetAttributeValue(databaseNode, SERVER, databaseElement.Server);
 			databaseElement.Database = GetAttributeValue(databaseNode, DATABASE, databaseElement.Database);
@@ -137,6 +139,7 @@ namespace Spring2.DataTierGenerator.Element {
 		SqlEntityElement.ParseNodeAttributes(elements[0], defaults);
 	    }
 
+	    // loop through each 'database' tag in the xml file (ex: file=dtg-databases.xml)
 	    ArrayList list = new ArrayList();
 	    elements = doc.DocumentElement.GetElementsByTagName("database");
 	    foreach (XmlNode node in elements) {

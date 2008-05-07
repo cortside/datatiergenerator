@@ -177,6 +177,8 @@ namespace Spring2.DataTierGenerator.Element {
 
 	public static ArrayList ParseFromXml(DatabaseElement database, XmlNode databaseNode, Hashtable sqltypes, Hashtable types, ParserValidationDelegate vd) {
 	    ArrayList sqlentities = new ArrayList();
+
+	    //databaseNode.ChildNodes corresponds to each <sqlentity> entry in the databases xml file(s) (such as dtg-databases.xml)
 	    foreach (XmlNode node in databaseNode.ChildNodes) {
 		if (node.Name.Equals("sqlentity")) {
 		    SqlEntityElement sqlentity = new SqlEntityElement(database);
@@ -185,12 +187,15 @@ namespace Spring2.DataTierGenerator.Element {
 		    if (node.Attributes["view"] != null) {
 			sqlentity.View = node.Attributes["view"].Value;
 		    }
+		    if (node.Attributes["audit"] != null) {
+			sqlentity.Audit = Boolean.Parse(node.Attributes["audit"].Value);
+		    }
 		    sqlentity.Columns = ColumnElement.ParseFromXml(node, sqlentity, sqltypes, types, vd);
 		    sqlentity.Constraints = ConstraintElement.ParseFromXml(node, sqlentity, sqltypes, types, vd);
 		    sqlentity.Indexes = IndexElement.ParseFromXml(node, sqlentity, sqltypes, types, vd);
 
 		    // TODO: this is a hack as many things need to be restructured.  the Elements all need to be parsed first, then 
-		    // relationships and links need to be created.  Otherwise, the config file becomes order dependant.
+		    // relationships and links need to be created.  Otherwise, the config file becomes order dependent.
 		    DatabaseElement d = new DatabaseElement();
 		    d.SqlEntities = sqlentities;
 		    sqlentity.Views = ViewElement.ParseFromXml(node, d, sqlentity, sqltypes, types, vd);

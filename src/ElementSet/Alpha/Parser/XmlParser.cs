@@ -169,8 +169,8 @@ namespace Spring2.DataTierGenerator.Parser {
 		    settings.ValidationEventHandler += veh;
 		    XmlReader reader = XmlReader.Create(filename, settings);
 				
-		    // wait until the read is over, its occuring in a different thread - kinda like 
-		    // when your walking to get a cup of coffee and your mind is in Hawaii
+		    // wait until the read is over, it's occurring in a different thread - kinda like 
+		    // when you're walking to get a cup of coffee and your mind is in Hawaii
 		    while (reader.Read());
 		}
 	    } catch(UnauthorizedAccessException ex) {
