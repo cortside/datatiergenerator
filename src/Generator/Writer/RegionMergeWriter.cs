@@ -84,10 +84,17 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 	    } else {
 		output = text;
 	    }
-	    changed = !current.GetStringBuilder().ToString().Equals(output);
+	    // determine whether anything has actually changed in the file
+	    bool fileHasChanged = false;
+	    String mergedContentIgnoreWhitespace = output.Replace("\r", "").Replace("\n", "").Replace("\t", "").Replace(" ", "");
+	    String exitingContentsIgnoreWhitespace = current.GetStringBuilder().ToString().Replace("\r", "").Replace("\n", "").Replace("\t", "").Replace(" ", "");
+	    if (mergedContentIgnoreWhitespace != exitingContentsIgnoreWhitespace)
+	    {
+		fileHasChanged = true;
+	    }
 
 	    // Only write to the file if it has changed or does not exist.
-	    if (changed) {
+	    if (fileHasChanged) {
 		// make a backup of the current file if it exists
 		if (file.Exists && backupFilePath != "") {
 		    FileInfo backup = new FileInfo(backupFilePath);
