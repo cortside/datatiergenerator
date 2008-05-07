@@ -155,26 +155,23 @@ namespace Spring2.DataTierGenerator.Parser {
 	private void ValidateSchema(String filename) {
 	    try {
 		ValidationEventHandler veh = new ValidationEventHandler(SchemaValidationEventHandler);
-		System.IO.Stream s = this.GetType().Assembly.GetManifestResourceStream("config.xsd");
-		if (s == null) {
+		System.IO.Stream stream = this.GetType().Assembly.GetManifestResourceStream("config.xsd");
+		if (stream == null) {
 		    isValid=false;
 		    WriteToLog(ParserValidationArgs.NewError("unable to locate config.xsd as assembly resource").ToString());
 		} else {
-		    XmlSchema xsd = XmlSchema.Read(s, veh);
-		    s.Close();
+		    XmlSchema schema = XmlSchema.Read(stream, veh);
+		    stream.Close();
 
-		    XmlTextReader xml = XIncludeReader.GetXmlTextReader(filename);
-		    XmlValidatingReader vr = new XmlValidatingReader(xml);
-		    vr.Schemas.Add(xsd);
-		    vr.ValidationType = ValidationType.Schema;
-
-		    // and validation errors events go to...
-		    vr.ValidationEventHandler += veh;
+		    XmlReaderSettings settings = new XmlReaderSettings();
+		    settings.ValidationType = ValidationType.Schema;
+		    settings.Schemas.Add(schema);
+		    settings.ValidationEventHandler += veh;
+		    XmlReader reader = XmlReader.Create(filename, settings);
 				
 		    // wait until the read is over, its occuring in a different thread - kinda like 
 		    // when your walking to get a cup of coffee and your mind is in Hawaii
-		    while (vr.Read());
-		    vr.Close();
+		    while (reader.Read());
 		}
 	    } catch(UnauthorizedAccessException ex) {
 		//dont have access permission
