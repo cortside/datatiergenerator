@@ -11,13 +11,35 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 
     public class NRefactoryUtil {
 
-	public static String Merge(String content1, String content2) {
-	    SourceUnit unit1 = new SourceUnit(content1);
-	    SourceUnit unit2 = new SourceUnit(content2);
+	public static String Merge(String generatedContent, String existingContent) {
+            TypeReference.PrimitiveTypesCSharp.Clear();
+            TypeReference.PrimitiveTypesCSharp.Add("Boolean", "System.Boolean");
+            TypeReference.PrimitiveTypesCSharp.Add("Byte", "System.Byte");
+            TypeReference.PrimitiveTypesCSharp.Add("Char", "System.Char");
+            TypeReference.PrimitiveTypesCSharp.Add("Decimal", "System.Decimal");
+            TypeReference.PrimitiveTypesCSharp.Add("Double", "System.Double");
+            TypeReference.PrimitiveTypesCSharp.Add("Single", "System.Single");
+            TypeReference.PrimitiveTypesCSharp.Add("Int32", "System.Int32");
+            TypeReference.PrimitiveTypesCSharp.Add("Int64", "System.Int64");
+            TypeReference.PrimitiveTypesCSharp.Add("Object", "System.Object");
+            TypeReference.PrimitiveTypesCSharp.Add("SByte", "System.SByte");
+            TypeReference.PrimitiveTypesCSharp.Add("Int16", "System.Int16");
+            TypeReference.PrimitiveTypesCSharp.Add("String", "System.String");
+            TypeReference.PrimitiveTypesCSharp.Add("UInt32", "System.UInt32");
+            TypeReference.PrimitiveTypesCSharp.Add("UInt64", "System.UInt64");
+            TypeReference.PrimitiveTypesCSharp.Add("UInt16", "System.UInt16");
+            TypeReference.PrimitiveTypesCSharp.Add("void", "System.Void");
+            TypeReference.PrimitiveTypesCSharpReverse.Clear();
+            foreach (KeyValuePair<string, string> pair in TypeReference.PrimitiveTypesCSharp) {
+                TypeReference.PrimitiveTypesCSharpReverse.Add(pair.Value, pair.Key);
+            }
 
-	    unit1.Merge(unit2);
+            SourceUnit generatedUnit = new SourceUnit(generatedContent);
+	    SourceUnit existingUnit = new SourceUnit(existingContent);
 
-	    return unit1.ToCSharp();
+	    existingUnit.Merge(generatedUnit);
+
+	    return existingUnit.ToCSharp();
 	}
 
 	/// <summary>
@@ -74,7 +96,9 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 		    lines[i + 1] = lines[i + 1].Insert(lines[i + 1].IndexOf("else"), "} ");
 		} else if (i < lines.Length - 1 && line.Trim().Equals("}") && lines[i + 1].Trim().StartsWith("catch")) {
 		    lines[i + 1] = lines[i + 1].Insert(lines[i + 1].IndexOf("catch"), "} ");
-		} else {
+                } else if (i < lines.Length - 1 && line.Trim().Equals("}") && lines[i + 1].Trim().StartsWith("finally")) {
+                    lines[i + 1] = lines[i + 1].Insert(lines[i + 1].IndexOf("finally"), "} ");
+                } else {
 		    sb.AppendLine(ReplaceLeadingSpacesWithTabs(line));
 		}
 	    }
@@ -111,7 +135,7 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 	    using (SpecialNodesUserDataInserter.Install(specials, outputVisitor)) {
 		unit.AcceptVisitor(outputVisitor, null);
 	    }
-
+            /*
 	    List<ISpecial> collectedSpecials = new List<ISpecial>();
 	    CollectSpecials(collectedSpecials, unit.Children);
 
@@ -119,7 +143,7 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 		Console.Out.WriteLine(collectedSpecials.Count);
 		Console.Out.WriteLine(specials.Count);
 
-	    }
+	    }*/
 	}
 
     	private static void CollectSpecials(List<ISpecial> specials, List<INode> children) {

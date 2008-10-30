@@ -55,10 +55,10 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 	    this.specials = specials;
 	}
 
-	public void Merge(SourceUnit rightUnit) {
-	    RemoveGeneratedMembers(rightUnit.unit.Children);
+	public void Merge(SourceUnit generatedUnit) {
+	    RemoveGeneratedMembers(unit.Children, generatedUnit.unit.Children);
 
-	    foreach (INode child in rightUnit.unit.Children) {
+	    foreach (INode child in generatedUnit.unit.Children) {
 		// need to have a wrapper for the CompilationUnit that has
 		// * this could be what keeps the CU and the specials collection together
 		// * methods to expose imports and namespaces
@@ -104,36 +104,68 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 	//    return results;
 	//}
 
-    	private static void RemoveGeneratedMembers(List<INode> nodes) {
+    	private static void RemoveGeneratedMembers(List<INode> existingNodes, List<INode> generatedNodes) {
 	    List<INode> nodesToRemove = new List<INode>();
 
-	    foreach(INode node in nodes) {
+	    foreach(INode node in existingNodes) {
 	    	Boolean removed = false;
-		if (node is AttributedNode) {
-		    AttributedNode field = node as AttributedNode;
-		    if (HasGenerateAttribute(field.Attributes)) {
-			nodesToRemove.Add(node);
-		    	removed = true;
-		    }
-		}
-		if (!removed) {
-		    RemoveGeneratedMembers(node.Children);
+                INode gNode = null;
+                bool found = false;
+                foreach (INode n in generatedNodes) {
+                    if (CompareNodes(node, n)) {
+                        found = true;
+                        gNode = n;
+                        break;
+                    }
+                }
+                if (!found && HasGenerateAttribute(node)) {
+                    nodesToRemove.Add(node);
+                    removed = true;
+                }
+		if (!removed && gNode != null) {
+		    RemoveGeneratedMembers(node.Children, gNode.Children);
 		}
 	    }
 
 	    foreach(INode node in nodesToRemove) {
-	    	nodes.Remove(node);
+	    	existingNodes.Remove(node);
 	    }
 	}
 
-    	private static bool HasGenerateAttribute(List<AttributeSection> attributes) {
-    	    foreach(AttributeSection section in attributes) {
-    	    	foreach(ICSharpCode.NRefactory.Ast.Attribute attribute in section.Attributes) {
-    	    	    if (attribute.Name == "Generate") {
-    	    	    	return true;
-    	    	    }
-    	    	}
-    	    }
+        private static bool CompareNodes(INode left, INode right) {
+            if (left is UsingDeclaration && right is UsingDeclaration) {
+                return CompareUsingNodes((UsingDeclaration)left, (UsingDeclaration)right);
+            }
+            if (left is ConstructorDeclaration && right is ConstructorDeclaration) {
+                return CompareConstructorNodes((ConstructorDeclaration)left, (ConstructorDeclaration)right);
+            }
+            if (left is FieldDeclaration && right is FieldDeclaration) {
+                return CompareFieldNodes((FieldDeclaration)left, (FieldDeclaration)right);
+            }
+            if (left is MemberNode && right is MemberNode) {
+                return CompareMemberNodes((MemberNode)left, (MemberNode)right);
+            }
+            if (left is NamespaceDeclaration && right is NamespaceDeclaration) {
+                return CompareNamespaceNodes((NamespaceDeclaration)left, (NamespaceDeclaration)right);
+            }
+            if (left is TypeDeclaration && right is TypeDeclaration) {
+                return CompareTypeNodes((TypeDeclaration)left, (TypeDeclaration)right);
+            }
+            return false;
+        }
+
+    	private static bool HasGenerateAttribute(INode node) {
+            if (node is AttributedNode) {
+                AttributedNode field = node as AttributedNode;
+
+                foreach (AttributeSection section in field.Attributes) {
+                    foreach (ICSharpCode.NRefactory.Ast.Attribute attribute in section.Attributes) {
+                        if (attribute.Name == "Generate") {
+                            return true;
+                        }
+                    }
+                }
+            }
 
     	    return false;
     	}
@@ -200,7 +232,6 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 	    if (child.Usings.Count != 1) {
 		throw new ArgumentOutOfRangeException("child", "didn't expect to have more than 1 in Usings collection");
 	    }
-	    String mergeName = child.Usings[0].Name;
 	    Int32 insertAt = 0;
 	    Boolean add = true;
 	    foreach (INode node in unit.Children) {
@@ -209,7 +240,7 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 		    if (element.Usings.Count != 1) {
 			throw new Exception("didn't expect to have more than 1 in the Usings collection");
 		    }
-		    if (element.Usings[0].Name == mergeName) {
+		    if (CompareUsingNodes(element, child)) {
 			add = false;
 		    }
 		    insertAt++;
@@ -220,6 +251,10 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 	    	unit.Children.Insert(insertAt, child);
 	    }
 	}
+
+        private static bool CompareUsingNodes(UsingDeclaration left, UsingDeclaration right) {
+            return left.Usings[0].Name == right.Usings[0].Name;
+        }
 
 	//private void AddSpecialsForNode(INode node, Hashtable specialMap) {
 	//    List<ISpecial> memberSpecials = specialMap[node] as List<ISpecial>;
@@ -240,7 +275,7 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 		    insertAt++;
 		} else if (node is NamespaceDeclaration) {
 		    NamespaceDeclaration element = node as NamespaceDeclaration;
-		    if (element.Name == child.Name) {
+		    if (CompareNamespaceNodes(element, child)) {
 			add = false;
 		    	MergeTypes(element, child);
 		    }
@@ -252,16 +287,17 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 	    }
 	}
 
+        private static bool CompareNamespaceNodes(NamespaceDeclaration left, NamespaceDeclaration right) {
+            return left.Name == right.Name;
+        }
+
 	private void MergeType(List<INode> collection, TypeDeclaration child) {
 	    Boolean add = true;
 	    foreach (INode node in collection) {
 		if (node is TypeDeclaration) {
 		    TypeDeclaration element = node as TypeDeclaration;
-		    if (element.Name == child.Name) {
+		    if (CompareTypeNodes(element, child)) {
 			add = false;
-			if (child.BaseTypes.Count > 0) {
-			    element.BaseTypes = child.BaseTypes; // any inheritance rules come from the original file
-			}
 			MergeMembers(element, child);
 		    }
 		}
@@ -270,6 +306,10 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 	    	collection.Add(child);
 	    }
 	}
+
+        private static bool CompareTypeNodes(TypeDeclaration left, TypeDeclaration right) {
+            return left.Name == right.Name;
+        }
 
 	private void MergeTypes(NamespaceDeclaration left, NamespaceDeclaration right) {
 	    foreach(INode node in right.Children) {
@@ -297,9 +337,11 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 	private void MergeConstructor(List<INode> collection, ConstructorDeclaration child) {
 	    Boolean add = true;
 	    Int32 index = -1;
+            Boolean replace = false;
 	    foreach (INode node in collection) {
 		if (node is ConstructorDeclaration) {
 		    ConstructorDeclaration element = node as ConstructorDeclaration;
+                    /*
 		    bool paramsAreTheSame = IsParamListTheSame(element.Parameters, child.Parameters);
 		    bool modifySettingIsTheSame = ( element.Modifier == child.Modifier );
 
@@ -307,20 +349,42 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 		    modifySettingIsTheSame |= ( element.Modifier == Modifiers.Internal && child.Modifier == Modifiers.Private );
 
 		    if ( (element.Name == child.Name) && (paramsAreTheSame) && modifySettingIsTheSame) {
-			index = collection.IndexOf(element);
+                        if (HasGenerateAttribute(node)) {
+                            replace = true;
+                            index = collection.IndexOf(element);
+                        }
 			add = false;
 			break;
 		    }
-		}
+                    */
+                    if (CompareConstructorNodes(element, child)) {
+                        if (HasGenerateAttribute(node)) {
+                            replace = true;
+                            index = collection.IndexOf(element);
+                        }
+                        add = false;
+                        break;
+                    }
+                }
 	    }
 	    if (add) {
 		collection.Add(child);
-	    } else {
+	    } else if (replace) {
 		// need to get rid of the [Generate()] metadata
 		collection.RemoveAt(index);
 		collection.Insert(index, child);
 	    }
 	}
+
+        private static bool CompareConstructorNodes(ConstructorDeclaration left, ConstructorDeclaration right) {
+            bool paramsAreTheSame = IsParamListTheSame(left.Parameters, right.Parameters);
+            bool modifySettingIsTheSame = (left.Modifier == right.Modifier);
+
+            // for this particular case, we accept an old, private constructor over the new, internal one, rather than both
+            modifySettingIsTheSame |= (left.Modifier == Modifiers.Private && right.Modifier == Modifiers.Internal);
+
+            return (left.Name == right.Name) && (paramsAreTheSame) && modifySettingIsTheSame;
+        }
 
 	private void MergeMember(List<INode> collection, MemberNode child) {
 	    Boolean add = true;
@@ -331,6 +395,7 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 		if (node is MemberNode) {
 		    MemberNode element = node as MemberNode;
 
+                    /*
 		    // Check for duplicates as MemberNode (typical case immediately below, Method-specific checks after)
 		    if ( (element.Name == child.Name) && (element.InterfaceImplementations.Count == child.InterfaceImplementations.Count) ) {
 			bool elementAndChildAreTheSame = true; // assume it is true unless we find proof otherwise
@@ -361,10 +426,21 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 
 			if (elementAndChildAreTheSame) {
 			    add = false;
-			    replace = true;
-			    index = collection.IndexOf(element);
+                            if (HasGenerateAttribute(node)) {
+                                replace = true;
+                                index = collection.IndexOf(element);
+                            }
 			}
-		    }
+		    }*/
+
+                    if (CompareMemberNodes(element, child)) {
+                        add = false;
+                        if (HasGenerateAttribute(node)) {
+                            replace = true;
+                            index = collection.IndexOf(element);
+                        }
+                    }
+
 		}
 		
 	    }
@@ -377,14 +453,52 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 	    }
 	}
 
+        private static bool CompareMemberNodes(MemberNode left, MemberNode right) {
+            bool areSame = false;
+            // Check for duplicates as MemberNode (typical case immediately below, Method-specific checks after)
+            if ((left.Name == right.Name) && (left.InterfaceImplementations.Count == right.InterfaceImplementations.Count)) {
+                areSame = true; // assume it is true unless we find proof otherwise
+
+                // verify that the interface implementations (if any) are the same
+                foreach (InterfaceImplementation leftInterfaceImpl in left.InterfaceImplementations) {
+                    // find the same interfaceImpl value in child
+                    bool bThisInterfaceIsFound = false;
+                    foreach (InterfaceImplementation rightInterfaceImpl in right.InterfaceImplementations) {
+                        if (rightInterfaceImpl.InterfaceType.Type == leftInterfaceImpl.InterfaceType.Type) {
+                            bThisInterfaceIsFound = true;
+                            break;
+                        }
+                    }
+                    areSame &= bThisInterfaceIsFound;
+                    if (!areSame) {
+                        break;
+                    }
+                }
+
+
+                // Check for duplicates as MethodNode, including compare of parameter lists
+                if (areSame && left is MethodDeclaration) {
+                    MethodDeclaration leftAsMethod = left as MethodDeclaration;
+                    MethodDeclaration rightAsMethod = right as MethodDeclaration;
+                    areSame &= IsParamListTheSame(leftAsMethod.Parameters, right.Parameters);
+                }
+            }
+
+            return areSame;
+        }
+
 	private void MergeField(List<INode> collection, FieldDeclaration child) {
 	    Boolean add = true;
 	    Int32 index = -1;
+            Boolean replace = false;
 	    foreach (INode node in collection) {
 		if (node is FieldDeclaration) {
 		    FieldDeclaration element = node as FieldDeclaration;
-		    if (element.Fields[0].Name == child.Fields[0].Name) {
-			index = collection.IndexOf(element);
+		    if (CompareFieldNodes(element, child)) {
+                        if (HasGenerateAttribute(node)) {
+                            index = collection.IndexOf(element);
+                            replace = true;
+                        }
 			add = false;
 			break;
 		    }
@@ -392,14 +506,18 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 	    }
 	    if (add) {
 		collection.Add(child);
-	    } else {
+	    } else if (replace) {
 		// need to get rid of the [Generate()] metadata
 		collection.RemoveAt(index);
 		collection.Insert(index, child);
 	    }
 	}
 
-	private bool IsParamListTheSame(List<ParameterDeclarationExpression> params1, List<ParameterDeclarationExpression> params2) {
+        private static bool CompareFieldNodes(FieldDeclaration left, FieldDeclaration right) {
+            return left.Fields[0].Name == right.Fields[0].Name;
+        }
+
+	private static bool IsParamListTheSame(List<ParameterDeclarationExpression> params1, List<ParameterDeclarationExpression> params2) {
 	    int params1Count = params1.Count;
 	    int params2Count = params2.Count;
 	    bool paramsAreTheSame = (params1Count == params2Count);
@@ -407,7 +525,7 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 		for (int curParamPos = 0; curParamPos < params1Count; curParamPos++) {
 		    ParameterDeclarationExpression curParam1 = params1[curParamPos];
 		    ParameterDeclarationExpression curParam2 = params2[curParamPos];
-		    paramsAreTheSame &= (curParam2.TypeReference.Type == curParam1.TypeReference.Type);
+		    paramsAreTheSame &= TypeReference.AreEqualReferences(curParam2.TypeReference, curParam1.TypeReference);
 		    if (!paramsAreTheSame) {
 			break;
 		    }
