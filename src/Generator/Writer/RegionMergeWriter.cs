@@ -85,13 +85,18 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 	    } else {
 		output = text;
 	    }
-	    // determine whether anything has actually changed in the file
+
+            // Style the output
+            string styledOutput = styler.Style(output);
+            
+            // determine whether anything has actually changed in the file
 	    bool fileHasChanged = false;
-	    String mergedContentIgnoreWhitespace = output.Replace("\r", "").Replace("\n", "").Replace("\t", "").Replace(" ", "");
+	    String mergedContentIgnoreWhitespace = styledOutput.Replace("\r", "").Replace("\n", "").Replace("\t", "").Replace(" ", "");
 	    String exitingContentsIgnoreWhitespace = current.GetStringBuilder().ToString().Replace("\r", "").Replace("\n", "").Replace("\t", "").Replace(" ", "");
 	    if (mergedContentIgnoreWhitespace != exitingContentsIgnoreWhitespace)
 	    {
 		fileHasChanged = true;
+                changed = true;
 	    }
 
 	    // Only write to the file if it has changed or does not exist.
@@ -111,9 +116,6 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 			File.SetAttributes(backupFilePath, File.GetAttributes(backupFilePath) ^ FileAttributes.ReadOnly);
 		    }
 		}
-
-                // Style the output
-                string styledOutput = styler.Style(output);
 
                 // write the new file
 		StreamWriter writer = new StreamWriter(file.FullName, false);
