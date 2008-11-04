@@ -6,6 +6,8 @@ CLASSDIR := 	../classes
 LIBDIR :=	../lib
 BUILDDIR :=     ../build
 RELEASEDIR	:= ../release
+DOTNETFRAMEWORK	:= c:/WINDOWS/Microsoft.NET/Framework/v3.5
+MSBUILD		:= $(DOTNETFRAMEWORK)/MSBuild.exe
 
 PS ?= \;
 
@@ -25,7 +27,7 @@ debug:
 	@echo MODULES = $(MODULES)
 
 build:
-	..\bin\NAnt\NAnt build
+	$(MSBUILD) DataTierGenerator.sln /verbosity:minimal /target:Build
 
 regress:
 	chmod a+x ../bin/NUnit/*
