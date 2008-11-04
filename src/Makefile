@@ -3,6 +3,7 @@
 #
 SRCDIR :=	../src
 CLASSDIR := 	../classes
+BINDIR		:= ../bin
 LIBDIR :=	../lib
 BUILDDIR :=     ../build
 RELEASEDIR	:= ../release
