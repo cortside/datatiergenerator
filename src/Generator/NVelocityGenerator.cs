@@ -145,13 +145,9 @@ namespace Spring2.DataTierGenerator.Generator {
 		    IWriter w = parser.GetWriter(task.Writer);
 		    try {
 			w.BackupFilePath = task.BackupDirectory + "\\" + Path.GetFileNameWithoutExtension(file.Name) + "." + DateTime.Now.ToString("yyyyMMddHHmmss") + Path.GetExtension(file.Name) + "~";
-			timer.Start();
-			String styledContent = s.Style(content);
-			timer.Stop();
-			stylerTicks += timer.TimeSpan.Ticks;
 
 			timer.Start();
-			Boolean changed = w.Write(file, styledContent);
+			Boolean changed = w.Write(file, content, s);
 			timer.Stop();
 			writerTicks += timer.TimeSpan.Ticks;
 

@@ -14,6 +14,7 @@ using Spring2.Core.Util;
 
 using Spring2.DataTierGenerator.Generator;
 using Spring2.DataTierGenerator.Generator.Writer;
+using Spring2.DataTierGenerator.Generator.Styler;
 
 namespace Spring2.DataTierGenerator.Test {
 
@@ -41,7 +42,7 @@ namespace Spring2.DataTierGenerator.Test {
 
 	    // write/merge files
 	    CSharpCodeWriter writer = new CSharpCodeWriter();
-	    writer.Write(file1, file2.OpenText().ReadToEnd());
+	    writer.Write(file1, file2.OpenText().ReadToEnd(), new NoStyler());
 
 	    // make sure new file matches compare file
 	    if (!file3.OpenText().ReadToEnd().Equals(file1.OpenText().ReadToEnd())) {

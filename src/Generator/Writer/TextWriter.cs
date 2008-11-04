@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.IO;
+using Spring2.DataTierGenerator.Generator.Styler;
 
 namespace Spring2.DataTierGenerator.Generator.Writer {
 
@@ -32,7 +33,7 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 	/// </summary>
 	/// <param name="fileName">name of file, including full path</param>
 	/// <param name="text">what to write to the file</param>
-	public Boolean Write(FileInfo file, String text) {
+	public Boolean Write(FileInfo file, String text, IStyler styler) {
 	    // Create the directory if it doesn't exist.
 	    if (!file.Directory.Exists) {
 		file.Directory.Create();
@@ -69,6 +70,10 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 		    }
 		}
 
+                // Style the contents
+                text = styler.Style(text);
+
+                // Write the file.
 		StreamWriter writer = new StreamWriter(file.FullName, false);
 		writer.Write(text);
 		writer.Close();

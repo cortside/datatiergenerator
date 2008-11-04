@@ -151,6 +151,7 @@
     <Compile Include="Generator\Styler\BaseStyler.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Generator\Styler\CommandLineStyler.cs" />
     <Compile Include="Generator\Styler\CSharpStyler.cs">
       <SubType>Code</SubType>
     </Compile>

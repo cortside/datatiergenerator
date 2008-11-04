@@ -12,6 +12,7 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
     public class NRefactoryUtil {
 
 	public static String Merge(String generatedContent, String existingContent) {
+            // Reset type reference so that it uses the types we want.
             TypeReference.PrimitiveTypesCSharp.Clear();
             TypeReference.PrimitiveTypesCSharp.Add("Boolean", "System.Boolean");
             TypeReference.PrimitiveTypesCSharp.Add("Byte", "System.Byte");

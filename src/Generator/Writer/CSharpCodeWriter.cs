@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.IO;
 using System.CodeDom.Compiler;
+using Spring2.DataTierGenerator.Generator.Styler;
 
 namespace Spring2.DataTierGenerator.Generator.Writer {
 
@@ -38,7 +39,7 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 	    set { backupFilePath = value; }
 	}
 
-	public Boolean Write(FileInfo file, String contents) {
+	public Boolean Write(FileInfo file, String contents, IStyler styler) {
 	    // Create the directory if it doesn't exist.
 	    if (!file.Directory.Exists) {
 		file.Directory.Create();
@@ -112,8 +113,11 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 				}
 			    }
 
+                            // Style the contents.
+                            string styledContent = styler.Style(mergedContent);
+
 			    StreamWriter writer = new StreamWriter(file.FullName, false);
-			    writer.Write(mergedContent);
+			    writer.Write(styledContent);
 			    writer.Close();
 			    return true;
 			}

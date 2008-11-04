@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.IO;
+using Spring2.DataTierGenerator.Generator.Styler;
 
 namespace Spring2.DataTierGenerator.Generator.Writer {
 
@@ -14,7 +15,7 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 	/// Write contents to disk.  Writer may merge existing file contents with new contents.
 	/// </summary>
 	/// <returns>boolean denoting whether file need to be updated or not</returns>
-	Boolean Write(FileInfo file, String text);
+	Boolean Write(FileInfo file, String text, IStyler styler);
 
 	/// <summary>
 	/// If set a copy of the file before generation is written to the specified path.
