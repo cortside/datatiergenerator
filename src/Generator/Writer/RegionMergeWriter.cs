@@ -130,8 +130,8 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 	    StringWriter writer = new StringWriter();
 
 	    Int32 index = text.Substring(0, text.LastIndexOf('}')).LastIndexOf('}');
-	    index = text.Substring(0, index).LastIndexOf('}') + 1;
-	    writer.WriteLine(text.Substring(0, index));
+            string localtext = text.Substring(0, index).TrimEnd();
+	    writer.WriteLine(localtext);
 	    writer.WriteLine();
 	    writer.Write("\t");
 	    writer.WriteLine(regionsString.Trim());
