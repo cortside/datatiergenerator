@@ -24,6 +24,7 @@ namespace Spring2.DataTierGenerator.Element {
 	private static readonly String FOREIGN_COLUMN = "foreigncolumn";
 	private static readonly String OBSOLETE = "obsolete";
 	private static readonly String COLLATE = "collate";
+        private static readonly String RETAINNONNULLVALUE = "retainnonnullvalue";
 
 	private SqlTypeElement sqlType = new SqlTypeElement();
 	private Boolean identity = false;
@@ -44,6 +45,7 @@ namespace Spring2.DataTierGenerator.Element {
 	private Int32 scale = 0;
 	private Boolean obsolete = false;
 	private String collate = String.Empty;
+        private Boolean retainnonnullvalue = false;
 
 	public String Formula {
 	    get { return this.formula; }
@@ -147,6 +149,14 @@ namespace Spring2.DataTierGenerator.Element {
 	    set { this.collate = value; }
 	}
 
+        /// <summary>
+        /// Used in SQL update method so that a column will not be updated with a null value 
+        /// </summary>
+        public Boolean RetainNonNullValue {
+            get { return this.retainnonnullvalue; }
+            set { this.retainnonnullvalue = value; }
+        }
+
 	/// <summary>
 	/// Parse only method. Parses and adds all entities found in the given node and adds them to the given
 	/// list.
@@ -175,7 +185,7 @@ namespace Spring2.DataTierGenerator.Element {
 			columnElement.Obsolete = Boolean.Parse(GetAttributeValue(columnNode, OBSOLETE, columnElement.Obsolete.ToString()));
 			columnElement.Description = columnNode.InnerText.Trim();
 			columnElement.Collate = GetAttributeValue(columnNode, COLLATE, columnElement.Collate);
-
+                        columnElement.RetainNonNullValue = Boolean.Parse(GetAttributeValue(columnNode, RETAINNONNULLVALUE, columnElement.RetainNonNullValue.ToString()));
 			columnElements.Add(columnElement);
 		    }
 		}
@@ -254,9 +264,19 @@ namespace Spring2.DataTierGenerator.Element {
 			if (node.Attributes["obsolete"] != null) {
 			    column.Obsolete = Boolean.Parse(node.Attributes[OBSOLETE].Value);
 			}
+                        if (node.Attributes["retainnonnullvalue"] != null) {
+                            column.RetainNonNullValue = Boolean.Parse(node.Attributes["retainnonnullvalue"].Value);
+                        }
 			if (node.Attributes[COLLATE] != null) {
 			    column.Collate = node.Attributes[COLLATE].Value;
 			}
+
+                        //Adds all attributes including all non defined by element class 
+                        foreach (XmlAttribute attribute in node.Attributes) {
+                            if (!column.Attributes.ContainsKey(attribute.Name)) {
+                                column.Attributes.Add(attribute.Name, attribute.Value);
+                            }
+                        }
 
 			column.Description = node.InnerText.Trim();
 
@@ -322,6 +342,10 @@ namespace Spring2.DataTierGenerator.Element {
 	    if (!Collate.Equals(String.Empty)) {
 		sb.Append(" collate=\"").Append(Collate).Append("\"");
 	    }
+
+            if (retainnonnullvalue) {
+                sb.Append(" retainnonnullvalue=\"True\"");
+            }
 
 	    sb.Append(" />");
 

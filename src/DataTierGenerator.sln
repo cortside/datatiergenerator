@@ -23,6 +23,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spring2.DataTierGenerator.U
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Element Sets", "Element Sets", "{B56FCA12-F11E-4FC3-8D16-E20FE668488F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spring2.DataTierGenerator.PluginInterface", "Spring2.DataTierGenerator.PluginInterface.csproj", "{3F50D432-9F6C-427F-B1DF-F1561F84ABC6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spring2.DataTierGenerator.Plugins", "Spring2.DataTierGenerator.Plugins.csproj", "{2FF72191-5648-47D5-84EC-B7AF8BF7DA91}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spring2.DataTierGenerator.TFSPlugin", "Spring2.DataTierGenerator.TFSPlugin.csproj", "{DB30A44E-32BA-4713-BDC8-A92869F6242B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -65,13 +71,25 @@ Global
 		{B6CB9D43-AD25-41E3-892E-242844DD6A7A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B6CB9D43-AD25-41E3-892E-242844DD6A7A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B6CB9D43-AD25-41E3-892E-242844DD6A7A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3F50D432-9F6C-427F-B1DF-F1561F84ABC6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3F50D432-9F6C-427F-B1DF-F1561F84ABC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3F50D432-9F6C-427F-B1DF-F1561F84ABC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3F50D432-9F6C-427F-B1DF-F1561F84ABC6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2FF72191-5648-47D5-84EC-B7AF8BF7DA91}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2FF72191-5648-47D5-84EC-B7AF8BF7DA91}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2FF72191-5648-47D5-84EC-B7AF8BF7DA91}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2FF72191-5648-47D5-84EC-B7AF8BF7DA91}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DB30A44E-32BA-4713-BDC8-A92869F6242B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB30A44E-32BA-4713-BDC8-A92869F6242B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DB30A44E-32BA-4713-BDC8-A92869F6242B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DB30A44E-32BA-4713-BDC8-A92869F6242B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{069AFE42-50D3-48D3-A12B-FAE1D8A2A44A} = {B56FCA12-F11E-4FC3-8D16-E20FE668488F}
 		{715E64DD-2DAD-4DA8-ACC5-2BAEBA573487} = {B56FCA12-F11E-4FC3-8D16-E20FE668488F}
+		{069AFE42-50D3-48D3-A12B-FAE1D8A2A44A} = {B56FCA12-F11E-4FC3-8D16-E20FE668488F}
 	EndGlobalSection
 	GlobalSection(DevPartner) = postSolution
 	EndGlobalSection

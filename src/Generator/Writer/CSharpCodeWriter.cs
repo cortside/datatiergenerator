@@ -3,6 +3,7 @@ using System.Collections;
 using System.IO;
 using System.CodeDom.Compiler;
 using Spring2.DataTierGenerator.Generator.Styler;
+using Spring2.DataTierGenerator.Plugins;
 
 namespace Spring2.DataTierGenerator.Generator.Writer {
 
@@ -13,8 +14,11 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 
 	private CodeGeneratorOptions cgOptions = new CodeGeneratorOptions ();
 	private String backupFilePath = "";
+        Spring2.DataTierGenerator.Plugins.Plugins plugins = null; 
 
 	public CSharpCodeWriter() {
+            String path = System.IO.Directory.GetCurrentDirectory();//Process.GetCurrentProcess().MainModule.FileName;
+            plugins = new Spring2.DataTierGenerator.Plugins.Plugins(path);
 	}
 
 	public CSharpCodeWriter(Hashtable options) {
@@ -29,6 +33,8 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 		    cgOptions.BracingStyle = "Block";
 		}
 	    }
+            String path = System.IO.Directory.GetCurrentDirectory();
+            plugins = new Spring2.DataTierGenerator.Plugins.Plugins(path);
 	}
 
 	/// <summary>
@@ -45,6 +51,7 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 		file.Directory.Create();
 	    }
 
+
 	    MemoryStream stream = new MemoryStream();
 	    StreamWriter sw = new StreamWriter(stream);
 	    sw.Write(contents);
@@ -60,6 +67,7 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 		    StreamWriter writer = new StreamWriter(file.FullName, false);
 		    writer.Write(mergedContent);
 		    writer.Close();
+                    DoPostProcessingNew(file.FullName);
 		    return true;
 		} catch (Exception ex) {
 		    Console.Out.WriteLine("Error in File Name " + file.Name);
@@ -115,7 +123,7 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 
                             // Style the contents.
                             string styledContent = styler.Style(mergedContent);
-
+                            DoPreProcessingExisting(file.FullName);
 			    StreamWriter writer = new StreamWriter(file.FullName, false);
 			    writer.Write(styledContent);
 			    writer.Close();
@@ -134,9 +142,19 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 
 		return false;
 	    }
+        }
 
-	}
+        private void DoPreProcessingExisting(String filePath) {
+            if (plugins.PluginsFound == true) {
+                plugins.DoPreWriteExisting(filePath);
+            }
+        }
 
+        private void DoPostProcessingNew(String filePath) {
+            if (plugins.PluginsFound == true) {
+                plugins.DoPostWriteNew(filePath);
+            }
+        }
 
     }
 }

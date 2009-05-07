@@ -21,14 +21,23 @@ namespace Spring2.DataTierGenerator.ConsoleRunner {
 	/// </summary>
 	[STAThread]
 	static void Main(string[] args) {
+
+            Boolean verbose = false;
+
 	    if (args.Length==1) {
-		Generate(args[0]);
-	    } else {
+		Generate(args[args.Length - 1],verbose);
+            } else if (args.Length == 2) {
+                if(args[0] == "-v") {
+                    verbose = true;
+                    Generate(args[args.Length - 1], verbose);
+                }
+            }  else {
 		Console.Out.WriteLine("usage: DataTierGenerator.exe <xml config filename>");
 	    }
+            //Console.ReadKey();
 	}
 
-	private static void Generate(String filename) {
+	private static void Generate(String filename,Boolean verbose) {
 	    FileInfo file = new FileInfo(filename);
 	    if (!file.Exists) {
 		Console.Out.WriteLine("could not find config file: " + file.FullName);
@@ -73,6 +82,9 @@ namespace Spring2.DataTierGenerator.ConsoleRunner {
 
 			// if the generator is not null, generate
 			if (generator != null) {
+                            if (verbose && generator is NVelocityGenerator) {
+                                ((NVelocityGenerator)generator).AttachToOutputEvent(ConsoleRunner.Output);
+                            }
 			    generator.Generate(parser);
 			    foreach(String s in generator.Log) {
 				Console.Out.WriteLine(s);
@@ -114,6 +126,10 @@ namespace Spring2.DataTierGenerator.ConsoleRunner {
 
 	    return null;
 	}
+
+        public static void Output(String s) {
+            Console.Out.WriteLine(s);
+        }
 
     }
 }

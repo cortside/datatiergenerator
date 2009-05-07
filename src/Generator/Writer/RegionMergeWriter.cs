@@ -3,6 +3,7 @@ using System.Collections;
 using System.IO;
 using System.Text;
 using Spring2.DataTierGenerator.Generator.Styler;
+using Spring2.DataTierGenerator.Plugins;
 
 namespace Spring2.DataTierGenerator.Generator.Writer {
 
@@ -14,13 +15,19 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 	private readonly String REGION = "#region";
 	private readonly String END_REGION = "#endregion";
 	private String backupFilePath = "";
+        Spring2.DataTierGenerator.Plugins.Plugins plugins = null; 
 
 	public RegionMergeWriter() 
 	{
+            String path = System.IO.Directory.GetCurrentDirectory();
+            plugins = new Spring2.DataTierGenerator.Plugins.Plugins(path);
+
 	}
 
 	public RegionMergeWriter(Hashtable options) {
             // currently does not support any configurable options
+            String path = System.IO.Directory.GetCurrentDirectory();
+            plugins = new Spring2.DataTierGenerator.Plugins.Plugins(path);
 	}
 
 	/// <summary>
@@ -101,30 +108,49 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 
 	    // Only write to the file if it has changed or does not exist.
 	    if (fileHasChanged) {
+                Boolean isNewFile = false;
 		// make a backup of the current file if it exists
-		if (file.Exists && backupFilePath != "") {
-		    FileInfo backup = new FileInfo(backupFilePath);
-		    if (!backup.Directory.Exists) {
-			backup.Directory.Create();
-		    }
-		    if (File.Exists(backupFilePath) && (File.GetAttributes(backupFilePath) & FileAttributes.ReadOnly) == FileAttributes.ReadOnly) 
-		    {
-			File.SetAttributes(backupFilePath, File.GetAttributes(backupFilePath) ^ FileAttributes.ReadOnly);
-		    }
-		    file.CopyTo(backupFilePath, true);
-		    if ((File.GetAttributes(backupFilePath) & FileAttributes.ReadOnly) == FileAttributes.ReadOnly) {
-			File.SetAttributes(backupFilePath, File.GetAttributes(backupFilePath) ^ FileAttributes.ReadOnly);
-		    }
-		}
+                if (file.Exists && backupFilePath != "") {
+                    DoPreProcessingExisting(file.FullName);
+                    FileInfo backup = new FileInfo(backupFilePath);
+                    if (!backup.Directory.Exists) {
+                        backup.Directory.Create();
+                    }
+                    if (File.Exists(backupFilePath) && (File.GetAttributes(backupFilePath) & FileAttributes.ReadOnly) == FileAttributes.ReadOnly) {
+                        File.SetAttributes(backupFilePath, File.GetAttributes(backupFilePath) ^ FileAttributes.ReadOnly);
+                    }
+                    file.CopyTo(backupFilePath, true);
+                    if ((File.GetAttributes(backupFilePath) & FileAttributes.ReadOnly) == FileAttributes.ReadOnly) {
+                        File.SetAttributes(backupFilePath, File.GetAttributes(backupFilePath) ^ FileAttributes.ReadOnly);
+                    }
+                } else {
+                    isNewFile = true;
+                }
 
                 // write the new file
 		StreamWriter writer = new StreamWriter(file.FullName, false);
 		writer.Write(styledOutput);
 		writer.Close();
+
+                if (isNewFile) {
+                    DoPostProcessingNew(file.FullName);
+                }
 	    }
 
 	    return changed;
 	}
+
+        private void DoPreProcessingExisting(String filePath) {
+            if (plugins.PluginsFound == true) {
+                plugins.DoPreWriteExisting(filePath);
+            }
+        }
+
+        private void DoPostProcessingNew(String filePath) {
+            if (plugins.PluginsFound == true) {
+                plugins.DoPostWriteNew(filePath);
+            }
+        }
 	
 	protected virtual String MergeRegion(String text, String regionsString) {
 	    StringWriter writer = new StringWriter();

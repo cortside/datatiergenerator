@@ -262,6 +262,7 @@ namespace Spring2.DataTierGenerator.Element {
 			PropertyElement.ParseFromXml(GetChildNodeByName(entityNode, PROPERTIES), entityElement.Fields);
 			FinderElement.ParseFromXml(GetChildNodeByName(entityNode, FINDERS), entityElement.Finders);
 			ComparerElement.ParseFromXml(GetChildNodeByName(entityNode, COMPARERS), entityElement.Comparers);
+
 			entityElements.Add(entityElement);
 		    //}
 		}
@@ -325,6 +326,14 @@ namespace Spring2.DataTierGenerator.Element {
 	    	if (descriptionNode != null) {
 	    	    entity.Description = descriptionNode.InnerText.Trim();
 	    	}
+
+
+                //Adds all attributes including all not defined by element class 
+                foreach (XmlAttribute attribute in node.Attributes) {
+                    if (!entity.Attributes.ContainsKey(attribute.Name)) {
+                        entity.Attributes.Add(attribute.Name, attribute.Value);
+                    }
+                }
 
 		entity.fields = PropertyElement.ParseFromXml(doc, entities, entity, sqltypes, types, vd);
 		entity.finders = FinderElement.ParseFromXml(doc, node, entities, entity, sqltypes, types, vd);

@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 
@@ -16,6 +17,7 @@ namespace Spring2.DataTierGenerator.Element {
 	protected String name = String.Empty;
 	protected String description = String.Empty;
 	protected String template = String.Empty;
+        protected Hashtable attributes = new Hashtable();
 
 	public ElementSkeleton() {}
 
@@ -45,7 +47,11 @@ namespace Spring2.DataTierGenerator.Element {
 
 	public Object Clone() {
 	    return MemberwiseClone();
-	}
+	}        
+
+        public Hashtable Attributes {
+            get { return this.attributes; }
+        }
 
 	/// <summary>
 	/// Returns the attribute value as a String if found, or the defaultValue if not.

@@ -296,6 +296,14 @@ namespace Spring2.DataTierGenerator.Element {
 			continue;
 		    }
 		    PropertyElement field = BuildElement(node, types, sqltypes, entity, isReference, vd);
+
+                    //Adds all attributes including all non defined by element class 
+                    foreach (XmlAttribute attribute in node.Attributes) {
+                        if (!field.Attributes.ContainsKey(attribute.Name)) {
+                            field.Attributes.Add(attribute.Name, attribute.Value);
+                        }
+                    }
+
 		    fields.Add(field);
 
 		    // Add in any subfields...
@@ -510,7 +518,7 @@ namespace Spring2.DataTierGenerator.Element {
 	    	field.Prefix = field.Entity.Name + "_";
 	    }
 
-	    return field;
+ 	    return field;
 	}
 
 	/// <summary>

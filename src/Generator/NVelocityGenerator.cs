@@ -25,10 +25,22 @@ namespace Spring2.DataTierGenerator.Generator {
 	private Int64 stylerTicks = 0;
 	private Int64 writerTicks = 0;
 	private Int64 files = 0;
+        private bool  verbose = false;
 
 	public NVelocityGenerator() {
 	    InitNVelocity();
 	}
+
+
+        public delegate void OutputHandler(String s);
+
+        private event OutputHandler OutputEvent;
+
+        public void AttachToOutputEvent(OutputHandler handler) {
+            OutputEvent += new OutputHandler(handler);
+            verbose = true;
+            
+        }
 
 	/// <summary>
 	/// Init the NVelocity singleton
@@ -57,7 +69,7 @@ namespace Spring2.DataTierGenerator.Generator {
 		
 	    foreach(ITask task in parser.Tasks) {
 		try {
-		    Velocity.GetTemplate(task.Template);
+		    Template t = Velocity.GetTemplate(task.Template);
 		} catch (ResourceNotFoundException) {
 		    WriteToLog("ERROR: Unable to locate " + task.Template);
 		    hasErrors = true;
@@ -77,17 +89,20 @@ namespace Spring2.DataTierGenerator.Generator {
 		}
 
 		WriteToLog(String.Empty.PadLeft(40,'-'));
-		foreach(ITask task in parser.Tasks) {
+                foreach(ITask task in parser.Tasks) {
+                    FireOutputEvent("TASK: " + task.Name);
 		    try {
 			Template template = Velocity.GetTemplate(task.Template);
-			foreach(IElement element in task.Elements) {
-			    try {
-				GenerateFile(parser, element, task, template);
-			    } catch (Exception ex) {
-				WriteToLog(String.Format("Unhandled exception in generating file for element '{0}' of task '{1}'", element.Name, task.Name));
-				WriteToLog(ex.ToString());
-			    }
-			}
+
+                        foreach (IElement element in task.Elements) {
+                            FireOutputEvent("ElementList: " + element.Name);
+                            try {
+                                GenerateFile(parser, element, task, template);
+                            } catch (Exception ex) {
+                                WriteToLog(String.Format("Unhandled exception in generating file for element '{0}' of task '{1}'", element.Name, task.Name));
+                                WriteToLog(ex.ToString());
+                            }
+                        }
 		    } catch (Exception ex) {
 			WriteToLog(String.Format("Unhandled exception in task '{0}'", task.Name));
 			WriteToLog(ex.ToString());
@@ -151,16 +166,16 @@ namespace Spring2.DataTierGenerator.Generator {
 			timer.Stop();
 			writerTicks += timer.TimeSpan.Ticks;
 
-			if (changed) {
-			    WriteToLog(w.Log);
-			    w.Log.Clear();
-			    WriteToLog("generating " + file.FullName);
+                        if (changed) {
+                            WriteToLog(w.Log);
+                            w.Log.Clear();
+                            WriteToLog("generating " + file.FullName);
 
-			    // touch the backup file so the timestamp is later than the newly generated file
-			    FileInfo backupFile = new FileInfo(w.BackupFilePath);
-			    backupFile.LastWriteTime = DateTime.Now;
-			} 
-		    } catch(Exception ex) { 
+                            // touch the backup file so the timestamp is later than the newly generated file
+                            //FileInfo backupFile = new FileInfo(w.BackupFilePath);
+                            //backupFile.LastWriteTime = DateTime.Now;
+                        }
+                    } catch (Exception ex) { 
 			WriteToLog("error generating " + file.FullName + " -- " + ex.Message);
 		    }
 		}
@@ -174,12 +189,22 @@ namespace Spring2.DataTierGenerator.Generator {
 	}
 
 	protected void WriteToLog(String s) {
-	    log.Add(s);
+            if (verbose) {
+                FireOutputEvent(s);
+            } else {
+                log.Add(s);
+            }
 	}
+
+        private void FireOutputEvent(String s) {
+            if (OutputEvent != null) {
+                OutputEvent(s);
+            }
+        }
 
 	protected void WriteToLog(IList list) {
 	    foreach(String s in list) {
-		log.Add(s);
+                WriteToLog(s);
 	    }
 	}
 

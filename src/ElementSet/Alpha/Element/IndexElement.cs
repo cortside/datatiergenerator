@@ -16,6 +16,7 @@ namespace Spring2.DataTierGenerator.Element {
 	private Boolean unique = false;
 	private Boolean clustered = false;
 	private ArrayList columns = new ArrayList();
+        private ArrayList includeColumns = new ArrayList();
 
 	public Boolean Unique {
 	    get { return this.unique; }
@@ -31,6 +32,11 @@ namespace Spring2.DataTierGenerator.Element {
 	    get { return this.columns; }
 	    set { this.columns = value; }
 	}
+
+        public ArrayList IncludeColumns {
+            get { return this.includeColumns; }
+            set { this.includeColumns = value; }
+        }
 
 	/// <summary>
 	/// Parse only method. Parses and adds all entities found in the given node and adds them to the given
@@ -51,6 +57,11 @@ namespace Spring2.DataTierGenerator.Element {
 			indexElement.Clustered = Boolean.Parse(GetAttributeValue(indexNode, CLUSTERED, indexElement.Clustered.ToString()));
 
 			ColumnElement.ParseFromXml(indexNode, indexElement.Columns);
+                        if (indexNode.Name == "includeColumns") {
+                            foreach (XmlNode includeNode in indexNode.ChildNodes) {
+                                ColumnElement.ParseFromXml(includeNode, indexElement.IncludeColumns);
+                            }
+                        }
 		
 			indexElements.Add(indexElement);
 		    }
@@ -88,6 +99,18 @@ namespace Spring2.DataTierGenerator.Element {
 			{
 			    continue;
 			}
+                        if (n.Name == "include") {
+                            foreach (XmlNode includeNode in n.ChildNodes) {
+                                ColumnElement includeColumn = sqlentity.FindColumnByName(includeNode.Attributes["name"].Value);
+                                if (includeColumn == null) {
+                                    vd(ParserValidationArgs.NewError("column specified (" + includeNode.Attributes["name"].Value + ") in index (" + index.Name + ") not found as column."));
+                                    includeColumn = new ColumnElement();
+                                    includeColumn.Name = includeNode.Attributes["name"].Value;
+                                }
+                                index.IncludeColumns.Add(includeColumn); 
+                            }
+                            continue;
+                        }
 			ColumnElement column = sqlentity.FindColumnByName(n.Attributes["name"].Value);
 			if (column == null) {
 			    vd(ParserValidationArgs.NewError("column specified (" + n.Attributes["name"].Value + ") in index (" + index.Name + ") not found as column."));

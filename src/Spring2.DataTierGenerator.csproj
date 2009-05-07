@@ -117,6 +117,10 @@
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
+    <ProjectReference Include="Spring2.DataTierGenerator.Plugins.csproj">
+      <Project>{2FF72191-5648-47D5-84EC-B7AF8BF7DA91}</Project>
+      <Name>Spring2.DataTierGenerator.Plugins</Name>
+    </ProjectReference>
     <ProjectReference Include="Spring2.DataTierGenerator.Attribute.csproj">
       <Name>Spring2.DataTierGenerator.Attribute</Name>
       <Project>{3131371A-6B4B-4B39-9DB0-18B9F955E0BD}</Project>

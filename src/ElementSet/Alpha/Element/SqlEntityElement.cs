@@ -190,6 +190,14 @@ namespace Spring2.DataTierGenerator.Element {
 		    if (node.Attributes["audit"] != null) {
 			sqlentity.Audit = Boolean.Parse(node.Attributes["audit"].Value);
 		    }
+
+                    //Adds all attributes including all not defined by element class 
+                    foreach (XmlAttribute attribute in node.Attributes) {
+                        if (!sqlentity.Attributes.ContainsKey(attribute.Name)) {
+                            sqlentity.Attributes.Add(attribute.Name, attribute.Value);
+                        }
+                    }
+
 		    sqlentity.Columns = ColumnElement.ParseFromXml(node, sqlentity, sqltypes, types, vd);
 		    sqlentity.Constraints = ConstraintElement.ParseFromXml(node, sqlentity, sqltypes, types, vd);
 		    sqlentity.Indexes = IndexElement.ParseFromXml(node, sqlentity, sqltypes, types, vd);
@@ -199,6 +207,7 @@ namespace Spring2.DataTierGenerator.Element {
 		    DatabaseElement d = new DatabaseElement();
 		    d.SqlEntities = sqlentities;
 		    sqlentity.Views = ViewElement.ParseFromXml(node, d, sqlentity, sqltypes, types, vd);
+
 
 		    sqlentities.Add(sqlentity);
 		}

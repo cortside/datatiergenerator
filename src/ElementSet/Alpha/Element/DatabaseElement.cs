@@ -152,6 +152,7 @@ namespace Spring2.DataTierGenerator.Element {
 		if (node.Attributes["key"] != null) {
 		    database.Key = node.Attributes["key"].Value;
 		}
+
 		database.SqlEntities = SqlEntityElement.ParseFromXml(database, GetSqlEntitiesNode(node), sqltypes, types, vd);
 		list.Add(database);
 	    }

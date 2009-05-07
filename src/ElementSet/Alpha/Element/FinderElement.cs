@@ -49,6 +49,7 @@ namespace Spring2.DataTierGenerator.Element {
 	    set { this.properties = value; }
 	}
 
+
 	public Boolean Limit {
 	    get { return this.limit; }
 	    set { this.limit = value; }
@@ -131,6 +132,13 @@ namespace Spring2.DataTierGenerator.Element {
 		    finder.Sort += p.GetSqlAlias();
 		}
 	    }
+
+            //Adds all attributes including all non defined by element class 
+            foreach (XmlAttribute attribute in node.Attributes) {
+                if (!finder.Attributes.ContainsKey(attribute.Name)) {
+                    finder.Attributes.Add(attribute.Name, attribute.Value);
+                }
+            }
 
 	    finder.container = entity;
 
