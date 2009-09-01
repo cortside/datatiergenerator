@@ -12,4 +12,4 @@ using System.Runtime.CompilerServices;
 // You can specify all the values or you can default the Revision and Build Numbers
 // by using the '*' as shown below:
 
-[assembly: System.Reflection.AssemblyVersionAttribute("1.2.1.3599")]
+[assembly: System.Reflection.AssemblyVersion("1.2.0.2343")]
