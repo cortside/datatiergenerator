@@ -97,8 +97,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\ICSharpCode.NRefactory.dll</HintPath>
     </Reference>
-    <Reference Include="NVelocity">
-      <Name>NVelocity</Name>
+    <Reference Include="NVelocity, Version=0.4.2.8580, Culture=neutral, PublicKeyToken=44382d1b57473eda">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\NVelocity.dll</HintPath>
     </Reference>
     <Reference Include="Spring2.Core">

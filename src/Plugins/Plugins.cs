@@ -20,7 +20,7 @@ namespace Spring2.DataTierGenerator.Plugins {
         protected List<T> GetPlugins<T>(string folder) {
             List<T> tList = new List<T>();
             string[] files = null;
-            Console.WriteLine("Looking for plugins here: " + folder); 
+            //Console.WriteLine("Looking for plugins here: " + folder); 
             try {
                 files = Directory.GetFiles(folder, "*.dll");
                 foreach (string file in files) {
@@ -49,7 +49,7 @@ namespace Spring2.DataTierGenerator.Plugins {
 
         public Plugins(String executablePath) {
             string exeName = executablePath;
-            string folder = executablePath + "\\Plugins";
+            string folder = executablePath + "\\..\\bin\\DTG";
             preAndPostList = GetPlugins<IPreAndPostProcessFile>(folder);
         }
 
