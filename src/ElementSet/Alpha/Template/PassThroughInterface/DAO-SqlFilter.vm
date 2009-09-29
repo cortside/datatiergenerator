@@ -397,7 +397,7 @@ namespace $options.GetDAONameSpace($element.Name) {
 	    cmd.ExecuteNonQuery();
 
 	    // Do not close the connection if it is part of a transaction.
-	    if (transaction == null) {
+	    if (transaction == null && DbConnectionScope.Current == null) {
  		cmd.Connection.Close();
 	    }
 
@@ -429,7 +429,7 @@ namespace $options.GetDAONameSpace($element.Name) {
 	    cmd.ExecuteNonQuery();
 
 	    // Do not close the connection if it is part of a transaction.
-	    if (transaction == null) {
+	    if (transaction == null && DbConnectionScope.Current == null) {
 		cmd.Connection.Close();
 	    }
 
@@ -473,7 +473,7 @@ namespace $options.GetDAONameSpace($element.Name) {
 	    cmd.ExecuteNonQuery();
 
 	    // do not close the connection if it is part of a transaction
-	    if (transaction == null) {
+	    if (transaction == null && DbConnectionScope.Current == null) {
 		cmd.Connection.Close();
 	    }
 
@@ -506,7 +506,7 @@ namespace $options.GetDAONameSpace($element.Name) {
 #end
 	    cmd.ExecuteNonQuery();
 
-	    if (transaction == null) {
+	    if (transaction == null && DbConnectionScope.Current == null) {
 		cmd.Connection.Close();
 	    }
 
@@ -518,7 +518,7 @@ namespace $options.GetDAONameSpace($element.Name) {
 #end
 	    cmd.ExecuteNonQuery();
 
-	    if (transaction == null) {
+	    if (transaction == null && DbConnectionScope.Current == null) {
 		cmd.Connection.Close();
 	    }
 	}
@@ -552,7 +552,7 @@ namespace $options.GetDAONameSpace($element.Name) {
 	    cmd.ExecuteNonQuery();
 
 	    // do not close the connection if it is part of a transaction
-	    if (transaction == null) {
+	    if (transaction == null && DbConnectionScope.Current == null) {
 		cmd.Connection.Close();
 	    }
 	}
@@ -597,7 +597,7 @@ namespace $options.GetDAONameSpace($element.Name) {
 	    cmd.ExecuteNonQuery();
 
 	    // Do not close the connection if it is part of a transaction.
-	    if (transaction == null) {
+	    if (transaction == null && DbConnectionScope.Current == null) {
 		cmd.Connection.Close();
 	    }
 	}
@@ -621,7 +621,7 @@ namespace $options.GetDAONameSpace($element.Name) {
 	    cmd.ExecuteNonQuery();
 
 	    // do not close the connection if it is part of a transaction
-	    if (transaction == null) {
+	    if (transaction == null && DbConnectionScope.Current == null) {
 		cmd.Connection.Close();
 	    }
 	}
@@ -677,7 +677,12 @@ namespace $options.GetDAONameSpace($element.Name) {
 	    cmd.Parameters.Add(CreateDataParameter("@$field.GetPropertyName().Replace(".", "_")", DbType.$field.Column.SqlType.DbType, ParameterDirection.Input, $options.GetSqlConversion($field)));
 
 #end
-	    IDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+	    IDataReader dataReader = null;
+	    if (DbConnectionScope.Current == null) {
+		dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+	    } else {
+		dataReader = cmd.ExecuteReader();
+	    }
 #end
 #if($finder.Unique)
 	    return GetDataObject(dataReader);
