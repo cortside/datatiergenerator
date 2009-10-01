@@ -1,0 +1,275 @@
+#if(!$element.SqlEntity.Name.Equals("") && !$element.IsAbstract)
+#set ($namespaces = "#nameSpaces($options $element true)")
+#set ($namespaces = $namespaces.Replace("using ${options.RootNameSpace}.BusinessLogic;", ""))
+$namespaces
+#if ($namespaces.IndexOf("${options.RootNameSpace}.Types") < 0)
+using ${options.RootNameSpace}.Types;
+#end
+using ${options.RootNameSpace}.BusinessLogic;
+using Spring2.Core.BusinessEntity;
+
+using Spring2.DataTierGenerator.Attribute;
+
+#set ($directory = $task.Directory)
+#if($directory.StartsWith('.\'))
+#set ($directory = $directory.Substring(2))
+#end
+
+namespace $options.GetDAONameSpace($element.Name) {
+	/// <summary>
+    /// Data access interface for $element.Name business entity.
+    /// </summary>
+    public interface I${element.Name}DAO {	
+	/// <summary>
+	/// Sets the singleton DAO instance of I${element.Name}DAO
+	/// </summary>
+	[Generate]
+	void SetInstance(I${element.Name}DAO instance);
+
+#set ($listtype = "void")
+#if($element.JoinTable)
+#set ($listtype="IList")
+#elseif ($element.IsDerived)
+#set ($listtype="${element.BaseEntity.Name}List")
+#else
+#set ($listtype = "${element.Name}List")
+#end
+	/// <summary>
+	/// Returns a list of all $element.Name rows.
+	/// </summary>
+	/// <returns>List of $element.Name objects.</returns>
+	/// <exception cref="Spring2.Core.DAO.FinderException">Thrown when no rows are found.</exception>
+	[Generate]
+	$listtype GetList();
+
+	/// <summary>
+	/// Returns a filtered list of $element.Name rows.
+	/// </summary>
+	/// <param name="filter">Filtering criteria.</param>
+	/// <returns>List of $element.Name objects.</returns>
+	/// <exception cref="Spring2.Core.DAO.FinderException">Thrown when no rows are found matching the where criteria.</exception>
+	[Generate]
+	$listtype GetList(SqlFilter filter);
+
+	/// <summary>
+	/// Returns an ordered list of $element.Name rows.  All rows in the database are returned
+	/// </summary>
+	/// <param name="orderByClause">Ordering criteria.</param>
+	/// <returns>List of $element.Name objects.</returns>
+	/// <exception cref="Spring2.Core.DAO.FinderException">Thrown when no rows are found.</exception>
+	[Generate]
+	$listtype GetList(IOrderBy orderByClause);
+
+	/// <summary>
+	/// Returns an ordered and filtered list of $element.Name rows.
+	/// </summary>
+	/// <param name="filter">Filtering criteria.</param>
+	/// <param name="orderByClause">Ordering criteria.</param>
+	/// <returns>List of $element.Name objects.</returns>
+	/// <exception cref="Spring2.Core.DAO.FinderException">Thrown when no rows are found matching the where criteria.</exception>
+	[Generate]
+	$listtype GetList(SqlFilter filter, IOrderBy orderByClause);
+
+	/// <summary>
+	/// Returns a list of all $element.Name rows.
+	/// </summary>
+	/// <param name="maxRows">Uses TOP to limit results to specified number of rows</param>
+	/// <returns>List of $element.Name objects.</returns>
+	/// <exception cref="Spring2.Core.DAO.FinderException">Thrown when no rows are found.</exception>
+	[Generate]
+	$listtype GetList(Int32 maxRows);
+
+	/// <summary>
+	/// Returns a filtered list of $element.Name rows.
+	/// </summary>
+	/// <param name="filter">Filtering criteria.</param>
+	/// <param name="maxRows">Uses TOP to limit results to specified number of rows</param>
+	/// <returns>List of $element.Name objects.</returns>
+	/// <exception cref="Spring2.Core.DAO.FinderException">Thrown when no rows are found matching the where criteria.</exception>
+	[Generate]
+	$listtype GetList(SqlFilter filter, Int32 maxRows);
+
+	/// <summary>
+	/// Returns an ordered list of $element.Name rows.  All rows in the database are returned
+	/// </summary>
+	/// <param name="orderByClause">Ordering criteria.</param>
+	/// <param name="maxRows">Uses TOP to limit results to specified number of rows</param>
+	/// <returns>List of $element.Name objects.</returns>
+	/// <exception cref="Spring2.Core.DAO.FinderException">Thrown when no rows are found.</exception>
+	[Generate]
+	$listtype GetList(IOrderBy orderByClause, Int32 maxRows);
+
+	/// <summary>
+	/// Returns an ordered and filtered list of $element.Name rows.
+	/// </summary>
+	/// <param name="filter">Filtering criteria.</param>
+	/// <param name="orderByClause">Ordering criteria.</param>
+	/// <param name="maxRows">Uses TOP to limit results to specified number of rows</param>
+	/// <returns>List of $element.Name objects.</returns>
+	/// <exception cref="Spring2.Core.DAO.FinderException">Thrown when no rows are found matching the where criteria.</exception>
+	[Generate]
+	$listtype GetList(SqlFilter filter, IOrderBy orderByClause, Int32 maxRows);
+
+#if($element.JoinTable)
+#set($s="${element.Name}Data")
+#else
+#set($s=$element.Name)
+#end
+	/// <summary>
+	/// Finds a $element.Name entity using it's primary key.
+	/// </summary>
+	#parameterComments(true $element.GetPrimaryKeyFields() "A key field.")
+	/// <returns>A $element.Name object.</returns>
+	/// <exception cref="Spring2.Core.DAO.FinderException">Thrown when no entity exists witht he specified primary key..</exception>
+	[Generate]
+	$s Load(#parameterList(true $element.GetPrimaryKeyFields()));
+
+	/// <summary>
+	/// Repopulates an existing business entity instance
+	/// </summary>
+	[Generate]
+	void Reload($s instance);
+	
+	/// <summary>
+	/// Builds a data object from the current row in a data reader..
+	/// </summary>
+	/// <param name="data">Entity to be populated from data reader</param>
+	/// <param name="dataReader">Container for database row.</param>
+	/// <returns>Data object built from current row.</returns>
+	[Generate]
+	$s GetDataObjectFromReader($s data, IDataReader dataReader);
+	
+	/// <summary>
+	/// Builds a data object from the current row in a data reader..
+	/// </summary>
+	/// <param name="dataReader">Container for database row.</param>
+	/// <returns>Data object built from current row.</returns>
+	[Generate]
+	$s GetDataObjectFromReader(IDataReader dataReader);
+	
+	/// <summary>
+	/// Builds a data object from the current row in a data reader..
+	/// </summary>
+	/// <param name="dataReader">Container for database row.</param>
+	/// <param name="ordinals">An instance of ColumnOrdinals initialized for this data reader</param>
+	/// <returns>Data object built from current row.</returns>
+	[Generate]
+	$s GetDataObjectFromReader(IDataReader dataReader, ${element.Name}DAO.ColumnOrdinals ordinals);
+	
+	/// <summary>
+	/// Builds a data object from the current row in a data reader..
+	/// </summary>
+	/// <param name="data">Entity to be populated from data reader</param>
+	/// <param name="dataReader">Container for database row.</param>
+	/// <param name="ordinals">An instance of ColumnOrdinals initialized for this data reader</param>
+	/// <returns>Data object built from current row.</returns>
+	[Generate]
+	$s GetDataObjectFromReader($s data, IDataReader dataReader, ${element.Name}DAO.ColumnOrdinals ordinals);
+	
+#if($element.SqlEntity.GenerateInsertStoredProcScript)
+
+	/// <summary>
+	/// Inserts a record into the $element.SqlEntity.Name table.
+	/// </summary>
+	/// <param name="data"></param>
+#set($returnType="void")
+#if($element.GetIdentityField())
+#set($returnType=${element.GetIdentityField().Type.Name})
+#end
+	[Generate]
+	$returnType Insert($s data);
+
+#if ($element.MultipleSqlEntities)
+	/// <summary>
+	/// Inserts a record into the $element.SqlEntity.Name table.
+	/// </summary>
+	/// <param name="data"></param>
+	/// <param name="transaction"></param>
+	[Generate]
+	$returnType Insert($s data, IDbTransaction transaction);
+	
+	/// <summary>
+	/// Inserts a record into the $element.SqlEntity.Name table.
+	/// </summary>
+	/// <param name="data"></param>
+	/// <param name="transaction"></param>
+	[Generate]
+	$returnType Insert($s data, IDbTransaction transaction)
+#end
+#end
+#if($element.SqlEntity.HasUpdatableColumns() && $element.SqlEntity.GenerateUpdateStoredProcScript)
+
+	/// <summary>
+	/// Updates a record in the $element.SqlEntity.Name table.
+	/// </summary>
+	/// <param name="data"></param>
+	[Generate]
+	void Update($s data);
+
+#set($t="Update")
+#if ($element.MultipleSqlEntities)
+	[Generate]
+	void Update($s data, IDbTransaction transaction);
+	
+	/// <summary>
+	/// Updates a record in the $element.SqlEntity.Name table.
+	/// </summary>
+	/// <param name="data"></param>
+	/// <param name="transaction"></param>
+	[Generate]
+	void Update($s data, IDbTransaction transaction);
+#end
+#end
+#if($element.SqlEntity.GenerateDeleteStoredProcScript)
+	/// <summary>
+	/// Deletes a record from the $element.SqlEntity.Name table by#if($element.GetPrimaryKeyFields().Count == 1 && $element.GetPrimaryKeyFields().get_Item(0).Column.Identity) $element.GetPrimaryKeyFields().get_Item(0).Name#else a composite primary key#end.
+	/// </summary>
+#parameterComments(true $element.GetPrimaryKeyFields() "A key field.")
+	[Generate]
+	void Delete(#foreach( $field in $element.GetPrimaryKeyFields() )#if($velocityCount>1), #end$field.CreateMethodParameter()#end);
+
+#if ($element.MultipleSqlEntities)
+	/// <summary>
+	/// Deletes a record from the $element.SqlEntity.Name table by#if($element.GetPrimaryKeyFields().Count == 1 && $element.GetPrimaryKeyFields().get_Item(0).Column.Identity) $element.GetPrimaryKeyFields().get_Item(0).Name#else a composite primary key#end.
+	/// </summary>
+#parameterComments(true $element.GetPrimaryKeyFields() "A key field.")
+	/// <param name="transaction"></param>
+	[Generate]
+	void Delete(#foreach( $field in $element.GetPrimaryKeyFields() )#if($velocityCount>1), #end$field.CreateMethodParameter()#end, IDbTransaction transaction);
+#end
+#end
+#foreach($finder in $element.Finders)
+
+	/// <summary>
+#if($finder.Unique)
+	/// Returns an object which matches the values for the fields specified.
+#else
+	/// Returns a list of objects which match the values for the fields specified.
+#end
+	/// </summary>
+#parameterComments(true $finder.Fields "A field value to be matched.")
+#if($finder.Unique)
+	/// <returns>The object found.</returns>
+#else
+	/// <returns>The list of $options.GetDAOClassName($element.Name) objects found.</returns>
+#end
+#if($finder.Unique)
+	/// <exception cref="Spring2.Core.DAO.FinderException">Thrown when no rows are found.</exception>
+#end
+#if($finder.Unique)
+#if($element.JoinTable)
+#set($s="${element.Name}Data")
+#else
+#set($s=$element.Name)
+#end
+#else
+#set($s=$listtype)
+#end
+	[Generate]
+	$s ${finder.Name}(#parameterList(true $finder.Fields)#if($finder.Limit), Int32 limit#end);
+#end
+
+	//}
+    }
+}
+#end

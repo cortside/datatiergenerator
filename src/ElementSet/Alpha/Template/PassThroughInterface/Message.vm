@@ -2,7 +2,8 @@
 using System;
 using System.Text;
 using System.Collections.Generic;
-
+using ${options.RootNameSpace}.Types;
+using ${options.RootNameSpace}.DataObject;
 using Spring2.Core.Message;
 using Spring2.Core.Types;
 
@@ -11,7 +12,7 @@ namespace ${options.RootNameSpace}.Exceptions {
 
 #foreach($property in $element.Fields)
 #if ($property.Type)
-       private $property.Type.Name $property.GetFieldFormat() = $property.Type.NewInstanceFormat ;
+       private $property.Type.Name $property.GetFieldFormat();
 #end
 #end
 

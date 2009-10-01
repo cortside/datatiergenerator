@@ -1,4 +1,3 @@
-#if(!$element.JoinTable)
 #*
 
         interface.vm - default data object templates (replaces DataObjectGenerator class)
@@ -22,12 +21,21 @@ namespace $namespace {
 
     public class ${element.Name}Fields {
 	private ${element.Name}Fields() {}
-	public static readonly String ${element.Name.ToUpper()} = "${element.Name}"; //Entity Name
+	public static readonly String ENTITY_NAME = "${element.Name}";
 	
-#foreach($propertyName in $element.GetPropertyNames($options, $elements))
-	public static readonly String $propertyName.FieldName = $propertyName.FieldValue;
+#foreach($field in $element.Fields)
+#if ($field.Column.SqlType.DbType.Length > 0)
+#if ($field.Column.SqlType.SqlDbType.Equals("VarChar(max)"))
+	public static readonly ColumnMetaData $field.Name.ToUpper().Replace(".","_") = new ColumnMetaData("$field.Name", "$field.GetSqlAlias()", DbType.$field.Column.SqlType.DbType, SqlDbType.VarChar, 0, 0, 0);
+#else
+	public static readonly ColumnMetaData $field.Name.ToUpper().Replace(".","_") = new ColumnMetaData("$field.Name", "$field.GetSqlAlias()", DbType.$field.Column.SqlType.DbType, SqlDbType.$field.Column.SqlType.SqlDbType, $field.Column.SqlType.Length, $field.Column.SqlType.Precision, $field.Column.SqlType.Scale);
+#end
+#else
+	public static readonly ColumnMetaData $field.Name.ToUpper().Replace(".","_") = new ColumnMetaData("$field.Name", "$field.GetSqlAlias()", DbType.Int32, SqlDbType.Int, 0, 0, 0);
+#end
 #end
     }
+#if(!$element.JoinTable)
 
     public interface I$element.Name :#if($element.IsDerived) I$element.BaseEntity.Name#else IBusinessEntity#end {
 #foreach($field in $element.ReadableProperties)
@@ -42,5 +50,5 @@ namespace $namespace {
 	}
 #end
     }
-}
 #end
+}

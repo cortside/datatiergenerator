@@ -96,16 +96,6 @@ namespace $namespace {
 	}
 
 	[Generate]
-	public Boolean Contains(${dataObjectClass} value) {
-	    return List.Contains(value);
-	}
-
-	[Generate]
-	public Int32 IndexOf(${dataObjectClass} value) {
-	    return List.IndexOf(value);
-	}
-
-	[Generate]
 	public void Insert(Int32 index, ${dataObjectClass} value) {
 	    if (!immutable) {
 		List.Insert(index, value);
@@ -129,18 +119,6 @@ namespace $namespace {
 #end
 		    List.RemoveAt(index);
 		}
-	    } else {
-		throw new System.Data.ReadOnlyException();
-	    }
-	}
-
-	[Generate]
-	public void Remove(${dataObjectClass} value) {
-	    if (!immutable) {
-		List.Remove(value);
-#if($identity)
-		keys.Remove(value.$identity.GetMethodFormat());
-#end
 	    } else {
 		throw new System.Data.ReadOnlyException();
 	    }
@@ -229,6 +207,20 @@ namespace $namespace {
 
 	    return result;
 	}
+
+	/// <summary>
+	/// removes value by identity
+	/// </summary>
+	[Generate]
+	public void Remove($identity.Type.Name $identity.GetFieldFormat()) {
+	    if(!immutable) {
+		$dataObjectClass objectInList = this[$identity.GetFieldFormat()];
+		List.Remove(objectInList);
+		keys.Remove($identity.GetFieldFormat());
+	    } else {
+		throw new System.Data.ReadOnlyException();
+	    }
+	}
 #end
 
 ## add sorting ability to the list by adding a sort method and a IComparer for each property
@@ -260,7 +252,7 @@ namespace $namespace {
 	}
 
 #foreach($field in $element.Fields)
-#if($field.Name.IndexOf(".")<0 && !$field.Type.Name.EndsWith("Enum") && !$field.Type.Name.StartsWith("I") && !$field.Type.Name.EndsWith("List") && $field.Type.Name!="BooleanType" && $field.Type.Name!="Hashtable" && $field.Type.Name!="Message" && $field.Type.Name!="Bitmap" && $field.Type.Name!="Byte[]" && $field.Readable)
+#if($field.Name.IndexOf(".")<0 && !$field.Type.Name.EndsWith("Enum") && ($field.Type.Name=="IntegerType" || $field.Type.Name=="IdType" || !$field.Type.Name.StartsWith("I")) && !$field.Type.Name.EndsWith("List") && $field.Type.Name!="BooleanType" && $field.Type.Name!="Hashtable" && $field.Type.Name!="Message" && $field.Type.Name!="Bitmap" && $field.Readable && $field.Type.Name!="Byte[]")
 	[Generate]
 	public class ${field.Name.Replace(".","_")}Sorter : IComparer {
 	    public Int32 Compare(Object a, Object b) {

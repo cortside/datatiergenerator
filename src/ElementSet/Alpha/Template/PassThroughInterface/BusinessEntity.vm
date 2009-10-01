@@ -11,6 +11,12 @@ using ${options.RootNameSpace}.DataObject;
 using ${options.RootNameSpace}.Types;
 
 namespace ${options.RootNameSpace}.BusinessLogic {
+
+#if ($element.Description != "")
+    /// <summary>
+    /// $element.Description
+    /// </summary>
+#end
     public #if($element.IsAbstract)abstract #end class $element.Name#if(!$element.JoinTable) :#if($element.IsDerived) $element.BaseEntity.Name,#else BusinessEntity,#end I$element.Name#end {
 
 #foreach($field in $element.PrivateFields)
@@ -76,6 +82,32 @@ namespace ${options.RootNameSpace}.BusinessLogic {
 		throw new MessageListException(errors);
             }
 
+#set ($setAuditStamps = "N")
+#set ($createDate = "N")
+#set ($createUserId = "N")
+#set ($lastModifiedDate = "N")
+#set ($lastModifiedUserId = "N")
+#foreach ($field in $element.PrivateFields)
+	#if ($field.Name.IndexOf("CreateDate")>-1)
+		#set ($createDate = "Y")
+		#set ($setAuditStamps = "Y")
+	#end
+	#if ($field.Name.IndexOf("CreateUserId")>-1)
+		#set ($createUserId = "Y")
+		#set ($setAuditStamps = "Y")
+	#end
+	#if ($field.Name.IndexOf("LastModifiedUserId")>-1)
+		#set ($lastModifiedUserId = "Y")
+		#set ($setAuditStamps = "Y")
+	#end
+	#if ($field.Name.IndexOf("LastModifiedDate")>-1)
+		#set ($lastModifiedDate = "Y")
+		#set ($setAuditStamps = "Y")
+	#end
+#end
+#if ($setAuditStamps == "Y")
+	    SetAuditStamps();
+#end
 #if($element.GetIdentityField())
 	    if (isNew) {
 		this.$element.GetIdentityField().GetMethodFormat() = ${element.Name}DAO.DAO.Insert(this);
@@ -88,6 +120,32 @@ namespace ${options.RootNameSpace}.BusinessLogic {
 #end
 #end
 
+#if (!$element.IsDerived && !$element.BaseEntity.IsAbstract && $setAuditStamps == "Y")
+	[Generate]
+	private void SetAuditStamps() {
+	    IdType userId = IdType.DEFAULT;
+	    if (System.Threading.Thread.CurrentPrincipal.Identity.Name.Length > 0) {
+		userId = (System.Threading.Thread.CurrentPrincipal as IUser).UserId;
+	    }
+#if ($createDate == "Y" || $createUserId == "Y")
+	    if (IsNew) {
+#if ($createDate == "Y")
+		this.CreateDate = DateTimeType.Now;
+#end
+#if ($createUserId == "Y")
+		this.CreateUserId = userId;
+#end
+	    }
+#end
+#if ($lastModifiedDate == "Y")
+	    this.LastModifiedDate = DateTimeType.Now;
+#end
+#if ($lastModifiedUserId == "Y")
+	    this.LastModifiedUserId = userId;
+#end
+	}
+	
+#end
 	[Generate]
 	public#if($element.IsDerived) override#else virtual#end MessageList Validate() {
 
@@ -161,6 +219,16 @@ namespace ${options.RootNameSpace}.BusinessLogic {
 ##	public abstract void Update(${element.Name}Data data);
 
 #end
+
+	[Generate()]
+	public override String ToString() {
+#if($element.GetIdentityField())	
+	    return GetType().ToString() + "@" + ${element.GetIdentityField().Name}.ToString(); 
+#else
+	    return GetType().ToString() + "@" + GetHashCode().ToString(); 
+#end		
+	}
+
     }
 }
 #end

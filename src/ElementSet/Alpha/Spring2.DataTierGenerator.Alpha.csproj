@@ -315,6 +315,7 @@
     <None Include="config.xsx">
       <DependentUpon>config.xsd</DependentUpon>
     </None>
+    <EmbeddedResource Include="Template\PassThroughInterface\DAO-Interface.vm" />
     <EmbeddedResource Include="Template\PassThroughInterface\DAO-SqlFilter.vm" />
     <Content Include="Test\regress.xml" />
     <Content Include="Test\sanity.xml" />
