@@ -99,6 +99,7 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 		// TODO: maybe UserData should be an object that has both before and after collections of specials???
 		//WriteCurrent();
 		System.Diagnostics.Debug.WriteLine("finish => " + enumerator.Current.ToString());
+		available = false;
 	    }
 	}
 
