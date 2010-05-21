@@ -50,7 +50,7 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 	    if (!file.Directory.Exists) {
 		file.Directory.Create();
 	    }
-
+Console.Out.WriteLine("processing file " + file.FullName);
 
 	    MemoryStream stream = new MemoryStream();
 	    StreamWriter sw = new StreamWriter(stream);
