@@ -34,8 +34,8 @@ namespace Spring2.DataTierGenerator.UpdateProjectFiles {
 
 	private static void ExecuteTask(FileInfo project, StringCollection files) {
 	    XmlDocument doc = new XmlDocument();
-	    //doc.Load(project.FullName);
-	    Console.Out.WriteLine(doc.FirstChild.Name);
+	    doc.Load(project.FullName);
+	    //Console.Out.WriteLine(doc.FirstChild.Name);
 
 	    Boolean updated = false;
 	    if (doc.DocumentElement.Name.Equals("VisualStudioProject")) {
