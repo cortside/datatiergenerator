@@ -37,9 +37,9 @@ namespace Spring2.DataTierGenerator.UpdateProjectFiles {
 	    doc.Load(project.FullName);
 
 	    Boolean updated = false;
-	    if (doc.FirstChild.Name.Equals("VisualStudioProject")) {
+	    if (doc.DocumentElement.Name.Equals("VisualStudioProject")) {
 		updated = AddFilesVS2003(doc, files, project);
-	    } else if (doc.FirstChild.Name.Equals("Project")) {
+	    } else if (doc.DocumentElement.Name.Equals("Project")) {
 		updated = AddFilesVS2005(doc, files, project);
 	    } else {
 		Console.Out.WriteLine("ERROR: Unknown project file version");
