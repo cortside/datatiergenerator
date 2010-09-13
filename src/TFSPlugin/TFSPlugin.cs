@@ -13,7 +13,7 @@ namespace TFSPlugin {
         private Workspace workspace = null;
 
         public TFSPlugin() {
-            String tfsName = ConfigurationSettings.AppSettings["TfsRespoitoryServer"].ToString();//"24.39.144.139";
+            String tfsName = ConfigurationManager.AppSettings["TfsRespoitoryServer"].ToString();//"24.39.144.139";
             TeamFoundationServer tfs = new TeamFoundationServer(tfsName);
             VersionControlServer versionControl = (VersionControlServer)tfs.GetService(typeof(VersionControlServer));
 
@@ -22,7 +22,7 @@ namespace TFSPlugin {
             versionControl.BeforeCheckinPendingChange += TFSPlugin.OnBeforeCheckinPendingChange;
             versionControl.NewPendingChange += TFSPlugin.OnNewPendingChange;
 
-            String workPath = ConfigurationSettings.AppSettings["TfsRespoitoryPath"].ToString();//@"C:\Data\Work\Seamlessweb\Manhattan";
+	    String workPath = ConfigurationManager.AppSettings["TfsRespoitoryPath"].ToString();//@"C:\Data\Work\Seamlessweb\Manhattan";
             workspace = versionControl.GetWorkspace(workPath);
         }
 

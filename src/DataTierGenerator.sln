@@ -1,5 +1,7 @@
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Element Sets", "Element Sets", "{B56FCA12-F11E-4FC3-8D16-E20FE668488F}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spring2.DataTierGenerator", "Spring2.DataTierGenerator.csproj", "{8BE555A1-8BBA-4CF7-9B4A-6BBEF7E20FA8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spring2.DataTierGenerator.Test", "Spring2.DataTierGenerator.Test.csproj", "{50037EF4-B0A4-4044-8638-E94A6D090CAB}"
@@ -20,8 +22,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spring2.DataTierGenerator.CSharpStyler", "Spring2.DataTierGenerator.CSharpStyler.csproj", "{2001988D-69BC-4D0D-BA21-19A98E89CADC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spring2.DataTierGenerator.UpdateProjectFiles", "Spring2.DataTierGenerator.UpdateProjectFiles.csproj", "{B6CB9D43-AD25-41E3-892E-242844DD6A7A}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Element Sets", "Element Sets", "{B56FCA12-F11E-4FC3-8D16-E20FE668488F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spring2.DataTierGenerator.PluginInterface", "Spring2.DataTierGenerator.PluginInterface.csproj", "{3F50D432-9F6C-427F-B1DF-F1561F84ABC6}"
 EndProject
@@ -88,8 +88,8 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{715E64DD-2DAD-4DA8-ACC5-2BAEBA573487} = {B56FCA12-F11E-4FC3-8D16-E20FE668488F}
 		{069AFE42-50D3-48D3-A12B-FAE1D8A2A44A} = {B56FCA12-F11E-4FC3-8D16-E20FE668488F}
+		{715E64DD-2DAD-4DA8-ACC5-2BAEBA573487} = {B56FCA12-F11E-4FC3-8D16-E20FE668488F}
 	EndGlobalSection
 	GlobalSection(DevPartner) = postSolution
 	EndGlobalSection

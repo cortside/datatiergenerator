@@ -7,8 +7,11 @@ BINDIR		:= ../bin
 LIBDIR :=	../lib
 BUILDDIR :=     ../build
 RELEASEDIR	:= ../release
-DOTNETFRAMEWORK	:= c:/WINDOWS/Microsoft.NET/Framework/v3.5
+DOTNETFRAMEWORK	:= c:/WINDOWS/Microsoft.NET/Framework/v4.0.30319
 MSBUILD		:= $(DOTNETFRAMEWORK)/MSBuild.exe
+
+RELEASE_REVISION	:= 1
+GETVERSION	:= $(BINDIR)/getversion.sh
 
 PS ?= \;
 
@@ -28,7 +31,7 @@ debug:
 	@echo MODULES = $(MODULES)
 
 build:
-	$(MSBUILD) DataTierGenerator.sln /verbosity:minimal /target:Build
+	$(MSBUILD) DataTierGenerator.sln /target:Build
 
 regress:
 	chmod a+x ../bin/NUnit/*
@@ -58,3 +61,11 @@ release: package
 	../bin/cvsadd.sh ${RELEASEDIR} Spring2.DataTierGenerator.$(shell getversion.sh).zip "new release version"
 	${BINDIR}/UpdateVersion -b Increment -i AssemblyVersionInfo.cs -o AssemblyVersionInfo.cs
 	cvs commit -m "update to next version" AssemblyVersionInfo.cs
+
+	
+package_cl:
+	#-cvs log -r${BRANCH_TAG} | perl ../bin/cvs2cl.pl --stdin -f ../release/ChangeLog-$(shell $(GETVERSION)).txt
+	#svn log --xml --verbose | xsltproc ../bin/svn2cl/svn2cl.xsl - > ChangeLog
+	../bin/svn2cl/svn2cl.sh -r ${RELEASE_REVISION}:BASE -o ../release/ChangeLog-$(shell $(GETVERSION)).txt
+
+	
