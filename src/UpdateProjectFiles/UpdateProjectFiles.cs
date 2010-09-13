@@ -41,8 +41,6 @@ namespace Spring2.DataTierGenerator.UpdateProjectFiles {
 		updated = AddFilesVS2003(doc, files, project);
 	    } else if (doc.DocumentElement.Name.Equals("Project")) {
 		updated = AddFilesVS2005(doc, files, project);
-	    } else if (doc.FirstChild.Name.Equals("xml")) {
-		updated = AddFilesVS2010(doc, files, project);
 	    } else {
 		Console.Out.WriteLine("ERROR: Unknown project file version");
 	    }
@@ -149,10 +147,6 @@ namespace Spring2.DataTierGenerator.UpdateProjectFiles {
 		}
 	    }
 	    return updated;
-	}
-
-	private static bool AddFilesVS2010(XmlDocument doc, StringCollection files, FileInfo project) {
-	    return AddFilesVS2005(doc, files, project);
 	}
     }
 }
