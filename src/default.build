@@ -28,8 +28,9 @@
     <target name="generate">
 		<loadtasks assembly="../bin/DTG/Spring2.DataTierGenerator.NAntTasks.dll" />
 		<generate configfile="DataTierGenerator.config.xml" />
-		</target>
-		<target name="updateprojects">
+	</target>
+	
+	<target name="updateprojects">
 		<loadtasks assembly="../bin/DTG/Spring2.DataTierGenerator.NAntTasks.dll" />
 		<updateprojectfiles project="MedQuest.InstaScript.DataObject.csproj">
 			<fileset>
