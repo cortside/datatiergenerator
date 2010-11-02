@@ -5,67 +5,67 @@
     <property name="build.dir" value="${build.root}\build" />
 
     <target name="clean">
-		<delete dir="${build.dir}" failonerror="false" />
+	<delete dir="${build.dir}" failonerror="false" />
     </target>    
 
     <!-- NOTE: this is specified in ccnet.config -->
     <target name="regress" description="runs unit tests">
-		<exec program="..\bin\NUnit\nunit-console.exe" commandline="..\build\Spring2.DataTierGenerator.Test.dll /xml=ccnet-nunit-results.xml" failonerror="true" />
+	<exec program="..\bin\NUnit\nunit-console.exe" commandline="..\build\Spring2.DataTierGenerator.Test.dll /xml=ccnet-nunit-results.xml" failonerror="true" />
     </target>
 
     <target name="updateversion">
-		<ifnot propertyexists="label-to-apply">
-			<fail message="label-to-apply property not set, so can't create labelled distribution files" />
-		</ifnot>
+	<ifnot propertyexists="label-to-apply">
+	    <fail message="label-to-apply property not set, so can't create labelled distribution files" />
+	</ifnot>
 
-		<exec program="..\bin\UpdateVersion.exe" commandline="-i AssemblyVersionInfo.cs -o AssemblyVersionInfo.cs -rp ${label-to-apply}" />
+	<exec program="..\bin\UpdateVersion.exe" commandline="-i AssemblyVersionInfo.cs -o AssemblyVersionInfo.cs -rp ${label-to-apply}" />
         <exec program="..\bin\UpdateVersion.exe" commandline="-i AssemblyVersionInfo.vb -o AssemblyVersionInfo.vb -rp ${label-to-apply}" />
-		<exec program="make" commandline="copyversion" />
+	<exec program="make" commandline="copyversion" />
     </target>
 
     <target name="gen" depends="generate, updateprojects" />
-	
     <target name="generate">
-		<loadtasks assembly="../bin/DTG/Spring2.DataTierGenerator.NAntTasks.dll" />
-		<generate configfile="DataTierGenerator.config.xml" />
-	</target>
-	
-	<target name="updateprojects">
-		<loadtasks assembly="../bin/DTG/Spring2.DataTierGenerator.NAntTasks.dll" />
-		<updateprojectfiles project="MedQuest.InstaScript.DataObject.csproj">
-			<fileset>
-			<include name="DataObject/*.cs" />
-			<include name="Types/*.cs" />
-			</fileset>
-		</updateprojectfiles>
-		<updateprojectfiles project="MedQuest.InstaScript.BusinessLogic.csproj">
-			<fileset>
-			<include name="DAO/*.cs" />
-			<include name="BusinessLogic/*.cs" />
-			</fileset>
-		</updateprojectfiles>
-		<updateprojectfiles project="MedQuest.InstaScript.Test.csproj">
-			<fileset>
-			<include name="Test/*.cs" />
-			</fileset>
-		</updateprojectfiles>
+	<loadtasks assembly="../bin/DTG/Spring2.DataTierGenerator.NAntTasks.dll" />
+	<generate configfile="DataTierGenerator.config.xml" />
+    </target>
+    <target name="updateprojects">
+	<loadtasks assembly="../bin/DTG/Spring2.DataTierGenerator.NAntTasks.dll" />
+	<updateprojectfiles project="MedQuest.InstaScript.DataObject.csproj">
+	    <fileset>
+		<include name="DataObject/*.cs" />
+		<include name="Types/*.cs" />
+	    </fileset>
+	</updateprojectfiles>
+	<updateprojectfiles project="MedQuest.InstaScript.BusinessLogic.csproj">
+	    <fileset>
+		<include name="DAO/*.cs" />
+		<include name="BusinessLogic/*.cs" />
+	    </fileset>
+	</updateprojectfiles>
+	<updateprojectfiles project="MedQuest.InstaScript.Test.csproj">
+	    <fileset>
+		<include name="Test/*.cs" />
+	    </fileset>
+	</updateprojectfiles>
     </target>
 
+
     <target name="build">
-		<solution solutionfile="DataTierGenerator.sln" configuration="debug" />
-		<copy todir="${build.dir}">
-				<fileset basedir="..\lib">
-					<include name="*.dll" />
-				</fileset>
+	<solution solutionfile="DataTierGenerator.sln" configuration="debug" />
+	<copy todir="${build.dir}">
+            <fileset basedir="..\lib">
+            	<include name="*.dll" />
+            </fileset>
     	</copy>
     </target>
 
+
 	<target name="xform">
-		<style style="xsd-elements.xsl" in="config.xsd" out="elements.xml" />
-		<style style="xsd-elements.xsl" in="config.xsd" out="elements.html" />
-		<!--<style style="xsd-html.xsl" in="config.xsd" out="elements.html" /> -->
-		<style style="schema2xhtml.xsl" in="config.xsd" out="schema.html" />
-		<style style="tree-view.xsl" in="config.xsd" out="tree.html" />
+<style style="xsd-elements.xsl" in="config.xsd" out="elements.xml" />
+<style style="xsd-elements.xsl" in="config.xsd" out="elements.html" />
+<!--<style style="xsd-html.xsl" in="config.xsd" out="elements.html" /> -->
+<style style="schema2xhtml.xsl" in="config.xsd" out="schema.html" />
+<style style="tree-view.xsl" in="config.xsd" out="tree.html" />
 	</target>
 
 </project>
