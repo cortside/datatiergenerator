@@ -119,7 +119,16 @@ ALTER TABLE $sql.Escape($element.Name)#if ($constraint.Type.ToUpper().Equals("PR
 	)
 #end
 #else
+#if($constraint.CheckClause.Length > 0)
 	CONSTRAINT $sql.Escape($constraint.Name) CHECK $constraint.CheckClause
+#else 
+	CONSTRAINT $sql.Escape($constraint.Name) CHECK 
+	(
+#foreach($column in $constraint.Columns)
+		#if ($velocityCount>1)and #end$sql.Escape($column.Name) in (#foreach($enumValue in $constraint.CheckEnum.Values)#if($velocityCount>1), #end'$sql.Escape($enumValue.Code)'#end)
+#end 
+	)
+#end
 #end
 GO
 

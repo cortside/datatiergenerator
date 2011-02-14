@@ -116,17 +116,25 @@ namespace Spring2.DataTierGenerator.Parser {
 	    autoGenerateClasses.AddRange(reportExtractions);
 	    collections = CollectionElement.ParseFromXml(options,doc,sqltypes,types, vd, collectableClasses, autoGenerateClasses, (ArrayList)entities);
 
-	    // find and assign the foreign entity now that they are parsed
+	    // find and assign the foreign entity and EnumElement now that they are parsed
 	    foreach(DatabaseElement database in databases) {
 		foreach(SqlEntityElement sqlEntity in database.SqlEntities) {
 		    foreach(ConstraintElement constraint in sqlEntity.Constraints) {
 			if (constraint.ForeignEntity.Name.Length > 0) {
 			    SqlEntityElement entity = SqlEntityElement.FindByName(DatabaseElement.GetAllSqlEntities(databases), constraint.ForeignEntity.Name);
-			    if (entity!=null) {
+			    if (entity != null) {
 				constraint.ForeignEntity = (SqlEntityElement)entity.Clone();
 			    } else {
 				vd(ParserValidationArgs.NewError("ForeignEntity (" + constraint.ForeignEntity.Name + ") specified in constraint " + constraint.Name + " could not be found as an defined entity"));
-			    }		    
+			    }    
+			}
+			if (constraint.CheckEnum.Name.Length > 0) {
+			    EnumElement entity = EnumElement.FindByName(enumtypes as ArrayList, constraint.CheckEnum.Name);
+			    if (entity != null) {
+				constraint.CheckEnum = (EnumElement)entity.Clone();
+			    } else {
+				vd(ParserValidationArgs.NewError("CheckEnum (" + constraint.CheckEnum.Name + ") specified in constraint " + constraint.Name + " could not be found as an defined entity"));
+			    }
 			}
 		    }
 		}

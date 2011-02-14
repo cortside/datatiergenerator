@@ -18,6 +18,7 @@ namespace Spring2.DataTierGenerator.Element {
 	private static readonly String FOREIGN_ENTITY = "foreignentity";
 	private static readonly String CHECK_CLAUSE = "checkclause";
 	private static readonly String PREFIX = "prefix";
+	private static readonly String CHECK_ENUM = "checkenum";
 
 	private String type = String.Empty;
 	private SqlEntityElement foreignEntity = new SqlEntityElement();
@@ -25,6 +26,7 @@ namespace Spring2.DataTierGenerator.Element {
 	private String checkClause = String.Empty;
 	private ArrayList columns = new ArrayList();
 	private String prefix = String.Empty;
+	private EnumElement checkEnum = new EnumElement();
 
 	public String Type {
 	    get { return this.type; }
@@ -56,6 +58,11 @@ namespace Spring2.DataTierGenerator.Element {
 	    set { this.prefix = value; }
 	}
 
+	public EnumElement CheckEnum {
+	    get { return checkEnum; }
+	    set { checkEnum = value; }
+	}
+
 	/// <summary>
 	/// Parse only method. Parses and adds all entities found in the given node and adds them to the given
 	/// list.
@@ -76,9 +83,10 @@ namespace Spring2.DataTierGenerator.Element {
 			constraintElement.ForeignEntity.Name = GetAttributeValue(constraintNode, FOREIGN_ENTITY, constraintElement.ForeignEntity.Name);
 			constraintElement.CheckClause = GetAttributeValue(constraintNode, CHECK_CLAUSE, constraintElement.CheckClause);
 			constraintElement.Prefix = GetAttributeValue(constraintNode, PREFIX, constraintElement.Prefix);
+			constraintElement.CheckEnum.Name = GetAttributeValue(constraintNode, CHECK_ENUM, constraintElement.CheckEnum.Name);
 
 			ColumnElement.ParseFromXml(constraintNode, constraintElement.Columns);
-		
+
 			constraintElements.Add(constraintElement);
 		    }
 		}
@@ -87,7 +95,7 @@ namespace Spring2.DataTierGenerator.Element {
 
 	public static ArrayList ParseFromXml(XmlNode root, SqlEntityElement sqlentity, Hashtable sqltypes, Hashtable types, ParserValidationDelegate vd) {
 	    ArrayList constraints = new ArrayList();
-	    XmlNodeList elements=null;
+	    XmlNodeList elements = null;
 	    foreach (XmlNode n in root.ChildNodes) {
 		if (n.Name.Equals("constraints")) {
 		    elements = n.ChildNodes;
@@ -96,8 +104,7 @@ namespace Spring2.DataTierGenerator.Element {
 	    }
 	    if (elements != null) {
 		foreach (XmlNode node in elements) {
-		    if (node.NodeType == XmlNodeType.Comment)
-		    {
+		    if (node.NodeType == XmlNodeType.Comment) {
 			continue;
 		    }
 		    ConstraintElement constraint = new ConstraintElement();
@@ -113,9 +120,11 @@ namespace Spring2.DataTierGenerator.Element {
 		    if (node.Attributes["checkclause"] != null) {
 			constraint.CheckClause = node.Attributes["checkclause"].Value;
 		    }
+		    if (node.Attributes["checkenum"] != null) {
+			constraint.CheckEnum.Name = node.Attributes["checkenum"].Value;
+		    }
 		    foreach (XmlNode n in node.ChildNodes) {
-			if (n.NodeType == XmlNodeType.Comment)
-			{
+			if (n.NodeType == XmlNodeType.Comment) {
 			    continue;
 			}
 			ColumnElement column = sqlentity.FindColumnByName(n.Attributes["name"].Value);
@@ -145,14 +154,17 @@ namespace Spring2.DataTierGenerator.Element {
 		sb.Append(" clustered=\"True\"");
 	    }
 
-	    if (foreignEntity.Name.Length!=0) {
+	    if (foreignEntity.Name.Length != 0) {
 		sb.Append(" foreignentity=\"").Append(foreignEntity).Append("\"");
 	    }
-	    if (checkClause.Length!=0) {
+	    if (checkClause.Length != 0) {
 		sb.Append(" checkclause=\"").Append(checkClause).Append("\"");
 	    }
+	    if (checkEnum.Name.Length != 0) {
+		sb.Append(" checkenum=\"").Append(checkEnum).Append("\"");
+	    }
 
-	    if (columns.Count>0) {
+	    if (columns.Count > 0) {
 		sb.Append(">").Append(Environment.NewLine);
 		foreach (ColumnElement column in columns) {
 		    sb.Append("        ").Append(column.ToXml()).Append(Environment.NewLine);
@@ -173,7 +185,5 @@ namespace Spring2.DataTierGenerator.Element {
 	    }
 	    return null;
 	}
-
-    
     }
 }
