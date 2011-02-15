@@ -1,6 +1,7 @@
 #
 # Location of the source and destination folders.
 #
+RM		:= rm -rf
 SRCDIR :=	../src
 CLASSDIR := 	../classes
 BINDIR		:= ../bin
@@ -33,14 +34,20 @@ debug:
 build:
 	$(MSBUILD) DataTierGenerator.sln /target:Build
 
+clean_release:
+	$(RM) ../release/*	
+
+cleanlogs:
+	$(RM) *.log
+	$(RM) nvelocity.log.*
+	
 regress:
 	chmod a+x ../bin/NUnit/*
 	../bin/NUnit/nunit-console.exe ../build/Test/Spring2.DataTierGenerator.Test.dll ../build/Test/Spring2.DataTierGenerator.Alpha.dll
 
-
 clean:
-	@rm -rf $(BUILDDIR)/*
-	@rm -rf ../docs/api
+	$(RM) $(BUILDDIR)/*
+	$(RM) ../docs/api
 
 changelog:
 	@updatechangelog.sh
@@ -48,10 +55,12 @@ changelog:
 
 docs:
 	@chmod a+x ../bin/NDoc/*
-	@rm -rf ../docs/api
+	$(RM) ../docs/api
 	../bin/NDoc/NDocConsole.exe -documenter=MSDN -project=Spring2.DataTierGenerator.ndoc
 
-package: clean build
+package: clean build changelog docs packageonly
+
+packageonly: 
 	rm -rf ${BUILDDIR}/Core
 	#cp ../docs/api/Spring2.DataTierGenerator.chm ${BUILDDIR}
 	jar -cMvf ${RELEASEDIR}/Spring2.DataTierGenerator.$(shell getversion.sh).zip -C ${BUILDDIR} .

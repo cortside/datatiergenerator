@@ -3,10 +3,22 @@
     <property name="debug" value="true" />
     <property name="build.root" value="c:\data\work\spring2\DataTierGenerator" />
     <property name="build.dir" value="${build.root}\build" />
+    <property name="msbuild" value="C:\Windows\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe" />
+
+    <property name="debug" value="true" />
+    <property name="build.root" value="..\" />
+    <property name="build.dir" value="..\build" />
+    <property name="release.dir" value="..\release" />
+    <property name="src.dir" value="..\src" />
+    <property name="build.major" value="x" />
+    <property name="build.minor" value="x" />
+    <property name="build.build" value="x" />
+    <property name="build.revision" value="x" />
+    <property name="svn.executable" value="svn" />
 
     <target name="clean">
 	<delete dir="${build.dir}" failonerror="false" />
-    </target>    
+    </target>
 
     <!-- NOTE: this is specified in ccnet.config -->
     <target name="regress" description="runs unit tests">
@@ -19,7 +31,7 @@
 	</ifnot>
 
 	<exec program="..\bin\UpdateVersion.exe" commandline="-i AssemblyVersionInfo.cs -o AssemblyVersionInfo.cs -rp ${label-to-apply}" />
-        <exec program="..\bin\UpdateVersion.exe" commandline="-i AssemblyVersionInfo.vb -o AssemblyVersionInfo.vb -rp ${label-to-apply}" />
+	<exec program="..\bin\UpdateVersion.exe" commandline="-i AssemblyVersionInfo.vb -o AssemblyVersionInfo.vb -rp ${label-to-apply}" />
 	<exec program="make" commandline="copyversion" />
     </target>
 
@@ -49,23 +61,45 @@
 	</updateprojectfiles>
     </target>
 
-
     <target name="build">
 	<solution solutionfile="DataTierGenerator.sln" configuration="debug" />
 	<copy todir="${build.dir}">
-            <fileset basedir="..\lib">
-            	<include name="*.dll" />
-            </fileset>
-    	</copy>
+	    <fileset basedir="..\lib">
+		<include name="*.dll" />
+	    </fileset>
+	</copy>
     </target>
 
+    <target name="ccnet-build">
+	<ifnot test="${property::exists('CCNetLabel')}">
+	    <fail message="CCNetLabel property not set, so can't create labelled distribution files" />
+	</ifnot>
+	<call target="CreateAssemblyVersionInfo" />
+	<call target="getSubversionRevision" />
+	<exec program="make" commandline="clean clean_release cleanlogs" />
+	<exec program="make" commandline="build packageonly package_cl docs" />
+    </target>
 
-	<target name="xform">
-<style style="xsd-elements.xsl" in="config.xsd" out="elements.xml" />
-<style style="xsd-elements.xsl" in="config.xsd" out="elements.html" />
-<!--<style style="xsd-html.xsl" in="config.xsd" out="elements.html" /> -->
-<style style="schema2xhtml.xsl" in="config.xsd" out="schema.html" />
-<style style="tree-view.xsl" in="config.xsd" out="tree.html" />
-	</target>
+    <target name="ccnet-publish">
+	<if test="${not property::exists('CCNetLabel')}">
+	    <fail message="CCNetLabel property not set, so can't create labelled distribution files" />
+	</if>
+	<property name="publish.dir" value="${CCNetArtifactDirectory}\${CCNetLabel}" />
+
+	<mkdir dir="${publish.dir}" />
+	<copy todir="${publish.dir}">
+	    <fileset basedir="..\release">
+		<include name="*"/>
+	    </fileset>
+	</copy>
+    </target>
+
+    <target name="xform">
+	<style style="xsd-elements.xsl" in="config.xsd" out="elements.xml" />
+	<style style="xsd-elements.xsl" in="config.xsd" out="elements.html" />
+	<!--<style style="xsd-html.xsl" in="config.xsd" out="elements.html" /> -->
+	<style style="schema2xhtml.xsl" in="config.xsd" out="schema.html" />
+	<style style="tree-view.xsl" in="config.xsd" out="tree.html" />
+    </target>
 
 </project>
