@@ -63,11 +63,11 @@ package: clean build changelog docs packageonly
 packageonly: 
 	rm -rf ${BUILDDIR}/Core
 	#cp ../docs/api/Spring2.DataTierGenerator.chm ${BUILDDIR}
-	jar -cMvf ${RELEASEDIR}/Spring2.DataTierGenerator.$(shell getversion.sh).zip -C ${BUILDDIR} .
+	jar -cMvf ${RELEASEDIR}/Spring2.DataTierGenerator.$(shell $(GETVERSION)).zip -C ${BUILDDIR} .
 
 release: package
-	cvs tag RELEASE_$(subst .,_,$(shell ./getversion.sh))
-	../bin/cvsadd.sh ${RELEASEDIR} Spring2.DataTierGenerator.$(shell getversion.sh).zip "new release version"
+	cvs tag RELEASE_$(subst .,_,$(shell $(GETVERSION)))
+	../bin/cvsadd.sh ${RELEASEDIR} Spring2.DataTierGenerator.$(shell $(GETVERSION)).zip "new release version"
 	${BINDIR}/UpdateVersion -b Increment -i AssemblyVersionInfo.cs -o AssemblyVersionInfo.cs
 	cvs commit -m "update to next version" AssemblyVersionInfo.cs
 
