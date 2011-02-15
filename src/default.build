@@ -26,9 +26,9 @@
     </target>
 
     <target name="updateversion">
-	<ifnot propertyexists="label-to-apply">
+	<if test="not property::exists('label-to-apply')">
 	    <fail message="label-to-apply property not set, so can't create labelled distribution files" />
-	</ifnot>
+	</if>
 
 	<exec program="..\bin\UpdateVersion.exe" commandline="-i AssemblyVersionInfo.cs -o AssemblyVersionInfo.cs -rp ${label-to-apply}" />
 	<exec program="..\bin\UpdateVersion.exe" commandline="-i AssemblyVersionInfo.vb -o AssemblyVersionInfo.vb -rp ${label-to-apply}" />
@@ -71,9 +71,9 @@
     </target>
 
     <target name="ccnet-build">
-	<ifnot test="${property::exists('CCNetLabel')}">
+	<if test="${not property::exists('CCNetLabel')}">
 	    <fail message="CCNetLabel property not set, so can't create labelled distribution files" />
-	</ifnot>
+	</if>
 	<call target="CreateAssemblyVersionInfo" />
 	<call target="getSubversionRevision" />
 	<exec program="make" commandline="clean clean_release cleanlogs" />
