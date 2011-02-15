@@ -102,4 +102,34 @@
 	<style style="tree-view.xsl" in="config.xsd" out="tree.html" />
     </target>
 
+    <target name="CreateAssemblyVersionInfo" description="Create an assembly info file with the current build number" >
+	<if test="${not property::exists('CCNetLabel')}">
+	    <fail message="CCNetLabel property not set, so can't create labelled distribution files" />
+	</if>
+	<asminfo output="AssemblyVersionInfo.cs" language="CSharp">
+	    <imports>
+		<import namespace="System.Reflection" />
+	    </imports>
+	    <attributes>
+		<attribute type="System.Reflection.AssemblyVersionAttribute" value="${CCNetLabel}" />
+	    </attributes>
+	</asminfo>
+    </target>
+
+    <target name="getSubversionRevision">
+	<!-- Retrieve subversion revision number -->
+	<echo message="Retrieving Subversion revision number"/>
+	<property name="svn.revision" value="0"/>
+	<exec
+		program="svn"
+		commandline='log "${src.dir}" --xml --limit 1'
+		output="${src.dir}\_revision.xml"
+		failonerror="false"/>
+	<xmlpeek
+		file="${src.dir}\_revision.xml"
+		xpath="/log/logentry/@revision"
+		property="svn.revision"
+		failonerror="false"/>
+	<echo message="Using Subversion revision number: ${svn.revision}"/>
+    </target>
 </project>
