@@ -5,7 +5,7 @@ $namespaces
 #if ($namespaces.IndexOf("${options.RootNameSpace}.Types") < 0)
 using ${options.RootNameSpace}.Types;
 #end
-using ${options.RootNameSpace}.BusinessLogic;
+using ${options.RootNameSpace}.BusinessLogic#if($element.HasNamespace).$element.Namespace#end;
 using Spring2.Core.BusinessEntity;
 
 using Spring2.DataTierGenerator.Attribute;

@@ -15,7 +15,7 @@ using System.Data;
 using Spring2.Core.DAO;
 using Spring2.Core.Types;
 
-using ${options.RootNameSpace}.BusinessLogic;
+using ${options.RootNameSpace}.BusinessLogic#if($element.HasNamespace).$element.Namespace#end;
 using ${options.RootNameSpace}.DataObject;
 using ${options.RootNameSpace}.Types;
 

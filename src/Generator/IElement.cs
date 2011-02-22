@@ -9,5 +9,9 @@ namespace Spring2.DataTierGenerator.Generator {
 	    get;
 	}
 
+	String Namespace {
+	    get;
+	}
+
     }
 }

@@ -9,6 +9,7 @@ using System.Xml;
 using NVelocity;
 using NVelocity.App;
 using NVelocity.Exception;
+using NVelocity.Runtime;
 using Spring2.Core.Util;
 using Spring2.DataTierGenerator;
 using Spring2.DataTierGenerator.Generator.Writer;
@@ -20,6 +21,7 @@ namespace Spring2.DataTierGenerator.Generator {
     public class NVelocityGenerator : IGenerator {
 
 	private IList log = new ArrayList();
+	private IList fileResourceLoaderPaths = new ArrayList();
 	private Int64 generateTicks = 0;
 	private Int64 mergeTicks = 0;
 	private Int64 stylerTicks = 0;
@@ -30,7 +32,6 @@ namespace Spring2.DataTierGenerator.Generator {
 	public NVelocityGenerator() {
 	    InitNVelocity();
 	}
-
 
         public delegate void OutputHandler(String s);
 
@@ -46,11 +47,11 @@ namespace Spring2.DataTierGenerator.Generator {
 	/// Init the NVelocity singleton
 	/// </summary>
 	private void InitNVelocity() {
-	    Velocity.SetProperty(NVelocity.Runtime.RuntimeConstants_Fields.FILE_RESOURCE_LOADER_CACHE, true);
+	    Velocity.SetProperty(RuntimeConstants_Fields.FILE_RESOURCE_LOADER_CACHE, true);
+	    SetFileResourceLoaderPaths(".");
 	    Velocity.Init();
 	}
 
-	
 	public void Generate(IParser parser) {
 	    Boolean hasErrors = false;
 	    try {
@@ -69,7 +70,7 @@ namespace Spring2.DataTierGenerator.Generator {
 		
 	    foreach(ITask task in parser.Tasks) {
 		try {
-		    Template t = Velocity.GetTemplate(task.Template);
+		    Template t = Velocity.GetTemplate(StaticFileResourcePathCheck(task.Template));
 		} catch (ResourceNotFoundException) {
 		    WriteToLog("ERROR: Unable to locate " + task.Template);
 		    hasErrors = true;
@@ -92,7 +93,7 @@ namespace Spring2.DataTierGenerator.Generator {
                 foreach(ITask task in parser.Tasks) {
                     FireOutputEvent("TASK: " + task.Name);
 		    try {
-			Template template = Velocity.GetTemplate(task.Template);
+			Template template = Velocity.GetTemplate(StaticFileResourcePathCheck(task.Template));
 
                         foreach (IElement element in task.Elements) {
                             FireOutputEvent("ElementList: " + element.Name);
@@ -124,6 +125,19 @@ namespace Spring2.DataTierGenerator.Generator {
 	    }
 	}
 
+	private String GetFilePath(ITask task, IElement element){
+	    string path = task.Directory + "\\";
+
+	    if (!string.IsNullOrEmpty(element.Namespace)) {
+		string[] namespaceParts = element.Namespace.Split('.');
+		foreach (string part in namespaceParts) {
+		    path += part + "\\";
+		}
+	    }
+
+	    return path;
+	}
+
 	private void GenerateFile(IParser parser, IElement element, ITask task, Template template) {
 	    Timer generateTimer = new Timer();
 	    files++;
@@ -149,7 +163,9 @@ namespace Spring2.DataTierGenerator.Generator {
 		timer.Stop();
 		mergeTicks += timer.TimeSpan.Ticks;
 
-		FileInfo file = new FileInfo(task.Directory + "\\" + task.FileNameFormat.Replace("{removewhitespace(element.Name)}", element.Name.Replace(" ", String.Empty)).Replace("{element.Name}", element.Name));
+		String fileName = task.FileNameFormat.Replace("{removewhitespace(element.Name)}", element.Name.Replace(" ", String.Empty)).Replace("{element.Name}", element.Name);
+		String filePath = GetFilePath(task, element);
+		FileInfo file = new FileInfo(filePath + fileName);
 		String content = writer.ToString();
 		if (content.Length > 0) {
 		    IStyler s = parser.GetStyler(task.Styler);
@@ -212,7 +228,28 @@ namespace Spring2.DataTierGenerator.Generator {
 	    get { return log; }
 	}
 
+	private String StaticFileResourcePathCheck(String taskTemplate) {
+	    // Check to see if the template is using a static path
+	    if (Path.IsPathRooted(taskTemplate)) {
+		// Get the path's root
+		string root = Path.GetPathRoot(taskTemplate).ToLower();
 
+		SetFileResourceLoaderPaths(root);
+
+		// Remove the drive from the path
+		taskTemplate = taskTemplate.Substring(3);
+	    }
+	    return taskTemplate;
+	}
+
+	private void SetFileResourceLoaderPaths(String root) {
+	    // If the root is not configured as a file resource loader path, add it
+	    if (!fileResourceLoaderPaths.Contains(root))
+		fileResourceLoaderPaths.Add(root);
+
+	    // Update the configuration
+	    Velocity.SetProperty(NVelocity.Runtime.RuntimeConstants_Fields.FILE_RESOURCE_LOADER_PATH, fileResourceLoaderPaths);
+	}
     }
 }
 

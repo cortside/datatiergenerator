@@ -288,7 +288,7 @@ namespace Spring2.DataTierGenerator.Generator.Writer {
 	}
 
         private static bool CompareNamespaceNodes(NamespaceDeclaration left, NamespaceDeclaration right) {
-            return left.Name == right.Name;
+	    return left.Name == right.Name;
         }
 
 	private void MergeType(List<INode> collection, TypeDeclaration child) {

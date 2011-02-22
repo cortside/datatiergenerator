@@ -17,6 +17,7 @@ namespace Spring2.DataTierGenerator.Element {
 	private static readonly String SQLENTITY = "sqlentity";
 	private static readonly String BASE_ENTITY = "baseentity";
 	private static readonly String ABSTRACT = "abstract";
+	private static readonly String NAMESPACE = "namespace";
 	private static readonly String LOG = "log";
 	private static readonly String RETURNWHOLEOBJECT = "returnwholeobject";
 	private static readonly String PREPAREFORINSERT = "prepareforinsert";
@@ -90,6 +91,7 @@ namespace Spring2.DataTierGenerator.Element {
 	private ArrayList comparers = new ArrayList();
 	private EntityElement baseEntity = EntityElement.EMPTY;
 	private Boolean isAbstract = false;
+	private Boolean hasNamespace = false;
 	private Boolean doLog = false;
 	private Boolean returnWholeObject = false;
 	private Boolean prepareForInsert = false;
@@ -109,6 +111,11 @@ namespace Spring2.DataTierGenerator.Element {
 	public Boolean IsAbstract {
 	    get { return this.isAbstract; }
 	    set { this.isAbstract = value; }
+	}
+
+	public Boolean HasNamespace {
+	    get { return this.hasNamespace; }
+	    set { this.hasNamespace = value; }
 	}
 
 	public Boolean DoLog {
@@ -250,9 +257,11 @@ namespace Spring2.DataTierGenerator.Element {
 			EntityElement entityElement = new EntityElement();
 
 			entityElement.Name = GetAttributeValue(entityNode, NAME, entityElement.Name);
+			entityElement.Namespace = GetAttributeValue(entityNode, NAMESPACE, entityElement.Namespace);
 			entityElement.BaseEntity.Name = GetAttributeValue(entityNode, BASE_ENTITY, entityElement.BaseEntity.Name);
 			entityElement.SqlEntity.Name = GetAttributeValue(entityNode, SQLENTITY, entityElement.SqlEntity.Name);
 			entityElement.IsAbstract = Boolean.Parse(GetAttributeValue(entityNode, ABSTRACT, entityElement.IsAbstract.ToString()));
+			entityElement.HasNamespace = !String.IsNullOrEmpty(GetAttributeValue(entityNode, NAMESPACE, entityElement.Namespace.ToString()));
 			entityElement.DoLog = Boolean.Parse (GetAttributeValue (entityNode, LOG, entityElement.DoLog.ToString ()));
 			entityElement.ReturnWholeObject = Boolean.Parse (GetAttributeValue (entityNode, RETURNWHOLEOBJECT, entityElement.ReturnWholeObject.ToString ()));
 			entityElement.PrepareForInsert = Boolean.Parse (GetAttributeValue (entityNode, PREPAREFORINSERT, entityElement.PrepareForInsert.ToString ()));
@@ -278,6 +287,9 @@ namespace Spring2.DataTierGenerator.Element {
 		}
 		EntityElement entity = new EntityElement();
 		entity.Name = node.Attributes["name"].Value;
+		if (node.Attributes["namespace"] != null) {
+		    entity.Namespace = node.Attributes["namespace"].Value;
+		}
 		if (node.Attributes["sqlentity"] != null) {
 		    SqlEntityElement sqlentity = SqlEntityElement.FindByName(sqlentities, node.Attributes["sqlentity"].Value);
 		    if (sqlentity!=null) {
@@ -300,6 +312,10 @@ namespace Spring2.DataTierGenerator.Element {
 
 		if (node.Attributes["abstract"] != null) {
 		    entity.IsAbstract = Boolean.Parse(node.Attributes["abstract"].Value);
+		}
+
+		if (node.Attributes["namespace"] != null) {
+		    entity.HasNamespace = !String.IsNullOrEmpty(node.Attributes["namespace"].Value);
 		}
 
 		if (node.Attributes["log"] != null) {

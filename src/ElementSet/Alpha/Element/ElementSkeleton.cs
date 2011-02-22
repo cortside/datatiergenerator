@@ -15,6 +15,7 @@ namespace Spring2.DataTierGenerator.Element {
 	protected static readonly String NAME = "name";
 
 	protected String name = String.Empty;
+	protected String namespace_ = String.Empty;
 	protected String description = String.Empty;
 	protected String template = String.Empty;
         protected Hashtable attributes = new Hashtable();
@@ -33,6 +34,11 @@ namespace Spring2.DataTierGenerator.Element {
 	public String Name {
 	    get { return this.name; }
 	    set { this.name = value; }
+	}
+
+	public String Namespace {
+	    get { return this.namespace_; }
+	    set { this.namespace_ = value; }
 	}
 
 	public String Description {

@@ -10,7 +10,7 @@ using ${options.RootNameSpace}.Dao;
 using ${options.RootNameSpace}.DataObject;
 using ${options.RootNameSpace}.Types;
 
-namespace ${options.RootNameSpace}.BusinessLogic {
+namespace ${options.RootNameSpace}.BusinessLogic#if($element.HasNamespace).$element.Namespace#end {
 
 #if ($element.Description != "")
     /// <summary>
