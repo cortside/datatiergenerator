@@ -153,18 +153,20 @@ namespace Spring2.DataTierGenerator.ConsoleRunner {
 	    bool valid = true;
 
 	    if (string.IsNullOrEmpty(filename)) {
-		Console.WriteLine("Try `DataTierGenerator.exe --help' for more information.");
-		Console.ReadLine();
+		Console.WriteLine("Invalid configuration file specified");
+		valid = false;
+	    }else if(!File.Exists(filename)){
+		Console.WriteLine("Unable to find the configuration file specified: " + filename);
 		valid = false;
 	    }
 
 	    return valid;
 	}
 
-	static void ShowHelp(OptionSet p) {
+	static void ShowHelp(OptionSet os) {
 	    Console.WriteLine("Usage: DataTierGenerator.exe [OPTIONS]");
 	    Console.WriteLine("Options:");
-	    p.WriteOptionDescriptions(Console.Out);
+	    os.WriteOptionDescriptions(Console.Out);
 	    Console.WriteLine();
 	    Console.WriteLine("Deprecated Usage: DataTierGenerator.exe (optional)-v configFile");
 	    Console.ReadLine();

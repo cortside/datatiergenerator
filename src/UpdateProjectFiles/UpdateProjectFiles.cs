@@ -207,7 +207,11 @@ namespace Spring2.DataTierGenerator.UpdateProjectFiles {
 	static Boolean Validate() {
 	    bool valid = true;
 
-	    if (!project.Exists) {
+
+	    if (project == null){
+		Console.Out.WriteLine("Invalid Project Specified");
+		valid = false;
+	    }else if(!project.Exists) {
 		Console.Out.WriteLine("Project file could not be found: " + project.FullName);
 		valid = false;
 	    }
