@@ -690,10 +690,14 @@ namespace $options.GetDAONameSpace($element.Name) {
 
 #else
 	    SqlFilter filter = new SqlFilter(new SqlLiteralPredicate("$finder.Expression"));
-	    String sql = "SELECT #if($finder.Limit)TOP " + limit.ToString() + " #end* from " + VIEW + filter.Statement + sort.FormatSql();
+	    String sql = "SELECT #if($finder.Limit)TOP " + limit.ToString() + " #end* from " + VIEW + filter.Statement#if($finder.Sort != "") + sort.FormatSql()#end;
 		IDataParameterCollection parameters = new SqlParameterList();
 #foreach($field in $finder.Fields)
-	    parameters.Add(CreateDataParameter("@$field.GetPropertyName().Replace(".", "_")", ${element.Name}Fields.$field.Name.ToUpper().Replace(".","_"), $options.GetSqlConversion($field)));
+#if($field.Name == "*")
+	    parameters.Add(CreateDataParameter("@$field.GetPropertyName().Replace(".", "_")", DbType.${field.Column.SqlType.DbType}, ParameterDirection.Input, $options.GetSqlConversion($field) #if($field.Column.SqlType.Length > 0), $field.Column.SqlType.Length#elseif($field.Column.SqlType.Precision > 0 || $field.Column.SqlType.Scale > 0), $field.Column.SqlType.Precision, $field.Column.SqlType.Scale#end));
+#else 
+		parameters.Add(CreateDataParameter("@$field.GetPropertyName().Replace(".", "_")", ${element.Name}Fields.$field.Name.ToUpper().Replace(".","_"), $options.GetSqlConversion($field)));
+#end
 #end
 		IDataReader dataReader = ExecuteReader(CONNECTION_STRING_KEY, sql, parameters, COMMAND_TIMEOUT);
 #end

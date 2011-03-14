@@ -25,7 +25,7 @@
 	<sqltype name="bit" sqldbtype="Bit" type="BooleanType" readermethodformat='{0}.GetBoolean({2})' />
 	<sqltype name="char" sqldbtype="Char" length="1" type="StringType" readermethodformat='{0}.GetString({2})' declarationformat="{0}({1})" />
 	<sqltype name="datetime" sqldbtype="DateTime" type="DateType" readermethodformat='{0}.GetDateTime({2})' />
-	<sqltype name="decimal" sqldbtype="Decimal" type="DecimalType" readermethodformat='{0}.GetDecimal({2})' declarationformat="{0}({2}, {3})" />
+	<sqltype name="decimal" sqldbtype="Decimal" type="DecimalType" precision="18" scale="8" readermethodformat='{0}.GetDecimal({2})' declarationformat="{0}({2}, {3})" />
 	<sqltype name="float" sqldbtype="Float" type="DecimalType" readermethodformat='{0}.GetDouble({2})' declarationformat="{0}({2})" />
 	<sqltype name="int" sqldbtype="Int" scale="0" precision="10" type="IntegerType" readermethodformat='{0}.GetInt32({2})' />
 	<sqltype name="money" sqldbtype="Money" type="CurrencyType" readermethodformat='{0}.GetDecimal({2})' />
