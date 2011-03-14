@@ -75,6 +75,8 @@
 	    <fail message="CCNetLabel property not set, so can't create labelled distribution files" />
 	</if>
 	<call target="CreateAssemblyVersionInfo" />
+	<copy file="AssemblyVersionInfo.cs" todir="${src.dir}\ElementSet\Alpha"/>
+	<copy file="AssemblyVersionInfo.cs" todir="${src.dir}\ElementSet\Beta"/>
 	<call target="getSubversionRevision" />
 	<exec program="make" commandline="clean clean_release cleanlogs" />
 	<exec program="make" commandline="build packageonly package_cl docs" />
