@@ -321,7 +321,7 @@ namespace Spring2.DataTierGenerator.Element {
 			    SqlEntityElement sqlEntity = ((EntityElement)entity).SqlEntity;
 
 			    String prefix = subentity.Name + "_";
-			    if (node.Attributes["prefix"]!=null) {
+			    if (node.Attributes["prefix"] != null) {
 				prefix = node.Attributes["prefix"].Value;
 			    }
 				    

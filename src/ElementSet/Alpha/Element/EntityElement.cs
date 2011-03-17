@@ -3,14 +3,15 @@ using System.Collections;
 using System.Collections.Specialized;
 using System.Text;
 using System.Xml;
+using System.Linq;
 
 using Spring2.DataTierGenerator;
 using Spring2.DataTierGenerator.Parser;
+using System.Collections.Generic;
 
 namespace Spring2.DataTierGenerator.Element {
 
     public class EntityElement : ElementSkeleton, IPropertyContainer, ICollectable {
-
 	private static readonly String PROPERTIES = "properties";
 	private static readonly String FINDERS = "finders";
 	private static readonly String COMPARERS = "comparers";
@@ -23,7 +24,7 @@ namespace Spring2.DataTierGenerator.Element {
 	private static readonly String PREPAREFORINSERT = "prepareforinsert";
 	private static readonly String JOINTABLE = "jointable";
 	private static readonly String DEPENDENTENTITY = "dependententity";
-    	private static readonly String DESCRIPTION = "description";
+	private static readonly String DESCRIPTION = "description";
 
 	/// <summary>
 	/// Handles creation of the static readonly property names and values.  Creates
@@ -51,14 +52,13 @@ namespace Spring2.DataTierGenerator.Element {
 	    /// <param name="prefix">Prefix for the property name/value.  Prefix separates classes with ~.  Like Property~Name</param>
 	    /// <param name="propertyName">Property name</param>
 	    public PropertyName(String prefix, String propertyName) {
-		fieldName = prefix.Replace(PREFIX_SEPARATOR,"_").ToUpper() + "_" + propertyName.ToUpper();
+		fieldName = prefix.Replace(PREFIX_SEPARATOR, "_").ToUpper() + "_" + propertyName.ToUpper();
 		fieldName = fieldName.StartsWith("_") ? fieldName.Substring(1) : fieldName;
 
 		if (prefix.Length > 0) {
-		    fieldValue = "\"" + prefix.Replace(PREFIX_SEPARATOR,".")
-			+ "." +  propertyName + "\"";
-		}
-		else {
+		    fieldValue = "\"" + prefix.Replace(PREFIX_SEPARATOR, ".")
+			+ "." + propertyName + "\"";
+		} else {
 		    fieldValue = "\"" + propertyName + "\"";
 		}
 	    }
@@ -89,6 +89,7 @@ namespace Spring2.DataTierGenerator.Element {
 	private ArrayList fields = new ArrayList();
 	private ArrayList finders = new ArrayList();
 	private ArrayList comparers = new ArrayList();
+	private ArrayList dependents = new ArrayList();
 	private EntityElement baseEntity = EntityElement.EMPTY;
 	private Boolean isAbstract = false;
 	private Boolean hasNamespace = false;
@@ -97,7 +98,7 @@ namespace Spring2.DataTierGenerator.Element {
 	private Boolean prepareForInsert = false;
 	private Boolean joinTable = false;
 	private Boolean dependentEntity = false;
-    	
+
 	public SqlEntityElement SqlEntity {
 	    get { return this.sqlEntity; }
 	    set { this.sqlEntity = value; }
@@ -122,7 +123,7 @@ namespace Spring2.DataTierGenerator.Element {
 	    get { return this.doLog; }
 	    set { this.doLog = value; }
 	}
-        
+
 	public Boolean ReturnWholeObject {
 	    get { return this.returnWholeObject; }
 	    set { this.returnWholeObject = value; }
@@ -152,7 +153,7 @@ namespace Spring2.DataTierGenerator.Element {
 	}
 
 	public ArrayList Fields {
-	    get { 
+	    get {
 		if (EntityElement.EMPTY.Equals(this.baseEntity)) {
 		    return this.fields;
 		} else {
@@ -215,6 +216,11 @@ namespace Spring2.DataTierGenerator.Element {
 	    set { this.comparers = value; }
 	}
 
+	public ArrayList Dependents {
+	    get { return this.dependents; }
+	    set { this.dependents = value; }
+	}
+
 	public String ToXml() {
 	    StringBuilder sb = new StringBuilder();
 	    sb.Append("<entity name=\"").Append(name).Append("\"");
@@ -254,25 +260,25 @@ namespace Spring2.DataTierGenerator.Element {
 		XmlNodeList entities = node.SelectNodes("entities/entity");
 		foreach (XmlNode entityNode in entities) {
 		    //if (entityNode.NodeType.Equals(XmlNodeType.Element)) {
-			EntityElement entityElement = new EntityElement();
+		    EntityElement entityElement = new EntityElement();
 
-			entityElement.Name = GetAttributeValue(entityNode, NAME, entityElement.Name);
-			entityElement.Namespace = GetAttributeValue(entityNode, NAMESPACE, entityElement.Namespace);
-			entityElement.BaseEntity.Name = GetAttributeValue(entityNode, BASE_ENTITY, entityElement.BaseEntity.Name);
-			entityElement.SqlEntity.Name = GetAttributeValue(entityNode, SQLENTITY, entityElement.SqlEntity.Name);
-			entityElement.IsAbstract = Boolean.Parse(GetAttributeValue(entityNode, ABSTRACT, entityElement.IsAbstract.ToString()));
-			entityElement.HasNamespace = !String.IsNullOrEmpty(GetAttributeValue(entityNode, NAMESPACE, entityElement.Namespace.ToString()));
-			entityElement.DoLog = Boolean.Parse (GetAttributeValue (entityNode, LOG, entityElement.DoLog.ToString ()));
-			entityElement.ReturnWholeObject = Boolean.Parse (GetAttributeValue (entityNode, RETURNWHOLEOBJECT, entityElement.ReturnWholeObject.ToString ()));
-			entityElement.PrepareForInsert = Boolean.Parse (GetAttributeValue (entityNode, PREPAREFORINSERT, entityElement.PrepareForInsert.ToString ()));
-			entityElement.JoinTable = Boolean.Parse (GetAttributeValue (entityNode, JOINTABLE, entityElement.JoinTable.ToString ()));
-			entityElement.DependentEntity = Boolean.Parse (GetAttributeValue (entityNode, DEPENDENTENTITY, entityElement.DependentEntity.ToString ()));
+		    entityElement.Name = GetAttributeValue(entityNode, NAME, entityElement.Name);
+		    entityElement.Namespace = GetAttributeValue(entityNode, NAMESPACE, entityElement.Namespace);
+		    entityElement.BaseEntity.Name = GetAttributeValue(entityNode, BASE_ENTITY, entityElement.BaseEntity.Name);
+		    entityElement.SqlEntity.Name = GetAttributeValue(entityNode, SQLENTITY, entityElement.SqlEntity.Name);
+		    entityElement.IsAbstract = Boolean.Parse(GetAttributeValue(entityNode, ABSTRACT, entityElement.IsAbstract.ToString()));
+		    entityElement.HasNamespace = !String.IsNullOrEmpty(GetAttributeValue(entityNode, NAMESPACE, entityElement.Namespace.ToString()));
+		    entityElement.DoLog = Boolean.Parse(GetAttributeValue(entityNode, LOG, entityElement.DoLog.ToString()));
+		    entityElement.ReturnWholeObject = Boolean.Parse(GetAttributeValue(entityNode, RETURNWHOLEOBJECT, entityElement.ReturnWholeObject.ToString()));
+		    entityElement.PrepareForInsert = Boolean.Parse(GetAttributeValue(entityNode, PREPAREFORINSERT, entityElement.PrepareForInsert.ToString()));
+		    entityElement.JoinTable = Boolean.Parse(GetAttributeValue(entityNode, JOINTABLE, entityElement.JoinTable.ToString()));
+		    entityElement.DependentEntity = Boolean.Parse(GetAttributeValue(entityNode, DEPENDENTENTITY, entityElement.DependentEntity.ToString()));
 
-			PropertyElement.ParseFromXml(GetChildNodeByName(entityNode, PROPERTIES), entityElement.Fields);
-			FinderElement.ParseFromXml(GetChildNodeByName(entityNode, FINDERS), entityElement.Finders);
-			ComparerElement.ParseFromXml(GetChildNodeByName(entityNode, COMPARERS), entityElement.Comparers);
+		    PropertyElement.ParseFromXml(GetChildNodeByName(entityNode, PROPERTIES), entityElement.Fields);
+		    FinderElement.ParseFromXml(GetChildNodeByName(entityNode, FINDERS), entityElement.Finders);
+		    ComparerElement.ParseFromXml(GetChildNodeByName(entityNode, COMPARERS), entityElement.Comparers);
 
-			entityElements.Add(entityElement);
+		    entityElements.Add(entityElement);
 		    //}
 		}
 	    }
@@ -280,7 +286,11 @@ namespace Spring2.DataTierGenerator.Element {
 
 	public static ArrayList ParseFromXml(Configuration options, XmlDocument doc, Hashtable sqltypes, Hashtable types, ArrayList sqlentities, ParserValidationDelegate vd) {
 	    ArrayList entities = new ArrayList();
-	    XmlNodeList elements = doc.DocumentElement.GetElementsByTagName("entity");
+	    XmlNode entitiesNode = doc.DocumentElement.Cast<XmlNode>().FirstOrDefault(x => x.Name.ToLowerInvariant() == "entities");
+	    if (entitiesNode == null)
+		return entities;
+
+	    IEnumerable<XmlNode> elements = entitiesNode.ChildNodes.Cast<XmlNode>().Where(x => x.Name.ToLowerInvariant() == "entity");
 	    foreach (XmlNode node in elements) {
 		if (node.NodeType == XmlNodeType.Comment) {
 		    continue;
@@ -292,7 +302,7 @@ namespace Spring2.DataTierGenerator.Element {
 		}
 		if (node.Attributes["sqlentity"] != null) {
 		    SqlEntityElement sqlentity = SqlEntityElement.FindByName(sqlentities, node.Attributes["sqlentity"].Value);
-		    if (sqlentity!=null) {
+		    if (sqlentity != null) {
 			entity.SqlEntity = (SqlEntityElement)sqlentity.Clone();
 		    } else {
 			entity.SqlEntity.Name = node.Attributes["sqlentity"].Value;
@@ -302,7 +312,7 @@ namespace Spring2.DataTierGenerator.Element {
 
 		if (node.Attributes["baseentity"] != null) {
 		    EntityElement baseentity = EntityElement.FindEntityByName(entities, node.Attributes["baseentity"].Value);
-		    if (baseentity!=null) {
+		    if (baseentity != null) {
 			entity.BaseEntity = (EntityElement)baseentity.Clone();
 		    } else {
 			entity.BaseEntity.Name = node.Attributes["baseentity"].Value;
@@ -319,37 +329,38 @@ namespace Spring2.DataTierGenerator.Element {
 		}
 
 		if (node.Attributes["log"] != null) {
-		    entity.DoLog = Boolean.Parse (node.Attributes["log"].Value);
+		    entity.DoLog = Boolean.Parse(node.Attributes["log"].Value);
 		}
 
 		if (node.Attributes["returnwholeobject"] != null) {
-		    entity.ReturnWholeObject = Boolean.Parse (node.Attributes["returnwholeobject"].Value);
+		    entity.ReturnWholeObject = Boolean.Parse(node.Attributes["returnwholeobject"].Value);
 		}
 
 		if (node.Attributes["prepareforinsert"] != null) {
-		    entity.PrepareForInsert = Boolean.Parse (node.Attributes["prepareforinsert"].Value);
+		    entity.PrepareForInsert = Boolean.Parse(node.Attributes["prepareforinsert"].Value);
 		}
 
 		if (node.Attributes["dependententity"] != null) {
-		    entity.DependentEntity = Boolean.Parse (node.Attributes["dependententity"].Value);
+		    entity.DependentEntity = Boolean.Parse(node.Attributes["dependententity"].Value);
 		}
 
 		if (node.Attributes["jointable"] != null) {
-		    entity.JoinTable = Boolean.Parse (node.Attributes["jointable"].Value);
+		    entity.JoinTable = Boolean.Parse(node.Attributes["jointable"].Value);
 		}
-	    	
-	    	XmlNode descriptionNode = node.SelectSingleNode(DESCRIPTION);
-	    	if (descriptionNode != null) {
-	    	    entity.Description = descriptionNode.InnerText.Trim();
-	    	}
 
+		XmlNode descriptionNode = node.SelectSingleNode(DESCRIPTION);
+		if (descriptionNode != null) {
+		    entity.Description = descriptionNode.InnerText.Trim();
+		}
 
-                //Adds all attributes including all not defined by element class 
-                foreach (XmlAttribute attribute in node.Attributes) {
-                    if (!entity.Attributes.ContainsKey(attribute.Name)) {
-                        entity.Attributes.Add(attribute.Name, attribute.Value);
-                    }
-                }
+		//Adds all attributes including all not defined by element class 
+		foreach (XmlAttribute attribute in node.Attributes) {
+		    if (!entity.Attributes.ContainsKey(attribute.Name)) {
+			entity.Attributes.Add(attribute.Name, attribute.Value);
+		    }
+		}
+
+		entity.dependents = ParseDependentsFromXml(node, vd);
 
 		entity.fields = PropertyElement.ParseFromXml(doc, entities, entity, sqltypes, types, vd);
 		entity.finders = FinderElement.ParseFromXml(doc, node, entities, entity, sqltypes, types, vd);
@@ -358,18 +369,33 @@ namespace Spring2.DataTierGenerator.Element {
 	    }
 
 	    StringCollection names = new StringCollection();
-	    foreach (EntityElement entity in entities) 
-	    {
-		if (names.Contains(entity.Name)) 
-		{
-		    vd(new ParserValidationArgs(ParserValidationSeverity.ERROR, "duplicate entity definition for " + entity.Name));	    	    	
-		} 
-		else 
-		{
+	    foreach (EntityElement entity in entities) {
+		if (names.Contains(entity.Name)) {
+		    vd(new ParserValidationArgs(ParserValidationSeverity.ERROR, "duplicate entity definition for " + entity.Name));
+		} else {
 		    names.Add(entity.Name);
 		}
-	    }   
+	    }
 	    return entities;
+	}
+
+	private static ArrayList ParseDependentsFromXml(XmlNode node, ParserValidationDelegate vd) {
+	    ArrayList returnList = new ArrayList();
+	    XmlNode dependentsNode = node.ChildNodes.Cast<XmlNode>()
+		.FirstOrDefault(x => x.Name.ToLowerInvariant() == "dependents");
+	    if (dependentsNode != null) {
+		IEnumerable<string> children =
+		    from x in dependentsNode.ChildNodes.Cast<XmlNode>()
+		    where x.Name.ToLowerInvariant() == "entity"
+		    select x.Attributes["name"].Value;
+
+		foreach (string name in children) {
+		    EntityElement element = new EntityElement { Name = name };
+		    returnList.Add(element);
+		}
+	    }
+
+	    return returnList;
 	}
 
 	public PropertyElement GetIdentityField() {
@@ -409,7 +435,6 @@ namespace Spring2.DataTierGenerator.Element {
 	    return null;
 	}
 
-
 	public static PropertyElement FindAnyFieldByColumnName(IList entities, String name) {
 	    foreach (EntityElement entity in entities) {
 		foreach (PropertyElement property in entity.Fields) {
@@ -420,7 +445,6 @@ namespace Spring2.DataTierGenerator.Element {
 	    }
 	    return null;
 	}
-
 
 	public IList GetPrimaryKeyFields() {
 	    ArrayList list = new ArrayList();
@@ -446,9 +470,9 @@ namespace Spring2.DataTierGenerator.Element {
 	    return null;
 	}
 
-	public ComparerElement FindComparerByName(String name)	{
-	    foreach (ComparerElement comparer in comparers)	    {
-		if (comparer.Name == name)		{
+	public ComparerElement FindComparerByName(String name) {
+	    foreach (ComparerElement comparer in comparers) {
+		if (comparer.Name == name) {
 		    return comparer;
 		}
 	    }
@@ -515,39 +539,38 @@ namespace Spring2.DataTierGenerator.Element {
 	    return this == EMPTY;
 	}
 
-    	public Boolean HasEntityMappedColumn(ColumnElement column) {
+	public Boolean HasEntityMappedColumn(ColumnElement column) {
 	    foreach (PropertyElement property in Fields) {
 		if (property.Entity.Name.Length > 0) {
-		    foreach(PropertyElement p in property.Entity.Fields) {
-		    	if (column.Name.EndsWith(property.Prefix + p.Name)) {
-		    	    return true;
-		    	}
+		    foreach (PropertyElement p in property.Entity.Fields) {
+			if (column.Name.EndsWith(property.Prefix + p.Name)) {
+			    return true;
+			}
 		    }
 		}
-	    }   	
+	    }
 
 	    return false;
 	}
-    	
-    	/// <summary>
-    	/// Returns the unique collection of columns from entity and base entity
-    	/// </summary>
+
+	/// <summary>
+	/// Returns the unique collection of columns from entity and base entity
+	/// </summary>
 	public ArrayList Columns {
 	    get {
-	    	if (MultipleSqlEntities) {
-	    	    ArrayList columns = new ArrayList();
-	    	    columns.AddRange(BaseEntity.SqlEntity.Columns);
-		    foreach(ColumnElement column in SqlEntity.Columns) {
+		if (MultipleSqlEntities) {
+		    ArrayList columns = new ArrayList();
+		    columns.AddRange(BaseEntity.SqlEntity.Columns);
+		    foreach (ColumnElement column in SqlEntity.Columns) {
 			if (BaseEntity.SqlEntity.FindColumnByName(column.Name) == null) {
 			    columns.Add(column);
-			}		    	
+			}
 		    }
-	    	    return columns;
-	    	} else {
-	    	    return SqlEntity.Columns;
-	    	}
+		    return columns;
+		} else {
+		    return SqlEntity.Columns;
+		}
 	    }
 	}
-
     }
 }
