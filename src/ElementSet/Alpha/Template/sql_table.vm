@@ -15,11 +15,11 @@ SET ANSI_NULLS ON
 SET QUOTED_IDENTIFIER ON
 GO
 
-if exists (select * from tempdb..sysobjects where name like '#spAlterColumn%' and xtype='P')
-drop procedure #spAlterColumn
+if exists (select * from tempdb..sysobjects where name like '#spAlterColumn_$element.Name%' and xtype='P')
+drop procedure #spAlterColumn_$element.Name
 GO
 
-CREATE PROCEDURE #spAlterColumn
+CREATE PROCEDURE #spAlterColumn_$element.Name
     @table varchar(100),
     @column varchar(100),
     @type varchar(50),
@@ -42,6 +42,13 @@ CREATE TABLE dbo.$sql.Escape($element.Name) (
 	$sql.Escape($column.Name) ${column.SqlType.Declaration}#if ($column.Identity) IDENTITY($column.Seed,$column.Increment)#end#if ($column.RowGuidCol) ROWGUIDCOL#end#if ($column.Identity || $column.Required || $column.RowGuidCol || $column.Default.Length>0) NOT#end NULL#if ($column.Default.Length>0) CONSTRAINT [DF_${element.Name}_$column.Name] DEFAULT ($column.Default)#end
 #end
 #end
+## audit stamp fields
+#if($element.Audit),
+	CreateDate DateTime NOT NULL,
+	CreateUserId Int NOT NULL,
+	LastModifiedDate DateTime NOT NULL,
+	LastModifiedUserId Int NOT NULL
+#end
 
 )
 GO
@@ -61,7 +68,8 @@ if not exists(select * from syscolumns where id=object_id('$sql.Escape($element.
 GO
 #if (!$column.SqlType.Declaration.ToLower().Equals("text") && !$column.SqlType.Declaration.ToLower().Equals("timestamp"))
 
-if exists(select * from syscolumns where id=object_id('$sql.Escape($element.Name)') and name = '$column.Name')
+
+if exists(select * from information_schema.columns where table_name='$sql.Escape($element.Name)' and column_name='$column.Name') and not exists(select * from information_schema.columns where table_name='$sql.Escape($element.Name)' and column_name='$column.Name'#if($column.SqlType.Length > 0) and character_maximum_length=$column.SqlType.Length#end and is_nullable=#if ($column.Required)'NO'#else'YES'#end)
   BEGIN
 #if($column.Default.Length>0)
 	declare @cdefault varchar(1000)
@@ -81,7 +89,7 @@ if exists(select * from syscolumns where id=object_id('$sql.Escape($element.Name
 	update $sql.Escape($element.Name) set $sql.Escape($column.Name) = $column.Default where $sql.Escape($column.Name) IS NULL
 #end
 #end
-	exec #spAlterColumn '$element.Name', '$column.Name', '$column.SqlType.Declaration',#if ($column.Required) 1#else 0#end
+	exec #spAlterColumn_$element.Name '$element.Name', '$column.Name', '$column.SqlType.Declaration',#if ($column.Required) 1#else 0#end
 
 #if($column.Default.Length>0)
 	if not exists(select * from sysobjects where name = 'DF_${element.Name}_$column.Name' and xtype='D')
@@ -93,6 +101,60 @@ if exists(select * from syscolumns where id=object_id('$sql.Escape($element.Name
 GO
 
 #end
+#end
+#if($element.Audit)
+if not exists(select * from syscolumns where id=object_id('$sql.Escape($element.Name)') and name = 'CreateUserId')
+  BEGIN
+	ALTER TABLE $sql.Escape($element.Name) ADD
+		CreateUserId Int NOT NULL
+  END
+GO
+
+if exists(select * from sys.columns where object_id=object_id('$sql.Escape($element.Name)') and name = 'CreateUserId') and not exists(select * from sys.columns where object_id=object_id('$sql.Escape($element.Name)') and name = 'CreateUserId' and system_type_id=type_id('Int') and is_nullable= 0)
+  BEGIN
+	exec #spAlterColumn_$element.Name '$sql.Escape($element.Name)', 'CreateUserId', 'Int', 1
+  END
+GO
+
+if not exists(select * from syscolumns where id=object_id('$sql.Escape($element.Name)') and name = 'CreateDate')
+  BEGIN
+	ALTER TABLE $sql.Escape($element.Name) ADD
+	    CreateDate DateTime NOT NULL
+  END
+GO
+
+if exists(select * from sys.columns where object_id=object_id('$sql.Escape($element.Name)') and name = 'CreateDate') and not exists(select * from sys.columns where object_id=object_id('$sql.Escape($element.Name)') and name = 'CreateDate' and system_type_id=type_id('DateTime') and is_nullable= 0)
+  BEGIN
+	exec #spAlterColumn_$element.Name '$sql.Escape($element.Name)', 'CreateDate', 'DateTime', 1
+  END
+GO
+
+if not exists(select * from syscolumns where id=object_id('$sql.Escape($element.Name)') and name = 'LastModifiedUserId')
+  BEGIN
+	ALTER TABLE $sql.Escape($element.Name) ADD
+		LastModifiedUserId Int NOT NULL
+  END
+GO
+
+if exists(select * from sys.columns where object_id=object_id('$sql.Escape($element.Name)') and name = 'LastModifiedUserId') and not exists(select * from sys.columns where object_id=object_id('$sql.Escape($element.Name)') and name = 'LastModifiedUserId' and system_type_id=type_id('Int') and is_nullable= 0)
+  BEGIN
+	exec #spAlterColumn_$element.Name '$sql.Escape($element.Name)', 'LastModifiedUserId', 'Int', 1
+  END
+GO
+
+if not exists(select * from syscolumns where id=object_id('$sql.Escape($element.Name)') and name = 'LastModifiedDate')
+  BEGIN
+	ALTER TABLE $sql.Escape($element.Name) ADD
+	    LastModifiedDate DateTime NOT NULL
+  END
+GO
+
+if exists(select * from sys.columns where object_id=object_id('$sql.Escape($element.Name)') and name = 'LastModifiedDate') and not exists(select * from sys.columns where object_id=object_id('$sql.Escape($element.Name)') and name = 'LastModifiedDate' and system_type_id=type_id('DateTime') and is_nullable= 0)
+  BEGIN
+	exec #spAlterColumn_$element.Name '$sql.Escape($element.Name)', 'LastModifiedDate', 'DateTime', 1
+  END
+GO
+
 #end
 ## create constraints, checking for existance
 #foreach ($constraint in $element.Constraints)
@@ -133,9 +195,34 @@ ALTER TABLE $sql.Escape($element.Name)#if ($constraint.Type.ToUpper().Equals("PR
 GO
 
 #end
+#if($element.Audit)
+if not exists (select * from dbo.sysobjects where id = object_id(N'FK_${element.Name}_CreatedUser') and OBJECTPROPERTY(id, N'IsForeignKey') = 1)
+ALTER TABLE $sql.Escape($element.Name) ADD
+	CONSTRAINT FK_${element.Name}_CreatedUser FOREIGN KEY
+	(
+		CreateUserId
+	)
+	REFERENCES [User]
+	(
+		UserId
+	)
+GO
+
+if not exists (select * from dbo.sysobjects where id = object_id(N'FK_${element.Name}_LastModifiedUser') and OBJECTPROPERTY(id, N'IsForeignKey') = 1)
+ALTER TABLE $sql.Escape($element.Name) ADD
+	CONSTRAINT FK_${element.Name}_LastModifiedUser FOREIGN KEY
+	(
+		LastModifiedUserId
+	)
+	REFERENCES [User]
+	(
+		UserId
+	)
+GO
+#end
 ## create indexes, checking for existance
 #foreach ($index in $element.Indexes)
-if not exists (select * from sysindexes where name='$index.Name' and id=object_id(N'[$element.Name]'))
+if not exists (select * from sys.indexes where name='$index.Name' and object_id=object_id(N'[$element.Name]'))
 	CREATE#if ($index.Unique) UNIQUE#end#if($index.Clustered) CLUSTERED#end INDEX $sql.Escape($index.Name) ON $sql.Escape($element.Name)
 	(
 #foreach ($column in $index.Columns)
@@ -150,4 +237,7 @@ GO
 grant all on $sql.Escape($element.Name) to [$element.User]
 GO
 #end
+
+drop procedure #spAlterColumn_$element.Name
+GO
 #end
