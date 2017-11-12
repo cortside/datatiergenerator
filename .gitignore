@@ -1,12 +1,12 @@
 syntax: glob
-/nvelocity.log.*
-/*.log
+nvelocity.log.*
+*.log
 /build/*
 /*.cs~
-/obj/*
+**/obj/*
 /*.sql~
 /*.mk~
-/*.user
+*.user
 /*.orig
 /*.orig
 /*.suo
@@ -31,3 +31,4 @@ Cubby
 /Core/src/SWS_Test/bin/*
 Core/src/obj/*
 /Core/build/*
+**/.vs/*
